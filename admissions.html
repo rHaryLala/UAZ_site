@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admissions - Université Adventiste Zurcher</title>
+<link rel="stylesheet" href="css/admissions.css">
+</head>
+<body>
+    <header>
+        <img src="img/UAZ_Logo.png" alt="Logo de l'Université Adventiste Zurcher" class="logo">
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="accueil.html">Accueil</a></li>
+            <li><a href="programme.html">Programmes</a></li>
+            <li><a href="admissions.html">Admissions</a></li>
+            <li><a href="vie_estudiantine.html">Vie éstudiantine</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1>Admissions à l'Université Adventiste Zurcher</h1>
+        <p>Bienvenue sur la page des admissions de l'Université Adventiste Zurcher. Nous sommes ravis de votre intérêt pour notre institution. Voici les étapes à suivre pour rejoindre notre communauté académique.</p>
+
+        <div class="admission-steps">
+            <div class="step">
+                <h3>1. Choisir votre programme</h3>
+                <p>Consultez notre catalogue de programmes et choisissez celui qui correspond le mieux à vos aspirations académiques et professionnelles.</p>
+                <a href="programme.html" class="btn">Voir les programmes</a>
+            </div>
+            <div class="step">
+                <h3>2. Vérifier les conditions d'admission</h3>
+                <p>Assurez-vous de remplir les conditions d'admission spécifiques à votre programme d'intérêt.</p>
+                <a href="#" class="btn">Conditions d'admission</a>
+            </div>
+            <div class="step">
+                <h3>3. Préparer vos documents</h3>
+                <p>Rassemblez tous les documents nécessaires, y compris vos relevés de notes, lettres de recommandation et pièce d'identité.</p>
+            </div>
+            <div class="step">
+                <h3>4. Soumettre votre candidature</h3>
+                <p>Remplissez le formulaire de candidature en ligne et joignez-y tous les documents requis.</p>
+            </div>
+            <div class="step">
+                <h3>5. Payer les frais de dossier</h3>
+                <p>Effectuez le paiement des frais de dossier non remboursables pour finaliser votre candidature.</p>
+            </div>
+            <div class="step">
+                <h3>6. Attendre la décision</h3>
+                <p>Nous examinerons votre dossier et vous informerons de notre décision dans les meilleurs délais.</p>
+            </div>
+        </div>
+
+        <div class="admission-steps">
+            <div class="step">
+                <h3>1. Choisir votre programme</h3>
+                <p>Consultez notre catalogue de programmes et choisissez celui qui correspond le mieux à vos aspirations académiques et professionnelles.</p>
+                <a href="programme.html" class="btn">Voir les programmes</a>
+            </div>
+            <div class="step">
+                <h3>2. Vérifier les conditions d'admission</h3>
+                <p>Assurez-vous de remplir les conditions d'admission spécifiques à votre programme d'intérêt.</p>
+                <a href="#" class="btn">Conditions d'admission</a>
+            </div>
+        </div>
+
+        <div class="admission-form">
+            <h2>Formulaire de pré-inscription</h2>
+            <form id="admission-form">
+                <div class="form-group">
+                    <label for="nom">Nom complet</label>
+                    <input type="text" id="nom" name="nom" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Adresse e-mail</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="telephone">Numéro de téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" required>
+                </div>
+                <div class="form-group">
+                    <label for="programme">Programme d'intérêt</label>
+                    <select id="programme" name="programme" required>
+                        <option value="">Sélectionnez un programme</option>
+                        <option value="licence_droit">Licence en Droit</option>
+                        <option value="licence_theologie">Licence en Théologie</option>
+                        <option value="licence_gestion">Licence en Gestion</option>
+                        <option value="licence_communication">Licence en Communication</option>
+                        <option value="licence_sciences">Licence en Sciences infirmières</option>
+                        <option value="licence_anglophone">Licence en Études Anglophones</option>
+                        <option value="licence_education">Licence en Éducation</option>
+                        <option value="licence_informatique">Licence en Informatique</option>
+                        <option value="master_communication">Master en Communication</option>
+                        <option value="master_gestion">Master en Gestion</option>
+                        <option value="master_informatique">Master en Informatique</option>
+                        <option value="master_etudes">Master en Études Anglophones</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message (optionnel)</label>
+                    <textarea id="message" name="message"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Envoyer la pré-inscription</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <ul class="social-media">
+                <li><a href="https://www.facebook.com/uazsambaina" target="_blank">Facebook</a></li>
+                <li><a href="https://www.youtube.com/@uaz-universiteadventistezu6053" target="_blank">Youtube</a></li>
+                <li><a href="https://www.instagram.com" target="_blank">Instagram</a></li>
+                <li><a href="https://www.linkedin.com" target="_blank">LinkedIn</a></li>
+            </ul>
+            <div class="contact-info">
+                <p>Contactez-nous: <a href="mailto:office@zurcher.edu.mg">office@zurcher.edu.mg</a></p>
+                <p>Téléphone:  034 44 931 07</p>
+            </div>
+        </div>
+        <p>&copy; 2024 Université Adventiste Zurcher. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        document.getElementById('admission-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert("Merci pour votre pré-inscription ! Nous vous contacterons bientôt avec plus d'informations.");
+            this.reset();
+        });
+    </script>
+</body>
+</html>

@@ -134,3 +134,22 @@ footer {
 .submit-btn:hover {
     background-color: #1c3d5a;
 }
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.social-media {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.social-media a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+}
+.contact-info {
+    margin-top: 20px;
+}

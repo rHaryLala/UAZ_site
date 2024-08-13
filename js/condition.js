@@ -1,0 +1,1 @@
+alert("photos d'identité");

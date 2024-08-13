@@ -40,7 +40,7 @@ nav ul li a:hover {
     color: #ffd700;
 }
 .hero {
-    background-image: url("../img/UAZ_Facade.JPG");
+    background-image: url("../img/PhotoAcceuil.jpg");
     background-size: cover;
     background-position: center;
     height: 500px;
@@ -52,7 +52,7 @@ nav ul li a:hover {
 }
 .hero-content {
     background-color: rgba(28, 61, 90, 0.7);
-    padding: 40px;
+    padding: 30px;
     border-radius: 10px;
 }
 .hero h1 {

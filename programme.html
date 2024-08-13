@@ -1,0 +1,122 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programmes - Université Adventiste Zurcher</title>
+<link rel="stylesheet" href="css/programme.css">
+</head>
+<body>
+    <header>
+        <img src="img/UAZ_Logo.png" alt="Logo de l'Université Adventiste Zurcher" class="logo">
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="accueil.html">Accueil</a></li>
+            <li><a href="programme.html">Programmes</a></li>
+            <li><a href="admissions.html">Admissions</a></li>
+            <li><a href="vie_estudiantine.html">Vie éstudiantine</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1>Nos Programmes d'Études</h1>
+        <p>L'Université Adventiste Zurcher offre une large gamme de programmes académiques conçus pour préparer nos étudiants à un avenir brillant. Découvrez nos formations et trouvez celle qui correspond à vos aspirations.</p>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Rechercher un programme..." id="search-input">
+            <button onclick="searchPrograms()">Rechercher</button>
+        </div>
+
+        <div class="filter-options">
+            <select id="niveau-filter">
+                <option value="">Tous les niveaux</option>
+                <option value="licence">Licence</option>
+                <option value="master">Master</option>
+            </select>
+            <select id="faculte-filter">
+                <option value="">Toutes les mentions</option>
+                <option value="droit">Droit</option>
+                <option value="theologie">Théologie</option>
+                <option value="gestion">Gestion</option>
+                <option value="communication">Communication</option>
+                <option value="sciences">Sciences Infirmières</option>
+                <option value="etudes_anglophones">Études Anglophones</option>
+                <option value="education">Éducation</option>
+                <option value="informatique">Informatique</option>
+            </select>
+        </div>
+
+        <div class="programmes-grid" id="programmes-container">
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <ul class="social-media">
+                <li><a href="https://www.facebook.com/uazsambaina" target="_blank">Facebook</a></li>
+                <li><a href="https://www.youtube.com/@uaz-universiteadventistezu6053" target="_blank">Youtube</a></li>
+                <li><a href="https://www.instagram.com" target="_blank">Instagram</a></li>
+                <li><a href="https://www.linkedin.com" target="_blank">LinkedIn</a></li>
+            </ul>
+            <div class="contact-info">
+                <p>Contactez-nous: <a href="mailto:office@zurcher.edu.mg">office@zurcher.edu.mg</a></p>
+                <p>Téléphone:  034 44 931 07</p>
+            </div>
+        </div>
+        <p>&copy; 2024 Université Adventiste Zurcher. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        const programmes = [
+            { nom: "Licence en Droit", niveau: "licence", faculte: "droit", description: "Explorez le monde fascinant du vivant et préparez-vous à une carrière dans la recherche ou l'industrie biotechnologique." },
+            { nom: "Licence en Théologie", niveau: "licence", faculte: "theologie", description: "Menez des recherches avancées sur les questions théologiques contemporaines et historiques." },
+            { nom: "Licence en Gestion", niveau: "licence", faculte: "gestion", description: "Acquérez les compétences essentielles pour diriger et innover dans le monde des affaires." },
+            { nom: "Licence en Communication", niveau: "licence", faculte: "communication", description: "Approfondissez votre compréhension des œuvres littéraires à travers les cultures et les époques." },
+            { nom: "Licence en Sciences infirmières", niveau: "licence", faculte: "sciences", description: "Explorez le monde fascinant du vivant et préparez-vous à une carrière dans la recherche ou l'industrie biotechnologique." },
+            { nom: "Licence en Études Anglophones", niveau: "licence", faculte: "etudes_anglophones", description: "Analysez les enjeux mondiaux et préparez-vous à une carrière dans la diplomatie ou les organisations internationales." },
+            { nom: "Licence en Éducation", niveau: "licence", faculte: "education", description: "Formez-vous aux soins de santé modernes et développez votre compassion au service des patients." },
+            { nom: "Licence en Informatique", niveau: "licence", faculte: "informatique", description: "Plongez dans l'univers du numérique et devenez un expert en programmation et en systèmes informatiques." },
+            { nom: "Master en Communication", niveau: "master", faculte: "communication", description: "Approfondissez votre compréhension des textes sacrés et de leur interprétation contemporaine." },
+            { nom: "Master en Gestion", niveau: "master", faculte: "gestion", description: "Approfondissez votre compréhension des textes sacrés et de leur interprétation contemporaine." },
+            { nom: "Master en Informatique", niveau: "master", faculte: "informatique", description: "Approfondissez votre compréhension des textes sacrés et de leur interprétation contemporaine." },
+            { nom: "Master en Études Anglophones", niveau: "master", faculte: "etudes_anglophones", description: "Approfondissez votre compréhension des textes sacrés et de leur interprétation contemporaine." },
+        ];
+
+        function createProgrammeCard(programme) {
+            return `
+                <div class="programme-card" data-niveau="${programme.niveau}" data-faculte="${programme.faculte}">
+                    <h3>${programme.nom}</h3>
+                    <p>${programme.description}</p>
+                    <a href="contact.html" class="btn">En savoir plus</a>
+                </div>
+            `;
+        }
+
+        function displayProgrammes(filteredProgrammes = programmes) {
+            const container = document.getElementById('programmes-container');
+            container.innerHTML = filteredProgrammes.map(createProgrammeCard).join('');
+        }
+
+        function searchPrograms() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const niveauFilter = document.getElementById('niveau-filter').value;
+            const faculteFilter = document.getElementById('faculte-filter').value;
+
+            const filteredProgrammes = programmes.filter(programme => 
+                programme.nom.toLowerCase().includes(searchTerm) &&
+                (niveauFilter === '' || programme.niveau === niveauFilter) &&
+                (faculteFilter === '' || programme.faculte === faculteFilter)
+            );
+
+            displayProgrammes(filteredProgrammes);
+        }
+
+        document.getElementById('niveau-filter').addEventListener('change', searchPrograms);
+        document.getElementById('faculte-filter').addEventListener('change', searchPrograms);
+
+        displayProgrammes();
+    </script>
+</body>
+</html>

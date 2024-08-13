@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vie Étudiante - Université Adventiste Zurcher</title>
+<link rel="stylesheet" href="css/vie_estudiantine.css">
+</head>
+<body>
+    <header>
+        <img src="img/UAZ_Logo.png" alt="Logo de l'Université Adventiste Zurcher" class="logo">
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="accueil.html">Accueil</a></li>
+            <li><a href="programme.html">Programmes</a></li>
+            <li><a href="admissions.html">Admissions</a></li>
+            <li><a href="vie_estudiantine.html">Vie éstudiantine</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1>Vie Étudiante à l'Université Adventiste Zurcher</h1>
+        <p>À l'Université Adventiste Zurcher, nous croyons que l'éducation s'étend bien au-delà de la salle de classe. Notre campus vibrant offre une multitude d'opportunités pour enrichir votre expérience universitaire, développer vos talents et créer des liens durables.</p>
+
+        <h2>Activités et clubs étudiants</h2>
+        <div class="activity-grid">
+            <div class="activity-card">
+                <h3>Association des Étudiants Adventistes</h3>
+                <p>Participez à des événements spirituels, des services communautaires et des activités sociales qui renforcent votre foi et votre engagement.</p>
+            </div>
+            <div class="activity-card">
+                <h3>Club d'Écologie et de Développement Durable</h3>
+                <p>Rejoignez-nous pour des projets de conservation, des ateliers sur l'agriculture durable et des initiatives écologiques sur le campus.</p>
+            </div>
+            <div class="activity-card">
+                <h3>Chorale Universitaire</h3>
+                <p>Exprimez vos talents musicaux et participez à des concerts inspirants sur le campus et dans la communauté locale.</p>
+            </div>
+            <div class="activity-card">
+                <h3>Club de Débat et d'Art Oratoire</h3>
+                <p>Affinez vos compétences en communication et en argumentation tout en discutant de sujets d'actualité importants.</p>
+            </div>
+        </div>
+
+        <h2>Logement et restauration</h2>
+        <p>Nos résidences universitaires offrent un environnement confortable et sécurisé pour vivre et étudier. Nos cafétérias proposent une variété de repas sains et équilibrés, y compris des options végétariennes et végétaliennes.</p>
+        <a href="#" class="btn">En savoir plus sur le logement étudiant</a>
+
+        <h2>Services de soutien aux étudiants</h2>
+        <p>Nous offrons une gamme complète de services pour soutenir votre réussite académique et votre bien-être personnel :</p>
+        <ul>
+            <li>Tutorat académique</li>
+            <li>Conseil en orientation professionnelle</li>
+            <li>Services de santé et de bien-être</li>
+            <li>Soutien spirituel et pastoral</li>
+        </ul>
+
+        <h2>Engagement communautaire</h2>
+        <p>L'Université Adventiste Zurcher encourage fortement l'engagement communautaire. Participez à des projets de service, des campagnes de sensibilisation à la santé, et des programmes d'alphabétisation dans les communautés locales.</p>
+
+        <h2>Sports et loisirs</h2>
+        <p>Restez actif et en bonne santé grâce à nos installations sportives modernes et à nos programmes de loisirs variés :</p>
+        <ul>
+            <li>Terrain de football</li>
+            <li>Courts de basketball et de volleyball</li>
+        </ul>
+
+        <div class="testimonial">
+            <p>"L'Université Adventiste Zurcher m'a offert bien plus qu'une simple éducation académique. J'ai grandi spirituellement, j'ai développé des amitiés durables et j'ai découvert ma passion pour le service communautaire. Cette expérience a véritablement façonné la personne que je suis aujourd'hui."</p>
+            <p class="testimonial-author">- Raza Andriamahefa, Promotion 2022</p>
+        </div>
+
+        <h2>Événements à venir</h2>
+        <ul>
+            <li>Festival culturel annuel - 15 octobre 2023</li>
+            <li>Semaine de la santé et du bien-être - 6-10 novembre 2023</li>
+            <li>Concert de Noël de la chorale universitaire - 8 décembre 2023</li>
+        </ul>
+        <a href="#" class="btn">Voir tous les événements</a>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <ul class="social-media">
+                <li><a href="https://www.facebook.com/uazsambaina" target="_blank">Facebook</a></li>
+                <li><a href="https://www.youtube.com/@uaz-universiteadventistezu6053" target="_blank">Youtube</a></li>
+                <li><a href="https://www.instagram.com" target="_blank">Instagram</a></li>
+                <li><a href="https://www.linkedin.com" target="_blank">LinkedIn</a></li>
+            </ul>
+            <div class="contact-info">
+                <p>Contactez-nous: <a href="mailto:office@zurcher.edu.mg">office@zurcher.edu.mg</a></p>
+                <p>Téléphone:  034 44 931 07</p>
+            </div>
+        </div>
+        <p>&copy; 2024 Université Adventiste Zurcher. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const activityCards = document.querySelectorAll('.activity-card');
+            activityCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.backgroundColor = '#e6f2ff';
+                    setTimeout(() => {
+                        this.style.backgroundColor = '#f9f9f9';
+                    }, 300);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

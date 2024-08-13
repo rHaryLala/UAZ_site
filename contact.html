@@ -1,0 +1,102 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact - Université Adventiste Zurcher</title>
+<link rel="stylesheet" href="css/contact.css">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQygd__AIC8rZfU7wLKYe_SOUm7S99e_c&callback=initMap" async defer></script>
+</head>
+<body>
+    <header>
+        <img src="img/UAZ_Logo.png" alt="Logo de l'Université Adventiste Zurcher" class="logo">
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="accueil.html">Accueil</a></li>
+            <li><a href="programme.html">Programmes</a></li>
+            <li><a href="admissions.html">Admissions</a></li>
+            <li><a href="vie_estudiantine.html">Vie éstudiantine</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1>Contactez l'Université Adventiste Zurcher</h1>
+        <p>Nous sommes là pour répondre à vos questions et vous aider dans votre parcours académique. N'hésitez pas à nous contacter par le moyen qui vous convient le mieux.</p>
+
+        <div class="contact-grid">
+            <div class="contact-form">
+                <h2>Formulaire de contact</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Nom complet</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Adresse e-mail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Sujet</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Envoyer le message</button>
+                </form>
+            </div>
+            <div class="contact-info">
+                <h2>Informations de contact</h2>
+                <h3>Adresse</h3>
+                <p>Université Adventiste Zurcher<br>
+                BP 325, Route Nationale 7<br>
+                Sambaina, Antsirabe 110<br>
+                Madagascar</p>
+                
+                <h3>Téléphone</h3>
+                <p>034 44 931 07</p>
+                
+                <h3>Email</h3>
+                <p>office@zurcher.edu.mg</p>
+                
+                <h3>Heures d'ouverture</h3>
+                <p>Lundi - Vendredi : 8h00 - 17h00<br>
+                Samedi - Dimanche : Fermé</p>
+
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Université Adventiste Zurcher. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        function initMap() {
+            const uazLocation = { lat: -19.66128, lng: 47.16356 };
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: uazLocation,
+            });
+            const marker = new google.maps.Marker({
+                position: uazLocation,
+                map: map,
+                title: "Université Adventiste Zurcher"
+            });
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Merci pour votre message. Nous vous répondrons dans les plus brefs délais.');
+            this.reset();
+        });
+
+        // Chargement de la carte une fois que la page est complètement chargée
+        window.onload = initMap;
+    </script>
+</body>
+</html>
