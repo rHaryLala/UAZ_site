@@ -1,4 +1,3 @@
-// Add smooth scrolling to anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -8,7 +7,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Add animation to grid items
 const gridItems = document.querySelectorAll('.grid-item');
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -26,7 +24,6 @@ gridItems.forEach(item => {
     observer.observe(item);
 });
 
-// Add counter animation to stats
 const stats = document.querySelectorAll('.stat-number');
 const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
