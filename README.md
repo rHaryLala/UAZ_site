@@ -53,6 +53,18 @@ Puis, dans un second terminal : `php artisan serve` (ou le domaine virtuel Larag
 | `php artisan import:wordpress --dry-run` | Simule l'import depuis zurcher.edu.mg (phase 5) |
 | `php artisan media-library:regenerate` | Régénère les miniatures et conversions WebP/AVIF |
 
+## Import depuis WordPress
+
+```bash
+php artisan import:wordpress --dry-run         # simulation : aucune écriture, aucun téléchargement
+php artisan import:wordpress                   # import réel + docs/IMPORT-REPORT.md
+php artisan import:wordpress --only=posts,team # étapes : users,pages,posts,team,testimonials,redirects,media
+php artisan media-library:regenerate           # produit ensuite les variantes AVIF
+```
+
+Lecture seule du site existant (GET uniquement, ≥ 600 ms entre requêtes, robots.txt respecté), **idempotent**, et
+sans jamais écraser un contenu retouché dans le back-office (sauf `--force`). Détails : `docs/DECISIONS.md` D-023 à D-027.
+
 ## Base de données
 
 SQLite en développement, MySQL/MariaDB en production : le code n'utilise que des fonctionnalités

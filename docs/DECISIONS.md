@@ -110,3 +110,34 @@ Format : **décision** — alternatives — raison.
 
 ## D-022 · Composant d'icônes `x-ico`
 - `x-icon` est déjà enregistré par blade-icons (dépendance de Filament) et masquait mon composant : renommé `x-ico`.
+
+## D-023 · Import WordPress : ce qui est importé, et ce qui ne l'est pas
+- **Importé** : auteurs (comptes **sans rôle**, e-mail `@import.invalid`, pour signer les articles), 18 articles, 12 pages
+  (rattachées aux pages système du nouveau site via `PAGE_MAP`), 92 membres de l'équipe, 3 témoignages vidéo, redirections.
+- **Médias** : uniquement ceux **référencés** par le contenu importé (≈ 75 sur 529). Les ~420 médias orphelins et les
+  fichiers > 10 Mo ou hors types autorisés (Word, `yearbook-2025.pdf` de 66,8 Mo) ne sont pas copiés : ils sont listés
+  dans `docs/IMPORT-REPORT.md` avec l'action à mener.
+- **Non importé volontairement** : `home`, `accueil-2`, `s-a`, `aumonerie`, `cours-a-la-carte`, `blog`, `academique`,
+  `contactez-nous` (voir AUDIT §7).
+
+## D-024 · Idempotence et respect des modifications des rédacteurs
+- Table `import_records` (source, identifiant, modèle local, empreinte du contenu source). Relancer l'import ne crée
+  rien en double et ne met à jour que ce qui a changé sur WordPress.
+- Un contenu **modifié dans le back-office depuis le dernier import n'est jamais écrasé** (il est signalé « à relire ») ;
+  `--force` permet de le remplacer.
+
+## D-025 · Nettoyage du HTML Divi
+- Suppression des shortcodes, commentaires Gutenberg, scripts, styles en ligne, classes, `data-start/data-end` ;
+  déroulage des conteneurs `et_pb_*` ; `h1` → `h2` ; paragraphes entièrement en gras (artefact d'éditeur) dégraissés ;
+  images → références à la médiathèque (`<figure data-media>`) rendues en images responsives AVIF/WebP ;
+  images cliquables menant à un PDF sans texte → lien texte « Télécharger … » ; iframes YouTube → lien.
+- Liens internes réécrits d'après `docs/URL-MAP.csv` et les nouveaux slugs ; les liens non résolus sont rapportés.
+- Le HTML importé repasse par l'assainisseur à l'affichage (liste blanche) : l'import n'est pas une zone de confiance.
+
+## D-026 · Textes alternatifs des images importées
+- Aucun média de l'ancien site n'a de texte alternatif. Les images **à la une** reçoivent un alt **provisoire**
+  (« Illustration : titre de l'article »), les portraits « Portrait de Nom » ; chacun est listé dans le rapport.
+  Les autres images restent à renseigner dans la médiathèque (filtre « Sans texte alternatif »).
+
+## D-027 · Conversions AVIF après l'import
+- L'import désactive l'AVIF (très lent) ; lancer ensuite `php artisan media-library:regenerate` pour le produire.
