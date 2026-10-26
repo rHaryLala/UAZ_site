@@ -68,8 +68,26 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Le super-admin passe toutes les autorisations.
-        Gate::before(fn ($user) => $user->hasRole(RolesAndPermissionsSeeder::SUPER_ADMIN) ?: null);
+        // Le super-admin passe toutes les autorisations, sauf pour se supprimer lui-même ou supprimer le dernier super-admin
+        // (garde-fou : on ne doit jamais pouvoir verrouiller le back-office par erreur).
+        Gate::before(function ($user, string $ability, array $arguments) {
+            if (! $user->hasRole(RolesAndPermissionsSeeder::SUPER_ADMIN)) {
+                return null;
+            }
+
+            $target = $arguments[0] ?? null;
+
+            if ($ability === 'delete' && $target instanceof User) {
+                $lastSuperAdmin = $target->hasRole(RolesAndPermissionsSeeder::SUPER_ADMIN)
+                    && User::role(RolesAndPermissionsSeeder::SUPER_ADMIN)->count() <= 1;
+
+                if ($target->is($user) || $lastSuperAdmin) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
 
         foreach (self::POLICIES as $model => $policy) {
             Gate::policy($model, $policy);

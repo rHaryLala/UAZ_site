@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TeamController;
 use App\Models\Event;
 use App\Models\Formation;
@@ -42,6 +43,9 @@ Route::get('/evenements/{event}', [EventController::class, 'show'])->name('event
 
 Route::get('/galerie', [AlbumController::class, 'index'])->name('albums.index');
 Route::get('/galerie/{album}', [AlbumController::class, 'show'])->name('albums.show');
+
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
 Route::get('/equipe', TeamController::class)->name('team');
 Route::get('/contact', ContactController::class)->name('contact');

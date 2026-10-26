@@ -30,6 +30,10 @@
         @include('home.partners')
     @endif
 
+    @push('head')
+        @include('partials.jsonld-organization', ['site' => $site])
+    @endpush
+
     <x-cta-banner
         :eyebrow="__('home.cta.eyebrow')"
         :title="__('home.cta.title')"

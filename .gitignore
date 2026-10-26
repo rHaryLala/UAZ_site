@@ -36,3 +36,4 @@ Thumbs.db
 
 # Captures locales (non versionnées)
 /tests/e2e/.cache
+/storage/media-library
