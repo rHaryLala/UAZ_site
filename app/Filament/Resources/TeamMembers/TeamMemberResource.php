@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Filament\Resources\TeamMembers;
+
+use App\Enums\TeamCategory;
+use App\Filament\Resources\TeamMembers\Pages\ManageTeamMembers;
+use App\Filament\Support\MediaPicker;
+use App\Models\TeamMember;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+
+class TeamMemberResource extends Resource
+{
+    protected static ?string $model = TeamMember::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Communauté';
+
+    protected static ?string $modelLabel = 'membre de l\'équipe';
+
+    protected static ?string $pluralModelLabel = 'équipe';
+
+    protected static ?string $navigationLabel = 'Équipe';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            TextInput::make('name')->label('Nom complet')->required()->maxLength(255),
+            TextInput::make('job_title')->label('Fonction')->maxLength(255),
+            Select::make('category')->label('Catégorie')->options(TeamCategory::class)
+                ->default(TeamCategory::Administration)->required()->selectablePlaceholder(false),
+            Select::make('faculty_id')->label('Faculté / département')
+                ->relationship('faculty', 'name')->searchable()->preload(),
+            Textarea::make('bio')->label('Courte biographie')->rows(3)->maxLength(600)->columnSpanFull(),
+            TextInput::make('email')->label('E-mail')->email()->maxLength(255),
+            TextInput::make('phone')->label('Téléphone')->tel()->maxLength(50),
+            MediaPicker::make('photo_id', 'Photo'),
+            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0),
+            Toggle::make('is_active')->label('Affiché sur le site')->default(true),
+        ])->columns(2);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                ImageColumn::make('photo_thumb')->label('Photo')->circular()->size(44)
+                    ->state(fn (TeamMember $record) => $record->photo?->url('thumb')),
+                TextColumn::make('name')->label('Nom')->searchable()->sortable()->weight('medium'),
+                TextColumn::make('job_title')->label('Fonction')->searchable(),
+                TextColumn::make('category')->label('Catégorie')->badge(),
+                TextColumn::make('faculty.name')->label('Département')->toggleable(),
+                ToggleColumn::make('is_active')->label('Affiché'),
+            ])
+            ->defaultSort('sort_order')
+            ->reorderable('sort_order')
+            ->filters([
+                SelectFilter::make('category')->label('Catégorie')->options(TeamCategory::class),
+                SelectFilter::make('faculty_id')->label('Département')->relationship('faculty', 'name'),
+            ])
+            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+    }
+
+    public static function getPages(): array
+    {
+        return ['index' => ManageTeamMembers::route('/')];
+    }
+}

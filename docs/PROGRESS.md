@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | 0 · Audit du site existant | ✅ Terminée | `docs: audit du site WordPress existant` |
 | 1 · Fondations | ✅ Terminée | `feat: fondations Laravel, Filament, rôles et médias` |
-| 2 · Modèles et back-office | ⏳ À faire | |
+| 2 · Modèles et back-office | ✅ Terminée | `feat: modèles, ressources Filament et médiathèque` |
 | 3 · Direction artistique | ⏳ À faire | |
 | 4 · Pages publiques et animations | ⏳ À faire | |
 | 5 · Import WordPress | ⏳ À faire | |
@@ -27,3 +27,15 @@
 - Media Library : disque `public`, trait `HasUazMedia` (conversions `thumb`/`card`/`hero` en WebP + AVIF), nettoyage planifié des orphelins.
 - 2FA TOTP optionnelle (colonnes `app_authentication_*`).
 - À faire plus tard : compression à l'envoi dans l'interface Filament (phase 2), polices Filament auto-hébergées.
+
+## Phase 2 — notes
+
+- 15 modèles + migrations + factories ; 16 ressources/pages Filament en français (Contenus, Formations, Communauté, Médias, Site, Administration).
+- Médiathèque (`MediaAsset`) : sélecteur avec recherche et miniatures, envoi multiple avec texte alternatif obligatoire, compression à 2560 px, conversions WebP (+ AVIF).
+- Pages en blocs flexibles (texte, image, galerie, citation, appel à l'action, chiffres clés, cartes), SEO, brouillon/publié/programmé.
+- Redirections 301 : modèle + middleware global mis en cache + `php artisan redirects:import` (41 lignes depuis URL-MAP.csv).
+- Politiques par rôle ; contributeur limité à ses brouillons (garde-fou aussi côté modèle).
+- Seeders : structure réelle (réglages, 7 licences, pages système, menus) + démo locale (`demo:purge`).
+- **74+ tests Pest verts** ; Pint propre.
+- Maquette de l'utilisateur intégrée : voir `docs/MAQUETTE.md`.
+- Reste à vérifier visuellement dans le navigateur (Playwright, phase 4) : mise en page des formulaires Filament.

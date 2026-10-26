@@ -19,13 +19,14 @@ class RolesAndPermissionsSeeder extends Seeder
     public const MATRIX = [
         self::EDITOR => [
             'content.view', 'content.create', 'content.update', 'content.delete', 'content.publish',
-            'media.manage',
+            'media.view', 'media.create', 'media.manage',
             'settings.manage',
-            'messages.view', 'messages.export',
+            'messages.view', 'messages.export', 'messages.delete',
         ],
         self::CONTRIBUTOR => [
             // Brouillons uniquement : la politique limite la modification à ses propres brouillons.
             'content.view', 'content.create',
+            'media.view', 'media.create',
         ],
     ];
 

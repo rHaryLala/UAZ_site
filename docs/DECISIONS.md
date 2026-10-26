@@ -58,3 +58,37 @@ Format : **décision** — alternatives — raison.
 ## D-012 · Fichiers d'instructions du squelette Laravel
 - Le squelette `laravel/laravel` 13 fournit `AGENTS.md` et `CLAUDE.md` génériques (installation d'outils
   tiers). Ils ont été supprimés : ils ne reflètent pas ce projet.
+
+## D-013 · Médiathèque = modèle `MediaAsset` (et non des fichiers attachés à chaque contenu)
+- **Décision** : chaque image/PDF est un `MediaAsset` (titre, **texte alternatif obligatoire**, légende, crédit) portant
+  un unique fichier Media Library. Les contenus référencent ces éléments par identifiant (couverture, galeries, blocs).
+- Alternatives : `SpatieMediaLibraryFileUpload` directement sur chaque modèle. Écartée : impossible dans les blocs
+  flexibles (Builder), pas de réutilisation, pas de texte alternatif centralisé.
+- Conséquences : sélecteur `MediaPicker` (recherche, miniatures, envoi sans quitter le formulaire), envoi multiple
+  avec alt obligatoire pour chaque fichier, compression de l'original à 2560 px, dimensions mémorisées (anti-CLS).
+
+## D-014 · Pages : arbre + clé système + blocs JSON
+- **Décision** : `pages.path` (chemin complet, unique) recalculé à l'enregistrement ; `pages.key` identifie les pages
+  « système » (home, about, admissions…) non supprimables ; blocs de contenu en JSON (`[{type, data}]`).
+- Les sections dynamiques (formations, actualités, événements, galerie, équipe, contact, recherche) ont des routes
+  dédiées ; leurs slugs sont réservés (`Page::RESERVED_SLUGS`).
+
+## D-015 · Aperçu des brouillons
+- **Décision** : le lien « Aperçu » du back-office ajoute `?apercu=1` à l'URL publique ; les contrôleurs publics
+  (phase 4) y afficheront aussi les brouillons pour un compte connecté ayant `content.view`.
+- Alternative : URLs signées temporaires. Écartée : plus lourd pour des rédacteurs non techniques.
+
+## D-016 · Brouillon imposé côté serveur
+- **Décision** : en plus du formulaire (l'option « Publié » n'est pas proposée), le modèle (`Publishable`) rétrograde
+  en brouillon tout enregistrement « publié » fait par un compte sans `content.publish`.
+
+## D-017 · Données de la maquette utilisées comme source
+- **Décision** : le seeder de structure reprend les chiffres, mentions/parcours, horaires et e-mail de la maquette
+  fournie par l'équipe (`docs/MAQUETTE.md`) ; ils sont à valider. Le **téléphone n'est pas pré-rempli** car la
+  maquette donne deux numéros différents.
+- Les contenus factices (`DemoContentSeeder`) sont limités à l'environnement local, préfixés « (Démo) » et supprimables
+  avec `php artisan demo:purge`.
+
+## D-018 · Export CSV des messages sans dépendance
+- **Décision** : export streamé via une action Filament (BOM UTF-8, séparateur `;`, neutralisation des formules
+  `= + - @`), sans les tables `exports`/`imports` de Filament ni file d'attente.

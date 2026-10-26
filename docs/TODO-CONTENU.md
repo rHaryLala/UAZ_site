@@ -20,3 +20,23 @@ Aucune donnée factuelle n'est inventée : tout ce qui manque est marqué `TODO-
 - [ ] **Yearbook 2025** (66,8 Mo) : fournir une version allégée ou un lien externe.
 - [ ] **Images héros / vidéo** : visuels haute définition du campus.
 - [ ] **Version anglaise** : prévue plus tard, non implémentée.
+
+## Après la maquette (Phase 2)
+
+- [ ] **Chiffres clés de l'accueil** (préremplis depuis la maquette, à valider) : fondation 1995, 7 mentions,
+      180 crédits ECTS, 200+ hectares.
+- [ ] **Téléphone** : la maquette donne deux numéros (+261 34 44 931 07 et +261 34 76 076 98) : lequel publier ?
+- [ ] **E-mail général** `office@zurcher.edu.mg`, bureau académique `registrar@zurcher.edu.mg` + téléphone
+      (+261 34 46 000 08) : à valider.
+- [ ] **Horaires** (lundi–jeudi 7 h 30–12 h / 13 h 30–17 h 30 ; vendredi 7 h 30–12 h) : à valider.
+- [ ] **Latitude / longitude** du campus pour la carte de la page Contact.
+- [ ] **Domaines** (Arts & lettres, Sciences sociales, Sciences de la santé, Sciences de l'ingénierie) :
+      confirmer s'il s'agit de facultés ou de départements, et leurs responsables.
+- [ ] **Parcours** de chaque mention (repris de la maquette) et **description / débouchés / conditions** de chacune
+      des 7 licences : marqués `TODO-CONTENU` dans les fiches.
+- [ ] **Master** : 2 ans · 120 crédits ECTS (maquette) — liste des masters ouverts (Communication annoncé le 18/09/2026).
+- [ ] **Pages système** (À propos, Admissions, Vie étudiante, Licence, Master, Frais…) : contenu à saisir ou à
+      importer de WordPress (phase 5).
+- [ ] **Photos réelles** du campus pour le héros, les domaines de formation, la vie étudiante : les photos de la
+      maquette sont des illustrations.
+- [ ] **Liens de la maquette sans page** : Se connecter, Donner, Alumni, Recherche (voir `docs/MAQUETTE.md`).

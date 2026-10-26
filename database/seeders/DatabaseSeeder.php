@@ -14,6 +14,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionsSeeder::class,
             AdminUserSeeder::class,
+            StructureSeeder::class,
         ]);
+
+        // Contenus factices uniquement en développement local.
+        if (app()->environment('local')) {
+            $this->call(DemoContentSeeder::class);
+        }
     }
 }
