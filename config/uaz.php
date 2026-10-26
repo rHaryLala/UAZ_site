@@ -61,6 +61,8 @@ return [
     'contact' => [
         'recipient' => env('CONTACT_RECIPIENT'),
         'rate_limit_per_minute' => 3,
+        // Délai minimal (secondes) entre l'affichage et l'envoi : plus rapide = robot, message écarté en silence.
+        'min_fill_seconds' => 3,
     ],
 
     /*

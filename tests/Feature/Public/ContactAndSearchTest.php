@@ -10,18 +10,19 @@ use App\Models\NewsPost;
 use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
+use Livewire\Attributes\Locked;
 use Livewire\Livewire;
 
 beforeEach(function () {
     RateLimiter::clear('contact:127.0.0.1');
     Mail::fake();
-    config(['uaz.contact.recipient' => 'bureau@example.org']);
+    config(['uaz.contact.recipient' => 'bureau@example.org', 'uaz.contact.min_fill_seconds' => 0]);
 });
 
 function fillContact($component, array $overrides = [])
 {
+
     return $component
-        ->set('renderedAt', time() - 30) // le visiteur a pris le temps de remplir le formulaire
         ->set('name', $overrides['name'] ?? 'Aina Rakoto')
         ->set('email', $overrides['email'] ?? 'aina@example.org')
         ->set('phone', $overrides['phone'] ?? '+261 34 00 000 00')
@@ -54,8 +55,8 @@ it('falls back to the site e-mail address when no recipient is configured', func
 });
 
 it('validates every field with French messages', function () {
+
     Livewire::test(ContactForm::class)
-        ->set('renderedAt', time() - 30)
         ->set('email', 'pas-un-email')
         ->set('phone', 'abc')
         ->call('send')
@@ -83,8 +84,9 @@ it('silently drops submissions that fill the honeypot', function () {
 });
 
 it('silently drops submissions made faster than a human can type', function () {
+    config(['uaz.contact.min_fill_seconds' => 3]);
+
     Livewire::test(ContactForm::class)
-        ->set('renderedAt', time())
         ->set('name', 'Robot')->set('email', 'bot@example.org')->set('subject', 'Offre spéciale')
         ->set('message', 'Achetez maintenant, offre limitée dans le temps.')
         ->call('send')
@@ -146,4 +148,10 @@ it('renders the search page without JavaScript through a GET form', function () 
     NewsPost::factory()->create(['title' => 'Rentrée solennelle']);
 
     $this->get('/recherche?q=solennelle')->assertOk()->assertSee('Rentrée solennelle')->assertSee('role="search"', false);
+});
+
+it('locks the anti-robot timestamp and the sent flag against browser tampering', function () {
+    foreach (['renderedAt', 'sent'] as $property) {
+        expect((new ReflectionProperty(ContactForm::class, $property))->getAttributes(Locked::class))->toHaveCount(1);
+    }
 });

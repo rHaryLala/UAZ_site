@@ -5,7 +5,7 @@
             <div class="rounded-card border border-gold-300 bg-paper-50 p-8 shadow-card" x-data x-init="$el.scrollIntoView({ block: 'center', behavior: 'smooth' })">
                 <p class="flex items-center gap-3 font-serif text-h4 text-navy-800"><x-ico name="check" class="size-6 text-gold-600" /> Merci, votre message a bien été envoyé.</p>
                 <p class="mt-3 text-ink-700">Notre équipe vous répondra dans les meilleurs délais.</p>
-                <button type="button" wire:click="$set('sent', false)" class="link-arrow mt-6">Envoyer un autre message</button>
+                <button type="button" wire:click="another" class="link-arrow mt-6">Envoyer un autre message</button>
             </div>
         @endif
     </div>

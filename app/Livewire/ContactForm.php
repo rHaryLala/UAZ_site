@@ -8,6 +8,7 @@ use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
@@ -29,14 +30,16 @@ class ContactForm extends Component
     /** Honeypot : un humain ne le voit jamais ; un robot le remplit. */
     public string $website = '';
 
-    /** Horodatage d'affichage du formulaire (délai minimal anti-robot). */
+    /** Horodatage d'affichage du formulaire (délai minimal anti-robot) : verrouillé, le navigateur ne peut pas le modifier. */
+    #[Locked]
     public int $renderedAt = 0;
 
+    #[Locked]
     public bool $sent = false;
 
     public function mount(): void
     {
-        $this->renderedAt = time();
+        $this->renderedAt = now()->timestamp;
         $this->subject = (string) request()->query('sujet', '');
     }
 
@@ -80,7 +83,7 @@ class ContactForm extends Component
         RateLimiter::hit($key, 60);
 
         // Robot détecté : on simule un succès sans rien enregistrer ni envoyer.
-        if ($this->website !== '' || time() - $this->renderedAt < 3) {
+        if ($this->website !== '' || now()->timestamp - $this->renderedAt < (int) config('uaz.contact.min_fill_seconds')) {
             $this->finish();
 
             return;
@@ -100,6 +103,13 @@ class ContactForm extends Component
         }
 
         $this->finish();
+    }
+
+    /** « Envoyer un autre message » : `sent` est verrouillé côté navigateur, on passe donc par une méthode. */
+    public function another(): void
+    {
+        $this->sent = false;
+        $this->renderedAt = now()->timestamp;
     }
 
     private function finish(): void
