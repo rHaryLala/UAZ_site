@@ -25,9 +25,12 @@ use App\Policies\MediaAssetPolicy;
 use App\Policies\PagePolicy;
 use App\Policies\SettingsPolicy;
 use App\Policies\UserPolicy;
+use App\View\Composers\SiteComposer;
 use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Spatie\MediaLibrary\MediaCollections\Events\MediaHasBeenAddedEvent;
 
@@ -73,5 +76,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Event::listen(MediaHasBeenAddedEvent::class, OptimizeUploadedImage::class);
+
+        View::composer(['components.layouts.app', 'components.seo', 'components.site.*'], SiteComposer::class);
+        Paginator::defaultView('vendor.pagination.uaz');
     }
 }

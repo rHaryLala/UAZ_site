@@ -5,7 +5,7 @@
 | 0 · Audit du site existant | ✅ Terminée | `docs: audit du site WordPress existant` |
 | 1 · Fondations | ✅ Terminée | `feat: fondations Laravel, Filament, rôles et médias` |
 | 2 · Modèles et back-office | ✅ Terminée | `feat: modèles, ressources Filament et médiathèque` |
-| 3 · Direction artistique | ⏳ À faire | |
+| 3 · Direction artistique | ✅ Terminée | `feat: design system aux couleurs du sceau` |
 | 4 · Pages publiques et animations | ⏳ À faire | |
 | 5 · Import WordPress | ⏳ À faire | |
 | 6 · Qualité, SEO, a11y, sécurité | ⏳ À faire | |
@@ -39,3 +39,12 @@
 - **74+ tests Pest verts** ; Pint propre.
 - Maquette de l'utilisateur intégrée : voir `docs/MAQUETTE.md`.
 - Reste à vérifier visuellement dans le navigateur (Playwright, phase 4) : mise en page des formulaires Filament.
+
+## Phase 3 — notes
+
+- Couleurs extraites du sceau par script : marine #232E66, or #8A724B, noir #060807 ; échelles OKLCH ; contrastes AA vérifiés et testés.
+- Silhouette de Madagascar vectorisée depuis le logo (resources/svg/madagascar.svg) ; triangle en SVG ; sceau optimisé (WebP 96–768 px).
+- Fraunces + Inter auto-hébergées (latin), préchargées.
+- 20 composants Blade, layout, en-tête + menu plein écran (CSS), pied de page, page /design-system.
+- Vérifié visuellement (Playwright 390/768/1440) ; menu plein écran : 18/18 contrôles (focus piégé, Échap, ARIA).
+- JS : entrée 1 Ko, Alpine CSP, Livewire à la demande, GSAP/Lenis différés.

@@ -33,3 +33,6 @@ Thumbs.db
 /public/fonts/filament
 /database/database.sqlite
 /docs/assets/*.tmp
+
+# Captures locales (non versionnées)
+/tests/e2e/.cache

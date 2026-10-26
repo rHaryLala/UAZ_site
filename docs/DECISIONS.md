@@ -92,3 +92,21 @@ Format : **décision** — alternatives — raison.
 ## D-018 · Export CSV des messages sans dépendance
 - **Décision** : export streamé via une action Filament (BOM UTF-8, séparateur `;`, neutralisation des formules
   `= + - @`), sans les tables `exports`/`imports` de Filament ni file d'attente.
+
+## D-019 · Transitions de page : View Transitions natives plutôt que Swup
+- **Décision** : `@view-transition { navigation: auto }` (CSS), fondu court ; désactivé en mouvement réduit.
+- Alternative : Swup. Écartée : Swup remplace le `<body>` sans recharger les scripts, ce qui complique Alpine, Livewire et
+  le nettoyage des ScrollTriggers ; l'API native est stable (Chrome/Edge/Safari) et n'affecte pas les autres navigateurs.
+
+## D-020 · Alpine « CSP » + Livewire seulement quand nécessaire
+- **Décision** : Alpine en build CSP (pas d'eval, donc CSP stricte possible) ; composants déclarés en JS. Livewire n'est
+  chargé que sur les pages contenant un composant Livewire (contact, recherche) : bundle principal ≈ 1 Ko gzip,
+  Alpine ≈ 23 Ko, Livewire +99 Ko uniquement sur ces deux pages. GSAP/Lenis sont chargés après le rendu.
+- Filament garde son propre Alpine (non compatible CSP stricte) : `livewire.csp_safe` reste à `false`.
+
+## D-021 · Pas de photos de la maquette
+- Les photos de la maquette sont des illustrations ; seules des photos réelles de l'UAZ seront utilisées. En attendant,
+  les images manquantes sont remplacées par la silhouette de Madagascar sur fond marine.
+
+## D-022 · Composant d'icônes `x-ico`
+- `x-icon` est déjà enregistré par blade-icons (dépendance de Filament) et masquait mon composant : renommé `x-ico`.

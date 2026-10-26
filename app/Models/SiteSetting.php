@@ -33,10 +33,19 @@ class SiteSetting extends Model
         static::saved(fn () => Cache::forget(self::CACHE_KEY));
     }
 
-    /** Ligne unique, créée à la demande et mise en cache. */
+    /**
+     * Ligne unique, créée à la demande. On met en cache les attributs bruts (un tableau) et non le modèle :
+     * Laravel interdit par défaut de désérialiser des objets depuis le cache (serializable_classes).
+     */
     public static function current(): self
     {
-        return Cache::remember(self::CACHE_KEY, 3600, fn () => static::query()->first() ?? static::create([]));
+        $attributes = Cache::remember(
+            self::CACHE_KEY,
+            3600,
+            fn () => (static::query()->first() ?? static::create([]))->getAttributes(),
+        );
+
+        return (new static)->newFromBuilder($attributes);
     }
 
     public function logo(): BelongsTo

@@ -32,8 +32,9 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('UAZ · Administration')
             ->colors([
-                // Provisoire : remplacé par la palette extraite du logo en phase 3.
-                'primary' => Color::Blue,
+                // Bleu marine du sceau (docs/DESIGN-SYSTEM.md).
+                'primary' => Color::hex('#232E66'),
+                'gray' => Color::Slate,
             ])
             // 2FA par application (TOTP), optionnel ; chaque utilisateur l'active depuis son profil.
             ->profile()
