@@ -40,3 +40,11 @@ Aucune donnée factuelle n'est inventée : tout ce qui manque est marqué `TODO-
 - [ ] **Photos réelles** du campus pour le héros, les domaines de formation, la vie étudiante : les photos de la
       maquette sont des illustrations.
 - [ ] **Liens de la maquette sans page** : Se connecter, Donner, Alumni, Recherche (voir `docs/MAQUETTE.md`).
+
+## Après la phase 4
+
+- [ ] **Pages légales** : confidentialité, accessibilité, non-discrimination, informations d'urgence (présentes dans le pied de page de la maquette) — textes à fournir.
+- [ ] **Phrases des trois piliers** (Spiritus, Manus, Mens) : reformulées à partir de la maquette, à faire valider (lang/fr/home.php).
+- [ ] **Résumés** des pages Cafétéria et Dortoirs (cartes « La vie à l'UAZ » de l'accueil) : seule la Bibliothèque a un texte de la maquette.
+- [ ] **Vidéo d'accueil** (facultative) : non implémentée ; une image d'en-tête se règle dans Réglages du site › Accueil.
+- [ ] **Carte** du campus : latitude/longitude à renseigner (Réglages › Coordonnées) pour l'aperçu OpenStreetMap.

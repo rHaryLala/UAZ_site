@@ -3,6 +3,7 @@
 namespace App\Models\Concerns;
 
 use App\Enums\PublicationStatus;
+use App\Support\Preview;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -51,6 +52,18 @@ trait Publishable
                 $q->whereNull($query->qualifyColumn('published_at'))
                     ->orWhere($query->qualifyColumn('published_at'), '<=', now());
             });
+    }
+
+    /**
+     * Contenus visibles sur le site public : publiés, ou tous en mode aperçu (compte du back-office).
+     *
+     * @param  Builder<static>  $query
+     */
+    public function scopeVisible(Builder $query): void
+    {
+        if (! Preview::active()) {
+            $this->scopePublished($query);
+        }
     }
 
     public function isLive(): bool

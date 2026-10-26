@@ -6,7 +6,7 @@
 | 1 · Fondations | ✅ Terminée | `feat: fondations Laravel, Filament, rôles et médias` |
 | 2 · Modèles et back-office | ✅ Terminée | `feat: modèles, ressources Filament et médiathèque` |
 | 3 · Direction artistique | ✅ Terminée | `feat: design system aux couleurs du sceau` |
-| 4 · Pages publiques et animations | ⏳ À faire | |
+| 4 · Pages publiques et animations | ✅ Terminée | `feat: pages publiques et animations` |
 | 5 · Import WordPress | ⏳ À faire | |
 | 6 · Qualité, SEO, a11y, sécurité | ⏳ À faire | |
 | 7 · Déploiement et passation | ⏳ À faire | |
@@ -48,3 +48,12 @@
 - 20 composants Blade, layout, en-tête + menu plein écran (CSS), pied de page, page /design-system.
 - Vérifié visuellement (Playwright 390/768/1440) ; menu plein écran : 18/18 contrôles (focus piégé, Échap, ARIA).
 - JS : entrée 1 Ko, Alpine CSP, Livewire à la demande, GSAP/Lenis différés.
+
+## Phase 4 — notes
+
+- Pages : accueil (13 sections), formations (filtrables) + détail, actualités + détail, événements, galerie + visionneuse, équipe, contact (Livewire), recherche (Livewire), pages libres par chemin, 403/404/419/429/500/503 soignées.
+- Animations GSAP : héros (SplitText + triangle qui se dessine + parallaxe), compteurs, piliers au scroll, apparitions ; Lenis ; mouvement réduit et sans JS vérifiés.
+- **128 tests Pest** + **23 contrôles Playwright** réels (tests/e2e/smoke.mjs) + menu plein écran (18 contrôles).
+- Vérifié visuellement à 390/768/1440 px.
+- Poids JS (gzip) : entrée 1 Ko ; Alpine 23 Ko ; GSAP 47 Ko et Lenis 6 Ko chargés après le rendu ; Livewire +99 Ko seulement sur /contact et /recherche.
+- Limites connues : photos réelles absentes (visuels de substitution aux couleurs du sceau) ; pages légales (confidentialité, accessibilité) à créer ; liens de la maquette sans page non implémentés.

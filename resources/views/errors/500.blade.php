@@ -1,0 +1,1 @@
+<x-errors.layout code="500" title="Un incident est survenu de notre côté." message="L'erreur a été enregistrée. Réessayez dans quelques instants ; si le problème persiste, écrivez-nous depuis la page contact." />

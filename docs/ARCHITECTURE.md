@@ -60,3 +60,44 @@ sont portés par un scope commun `published()`.
   aux modèles concernés : les colonnes texte sont déjà isolées (pas de logique métier dedans).
 - Les routes publiques passeront sous un préfixe `/{locale}` uniquement pour les langues autres que la
   langue par défaut, afin de ne pas casser les URLs françaises.
+
+## Site public (phase 4)
+
+| Route | Contrôleur / composant | Notes |
+| --- | --- | --- |
+| `/` | `HomeController` + `resources/views/home/*` | sections : héros, différence UAZ, piliers, formations par domaine, admissions, vie à l'UAZ, apprentissage pratique, témoignages, actualités, événements, ressources, partenaires |
+| `/formations`, `/formations/{slug}` | `FormationController` | filtres niveau / domaine en liens (sans JS) |
+| `/actualites`, `/actualites/{slug}` | `NewsController` | filtre catégorie, pagination (9) |
+| `/evenements`, `/galerie`, `/equipe` | contrôleurs dédiés | album = visionneuse `<dialog>` |
+| `/contact` | `ContactController` + `Livewire\ContactForm` | honeypot, délai mini 3 s, 3 envois/min/IP, e-mail au bureau |
+| `/recherche` | `Livewire\Search` | LIKE (SQLite/MySQL), formulaire GET sans JS |
+| `/{chemin}` | `PageController` | pages du back-office par chemin complet ; **toujours en dernier** |
+
+- **Visibilité** : scope `visible()` (publié et date passée) ; `?apercu=1` ajoute brouillons et programmés pour un compte
+  du back-office (en-têtes `no-store` et `noindex`). Les `Route::bind` ne résolvent que du contenu visible (sinon 404).
+- **Contenu éditorial** : textes de l'accueil dans `lang/fr/home.php` (prêts pour l'anglais) ; titre/sous-titre du héros,
+  chiffres clés, formations, actualités, témoignages, partenaires dans le back-office.
+- **Cache** : `SiteSetting`, `Menu::resolved()` et la table de redirections sont mis en cache ; on y stocke des tableaux,
+  jamais des modèles (Laravel 13 interdit leur désérialisation par défaut).
+
+## Animations
+
+```
+resources/js/
+  app.js                 entrée minuscule : choisit boot/alpine.js ou boot/livewire.js, lance les animations
+  boot/                  Alpine CSP seul, ou Livewire (qui embarque Alpine CSP) quand la page a un composant Livewire
+  components/            Alpine.data : site-menu, carousel, lightbox (aucune expression inline complexe : build CSP)
+  animations/
+    index.js             charge, après le rendu, uniquement les modules dont la page a besoin
+    gsap.js              enregistrement unique de GSAP + ScrollTrigger + SplitText ; nettoyage pagehide/pageshow
+    smooth-scroll.js     Lenis synchronisé avec ScrollTrigger (désactivé en mouvement réduit)
+    reveal.js            [data-reveal] : opacité + translation au défilement
+    hero.js              SplitText mot par mot, triangle (stroke-dashoffset), Madagascar, parallaxe
+    counters.js          [data-counter] : compteurs (valeur finale déjà dans le HTML)
+    pillars.js           Spiritus · Manus · Mens : triangle dessiné au scroll (scrub)
+    parallax.js          [data-parallax]
+```
+
+Règles : `transform`/`opacity` seulement ; `gsap.matchMedia()` pour `prefers-reduced-motion` ; états initiaux masqués par CSS
+uniquement sous `html.js`, avec filet de sécurité (affichage forcé après 1,4 à 3,5 s) ; le contenu est toujours dans le HTML.
+Transitions entre pages : View Transitions API native (voir DECISIONS D-019).

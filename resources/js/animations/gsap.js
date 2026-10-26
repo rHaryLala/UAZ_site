@@ -8,4 +8,12 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 export const NO_MOTION = '(prefers-reduced-motion: reduce)';
 export const MOTION_OK = '(prefers-reduced-motion: no-preference)';
 
+// Retour arrière / page restaurée depuis le cache du navigateur : on recalcule les positions.
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) ScrollTrigger.refresh();
+});
+
+// Les déclencheurs sont détruits quand la page est quittée (pas de fuite entre navigations).
+window.addEventListener('pagehide', () => ScrollTrigger.getAll().forEach((trigger) => trigger.kill()));
+
 export { gsap, ScrollTrigger, SplitText };

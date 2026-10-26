@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ApplyRedirects;
+use App\Http\Middleware\PreviewHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Redirections 301 (ancien site WordPress) : middleware global, car il doit aussi
         // s'appliquer aux URLs qui ne correspondent à aucune route (donc 404 sans lui).
         $middleware->prepend(ApplyRedirects::class);
+        $middleware->web(append: [PreviewHeaders::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -45,7 +45,10 @@ Puis, dans un second terminal : `php artisan serve` (ou le domaine virtuel Larag
 | `vendor/bin/pint` | Formate le PHP |
 | `npm run lint` / `npm run format` | ESLint / Prettier |
 | `npm run build` | Build Vite de production |
-| `npm run e2e` | Tests Playwright (serveur sur `:8000`) |
+| `npm run e2e` | Test de fumée Playwright (serveur sur `:8000`, données de démonstration) |
+| `npm run e2e:menu` / `npm run e2e:shots -- <dossier> /chemin` | Menu plein écran ; captures 390/768/1440 |
+| `php artisan redirects:import` | Importe `docs/URL-MAP.csv` (redirections 301) |
+| `php artisan demo:purge` | Supprime les contenus de démonstration « (Démo) » |
 | `php artisan migrate:fresh --seed` | Réinitialise la base de développement |
 | `php artisan import:wordpress --dry-run` | Simule l'import depuis zurcher.edu.mg (phase 5) |
 | `php artisan media-library:regenerate` | Régénère les miniatures et conversions WebP/AVIF |

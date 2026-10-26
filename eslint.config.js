@@ -26,7 +26,11 @@ export default [
     {
         // Outils Node (scripts de build, captures Playwright) : console autorisée, DOM dans page.evaluate().
         files: ['scripts/**/*.mjs', 'tests/e2e/**/*.mjs', '*.config.js'],
-        languageOptions: { ecmaVersion: 2023, sourceType: 'module', globals: { ...globals.node, ...globals.browser } },
+        languageOptions: {
+            ecmaVersion: 2023,
+            sourceType: 'module',
+            globals: { ...globals.node, ...globals.browser },
+        },
         rules: { 'no-unused-vars': ['error', { argsIgnorePattern: '^_' }] },
     },
     prettier,

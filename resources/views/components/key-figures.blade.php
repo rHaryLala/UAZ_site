@@ -12,7 +12,9 @@
             @php($value = (int) ($figure['value'] ?? 0))
             <div class="border-t-2 border-gold-400 pt-5" data-reveal data-reveal-delay="{{ $loop->index * 0.08 }}">
                 <dd @class(['order-first font-serif text-figure leading-none', 'text-white' => $dark, 'text-navy-800' => ! $dark])>
-                    <span data-counter data-value="{{ $value }}">{{ $value >= 10000 ? number_format($value, 0, ',', "\u{202F}") : $value }}</span><span @class(['text-gold-300' => $dark, 'text-gold-600' => ! $dark])>{{ $figure['suffix'] ?? '' }}</span>
+                    @php($final = ($value >= 10000 ? number_format($value, 0, ',', "\u{202F}") : $value).($figure['suffix'] ?? ''))
+                    <span aria-hidden="true"><span data-counter data-value="{{ $value }}">{{ $value >= 10000 ? number_format($value, 0, ',', "\u{202F}") : $value }}</span><span @class(['text-gold-300' => $dark, 'text-gold-600' => ! $dark])>{{ $figure['suffix'] ?? '' }}</span></span>
+                    <span class="sr-only">{{ $final }}</span>
                 </dd>
                 <dt @class(['mt-3 text-sm font-medium', 'text-ink-700' => ! $dark, 'text-navy-100' => $dark])>{{ $figure['label'] ?? '' }}</dt>
             </div>

@@ -629,6 +629,58 @@
     }
 }
 
+/*
+ * Héros et piliers : états initiaux appliqués par CSS (pas de « flash » avant que GSAP démarre), levés dès que le module
+ * a pris la main (attribut data-*-started) ; filet de sécurité si JavaScript est trop lent ou en échec.
+ */
+@keyframes uaz-draw-failsafe {
+    to {
+        stroke-dashoffset: 0;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.js [data-hero-title]:not([data-split]) {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 1.4s forwards;
+}
+
+.js [data-hero]:not([data-hero-started]) [data-hero-triangle] {
+    stroke-dashoffset: 1;
+    animation: uaz-draw-failsafe 0.01s 2s forwards;
+}
+
+.js [data-hero]:not([data-hero-started]) :is([data-hero-fill], [data-hero-island], [data-hero-word]) {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 2s forwards;
+}
+
+.js [data-pillars]:not([data-pillars-started]) [data-pillars-triangle] {
+    stroke-dashoffset: 1;
+    animation: uaz-draw-failsafe 0.01s 3.5s forwards;
+}
+
+.js [data-pillars]:not([data-pillars-started]) :is([data-pillars-island], [data-pillars-word]) {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 3.5s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .js [data-hero-title]:not([data-split]),
+    .js [data-hero]:not([data-hero-started]) :is([data-hero-fill], [data-hero-island], [data-hero-word]),
+    .js [data-pillars]:not([data-pillars-started]) :is([data-pillars-island], [data-pillars-word]) {
+        opacity: 1;
+        animation: none;
+    }
+
+    .js [data-hero]:not([data-hero-started]) [data-hero-triangle],
+    .js [data-pillars]:not([data-pillars-started]) [data-pillars-triangle] {
+        stroke-dashoffset: 0;
+        animation: none;
+    }
+}
+
 /* Menu plein écran ouvert : on fige le défilement de la page. */
 html.menu-open {
     overflow: hidden;
