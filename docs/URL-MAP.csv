@@ -1,0 +1,46 @@
+ancienne_url,nouvelle_url,code,type,note
+/home/,/,301,page,Page vide dupliquée
+/accueil-2/,/,301,page,Doublon de l'accueil
+/aumonerie/,/formations,301,page,Cours en ligne daté (févr. 2026) : non migré
+/blog/,/actualites,301,page,
+/cours-a-la-carte/,/formations,301,page,Cours en ligne daté (févr. 2026) : non migré
+/telechargements/,/admissions/telechargements,301,page,Page générique (PDF)
+/temoignages/,/,301,page,Vidéos YouTube -> Témoignages affichés sur l'accueil
+/cafeteria/,/vie-etudiante/cafeteria,301,page,Page générique
+/dortoirs/,/vie-etudiante/dortoirs,301,page,Page générique
+/s-a/,/vie-etudiante,301,page,Simple lien Facebook : non migré
+/bibliotheque/,/vie-etudiante/bibliotheque,301,page,Page générique
+/academique/emplois-du-temps/,/formations/emplois-du-temps,301,page,Page générique (PDF)
+/programmes/,/formations/systeme-lmd,301,page,Page générique (explication LMD)
+/frais-academiques/,/admissions/frais-academiques,301,page,Page générique ; chiffres TODO-CONTENU à valider
+/licence/,/admissions/licence,301,page,Page générique
+/master/,/admissions/master,301,page,Page générique
+/contactez-nous/,/contact,301,page,
+/a-propos/,/a-propos,301,page,
+/personnel/,/equipe,301,page,Importé en Membres de l'équipe
+/vie-etudiante/,/vie-etudiante,301,page,
+/academique/,/formations,301,page,Remplacé par la liste filtrable des formations
+/admission/,/admissions,301,page,
+/culte-douverture-de-lannee-academique-2026-2027-une-nouvelle-page-souvre-a-luaz/,/actualites/culte-douverture-de-lannee-academique-2026-2027-une-nouvelle-page-souvre-a-luaz,301,article,
+/master-en-ligne-luaz-ouvre-officiellement-son-annee-academique/,/actualites/master-en-ligne-luaz-ouvre-officiellement-son-annee-academique,301,article,
+/sortie-et-team-building-a-green-palm/,/actualites/sortie-et-team-building-a-green-palm,301,article,
+/inauguration-du-centre-medical-zurcher/,/actualites/inauguration-du-centre-medical-zurcher,301,article,
+/admissions-2026-2027-licence/,/actualites/admissions-2026-2027-licence,301,article,
+/luaz-ouvre-son-master-en-communication-une-nouvelle-filiere/,/actualites/luaz-ouvre-son-master-en-communication-une-nouvelle-filiere,301,article,
+/luaz-a-la-rencontre-des-futurs-etudiants/,/actualites/luaz-a-la-rencontre-des-futurs-etudiants,301,article,
+/un-homecoming-inoubliable/,/actualites/un-homecoming-inoubliable,301,article,
+/appel-a-candidature-departement-sciences-infirmieres/,/actualites/appel-a-candidature-departement-sciences-infirmieres,301,article,
+/universite-adventiste-zurcher-recherche-son-sa-future-secretaire-academique/,/actualites/universite-adventiste-zurcher-recherche-son-sa-future-secretaire-academique,301,article,
+/lart-de-la-parole-et-de-lesprit-a-lhonneur-le-service-academique-dresse-le-bilan-des-concours-de-luaz/,/actualites/lart-de-la-parole-et-de-lesprit-a-lhonneur-le-service-academique-dresse-le-bilan-des-concours-de-luaz,301,article,
+/art-oratoire-voyages-et-grands-projets-un-mois-de-mai-memorable-a-luaz/,/actualites/art-oratoire-voyages-et-grands-projets-un-mois-de-mai-memorable-a-luaz,301,article,
+/la-collaboration-internationale-en-action-usn-norvege-x-uaz/,/actualites/la-collaboration-internationale-en-action-usn-norvege-x-uaz,301,article,
+/la-moisson-a-luaz/,/actualites/la-moisson-a-luaz,301,article,
+/vid-university/,/actualites/vid-university,301,article,
+/1557-2/,/actualites/janvier-2026-a-l-uaz-entre-excellence-academique-et-lancement-de-l-annee-jubilai,301,article,Slug régénéré depuis le titre
+/https-zurcher-edu-mg-blog/,/actualites/evenement-marquant-l-universite-adventiste-zurcher-accueille-sa-nouvelle-equipe,301,article,Slug régénéré depuis le titre
+/https-zurcher-edu-mg-blog-2/,/actualites/discours-motivationnel-a-la-chapelle-la-resilience,301,article,Slug régénéré depuis le titre
+/category/non-classe/,/actualites,301,categorie,Catégorie unique « Non classé » : non migrée
+/author/{slug}/,/actualites,301,auteur,Pages auteurs supprimées
+/?s={terme},/recherche?q={terme},301,recherche,Recherche WordPress -> page de recherche
+/wp-sitemap.xml,/sitemap.xml,301,sitemap,
+/feed/,/actualites,301,flux,Flux RSS non repris (voir DECISIONS)
