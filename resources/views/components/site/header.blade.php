@@ -31,8 +31,9 @@
             <a href="{{ url('/') }}" class="flex items-center gap-3.5" aria-label="{{ $site->site_name }} — accueil">
                 <x-seal :size="56" eager class="size-11 md:size-14" />
                 <span class="leading-none">
-                    <span class="brand-tag block text-[0.6rem] font-medium tracking-[0.02em] text-navy-900 uppercase md:text-[0.65rem]">Université Adventiste</span>
-                    <span class="brand-name mt-1 block font-serif text-lg font-bold text-royal-600 uppercase md:text-[1.3rem]">Zurcher</span>
+                    {{-- « Université Adventiste » est justifié sur la largeur de « ZURCHER » (w-0 min-w-full : il ne l'élargit jamais). --}}
+                    <span class="brand-tag block w-0 min-w-full text-justify [text-align-last:justify] text-[0.6rem] font-medium text-navy-900 uppercase md:text-[0.72rem]">Université Adventiste</span>
+                    <span class="brand-name mt-1 block font-serif text-[1.3rem] font-bold text-royal-600 uppercase md:text-[1.55rem]">Zurcher</span>
                 </span>
             </a>
 

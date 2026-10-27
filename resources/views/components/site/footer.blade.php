@@ -10,7 +10,8 @@
             <a href="{{ url('/') }}" class="inline-flex items-center gap-3 text-white" aria-label="{{ $site->site_name }} — accueil">
                 <x-seal :size="64" class="size-16" />
                 <span class="leading-none">
-                    <span class="block text-[0.6rem] font-semibold tracking-[0.22em] uppercase opacity-80">Université Adventiste</span>
+                    {{-- Justifié sur la largeur de « ZURCHER » (w-0 min-w-full : ne l'élargit jamais). --}}
+                    <span class="block w-0 min-w-full text-justify [text-align-last:justify] text-[0.88rem] font-medium uppercase opacity-90">Université Adventiste</span>
                     <span class="mt-1 block font-serif text-3xl tracking-[0.08em]">ZURCHER</span>
                 </span>
             </a>
