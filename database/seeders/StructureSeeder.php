@@ -167,7 +167,6 @@ class StructureSeeder extends Seeder
         Menu::firstOrCreate(['handle' => 'header'], [
             'name' => 'Menu principal',
             'items' => [
-                $page('À propos', 'about'),
                 $url('Formations', '/formations'),
                 array_merge($url('Admissions', '#'), ['children' => [
                     $page('Licence', 'licence'), $page('Master', 'master'),
@@ -177,6 +176,7 @@ class StructureSeeder extends Seeder
                     $page('Bibliothèque', 'library'), $page('Cafétéria', 'cafeteria'), $page('Dortoirs', 'dorms'),
                 ]]),
                 $page('Centre de recherche', 'research'),
+                $page('À propos', 'about'),
             ],
         ]);
 
