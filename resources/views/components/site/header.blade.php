@@ -1,6 +1,6 @@
 @php
     $socials = [
-        'facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube',
+        'facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube', 'tiktok' => 'TikTok',
     ];
     // Le dernier lien de la barre du haut est mis en avant (« Se connecter » dans la maquette).
     $topbarLinks = collect($topbarMenu);
@@ -242,7 +242,7 @@
                     <ul class="flex gap-3">
                         @foreach ($socials as $key => $label)
                             @if ($site->social($key))
-                                <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-none border border-white/30 hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
+                                <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/30 hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
                             @endif
                         @endforeach
                     </ul>

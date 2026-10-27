@@ -77,6 +77,8 @@ class ManageSiteSettings extends Page
                         TextInput::make('social_links.instagram')->label('Instagram')->url()->maxLength(255),
                         TextInput::make('social_links.linkedin')->label('LinkedIn')->url()->maxLength(255),
                         TextInput::make('social_links.youtube')->label('YouTube')->url()->maxLength(255),
+                        TextInput::make('social_links.tiktok')->label('TikTok')->url()->maxLength(255)
+                            ->placeholder('https://www.tiktok.com/@…'),
                     ])->columns(2),
                     Tab::make('Accueil')->icon(Heroicon::OutlinedHome)->schema([
                         TextInput::make('home_hero_title')->label('Titre principal')->maxLength(160)

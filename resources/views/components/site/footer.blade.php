@@ -1,5 +1,5 @@
 @php
-    $socials = ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube'];
+    $socials = ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube', 'tiktok' => 'TikTok'];
 @endphp
 
 <footer class="on-dark relative isolate overflow-hidden bg-navy-950 text-navy-100">
@@ -20,7 +20,7 @@
             <ul class="mt-6 flex gap-3">
                 @foreach ($socials as $key => $label)
                     @if ($site->social($key))
-                        <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-none border border-white/25 text-white hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
+                        <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/25 text-white hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
                     @endif
                 @endforeach
             </ul>
