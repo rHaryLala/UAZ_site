@@ -61,4 +61,4 @@ Aucune donnée factuelle n'est inventée : tout ce qui manque est marqué `TODO-
 - [ ] **Newsletter MailPoet** : hors périmètre.
 - [ ] **Produire les variantes AVIF** : `php artisan media-library:regenerate --only-missing` (l'import les a désactivées).
 - [ ] **Année de fondation** : la maquette dit 1995 (PDF, chiffres clés) et 1996 (barre du haut de la capture). Réglage : `founded_year` dans `config/uaz.php` (1995 par défaut) ; à trancher.
-- [ ] **Liens de la barre du haut** sans page dédiée : « Étudiants » → Vie étudiante, « Alumni » et « Donner » → formulaire de contact pré-rempli, « Se connecter » → /admin (accès rédacteurs). À remplacer (menu « Barre du haut » du back-office) quand un espace étudiant, un réseau alumni et un dispositif de dons existeront.
+- [ ] **Liens de la barre du haut** sans page dédiée : « Étudiants » → Vie étudiante, « Alumni » → https://alumni-auz.api.mg/ (nouvel onglet) ; « Donner » → formulaire de contact pré-rempli, « Se connecter » → /admin (accès rédacteurs). À remplacer (menu « Barre du haut » du back-office) quand un espace étudiant, un réseau alumni et un dispositif de dons existeront.

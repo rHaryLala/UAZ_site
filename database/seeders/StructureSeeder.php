@@ -185,7 +185,7 @@ class StructureSeeder extends Seeder
             'items' => [
                 $page('Étudiants', 'student-life'),
                 $url('Notre équipe', '/equipe'),
-                $url('Alumni', '/contact?sujet=Alumni'),
+                array_merge($url('Alumni', 'https://alumni-auz.api.mg/'), ['new_tab' => true]),
                 $url('Donner', '/contact?sujet=Soutenir%20l%27UAZ'),
                 $url('Se connecter', '/admin'),
             ],
