@@ -172,3 +172,20 @@ it('renders team profile cards that open an enlarged sheet with the quote and me
         ->assertSee('Message aux lecteurs')
         ->assertSee('id="team-profile"', false);
 });
+
+it('renders a download list block as a styled list with file types and safe links', function () {
+    $page = \App\Models\Page::factory()->create([
+        'title' => 'Documents', 'slug' => 'documents-test', 'path' => 'documents-test',
+        'blocks' => [['type' => 'download_list', 'data' => ['title' => 'Centre', 'items' => [
+            ['title' => 'Liste des frais', 'text' => 'Frais 2026', 'url' => 'https://example.test/frais.pdf'],
+            ['title' => 'Formulaire', 'url' => 'https://example.test/form.docx'],
+            ['title' => 'Piégé', 'url' => 'javascript:alert(1)'],
+        ]]]],
+    ]);
+
+    $this->get('/documents-test')->assertOk()
+        ->assertSee('Liste des frais')->assertSee('PDF')->assertSee('DOC')
+        ->assertSee('https://example.test/frais.pdf', false)
+        ->assertDontSee('javascript:alert', false)
+        ->assertDontSee('Piégé');
+});

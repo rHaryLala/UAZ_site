@@ -16,7 +16,7 @@ use Filament\Forms\Components\TextInput;
  */
 class PageBlocks
 {
-    public const TYPES = ['rich_text', 'image', 'gallery', 'quote', 'cta', 'key_figures', 'card_list'];
+    public const TYPES = ['rich_text', 'image', 'gallery', 'quote', 'cta', 'key_figures', 'card_list', 'download_list'];
 
     public static function builder(): Builder
     {
@@ -67,6 +67,19 @@ class PageBlocks
                         TextInput::make('label')->label('Libellé')->required()->maxLength(80),
                     ])->columns(3)->minItems(1)->maxItems(6)->addActionLabel('Ajouter un chiffre')
                         ->itemLabel(fn (array $state): ?string => $state['label'] ?? null),
+                ]),
+                Block::make('download_list')->label('Liste de téléchargements')->icon('heroicon-o-arrow-down-tray')->schema([
+                    TextInput::make('title')->label('Titre (facultatif)')->maxLength(200),
+                    Textarea::make('intro')->label('Introduction (facultatif)')->rows(2)->maxLength(400),
+                    Repeater::make('items')->label('Documents')->schema([
+                        TextInput::make('title')->label('Titre du document')->required()->maxLength(160),
+                        Textarea::make('text')->label('Description (facultatif)')->rows(2)->maxLength(400),
+                        MediaPicker::make('file_id', 'Fichier de la médiathèque', false)
+                            ->helperText('Choisissez un PDF envoyé dans la médiathèque… ou indiquez une adresse ci-dessous.'),
+                        TextInput::make('url')->label('Adresse du fichier (si hors médiathèque)')->maxLength(500)
+                            ->helperText('Adresse complète (https://…) : ancien site, Google Drive, etc.'),
+                    ])->minItems(1)->addActionLabel('Ajouter un document')->collapsible()->reorderableWithButtons()
+                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? null),
                 ]),
                 Block::make('card_list')->label('Liste de cartes')->icon('heroicon-o-rectangle-group')->schema([
                     TextInput::make('title')->label('Titre (facultatif)')->maxLength(200),

@@ -7,6 +7,7 @@
     $ids = collect($blocks)->flatMap(fn ($b) => match ($b['type'] ?? null) {
         'image' => [$b['data']['image_id'] ?? null],
         'gallery' => collect($b['data']['images'] ?? [])->pluck('image_id')->all(),
+        'download_list' => collect($b['data']['items'] ?? [])->pluck('file_id')->all(),
         'card_list' => collect($b['data']['cards'] ?? [])->pluck('image_id')->all(),
         default => [],
     })->filter()->unique()->all();

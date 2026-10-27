@@ -7,7 +7,7 @@ import { chromium } from '@playwright/test';
 const base = process.env.BASE_URL ?? 'http://127.0.0.1:8000';
 const paths = process.argv.slice(2).length
     ? process.argv.slice(2)
-    : ['/', '/formations', '/actualites', '/evenements', '/galerie', '/equipe', '/contact', '/recherche', '/a-propos', '/admissions', '/design-system', '/page-inexistante'];
+    : ['/', '/formations', '/actualites', '/evenements', '/galerie', '/equipe', '/contact', '/recherche', '/a-propos', '/admissions/telechargements', '/design-system', '/page-inexistante'];
 
 const browser = await chromium.launch();
 let blocking = 0;
