@@ -12,7 +12,7 @@
                 <span class="leading-none">
                     {{-- Justifié sur la largeur de « ZURCHER » (w-0 min-w-full : ne l'élargit jamais). --}}
                     <span class="block w-0 min-w-full text-justify [text-align-last:justify] text-[0.88rem] font-medium uppercase opacity-90">Université Adventiste</span>
-                    <span class="mt-1 block font-serif text-3xl tracking-[0.08em]">ZURCHER</span>
+                    <span class="mt-1 block font-serif text-3xl tracking-[0.03em]">ZURCHER</span>
                 </span>
             </a>
             @if ($site->footer_text)
