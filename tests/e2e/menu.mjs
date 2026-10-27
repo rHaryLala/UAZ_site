@@ -12,7 +12,7 @@ const check = (ok, label) => {
     if (!ok) failures++;
 };
 
-for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['tablette', { width: 1100, height: 800 }]]) {
+for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['bureau', { width: 1440, height: 900 }]]) {
     const page = await (await browser.newContext({ viewport })).newPage();
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
@@ -27,6 +27,7 @@ for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['table
     await page.waitForTimeout(1400);
     check((await menu.getAttribute('data-open')) === 'true', `${name} : menu ouvert après clic`);
     check(await menu.getByRole('link', { name: 'Formations' }).first().isVisible(), `${name} : liens visibles`);
+    check(await menu.getByRole('link', { name: 'Téléchargements' }).first().isVisible(), `${name} : ressources et autres pages visibles`);
     check((await button.getAttribute('aria-expanded')) === 'true', `${name} : aria-expanded = true`);
     check(await page.evaluate(() => document.documentElement.classList.contains('menu-open')), `${name} : défilement de la page figé`);
 

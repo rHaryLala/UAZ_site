@@ -656,6 +656,26 @@
         }
     }
 
+    /* Rideau or : uniquement piloté par GSAP (animations/menu.js) ; masqué dans tous les autres cas. */
+    .menu-curtain {
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    /* GSAP a pris la main : plus de transitions CSS sur le panneau ni sur les liens (états posés en ligne). */
+    .menu-gsap .menu-overlay,
+    .menu-gsap .menu-overlay[data-open='true'] {
+        transition: none;
+        clip-path: none;
+    }
+
+    .menu-gsap .menu-overlay__item,
+    .menu-gsap .menu-overlay[data-open='true'] .menu-overlay__item {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
     /* Sans JavaScript : le menu complet est affiché à plat sous l'en-tête. */
     html:not(.js) .menu-overlay {
         position: static;

@@ -1,6 +1,7 @@
 // Chargeur d'animations : GSAP, Lenis et chaque module ne sont téléchargés qu'après le premier rendu,
 // et seulement si la page contient l'élément correspondant. Voir docs/ARCHITECTURE.md (section Animations).
 const MODULES = [
+    ['#site-menu', () => import('./menu.js').then((m) => m.initMenu())],
     ['[data-reveal]', () => import('./reveal.js').then((m) => m.initReveal())],
     ['[data-hero]', () => import('./hero.js').then((m) => m.initHero())],
     ['[data-counter]', () => import('./counters.js').then((m) => m.initCounters())],

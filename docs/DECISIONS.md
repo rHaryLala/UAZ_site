@@ -153,3 +153,11 @@ Format : **décision** — alternatives — raison.
 - Menu éditable « topbar » (barre du haut) ajouté ; le menu principal passe à À propos · Formations · Admissions · Vie étudiante · Recherche
   (Actualités reste dans « Pied de page »). Sous 1280 px, le bouton « Menu » ouvre le menu plein écran.
 - Orthographe : « Vie étudiante » (la maquette écrit « Vie estudiantine », faute probable) ; apostrophes typographiques dans le titre.
+
+## D-029 · Menu plein écran animé avec GSAP
+- Le bouton « Menu » est visible à toutes les largeurs (bureau compris). Il ouvre un menu plein écran animé par GSAP
+  (`resources/js/animations/menu.js`) : rideau or puis panneau marine ouverts en cercle depuis le bouton, liens en cascade.
+- Contenu : menu principal avec sous-pages, **ressources et pages utiles** (menu « Pied de page » du back-office : Actualités,
+  Notre équipe, Événements, Galerie, Emplois du temps, Téléchargements, Contact), liens de la barre du haut non déjà présents,
+  bouton « S'inscrire », coordonnées et réseaux.
+- Repli : sans GSAP (économiseur de données, chargement en cours) ou en mouvement réduit, le menu s'affiche avec un simple fondu CSS.

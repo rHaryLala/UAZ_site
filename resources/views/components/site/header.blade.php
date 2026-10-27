@@ -6,6 +6,8 @@
     $topbarLinks = collect($topbarMenu);
     $topbarCta = $topbarLinks->count() > 1 ? $topbarLinks->last() : null;
     $topbarPlain = $topbarCta ? $topbarLinks->slice(0, -1) : $topbarLinks;
+    // Dans le menu plein écran, on n'affiche pas deux fois la même page.
+    $spaces = $topbarLinks->reject(fn ($link) => collect($footerMenu)->pluck('url')->contains($link['url']));
 @endphp
 
 <div x-data="siteMenu" @keydown.escape.window="close" class="contents">
@@ -36,7 +38,7 @@
 
             <div class="flex items-center gap-3 sm:gap-7">
                 {{-- Navigation principale (grands écrans) --}}
-            <nav aria-label="Navigation principale" class="hidden xl:block">
+                <nav aria-label="Navigation principale" class="hidden xl:block">
                     <ul class="flex items-center gap-7">
                         @foreach ($headerMenu as $item)
                             <li class="group relative">
@@ -66,7 +68,7 @@
                     @click="toggle"
                     x-bind:aria-expanded="open"
                     aria-controls="site-menu"
-                    class="site-header__icon inline-flex h-11 items-center gap-2.5 px-1 text-[0.8125rem] font-semibold xl:hidden"
+                    class="site-header__icon inline-flex h-11 items-center gap-2.5 px-1 text-[0.8125rem] font-semibold"
                 >
                     <span class="menu-burger" aria-hidden="true"><span></span><span></span></span>
                     <span>Menu</span>
@@ -75,7 +77,9 @@
         </div>
     </header>
 
-    {{-- Menu plein écran : ouverture en cercle depuis le bouton, liens en cascade (CSS, voir app.css) --}}
+    {{-- Menu plein écran : rideau or puis panneau marine ouverts en cercle depuis le bouton, liens en cascade.
+         Animation GSAP (animations/menu.js) ; sans GSAP ou en mouvement réduit, repli CSS (voir app.css). --}}
+    <div data-menu-curtain class="menu-curtain fixed inset-0 z-[59] bg-sun-400" aria-hidden="true"></div>
     <div
         id="site-menu"
         x-bind:data-open="open"
@@ -86,32 +90,33 @@
         data-open="false"
         class="menu-overlay on-dark fixed inset-0 z-[60] overflow-y-auto bg-navy-900 text-white"
     >
-        <x-madagascar class="pointer-events-none absolute top-[8%] right-[-4rem] h-[120%] text-navy-800/70 sm:right-[8%]" />
-        <x-triangle class="pointer-events-none absolute bottom-[-22%] left-[-10%] w-[56rem] text-gold-300/10" />
+        <x-madagascar class="pointer-events-none absolute top-[8%] right-[-4rem] h-[120%] text-navy-800/70 sm:right-[8%]" data-menu-deco />
+        <x-triangle class="pointer-events-none absolute bottom-[-22%] left-[-10%] w-[56rem] text-gold-300/10" data-menu-deco />
 
         <div class="container-site relative flex min-h-full flex-col pt-5 pb-10">
             <div class="flex h-[calc(var(--header-h)-1.25rem)] items-center justify-between">
                 <span class="flex items-center gap-3">
                     <x-seal :size="44" class="size-11" />
-                    <span class="font-serif text-xl tracking-[0.08em]">ZURCHER</span>
+                    <span class="font-serif text-xl tracking-[0.04em] uppercase">Zurcher</span>
                 </span>
-                <button type="button" @click="close" class="inline-flex h-11 items-center gap-2.5 rounded-full border border-white/40 px-4 text-sm font-semibold hover:bg-white hover:text-navy-900">
+                <button type="button" x-ref="closer" @click="close" class="inline-flex h-11 items-center gap-2.5 rounded-full border border-white/40 px-4 text-sm font-semibold hover:bg-white hover:text-navy-900">
                     <x-ico name="close" class="size-4" /> Fermer <span class="sr-only">le menu</span>
                 </button>
             </div>
 
-            <div class="mt-10 grid flex-1 gap-12 lg:mt-16 lg:grid-cols-[1.4fr_1fr] lg:gap-20">
+            <div class="mt-8 grid flex-1 gap-12 lg:mt-12 lg:grid-cols-[1.25fr_1fr_0.85fr] lg:gap-14">
                 <nav aria-label="Menu du site">
+                    <p class="eyebrow mb-4 menu-overlay__item" data-menu-item>Découvrir</p>
                     <ul class="space-y-1">
                         @foreach ($headerMenu as $item)
-                            <li class="menu-overlay__item" style="--i: {{ $loop->index }}">
-                                <a href="{{ $item['url'] }}" class="group flex items-baseline gap-4 py-1.5 font-serif text-[clamp(1.75rem,1.1rem+2.8vw,3.25rem)] leading-tight text-white hover:text-gold-300"
+                            <li class="menu-overlay__item" data-menu-item>
+                                <a href="{{ $item['url'] }}" class="group flex items-baseline gap-4 py-1 font-serif text-[clamp(1.5rem,1rem+2.2vw,2.75rem)] leading-tight text-white hover:text-gold-300"
                                    @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
                                     <span class="font-sans text-xs font-semibold tracking-[0.2em] text-gold-300" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                     <span class="transition-transform duration-300 group-hover:translate-x-2">{{ $item['label'] }}</span>
                                 </a>
                                 @if (count($item['children']))
-                                    <ul class="mt-1 mb-3 ml-12 flex flex-wrap gap-x-6 gap-y-1">
+                                    <ul class="mt-1 mb-3 ml-10 flex flex-wrap gap-x-6 gap-y-1">
                                         @foreach ($item['children'] as $child)
                                             <li><a href="{{ $child['url'] }}" class="text-sm text-navy-100 underline-offset-4 hover:text-white hover:underline">{{ $child['label'] }}</a></li>
                                         @endforeach
@@ -122,15 +127,35 @@
                     </ul>
                 </nav>
 
-                <div class="menu-overlay__item space-y-8 self-end" style="--i: {{ count($headerMenu) + 1 }}">
-                    <x-button :href="url('/admissions')" variant="gold" arrow>S'inscrire</x-button>
-                    @if ($topbarLinks->isNotEmpty())
-                        <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-navy-100">
-                            @foreach ($topbarLinks as $item)
-                                <li><a href="{{ $item['url'] }}" class="underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</a></li>
-                            @endforeach
-                        </ul>
-                    @endif
+                @if (count($footerMenu) || $spaces->isNotEmpty())
+                    <nav aria-label="Ressources et autres pages">
+                        @if (count($footerMenu))
+                            <p class="eyebrow mb-4 menu-overlay__item" data-menu-item>Ressources et pages utiles</p>
+                            <ul class="space-y-1">
+                                @foreach ($footerMenu as $item)
+                                    <li class="menu-overlay__item" data-menu-item>
+                                        <a href="{{ $item['url'] }}" class="group flex items-center gap-3 py-1.5 font-serif text-[clamp(1.125rem,1rem+0.7vw,1.5rem)] text-white hover:text-gold-300"
+                                           @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
+                                            <span class="transition-transform duration-300 group-hover:translate-x-2">{{ $item['label'] }}</span>
+                                            <x-ico name="arrow-up-right" class="size-4 text-gold-300 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        @if ($spaces->isNotEmpty())
+                            <p class="eyebrow mt-10 mb-4 menu-overlay__item" data-menu-item>Espaces</p>
+                            <ul class="menu-overlay__item flex flex-wrap gap-x-6 gap-y-2 text-sm text-navy-100" data-menu-item>
+                                @foreach ($spaces as $item)
+                                    <li><a href="{{ $item['url'] }}" class="underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</a></li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </nav>
+                @endif
+
+                <div class="menu-overlay__item space-y-8 self-end" data-menu-item>
+                    <x-button :href="url('/admissions')" variant="sun" arrow class="btn-square">S'inscrire</x-button>
                     <address class="space-y-3 text-sm not-italic text-navy-100">
                         @if ($site->address)<p class="flex gap-3"><x-ico name="map-pin" class="mt-0.5 size-4 text-gold-300" />{{ $site->address }}</p>@endif
                         @if ($site->email)<p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 text-gold-300" /><a href="mailto:{{ $site->email }}" class="hover:text-white">{{ $site->email }}</a></p>@endif
