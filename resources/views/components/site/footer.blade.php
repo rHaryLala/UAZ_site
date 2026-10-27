@@ -33,7 +33,7 @@
                         @endforeach
                     </span>
                     <span><span class="font-semibold text-white" data-weather-temp>{{ $weather['temperature'] }} °C</span> · <span data-weather-label>{{ $weather['label'] }}</span> <span class="text-white/60">à l'UAZ</span></span>
-                    <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" class="ml-auto self-end text-[0.65rem] text-white/40 underline-offset-4 hover:text-white/80 hover:underline" aria-label="Données météo : Open-Meteo (nouvel onglet)">Open-Meteo</a>
+                    <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" class="ml-auto self-end text-[0.65rem] text-white/70 underline-offset-4 hover:text-white hover:underline" aria-label="Données météo : Open-Meteo (nouvel onglet)">Open-Meteo</a>
                 </p>
             @endif
             <ul class="mt-6 flex gap-3">
