@@ -1,7 +1,7 @@
 <x-layouts.app title="Notre équipe" description="L'équipe de l'Université Adventiste Zurcher : celles et ceux qui font vivre l'UAZ au quotidien.">
     <x-page-hero eyebrow="Communauté" title="Notre équipe" intro="Celles et ceux qui font vivre l'UAZ au quotidien." :breadcrumbs="[['label' => 'Notre équipe']]" />
 
-    <section class="relative isolate overflow-hidden bg-paper-100 pt-16 pb-24 md:pt-24 md:pb-32" aria-label="Membres de l'équipe">
+    <section class="relative isolate overflow-x-clip bg-paper-100 pt-16 pb-24 md:pt-24 md:pb-32" aria-label="Membres de l'équipe">
         <x-madagascar class="pointer-events-none absolute top-10 -right-24 -z-10 h-[38rem] text-navy-800/[0.04]" />
 
         <div class="container-site">
@@ -16,7 +16,7 @@
                 <h2 class="sr-only">Liste des membres</h2>
                 <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @foreach ($members as $member)
-                        <li data-reveal data-reveal-delay="{{ ($loop->index % 4) * 0.06 }}" @class(['xl:translate-y-8' => $loop->index % 4 === 1 || $loop->index % 4 === 3])>
+                        <li data-reveal data-reveal-delay="{{ ($loop->index % 4) * 0.06 }}" @class(['xl:translate-y-10' => $loop->index % 4 === 1 || $loop->index % 4 === 3])>
                             <x-person-card :member="$member" />
                         </li>
                     @endforeach
