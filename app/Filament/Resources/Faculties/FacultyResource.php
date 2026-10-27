@@ -52,7 +52,8 @@ class FacultyResource extends Resource
             Textarea::make('summary')->label('Résumé')->rows(2)->maxLength(500)->columnSpanFull(),
             Rich::editor('description', 'Présentation'),
             MediaPicker::make('cover_id', 'Image'),
-            TextInput::make('sort_order')->label('Ordre')->numeric()->default(0)->minValue(0),
+            TextInput::make('sort_order')->label('Ordre')->numeric()->default(0)->minValue(0)
+                ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             SlugField::make(),
             Toggle::make('is_active')->label('Affichée sur le site')->default(true),
         ])->columns(2);

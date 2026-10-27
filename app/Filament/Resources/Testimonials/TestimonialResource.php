@@ -27,7 +27,7 @@ class TestimonialResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Communauté';
+    protected static string|\UnitEnum|null $navigationGroup = 'Personnes & messages';
 
     protected static ?string $modelLabel = 'témoignage';
 
@@ -35,7 +35,7 @@ class TestimonialResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'author_name';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {
@@ -47,7 +47,8 @@ class TestimonialResource extends Resource
                 ->helperText('Texte du témoignage. Laissez vide si seule une vidéo est fournie.'),
             TextInput::make('video_url')->label('Vidéo YouTube (facultatif)')->url()->maxLength(500)->columnSpanFull(),
             MediaPicker::make('photo_id', 'Photo'),
-            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0),
+            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0)
+                ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             Toggle::make('is_active')->label('Affiché sur le site')->default(true),
         ])->columns(2);
     }
@@ -59,7 +60,7 @@ class TestimonialResource extends Resource
             ->modifyQueryUsing(fn ($query) => $query->with(['photo.media']))
             ->columns([
                 ImageColumn::make('photo_thumb')->label('Photo')->circular()->size(44)
-                    ->state(fn (Testimonial $record) => $record->photo?->url('thumb')),
+                    ->state(fn (Testimonial $record) => $record->photo?->absoluteUrl('thumb')),
                 TextColumn::make('author_name')->label('Nom')->searchable()->weight('medium'),
                 TextColumn::make('author_role')->label('Qualité')->toggleable(),
                 TextColumn::make('quote')->label('Témoignage')->limit(70)->placeholder('Vidéo uniquement'),

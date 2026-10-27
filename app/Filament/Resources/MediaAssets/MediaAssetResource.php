@@ -31,7 +31,7 @@ class MediaAssetResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Médias';
+    protected static string|\UnitEnum|null $navigationGroup = 'Site & médias';
 
     protected static ?string $navigationLabel = 'Médiathèque';
 

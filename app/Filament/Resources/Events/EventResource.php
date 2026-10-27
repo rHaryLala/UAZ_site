@@ -55,7 +55,7 @@ class EventResource extends Resource
             Layout::mainAndSide(
                 main: [
                     Section::make('Événement')->schema([
-                        TextInput::make('title')->label('Titre')->required()->maxLength(255),
+                        TextInput::make('title')->label('Titre')->required()->maxLength(255)->placeholder('Ex. : Journée portes ouvertes'),
                         Textarea::make('summary')->label('Résumé')->rows(2)->maxLength(500),
                         MediaPicker::make('cover_id', 'Image'),
                         Rich::editor('description', 'Description'),

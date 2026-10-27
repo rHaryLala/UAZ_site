@@ -81,7 +81,11 @@ class AppServiceProvider extends ServiceProvider
         \Filament\Tables\Table::configureUsing(fn (\Filament\Tables\Table $table) => $table
             ->deferLoading()
             ->paginationPageOptions([10, 25, 50])
-            ->defaultPaginationPageOption(25));
+            ->defaultPaginationPageOption(25)
+            // Recherche, filtres et tri sont mémorisés pour la session : on retrouve sa liste telle qu'on l'a laissée.
+            ->persistSearchInSession()
+            ->persistFiltersInSession()
+            ->persistSortInSession());
 
         // Le super-admin passe toutes les autorisations, sauf pour se supprimer lui-même ou supprimer le dernier super-admin
         // (garde-fou : on ne doit jamais pouvoir verrouiller le back-office par erreur).

@@ -30,7 +30,7 @@ class TeamMemberResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Communauté';
+    protected static string|\UnitEnum|null $navigationGroup = 'Personnes & messages';
 
     protected static ?string $modelLabel = 'membre de l\'équipe';
 
@@ -40,7 +40,7 @@ class TeamMemberResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
@@ -58,7 +58,8 @@ class TeamMemberResource extends Resource
             TextInput::make('email')->label('E-mail')->email()->maxLength(255),
             TextInput::make('phone')->label('Téléphone')->tel()->maxLength(50),
             MediaPicker::make('photo_id', 'Photo'),
-            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0),
+            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0)
+                ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             Toggle::make('is_active')->label('Affiché sur le site')->default(true),
         ])->columns(2);
     }
@@ -70,7 +71,7 @@ class TeamMemberResource extends Resource
             ->modifyQueryUsing(fn ($query) => $query->with(['photo.media', 'faculty']))
             ->columns([
                 ImageColumn::make('photo_thumb')->label('Photo')->circular()->size(44)
-                    ->state(fn (TeamMember $record) => $record->photo?->url('thumb')),
+                    ->state(fn (TeamMember $record) => $record->photo?->absoluteUrl('thumb')),
                 TextColumn::make('name')->label('Nom')->searchable()->sortable()->weight('medium'),
                 TextColumn::make('job_title')->label('Fonction')->searchable(),
                 TextColumn::make('category')->label('Catégorie')->badge(),

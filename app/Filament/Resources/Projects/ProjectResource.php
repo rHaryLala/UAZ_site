@@ -28,20 +28,22 @@ class ProjectResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Communauté';
+    protected static string|\UnitEnum|null $navigationGroup = 'Contenus';
 
     protected static ?string $modelLabel = 'projet';
 
     protected static ?string $pluralModelLabel = 'projets à soutenir';
 
+    protected static ?string $navigationLabel = 'Projets à soutenir';
+
     protected static ?string $recordTitleAttribute = 'title';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')->label('Titre du projet')->required()->maxLength(255)->columnSpanFull(),
+            TextInput::make('title')->label('Titre du projet')->required()->maxLength(255)->placeholder('Ex. : Un grand dortoir pour les garçons')->columnSpanFull(),
             Textarea::make('summary')->label('Résumé')->rows(3)->maxLength(400)->columnSpanFull()
                 ->helperText('Affiché sur la carte du projet (2 à 3 phrases).'),
             Rich::editor('body', 'Présentation détaillée')->columnSpanFull(),
@@ -51,7 +53,8 @@ class ProjectResource extends Resource
                 ->helperText('Uniquement un chiffre officiel et vérifié.'),
             TextInput::make('status_label')->label('Avancement')->maxLength(80)->placeholder('ex. En construction'),
             TextInput::make('url')->label('Lien « En savoir plus »')->url()->maxLength(500),
-            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0),
+            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0)
+                ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             Toggle::make('is_active')->label('Affiché sur le site')->default(true),
         ])->columns(2);
     }
@@ -63,7 +66,7 @@ class ProjectResource extends Resource
             ->modifyQueryUsing(fn ($query) => $query->with(['cover.media']))
             ->columns([
                 ImageColumn::make('cover_thumb')->label('Image')->size(44)
-                    ->state(fn (Project $record) => $record->cover?->url('thumb')),
+                    ->state(fn (Project $record) => $record->cover?->absoluteUrl('thumb')),
                 TextColumn::make('title')->label('Projet')->searchable()->sortable()->weight('medium'),
                 TextColumn::make('status_label')->label('Avancement'),
                 TextColumn::make('budget')->label('Budget'),

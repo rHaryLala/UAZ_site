@@ -49,13 +49,31 @@ class NewsPostResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    /** Pastille de navigation : nombre d'actualités en brouillon (à relire et à publier). */
+    public static function getNavigationBadge(): ?string
+    {
+        $drafts = \App\Support\AdminStats::get()['news_drafts'];
+
+        return $drafts > 0 ? (string) $drafts : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Actualités en brouillon';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
             Layout::mainAndSide(
                 main: [
                     Section::make('Actualité')->schema([
-                        TextInput::make('title')->label('Titre')->required()->maxLength(255),
+                        TextInput::make('title')->label('Titre')->required()->maxLength(255)->placeholder('Ex. : Rentrée académique 2026-2027'),
                         Textarea::make('excerpt')->label('Extrait')->rows(3)->maxLength(500)
                             ->helperText('Court résumé affiché dans les listes et les partages.'),
                         MediaPicker::make('cover_id', 'Image à la une'),

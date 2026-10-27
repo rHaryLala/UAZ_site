@@ -46,7 +46,7 @@ class PublicationTable
     {
         return ImageColumn::make($relation.'_thumb')
             ->label($label)
-            ->state(fn (Model $record): ?string => $record->{$relation}?->url('thumb'))
+            ->state(fn (Model $record): ?string => $record->{$relation}?->absoluteUrl('thumb'))
             ->square()
             ->size(48);
     }

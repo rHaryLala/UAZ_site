@@ -27,7 +27,7 @@ class ContactMessageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Communauté';
+    protected static string|\UnitEnum|null $navigationGroup = 'Personnes & messages';
 
     protected static ?string $modelLabel = 'message';
 
@@ -37,7 +37,7 @@ class ContactMessageResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'subject';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationBadge(): ?string
     {

@@ -26,13 +26,13 @@ class ManageSiteSettings extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Site';
+    protected static string|\UnitEnum|null $navigationGroup = 'Site & médias';
 
     protected static ?string $navigationLabel = 'Réglages du site';
 
     protected static ?string $title = 'Réglages du site';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 4;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];

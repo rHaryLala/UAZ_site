@@ -36,7 +36,7 @@ class PhotoAlbumResource extends Resource
 {
     protected static ?string $model = PhotoAlbum::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static string|\UnitEnum|null $navigationGroup = 'Contenus';
 
@@ -56,7 +56,7 @@ class PhotoAlbumResource extends Resource
             Layout::mainAndSide(
                 main: [
                     Section::make('Album')->schema([
-                        TextInput::make('title')->label('Titre')->required()->maxLength(255),
+                        TextInput::make('title')->label('Titre')->required()->maxLength(255)->placeholder('Ex. : Remise des diplômes 2026'),
                         Textarea::make('description')->label('Description')->rows(2)->maxLength(500),
                         MediaPicker::make('cover_id', 'Image de couverture'),
                     ]),

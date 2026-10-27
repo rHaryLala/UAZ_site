@@ -53,7 +53,7 @@ class PageResource extends Resource
             Layout::mainAndSide(
                 main: [
                     Section::make('Page')->schema([
-                        TextInput::make('title')->label('Titre')->required()->maxLength(255),
+                        TextInput::make('title')->label('Titre')->required()->maxLength(255)->placeholder('Ex. : Frais académiques'),
                         Textarea::make('summary')->label('Introduction')->rows(2)->maxLength(500)
                             ->helperText('Court texte affiché sous le titre et utilisé pour le référencement.'),
                         MediaPicker::make('cover_id', 'Image d\'en-tête'),
@@ -83,7 +83,8 @@ class PageResource extends Resource
                                     }
                                 },
                             ]),
-                        TextInput::make('sort_order')->label('Ordre')->numeric()->default(0)->minValue(0),
+                        TextInput::make('sort_order')->label('Ordre')->numeric()->default(0)->minValue(0)
+                ->helperText('Les nombres les plus petits s\'affichent en premier.'),
                     ]),
                     SeoSection::make(),
                 ],

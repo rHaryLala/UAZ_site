@@ -50,10 +50,8 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make('Contenus'),
                 NavigationGroup::make('Formations'),
-                NavigationGroup::make('Communauté'),
-                NavigationGroup::make('Médias'),
-                NavigationGroup::make('Site'),
-                NavigationGroup::make('Administration'),
+                NavigationGroup::make('Personnes & messages'),
+                NavigationGroup::make('Site & médias'),
             ])
             // Zone de glisser-déposer au-dessus de la médiathèque.
             ->renderHook(
@@ -64,12 +62,14 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
-                Dashboard::class,
+                \App\Filament\Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
+                \App\Filament\Widgets\QuickActions::class,
                 ContentOverview::class,
+                \App\Filament\Widgets\LatestDrafts::class,
+                \App\Filament\Widgets\LatestMessages::class,
             ])
             ->middleware([
                 EncryptCookies::class,

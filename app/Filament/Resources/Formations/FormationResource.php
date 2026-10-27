@@ -83,7 +83,8 @@ class FormationResource extends Resource
                         TextInput::make('duration')->label('Durée')->maxLength(100)->placeholder('3 ans (6 semestres)'),
                         TextInput::make('credits')->label('Crédits ECTS')->numeric()->minValue(0)->maxValue(1000),
                         Toggle::make('is_featured')->label('Mettre en avant sur l\'accueil'),
-                        TextInput::make('sort_order')->label('Ordre')->numeric()->default(0)->minValue(0),
+                        TextInput::make('sort_order')->label('Ordre')->numeric()->default(0)->minValue(0)
+                ->helperText('Les nombres les plus petits s\'affichent en premier.'),
                         SlugField::make(),
                     ]),
                     SeoSection::make(),

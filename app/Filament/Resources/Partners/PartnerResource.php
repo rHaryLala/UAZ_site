@@ -26,7 +26,7 @@ class PartnerResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHandRaised;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Communauté';
+    protected static string|\UnitEnum|null $navigationGroup = 'Personnes & messages';
 
     protected static ?string $modelLabel = 'partenaire';
 
@@ -34,7 +34,7 @@ class PartnerResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {
@@ -42,7 +42,8 @@ class PartnerResource extends Resource
             TextInput::make('name')->label('Nom')->required()->maxLength(255),
             TextInput::make('url')->label('Site web')->url()->maxLength(500),
             MediaPicker::make('logo_id', 'Logo'),
-            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0),
+            TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0)
+                ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             Toggle::make('is_active')->label('Affiché sur le site')->default(true),
         ])->columns(2);
     }
@@ -54,7 +55,7 @@ class PartnerResource extends Resource
             ->modifyQueryUsing(fn ($query) => $query->with(['logo.media']))
             ->columns([
                 ImageColumn::make('logo_thumb')->label('Logo')->size(44)
-                    ->state(fn (Partner $record) => $record->logo?->url('thumb')),
+                    ->state(fn (Partner $record) => $record->logo?->absoluteUrl('thumb')),
                 TextColumn::make('name')->label('Nom')->searchable()->sortable()->weight('medium'),
                 TextColumn::make('url')->label('Site web')->limit(40)->url(fn (Partner $record) => $record->url)->openUrlInNewTab(),
                 ToggleColumn::make('is_active')->label('Affiché'),

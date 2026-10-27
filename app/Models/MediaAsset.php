@@ -47,6 +47,14 @@ class MediaAsset extends Model implements HasMedia
         return $this->title ?: ($this->file()?->file_name ?? 'Média #'.$this->getKey());
     }
 
+    /** Adresse complète (http://…) : requise par les colonnes d'image de Filament, qui traiteraient un chemin relatif comme un chemin du disque. */
+    public function absoluteUrl(string $conversion = ''): ?string
+    {
+        $url = $this->url($conversion);
+
+        return $url === '' ? null : url($url);
+    }
+
     /** URL de l'original ou d'une conversion (thumb, card, hero) ; repli sur l'original. */
     public function url(string $conversion = ''): string
     {

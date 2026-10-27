@@ -230,3 +230,12 @@ Vous pouvez aussi les lâcher n'importe où sur la page. Le formulaire d'envoi s
 ## Navigation du back-office (mode SPA)
 Le back-office fonctionne en « application monopage » : un clic dans le menu ou sur un lien remplace uniquement le contenu, sans recharger toute la page
 (plus rapide, plus fluide, et le survol d'un lien précharge l'écran suivant). Les boutons précédent / suivant du navigateur fonctionnent normalement.
+
+## Tableau de bord et actions rapides
+- **Tableau de bord** : quatre raccourcis (écrire une actualité, ajouter un événement, envoyer des images, lire les messages), les chiffres clés (cliquez sur une carte pour ouvrir la liste correspondante),
+  les brouillons à relire et les derniers messages reçus. Il ne se rafraîchit pas tout seul : les chiffres se mettent à jour quand un contenu change.
+- **Dans chaque liste** (pages, actualités, événements, formations) : **Aperçu** et **Modifier** sont à portée de clic ; le menu **⋯** propose **Dupliquer** (la copie est un brouillon dont le titre finit par « (copie) »),
+  **Publier** ou **Repasser en brouillon** (avec confirmation), et **Supprimer**. Cochez plusieurs lignes pour publier ou repasser en brouillon toute la sélection d'un coup.
+- Seules les personnes autorisées à publier voient ces boutons de publication ; un contributeur garde ses contenus en brouillon.
+- **Votre recherche, vos filtres et votre tri sont mémorisés** pendant la session : en revenant sur une liste, elle est comme vous l'avez laissée.
+- **Navigation** : quatre groupes — Contenus, Formations, Personnes & messages (messages de contact en premier, avec leur compteur), Site & médias. L'entrée Actualités affiche le nombre de brouillons en attente.
