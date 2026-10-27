@@ -102,12 +102,8 @@ class NewsPostResource extends Resource
                 SelectFilter::make('news_category_id')->label('Catégorie')->relationship('category', 'name'),
                 TernaryFilter::make('is_featured')->label('À la une'),
             ])
-            ->recordActions([
-                PublicationTable::previewAction(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->recordActions(PublicationTable::recordActions())
+            ->toolbarActions([PublicationTable::bulkActions()]);
     }
 
     public static function getPages(): array

@@ -114,12 +114,8 @@ class PhotoAlbumResource extends Resource
             ])
             ->defaultSort('taken_on', 'desc')
             ->filters([PublicationTable::statusFilter()])
-            ->recordActions([
-                PublicationTable::previewAction(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->recordActions(PublicationTable::recordActions())
+            ->toolbarActions([PublicationTable::bulkActions()]);
     }
 
     public static function getPages(): array

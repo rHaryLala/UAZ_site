@@ -172,3 +172,43 @@ it('does not let contributors read contact messages', function () {
 
     $this->get('/admin/contact-messages')->assertForbidden();
 });
+
+it('duplicates, publishes and unpublishes contents from the list actions', function (string $listClass, string $model, string $titleField) {
+    $this->actingAs(\App\Models\User::factory()->create()->assignRole('super-admin'));
+    $record = $model::factory()->create([$titleField => 'Contenu original', 'status' => \App\Enums\PublicationStatus::Draft]);
+
+    Livewire::test($listClass)->loadTable()
+        ->callTableAction('replicate', $record)
+        ->assertNotified();
+
+    $copy = $model::where($titleField, 'Contenu original (copie)')->first();
+    expect($copy)->not->toBeNull()
+        ->and($copy->status)->toBe(\App\Enums\PublicationStatus::Draft)
+        ->and($copy->slug)->not->toBe($record->slug)
+        ->and($copy->getKey())->not->toBe($record->getKey());
+
+    Livewire::test($listClass)->loadTable()->callTableAction('publish', $record)->assertNotified();
+    expect($record->refresh()->status)->toBe(\App\Enums\PublicationStatus::Published)->and($record->published_at)->not->toBeNull();
+
+    Livewire::test($listClass)->loadTable()->callTableAction('unpublish', $record)->assertNotified();
+    expect($record->refresh()->status)->toBe(\App\Enums\PublicationStatus::Draft);
+
+    Livewire::test($listClass)->loadTable()
+        ->callTableBulkAction('publishSelected', [$record, $copy])
+        ->assertNotified();
+    expect($record->refresh()->status)->toBe(\App\Enums\PublicationStatus::Published)
+        ->and($copy->refresh()->status)->toBe(\App\Enums\PublicationStatus::Published);
+})->with([
+    'actualités' => [\App\Filament\Resources\NewsPosts\Pages\ListNewsPosts::class, \App\Models\NewsPost::class, 'title'],
+    'événements' => [\App\Filament\Resources\Events\Pages\ListEvents::class, \App\Models\Event::class, 'title'],
+    'formations' => [\App\Filament\Resources\Formations\Pages\ListFormations::class, \App\Models\Formation::class, 'title'],
+    'pages' => [\App\Filament\Resources\ContentPages\Pages\ListPages::class, \App\Models\Page::class, 'title'],
+]);
+
+it('does not let a contributor publish from the quick actions', function () {
+    $this->actingAs(\App\Models\User::factory()->create()->assignRole('contributor'));
+    $post = \App\Models\NewsPost::factory()->draft()->create();
+
+    Livewire::test(\App\Filament\Resources\NewsPosts\Pages\ListNewsPosts::class)->loadTable()
+        ->assertTableActionHidden('publish', $post);
+});

@@ -102,12 +102,8 @@ class EventResource extends Resource
                         default => $query,
                     }),
             ])
-            ->recordActions([
-                PublicationTable::previewAction(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->recordActions(PublicationTable::recordActions())
+            ->toolbarActions([PublicationTable::bulkActions()]);
     }
 
     public static function getPages(): array

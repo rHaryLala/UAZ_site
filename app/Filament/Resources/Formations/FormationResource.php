@@ -113,12 +113,8 @@ class FormationResource extends Resource
                 SelectFilter::make('level')->label('Niveau')->options(FormationLevel::class),
                 SelectFilter::make('faculty_id')->label('Faculté / département')->relationship('faculty', 'name'),
             ])
-            ->recordActions([
-                PublicationTable::previewAction(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->recordActions(PublicationTable::recordActions())
+            ->toolbarActions([PublicationTable::bulkActions()]);
     }
 
     public static function getPages(): array
