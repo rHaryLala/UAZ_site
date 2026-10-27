@@ -8,8 +8,8 @@
             <h2 class="text-h2 text-white!" data-reveal>{{ __('home.admissions.title') }}</h2>
             <p class="mt-6 max-w-xl text-lead text-navy-100" data-reveal data-reveal-delay="0.1">{{ __('home.admissions.text') }}</p>
             <div class="mt-10 flex flex-wrap gap-4" data-reveal data-reveal-delay="0.2">
-                <x-button :href="url('/admissions')" variant="gold" arrow>{{ __('home.admissions.primary') }}</x-button>
-                <x-button :href="url('/admissions')" variant="outline">{{ __('home.admissions.secondary') }}</x-button>
+                <x-button :href="config('uaz.registration_url')" target="_blank" rel="noopener noreferrer" variant="gold" arrow>{{ __('home.admissions.primary') }}</x-button>
+                <x-button :href="url('/admissions/licence')" variant="outline">{{ __('home.admissions.secondary') }}</x-button>
             </div>
         </div>
 

@@ -8,7 +8,7 @@ ancienne_url,nouvelle_url,code,type,note
 /temoignages/,/,301,page,Vidéos YouTube -> Témoignages affichés sur l'accueil
 /cafeteria/,/vie-etudiante/cafeteria,301,page,Page générique
 /dortoirs/,/vie-etudiante/dortoirs,301,page,Page générique
-/s-a/,/vie-etudiante,301,page,Simple lien Facebook : non migré
+/s-a/,/vie-etudiante/bibliotheque,301,page,Simple lien Facebook : non migré
 /bibliotheque/,/vie-etudiante/bibliotheque,301,page,Page générique
 /academique/emplois-du-temps/,/formations/emplois-du-temps,301,page,Page générique (PDF)
 /programmes/,/formations/systeme-lmd,301,page,Page générique (explication LMD)
@@ -18,9 +18,9 @@ ancienne_url,nouvelle_url,code,type,note
 /contactez-nous/,/contact,301,page,
 /a-propos/,/a-propos,301,page,
 /personnel/,/equipe,301,page,Importé en Membres de l'équipe
-/vie-etudiante/,/vie-etudiante,301,page,
+/vie-etudiante/,/vie-etudiante/bibliotheque,301,page,
 /academique/,/formations,301,page,Remplacé par la liste filtrable des formations
-/admission/,/admissions,301,page,
+/admission/,/admissions/licence,301,page,
 /culte-douverture-de-lannee-academique-2026-2027-une-nouvelle-page-souvre-a-luaz/,/actualites/culte-douverture-de-lannee-academique-2026-2027-une-nouvelle-page-souvre-a-luaz,301,article,
 /master-en-ligne-luaz-ouvre-officiellement-son-annee-academique/,/actualites/master-en-ligne-luaz-ouvre-officiellement-son-annee-academique,301,article,
 /sortie-et-team-building-a-green-palm/,/actualites/sortie-et-team-building-a-green-palm,301,article,

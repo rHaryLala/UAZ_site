@@ -41,5 +41,5 @@
         @endif
     </x-section>
 
-    <x-cta-banner title="Une question sur une formation ?" text="Le bureau académique vous accompagne dans votre choix et votre candidature." :primary="['label' => 'Nous contacter', 'url' => url('/contact')]" :secondary="['label' => 'Conditions d\'admission', 'url' => url('/admissions')]" />
+    <x-cta-banner title="Une question sur une formation ?" text="Le bureau académique vous accompagne dans votre choix et votre candidature." :primary="['label' => 'Nous contacter', 'url' => url('/contact')]" :secondary="['label' => 'Conditions d\'admission', 'url' => url('/admissions/licence')]" />
 </x-layouts.app>

@@ -168,3 +168,10 @@ Format : **décision** — alternatives — raison.
 - Pas de Livewire sur toutes les pages (≈ 99 Ko) : la fenêtre charge un fragment HTML (`/recherche/apercu`, limité à 60 requêtes/min)
   rendu par le serveur ; le moteur (`App\Services\SiteSearch`) est partagé avec la page `/recherche`.
 - Alpine CSP interdit `x-html` : le fragment est inséré par `innerHTML` depuis notre propre serveur (valeurs échappées par Blade).
+
+## D-031 · Rubriques sans page parente, inscription en ligne
+- « Admissions » et « Vie étudiante » sont des rubriques : leurs pages parentes sont **non publiées** (elles répondent par une
+  redirection vers leur première sous-page), les sous-pages gardent leurs adresses (`/admissions/licence`, `/vie-etudiante/cafeteria`…).
+  Dans la navigation, ces rubriques ouvrent une liste et ne sont pas des liens.
+- Les boutons « S'inscrire » / « Candidater » mènent à `config('uaz.registration_url')`
+  (https://registrar.zurcher.edu.mg/#pre-inscription, réglable par `UAZ_REGISTRATION_URL`), dans un nouvel onglet.

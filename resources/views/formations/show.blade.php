@@ -35,7 +35,7 @@
                         @endforeach
                     </dl>
                     <div class="mt-7 space-y-3">
-                        <x-button :href="url('/admissions')" variant="navy" arrow class="w-full">Candidater</x-button>
+                        <x-button :href="config('uaz.registration_url')" target="_blank" rel="noopener noreferrer" variant="navy" arrow class="w-full">Candidater</x-button>
                         <x-button :href="url('/contact?sujet='.urlencode('Formation : '.$formation->title))" variant="outline" class="w-full">Poser une question</x-button>
                     </div>
                 </div>

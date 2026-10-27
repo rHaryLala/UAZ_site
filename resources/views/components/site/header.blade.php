@@ -70,7 +70,7 @@
                 <a href="{{ url('/recherche') }}" @click.prevent="openSearch" class="site-header__icon inline-flex size-11 items-center justify-center" aria-label="Rechercher sur le site" aria-haspopup="dialog">
                     <x-ico name="search" class="size-5" />
                 </a>
-                <x-button :href="url('/admissions')" variant="royal" arrow class="btn-square hidden md:inline-flex">S'inscrire</x-button>
+                <x-button :href="config('uaz.registration_url')" target="_blank" rel="noopener noreferrer" variant="royal" arrow class="btn-square hidden md:inline-flex">S'inscrire</x-button>
                 <button
                     type="button"
                     x-ref="trigger"
@@ -233,7 +233,7 @@
                 @endif
 
                 <div class="menu-overlay__item space-y-8 self-end" data-menu-item>
-                    <x-button :href="url('/admissions')" variant="sun" arrow class="btn-square">S'inscrire</x-button>
+                    <x-button :href="config('uaz.registration_url')" target="_blank" rel="noopener noreferrer" variant="sun" arrow class="btn-square">S'inscrire</x-button>
                     <address class="space-y-3 text-sm not-italic text-navy-100">
                         @if ($site->address)<p class="flex gap-3"><x-ico name="map-pin" class="mt-0.5 size-4 text-gold-300" />{{ $site->address }}</p>@endif
                         @if ($site->email)<p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 text-gold-300" /><a href="mailto:{{ $site->email }}" class="hover:text-white">{{ $site->email }}</a></p>@endif

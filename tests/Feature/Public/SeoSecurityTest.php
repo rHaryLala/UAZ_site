@@ -135,7 +135,7 @@ it('serves canonical URLs without tracking parameters', function () {
 });
 
 it('gives every system page a unique title and meta description', function () {
-    $titles = collect(['/a-propos', '/admissions', '/vie-etudiante', '/formations', '/contact'])
+    $titles = collect(['/a-propos', '/admissions/licence', '/vie-etudiante/cafeteria', '/formations', '/contact'])
         ->map(fn ($path) => preg_match('#<title>(.*?)</title>#', $this->get($path)->getContent(), $m) ? $m[1] : null);
 
     expect($titles->filter()->unique()->count())->toBe(5);

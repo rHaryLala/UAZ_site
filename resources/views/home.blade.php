@@ -38,7 +38,7 @@
         :eyebrow="__('home.cta.eyebrow')"
         :title="__('home.cta.title')"
         :text="__('home.cta.text')"
-        :primary="['label' => __('home.admissions.primary'), 'url' => url('/admissions')]"
-        :secondary="['label' => __('home.admissions.secondary'), 'url' => url('/admissions')]"
+        :primary="['label' => __('home.admissions.primary'), 'url' => config('uaz.registration_url')]"
+        :secondary="['label' => __('home.admissions.secondary'), 'url' => url('/admissions/licence')]"
     />
 </x-layouts.app>

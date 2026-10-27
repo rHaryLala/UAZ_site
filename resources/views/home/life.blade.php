@@ -4,7 +4,7 @@
 
 <x-section :eyebrow="__('home.life.eyebrow')" :title="__('home.life.title')" :intro="__('home.life.text')">
     <div class="-mt-4 mb-12" data-reveal>
-        <a href="{{ url('/vie-etudiante') }}" class="link-arrow">{{ __('home.life.link') }} <x-ico name="arrow-right" class="size-4" /></a>
+        <a href="{{ url('/vie-etudiante/bibliotheque') }}" class="link-arrow">{{ __('home.life.link') }} <x-ico name="arrow-right" class="size-4" /></a>
     </div>
 
     @if ($items->isNotEmpty())

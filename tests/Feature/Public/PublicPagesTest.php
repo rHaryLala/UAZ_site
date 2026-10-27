@@ -27,7 +27,7 @@ it('renders the home page with the hero, key figures and formations from the str
 
 it('serves every public section', function (string $path) {
     $this->get($path)->assertOk()->assertSee('<main id="contenu"', false);
-})->with(['/formations', '/actualites', '/evenements', '/galerie', '/equipe', '/contact', '/recherche', '/a-propos', '/admissions', '/vie-etudiante']);
+})->with(['/formations', '/actualites', '/evenements', '/galerie', '/equipe', '/contact', '/recherche', '/a-propos']);
 
 it('serves a nested page by its full path and breadcrumbs', function () {
     $this->get('/admissions/licence')
@@ -148,4 +148,16 @@ it('keeps the contact form markup and honeypot in the page', function () {
 
 it('marks draft content as noindex in preview mode only', function () {
     expect(PublicationStatus::Draft->value)->toBe('draft');
+});
+
+it('has no public parent pages for the Admissions and Vie étudiante sections, but keeps their sub-pages', function () {
+    $this->get('/admissions')->assertNotFound();
+    $this->get('/vie-etudiante')->assertNotFound();
+    $this->get('/admissions/licence')->assertOk();
+    $this->get('/vie-etudiante/cafeteria')->assertOk();
+});
+
+it('sends the enrol buttons to the online registration site', function () {
+    $this->get('/')->assertOk()->assertSee('href="'.config('uaz.registration_url').'"', false);
+    expect(config('uaz.registration_url'))->toBe('https://registrar.zurcher.edu.mg/#pre-inscription');
 });

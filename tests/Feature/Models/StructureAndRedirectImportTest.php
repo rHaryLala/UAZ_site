@@ -34,7 +34,7 @@ it('keeps the seeded header menu resolvable with sub-menus', function () {
     $admissions = collect($tree)->firstWhere('label', 'Admissions');
 
     expect($tree)->toHaveCount(5)
-        ->and($admissions['url'])->toBe(url('/admissions'))
+        ->and($admissions['url'])->toBe('#')
         ->and(collect($admissions['children'])->pluck('label')->all())
         ->toBe(['Licence', 'Master', 'Frais académiques', 'Téléchargements']);
 });
@@ -65,5 +65,5 @@ it('only exposes published structure pages', function () {
     $this->seed(StructureSeeder::class);
     Page::where('key', 'about')->update(['status' => PublicationStatus::Draft]);
 
-    expect(Page::byKey('about'))->toBeNull()->and(Page::byKey('admissions'))->not->toBeNull();
+    expect(Page::byKey('about'))->toBeNull()->and(Page::byKey('admissions-licence'))->not->toBeNull();
 });

@@ -122,7 +122,7 @@ class StructureSeeder extends Seeder
     /** @return array<string, Page> */
     private function pages(): array
     {
-        $make = function (string $key, string $title, ?string $slug = null, ?Page $parent = null, ?string $summary = null, int $sort = 0): Page {
+        $make = function (string $key, string $title, ?string $slug = null, ?Page $parent = null, ?string $summary = null, int $sort = 0, PublicationStatus $status = PublicationStatus::Published): Page {
             return Page::firstOrCreate(['key' => $key], [
                 'title' => $title,
                 'slug' => $slug,
@@ -133,7 +133,7 @@ class StructureSeeder extends Seeder
                     'type' => 'rich_text',
                     'data' => ['heading' => null, 'content' => '<p>'.self::TODO.' : contenu de la page « '.$title.' ».</p>', 'width' => 'normal'],
                 ]],
-                'status' => PublicationStatus::Published,
+                'status' => $status,
                 'published_at' => now(),
             ]);
         };
@@ -141,12 +141,12 @@ class StructureSeeder extends Seeder
         $pages = [];
         $pages['home'] = $make('home', 'Accueil', 'accueil');
         $pages['about'] = $make('about', 'À propos', 'a-propos', null, 'Histoire, vision et valeurs de l\'Université Adventiste Zurcher.', 1);
-        $pages['admissions'] = $make('admissions', 'Admissions', 'admissions', null, 'Admission après le baccalauréat, selon la mention et les critères de chaque filière.', 2);
+        $pages['admissions'] = $make('admissions', 'Admissions', 'admissions', null, 'Admission après le baccalauréat, selon la mention et les critères de chaque filière.', 2, PublicationStatus::Draft);
         $pages['licence'] = $make('admissions-licence', 'Licence', 'licence', $pages['admissions'], null, 1);
         $pages['master'] = $make('admissions-master', 'Master', 'master', $pages['admissions'], null, 2);
         $pages['fees'] = $make('admissions-fees', 'Frais académiques', 'frais-academiques', $pages['admissions'], null, 3);
         $pages['downloads'] = $make('admissions-downloads', 'Téléchargements', 'telechargements', $pages['admissions'], null, 4);
-        $pages['student-life'] = $make('student-life', 'Vie étudiante', 'vie-etudiante', null, 'Campus, bibliothèque, cafétéria, dortoirs et accompagnement.', 3);
+        $pages['student-life'] = $make('student-life', 'Vie étudiante', 'vie-etudiante', null, 'Campus, bibliothèque, cafétéria, dortoirs et accompagnement.', 3, PublicationStatus::Draft);
         $pages['library'] = $make('student-life-library', 'Bibliothèque', 'bibliotheque', $pages['student-life'], null, 1);
         $pages['cafeteria'] = $make('student-life-cafeteria', 'Cafétéria', 'cafeteria', $pages['student-life'], null, 2);
         $pages['dorms'] = $make('student-life-dorms', 'Dortoirs', 'dortoirs', $pages['student-life'], null, 3);
@@ -169,11 +169,11 @@ class StructureSeeder extends Seeder
             'items' => [
                 $page('À propos', 'about'),
                 $url('Formations', '/formations'),
-                array_merge($page('Admissions', 'admissions'), ['children' => [
+                array_merge($url('Admissions', '#'), ['children' => [
                     $page('Licence', 'licence'), $page('Master', 'master'),
                     $page('Frais académiques', 'fees'), $page('Téléchargements', 'downloads'),
                 ]]),
-                array_merge($page('Vie étudiante', 'student-life'), ['children' => [
+                array_merge($url('Vie étudiante', '#'), ['children' => [
                     $page('Bibliothèque', 'library'), $page('Cafétéria', 'cafeteria'), $page('Dortoirs', 'dorms'),
                 ]]),
                 $page('Centre de recherche', 'research'),
@@ -185,7 +185,7 @@ class StructureSeeder extends Seeder
         Menu::firstOrCreate(['handle' => 'topbar'], [
             'name' => 'Barre du haut',
             'items' => [
-                $page('Étudiants', 'student-life'),
+                $page('Étudiants', 'library'),
                 $url('Notre équipe', '/equipe'),
                 array_merge($url('Alumni', 'https://alumni-auz.api.mg/'), ['new_tab' => true]),
                 $url('Donner', '/contact?sujet=Soutenir%20l%27UAZ'),

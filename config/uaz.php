@@ -22,6 +22,11 @@ return [
     'founded_year' => (int) env('UAZ_FOUNDED_YEAR', 1995),
 
     /*
+    | Inscription en ligne (bureau académique) : cible des boutons « S'inscrire » et « Candidater ».
+    */
+    'registration_url' => env('UAZ_REGISTRATION_URL', 'https://registrar.zurcher.edu.mg/#pre-inscription'),
+
+    /*
     |--------------------------------------------------------------------------
     | Médiathèque
     |--------------------------------------------------------------------------
