@@ -224,8 +224,8 @@ class StructureSeeder extends Seeder
                 $page('Étudiants', 'library'),
                 $url('Notre équipe', '/equipe'),
                 array_merge($url('Alumni', 'https://alumni-auz.api.mg/'), ['new_tab' => true]),
-                $page('Donner', 'support'),
                 $url('Yearbook', '/yearbook'),
+                $page('Donner', 'support'),
                 $url('Se connecter', '/admin'),
             ],
         ]);

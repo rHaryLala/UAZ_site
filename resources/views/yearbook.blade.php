@@ -47,12 +47,12 @@
                 <button type="button" data-yb-next class="yb-btn" aria-label="Page suivante"><x-ico name="arrow-right" class="size-5" /></button>
             </div>
 
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
+            <div class="yb-extras mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
                 <button type="button" data-yb-thumbs-toggle aria-expanded="false" aria-controls="yb-thumbs" class="yb-chip"><x-ico name="grid" class="size-4" /> Miniatures</button>
                 <button type="button" data-yb-fullscreen aria-pressed="false" class="yb-chip"><x-ico name="expand" class="size-4" /> Plein écran</button>
-                <a href="{{ $book['pdf'] }}" target="_blank" rel="noopener noreferrer" class="yb-chip"><x-ico name="download" class="size-4" /> Télécharger le PDF <span class="sr-only">(nouvel onglet)</span></a>
+                <a href="{{ $book['pdf'] }}" target="_blank" rel="noopener noreferrer" class="yb-chip yb-pdf"><x-ico name="download" class="size-4" /> Télécharger le PDF <span class="sr-only">(nouvel onglet)</span></a>
             </div>
-            <p class="mt-5 hidden text-xs text-white/50 md:block">Cliquez ou faites glisser un coin de page · flèches ← → du clavier</p>
+            <p class="yb-hint mt-5 hidden text-xs text-white/50 md:block">Cliquez ou faites glisser un coin de page · flèches ← → du clavier</p>
 
             <noscript><p class="mt-8 max-w-lg text-center text-white/80">Le livre à feuilleter demande JavaScript. Vous pouvez <a href="{{ $book['pdf'] }}" class="underline">télécharger le PDF</a>.</p></noscript>
         </div>
