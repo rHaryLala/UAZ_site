@@ -81,3 +81,9 @@ communes. Pour MySQL, renseignez `DB_CONNECTION=mysql` et les variables `DB_*` d
 ## Licence
 
 Code propriétaire de l'Université Adventiste Zurcher, sauf mention contraire des dépendances.
+
+## Serveur de développement : préférer Laragon à `artisan serve`
+`php artisan serve` est **mono-processus** sous Windows (le serveur intégré de PHP n'y gère pas `PHP_CLI_SERVER_WORKERS`). Le back-office Filament charge
+une trentaine de fichiers JS/CSS à chaque page : certaines requêtes peuvent être refusées ou abandonnées, et la page s'affiche alors **sans style** jusqu'à
+l'actualisation. Pour éviter ce défaut de confort, utilisez le serveur web de Laragon (Nginx/Apache + PHP) : le projet est déjà dans `C:\laragon\www`,
+l'adresse `http://uaz-website.test` fonctionne après « Démarrer tout » (adapter `APP_URL` dans `.env` et vider le cache de config). Le défaut n'existe pas en production.
