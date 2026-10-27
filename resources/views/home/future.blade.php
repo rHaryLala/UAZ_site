@@ -29,8 +29,8 @@
                 ></video>
                 @if ($videoReady)
                     <button type="button" data-future-play class="group absolute inset-0 flex items-center justify-center bg-navy-950/25 transition hover:bg-navy-950/10 focus-visible:outline-offset-[-6px]" aria-label="{{ __('home.future.play') }}">
-                        <span class="flex size-14 items-center justify-center bg-sun-400 text-night-900 shadow-lift transition-transform duration-300 group-hover:scale-110 sm:size-16">
-                            <x-ico name="play" class="size-6 translate-x-0.5 sm:size-7" />
+                        <span class="flex h-9 w-14 items-center justify-center bg-sun-400 text-night-900 shadow-lift transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-16">
+                            <x-ico name="play" class="size-4 translate-x-px sm:size-5" />
                         </span>
                     </button>
                 @endif
