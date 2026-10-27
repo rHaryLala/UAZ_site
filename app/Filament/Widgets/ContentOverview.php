@@ -2,10 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\PublicationStatus;
-use App\Models\ContactMessage;
-use App\Models\Event;
-use App\Models\NewsPost;
+use App\Support\AdminStats;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -13,22 +10,30 @@ class ContentOverview extends StatsOverviewWidget
 {
     protected ?string $heading = 'Aperçu du site';
 
+    // Pas de rafraîchissement automatique (Filament le fait par défaut toutes les 5 s) : les chiffres sont en cache et se
+    // mettent à jour quand un contenu change. Chargement différé : le tableau de bord s'affiche sans attendre les chiffres.
+    protected ?string $pollingInterval = null;
+
+    protected static bool $isLazy = true;
+
     protected function getStats(): array
     {
-        $stats = [
-            Stat::make('Actualités publiées', NewsPost::published()->count())
-                ->description(NewsPost::where('status', PublicationStatus::Draft)->count().' brouillon(s)')
+        $stats = AdminStats::get();
+
+        $cards = [
+            Stat::make('Actualités publiées', $stats['news_published'])
+                ->description($stats['news_drafts'].' brouillon(s)')
                 ->icon('heroicon-o-newspaper'),
-            Stat::make('Événements à venir', Event::published()->upcoming()->count())
+            Stat::make('Événements à venir', $stats['events_upcoming'])
                 ->icon('heroicon-o-calendar-days'),
         ];
 
         if (auth()->user()?->can('messages.view')) {
-            $stats[] = Stat::make('Messages non lus', ContactMessage::unread()->count())
+            $cards[] = Stat::make('Messages non lus', $stats['messages_unread'])
                 ->icon('heroicon-o-envelope')
-                ->color(ContactMessage::unread()->exists() ? 'warning' : 'gray');
+                ->color($stats['messages_unread'] > 0 ? 'warning' : 'gray');
         }
 
-        return $stats;
+        return $cards;
     }
 }
