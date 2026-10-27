@@ -18,7 +18,7 @@ beforeEach(fn () => $this->seed(StructureSeeder::class));
 it('renders the home page with the hero, key figures and formations from the structure', function () {
     $this->get('/')
         ->assertOk()
-        ->assertSee('Préparer aujourd\'hui les leaders de demain')
+        ->assertSee('Préparer aujourd’hui les leaders de demain')
         ->assertSee('data-hero', false)
         ->assertSee('Mentions de licence')
         ->assertSee('Arts &amp; lettres', false)

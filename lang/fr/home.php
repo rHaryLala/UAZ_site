@@ -9,9 +9,10 @@
 
 return [
     'hero' => [
-        'eyebrow' => 'Spiritus · Manus · Mens',
-        'title' => 'Préparer aujourd\'hui les leaders de demain',
-        'subtitle' => 'Excellence académique, vie étudiante dynamique et développement personnel : l\'UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
+        'eyebrow' => 'Une formation. Un avenir. Une vision.',
+        'region' => 'Madagascar / Université francophone',
+        'title' => 'Préparer aujourd’hui les leaders de demain',
+        'subtitle' => 'Excellence académique, vie étudiante dynamique et développement personnel : l’UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
         'cta_primary' => 'Découvrir l\'UAZ',
         'cta_secondary' => 'Planifier votre visite',
         'note' => 'Admission après baccalauréat selon mention et critères de chaque filière.',
@@ -93,7 +94,7 @@ return [
 
     'cta' => [
         'eyebrow' => 'Votre avenir se dessine',
-        'title' => 'Préparer aujourd\'hui les leaders de demain.',
-        'text' => 'Excellence académique, vie étudiante dynamique et développement personnel : l\'UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
+        'title' => 'Préparer aujourd’hui les leaders de demain.',
+        'text' => 'Excellence académique, vie étudiante dynamique et développement personnel : l’UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
     ],
 ];

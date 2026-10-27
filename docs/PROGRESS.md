@@ -74,3 +74,7 @@
 
 - `docs/DEPLOIEMENT.md` (VPS Ubuntu, Nginx/Caddy, PHP-FPM, MariaDB, HTTPS, queue, cron, sauvegardes, retour arrière), `docs/PLAN-DE-BASCULE.md`, `docs/GUIDE-REDACTEUR.md` (captures dans `docs/screenshots/`), `docs/QUALITE.md`.
 - `scripts/backup.sh` (testé), `restore.sh`, `deploy.sh` ; `Dockerfile` et `docker-compose.yml` optionnels : **syntaxe validée (`docker compose config`) mais image non construite** (démon Docker arrêté sur la machine de développement).
+
+## 27 octobre 2026 — accueil aligné sur la maquette
+- Nouvelle photo du héros (vue aérienne du campus) ; en-tête, barre du haut et héros refaits d'après la capture (D-028) ; serif Libre Baskerville.
+- Tests : Pest, smoke, menu (mobile + tablette), axe (reste un avertissement mineur sur la page catalogue /design-system : deux fils d'Ariane).

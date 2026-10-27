@@ -16,7 +16,7 @@ it('seeds the site structure idempotently', function () {
     expect(Formation::count())->toBe(7)
         ->and(Page::where('key', 'home')->count())->toBe(1)
         ->and(Page::where('key', 'admissions-licence')->value('path'))->toBe('admissions/licence')
-        ->and(Menu::count())->toBe(2)
+        ->and(Menu::count())->toBe(3)
         ->and(SiteSetting::current()->address)->toContain('Antsirabe');
 });
 
@@ -33,7 +33,7 @@ it('keeps the seeded header menu resolvable with sub-menus', function () {
     $tree = Menu::resolved('header');
     $admissions = collect($tree)->firstWhere('label', 'Admissions');
 
-    expect($tree)->toHaveCount(6)
+    expect($tree)->toHaveCount(5)
         ->and($admissions['url'])->toBe(url('/admissions'))
         ->and(collect($admissions['children'])->pluck('label')->all())
         ->toBe(['Licence', 'Master', 'Frais académiques', 'Téléchargements']);

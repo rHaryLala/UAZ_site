@@ -55,7 +55,7 @@ class StructureSeeder extends Seeder
         if ($settings->wasRecentlyCreated || blank($settings->tagline)) {
             $settings->update([
                 'site_name' => 'Université Adventiste Zurcher',
-                'tagline' => 'Préparer aujourd\'hui les leaders de demain',
+                'tagline' => 'Préparer aujourd’hui les leaders de demain',
                 'address' => 'PK 135, Route Nationale 7, Antsirabe, Madagascar',
                 'email' => 'office@zurcher.edu.mg', // à valider (maquette)
                 'phone' => null, // TODO-CONTENU : la maquette donne deux numéros différents
@@ -73,11 +73,11 @@ class StructureSeeder extends Seeder
                 ],
                 'footer_text' => 'Spiritus · Manus · Mens — Service.',
                 'footer_legal' => '© Université Adventiste Zurcher',
-                'home_hero_title' => 'Préparer aujourd\'hui les leaders de demain',
-                'home_hero_subtitle' => 'Excellence académique, vie étudiante dynamique et développement personnel : l\'UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
+                'home_hero_title' => 'Préparer aujourd’hui les leaders de demain',
+                'home_hero_subtitle' => 'Excellence académique, vie étudiante dynamique et développement personnel : l’UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
                 // Chiffres de la maquette, à faire valider par l'équipe avant publication.
                 'key_figures' => [
-                    ['value' => 1995, 'suffix' => '', 'label' => 'Fondation de l\'UAZ'],
+                    ['value' => 1995, 'suffix' => '', 'label' => 'Fondation de l’UAZ'],
                     ['value' => 7, 'suffix' => '', 'label' => 'Mentions de licence'],
                     ['value' => 180, 'suffix' => '', 'label' => 'Crédits ECTS en licence (3 ans)'],
                     ['value' => 200, 'suffix' => '+', 'label' => 'Hectares de campus'],
@@ -150,7 +150,7 @@ class StructureSeeder extends Seeder
         $pages['library'] = $make('student-life-library', 'Bibliothèque', 'bibliotheque', $pages['student-life'], null, 1);
         $pages['cafeteria'] = $make('student-life-cafeteria', 'Cafétéria', 'cafeteria', $pages['student-life'], null, 2);
         $pages['dorms'] = $make('student-life-dorms', 'Dortoirs', 'dortoirs', $pages['student-life'], null, 3);
-        $pages['lmd'] = $make('lmd', 'Système LMD', 'systeme-lmd', null, 'Licence, Master, Doctorat : le système d\'études de l\'UAZ.', 4);
+        $pages['lmd'] = $make('lmd', 'Système LMD', 'systeme-lmd', null, 'Licence, Master, Doctorat : le système d\'études de l’UAZ.', 4);
         $pages['timetables'] = $make('timetables', 'Emplois du temps', 'emplois-du-temps', null, null, 5);
 
         return $pages;
@@ -174,14 +174,27 @@ class StructureSeeder extends Seeder
                 array_merge($page('Vie étudiante', 'student-life'), ['children' => [
                     $page('Bibliothèque', 'library'), $page('Cafétéria', 'cafeteria'), $page('Dortoirs', 'dorms'),
                 ]]),
-                $url('Actualités', '/actualites'),
-                $url('Contact', '/contact'),
+                $url('Recherche', '/recherche'),
+            ],
+        ]);
+
+        // Barre du haut de la maquette. TODO-CONTENU : « Étudiants », « Alumni », « Donner » et « Se connecter » n'ont
+        // pas encore de page dédiée ; les destinations ci-dessous sont provisoires (docs/TODO-CONTENU.md).
+        Menu::firstOrCreate(['handle' => 'topbar'], [
+            'name' => 'Barre du haut',
+            'items' => [
+                $page('Étudiants', 'student-life'),
+                $url('Notre équipe', '/equipe'),
+                $url('Alumni', '/contact?sujet=Alumni'),
+                $url('Donner', '/contact?sujet=Soutenir%20l%27UAZ'),
+                $url('Se connecter', '/admin'),
             ],
         ]);
 
         Menu::firstOrCreate(['handle' => 'footer'], [
             'name' => 'Pied de page',
             'items' => [
+                $url('Actualités', '/actualites'),
                 $url('Notre équipe', '/equipe'),
                 $url('Événements', '/evenements'),
                 $url('Galerie', '/galerie'),

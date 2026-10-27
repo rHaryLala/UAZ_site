@@ -52,9 +52,13 @@ plus foncé sur marine. Le catalogue recalcule les ratios en direct et un test �
 
 ## 3. Typographie
 
+> Depuis le 27 octobre 2026 le serif est **Libre Baskerville** (celui de la maquette de l'UAZ), à la place de Fraunces, et l'accueil
+> reprend la maquette à l'identique : barre du haut `#0a1628`, en-tête clair `#f4f4f8`, bleu d'action `royal-600` `#3856a6`,
+> or vif `sun-400` `#c9a84c`, boutons à angles droits (`btn-square`, `btn-royal`, `btn-sun`). Voir D-028.
+
 | Rôle | Police | Détails |
 | --- | --- | --- |
-| Titres, chiffres clés, citations | **Fraunces** (variable, axe optique) | serif expressif, graisse 420, `text-wrap: balance` |
+| Titres, chiffres clés, citations | **Libre Baskerville** (variable) | serif classique de la maquette, graisse 400, `text-wrap: balance` |
 | Texte, interface, formulaires | **Inter** (variable) | lisible, chiffres tabulaires disponibles |
 
 Polices **auto-hébergées** (`@fontsource-variable`), sous-ensemble latin uniquement (couvre é è ç œ « »),

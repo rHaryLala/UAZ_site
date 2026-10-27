@@ -1,53 +1,40 @@
 {{--
-    Héros plein écran. Le titre, le sous-titre et les boutons sont dans le HTML ; GSAP révèle le titre mot par mot
-    (SplitText), dessine le triangle du sceau et applique une légère parallaxe (animations/hero.js).
+    Héros d'après la maquette : photo du campus, titre serif, deux actions, bandeau d'information en bas.
+    GSAP révèle le titre mot par mot (SplitText) et applique une légère parallaxe à la photo (animations/hero.js).
 --}}
-<section data-hero class="on-dark relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden bg-navy-950 text-white" aria-labelledby="hero-title">
-    {{-- Image d'en-tête (réglages du site) en parallaxe ; à défaut, fond marine et motifs du sceau --}}
+<section data-hero class="on-dark relative isolate flex min-h-[calc(100svh-var(--header-h)-2.25rem)] flex-col justify-between overflow-hidden bg-night-900 text-white" aria-labelledby="hero-title">
     @if ($site->homeHeroImage)
         <div class="absolute inset-0 -z-30 overflow-hidden" data-hero-bg>
-            <x-picture :asset="$site->homeHeroImage" conversion="hero" sizes="100vw" decorative eager class="size-full scale-110 object-cover" />
+            <x-picture :asset="$site->homeHeroImage" conversion="hero" sizes="100vw" decorative eager class="size-full scale-110 object-cover object-[50%_22%]" />
         </div>
-        <div class="absolute inset-0 -z-20 bg-gradient-to-t from-navy-950/95 via-navy-950/35 to-navy-950/10" aria-hidden="true"></div>
-        <div class="absolute inset-0 -z-20 bg-gradient-to-r from-navy-950/75 via-navy-950/25 to-transparent" aria-hidden="true"></div>
+        <div class="absolute inset-0 -z-20 bg-gradient-to-t from-night-900/70 via-night-900/5 to-transparent" aria-hidden="true"></div>
+        <div class="absolute inset-0 -z-20 bg-gradient-to-r from-night-900/75 via-night-900/25 to-transparent" aria-hidden="true"></div>
     @else
         <div class="absolute inset-0 -z-30 bg-[radial-gradient(120%_90%_at_75%_30%,var(--color-navy-700)_0%,var(--color-navy-900)_55%,var(--color-navy-950)_100%)]" aria-hidden="true"></div>
     @endif
 
-    {{-- Composition graphique : triangle + Madagascar + Spiritus · Manus · Mens (décorative) --}}
-    <div class="pointer-events-none absolute inset-y-0 right-0 -z-10 flex w-full items-center justify-end overflow-hidden lg:w-[46%]" aria-hidden="true" data-hero-graphic>
-        <div class="relative aspect-[100/90] w-[min(34rem,115vw)] translate-x-[22%] opacity-25 sm:translate-x-[10%] sm:opacity-60 lg:translate-x-[-4%] lg:opacity-100">
-            <svg viewBox="0 0 100 90" class="absolute inset-0 size-full overflow-visible" fill="none">
-                <path d="M3 4h94L50 86z" pathLength="1" stroke="var(--color-gold-300)" stroke-width="0.5" stroke-linejoin="miter" stroke-dasharray="1" stroke-dashoffset="0" data-hero-triangle />
-                <path d="M3 4h94L50 86z" fill="var(--color-navy-800)" fill-opacity="0.35" data-hero-fill />
-            </svg>
-            <x-madagascar class="absolute top-[14%] left-[35%] h-[60%] text-gold-300/85" data-hero-island />
-            <span class="absolute top-[4%] left-1/2 -translate-x-1/2 -translate-y-[160%] font-serif text-[0.7rem] tracking-[0.4em] text-gold-300 uppercase sm:text-sm max-sm:hidden" data-hero-word>Spiritus</span>
-            <span class="absolute top-[30%] left-[10%] -rotate-[58deg] font-serif text-[0.7rem] tracking-[0.4em] text-gold-300 uppercase sm:text-sm max-sm:hidden" data-hero-word>Manus</span>
-            <span class="absolute top-[30%] right-[10%] rotate-[58deg] font-serif text-[0.7rem] tracking-[0.4em] text-gold-300 uppercase sm:text-sm max-sm:hidden" data-hero-word>Mens</span>
-            <span class="absolute top-[60%] left-1/2 -translate-x-1/2 font-serif text-2xl text-white sm:text-4xl" data-hero-word>{{ __('home.pillars.service') }}</span>
-        </div>
-    </div>
+    <div class="container-site relative pt-[clamp(2.5rem,7.5vw,6.75rem)]">
+        <p class="eyebrow mb-5 text-[0.6875rem]! tracking-[0.03em]! text-sun-400!" data-reveal>{{ __('home.hero.eyebrow') }}</p>
 
-    <div class="container-site relative pt-[calc(var(--header-h)+3rem)] pb-10 md:pb-14">
-        <p class="eyebrow mb-6" data-reveal>{{ __('home.hero.eyebrow') }}</p>
+        <h1 id="hero-title" class="max-w-[52rem] text-[clamp(2.5rem,1.2rem+4vw,4.15rem)] leading-[1.1] tracking-normal font-normal text-white!" data-hero-title>{{ $site->home_hero_title ?: __('home.hero.title') }}</h1>
 
-        <h1 id="hero-title" class="max-w-4xl text-display text-white! lg:max-w-[50rem]" data-hero-title>{{ $site->home_hero_title ?: __('home.hero.title') }}</h1>
-
-        <p class="mt-8 max-w-2xl text-lead text-navy-100" data-reveal data-reveal-delay="0.5">
+        <p class="mt-8 max-w-[31rem] text-[clamp(1rem,0.9rem+0.3vw,1.0625rem)] leading-[1.6] text-white/85" data-reveal data-reveal-delay="0.5">
             {{ $site->home_hero_subtitle ?: __('home.hero.subtitle') }}
         </p>
 
-        <div class="mt-10 flex flex-wrap gap-4" data-reveal data-reveal-delay="0.65">
-            <x-button :href="url('/a-propos')" variant="gold" arrow>{{ __('home.hero.cta_primary') }}</x-button>
-            <x-button :href="url('/contact')" variant="outline">{{ __('home.hero.cta_secondary') }}</x-button>
-        </div>
-
-        <div class="mt-14 flex items-end justify-between gap-6 border-t border-white/15 pt-5 text-sm text-navy-100" data-reveal data-reveal-delay="0.8">
-            <p class="flex max-w-md items-center gap-3"><span class="size-2 shrink-0 rounded-full bg-gold-300" aria-hidden="true"></span>{{ __('home.hero.note') }}</p>
-            <a href="#difference" class="hidden items-center gap-2 font-medium text-white hover:text-gold-300 sm:inline-flex">
-                {{ __('home.hero.scroll') }} <x-ico name="chevron-down" class="size-4 animate-bounce motion-reduce:animate-none" />
+        <div class="mt-9 flex flex-wrap items-center gap-x-7 gap-y-5" data-reveal data-reveal-delay="0.65">
+            <x-button :href="url('/a-propos')" variant="sun" arrow class="btn-square">{{ __('home.hero.cta_primary') }}</x-button>
+            <a href="{{ url('/contact') }}" class="group inline-flex items-center gap-5 py-2 text-[0.8125rem] font-semibold text-white hover:text-sun-400">
+                {{ __('home.hero.cta_secondary') }}
+                <x-ico name="arrow-right" class="size-4 text-sun-400 transition-transform group-hover:translate-x-1" />
             </a>
+        </div>
+    </div>
+
+    <div class="container-site relative mt-14 pb-6 md:mt-20 md:pb-7" data-reveal data-reveal-delay="0.8">
+        <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 text-[0.75rem] text-white/85">
+            <p class="flex max-w-xl items-center gap-3"><span class="size-2 shrink-0 bg-sun-400" aria-hidden="true"></span>{{ __('home.hero.note') }}</p>
+            <p class="tracking-[0.02em] uppercase">{{ __('home.hero.region') }}</p>
         </div>
     </div>
 </section>

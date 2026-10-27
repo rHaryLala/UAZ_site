@@ -5,7 +5,6 @@
     'canonical' => null,
     'type' => 'website',
     'noindex' => false,
-    'headerTone' => 'dark', // dark : en-tête transparent sur un héros sombre ; solid : toujours opaque
 ])
 
 <!DOCTYPE html>
@@ -26,7 +25,7 @@
 
     {{-- Polices auto-hébergées : préchargées (latin variable), font-display: swap dans fonts.css --}}
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ Vite::asset('node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') }}">
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ Vite::asset('node_modules/@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2') }}">
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ Vite::asset('node_modules/@fontsource-variable/libre-baskerville/files/libre-baskerville-latin-wght-normal.woff2') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -35,9 +34,9 @@
 <body {{ $attributes->class('min-h-screen antialiased') }}>
     <a href="#contenu" class="skip-link">Aller au contenu principal</a>
 
-    <x-site.header :tone="$headerTone" />
+    <x-site.header />
 
-    <main id="contenu" tabindex="-1" @class(['pt-[var(--header-h)]' => $headerTone === 'solid'])>
+    <main id="contenu" tabindex="-1">
         {{ $slot }}
     </main>
 

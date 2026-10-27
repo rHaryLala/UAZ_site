@@ -13,6 +13,7 @@ class SiteComposer
     {
         $view->with([
             'site' => SiteSetting::current(),
+            'topbarMenu' => Menu::resolved('topbar'),
             'headerMenu' => Menu::resolved('header'),
             'footerMenu' => Menu::resolved('footer'),
         ]);

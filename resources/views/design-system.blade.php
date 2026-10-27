@@ -48,11 +48,11 @@
     </x-section>
 
     {{-- TYPOGRAPHIE --}}
-    <x-section id="typographie" tone="white" eyebrow="Fondations" title="Typographie" intro="Fraunces (titres, serif expressif à axe optique) et Inter (texte), auto-hébergées, latin uniquement, font-display: swap.">
+    <x-section id="typographie" tone="white" eyebrow="Fondations" title="Typographie" intro="Libre Baskerville (titres, serif de la maquette) et Inter (texte), auto-hébergées, latin uniquement, font-display: swap.">
         <div class="grid gap-12 lg:grid-cols-[1fr_1.2fr]">
             <div class="space-y-6 text-sm text-ink-700">
                 <p><span class="eyebrow">Eyebrow</span> — surtitre capitales espacées, or 700 sur clair, or 300 sur marine.</p>
-                <p><strong class="text-ink-900">Fraunces</strong> pour <code>h1–h4</code>, chiffres clés et citations.</p>
+                <p><strong class="text-ink-900">Libre Baskerville</strong> pour <code>h1–h4</code>, chiffres clés et citations.</p>
                 <p><strong class="text-ink-900">Inter</strong> pour le texte courant, les formulaires et l'interface.</p>
                 <p>Échelle fluide : de 390 px à 1440 px, aucune taille fixe en pixels.</p>
             </div>

@@ -141,3 +141,15 @@ Format : **décision** — alternatives — raison.
 
 ## D-027 · Conversions AVIF après l'import
 - L'import désactive l'AVIF (très lent) ; lancer ensuite `php artisan media-library:regenerate` pour le produire.
+
+## D-028 · Accueil identique à la maquette (27 octobre 2026)
+- À la demande de l'équipe (« vraiment identique »), l'en-tête et le héros reprennent la capture de la maquette : barre du haut
+  (devise + Étudiants · Notre équipe · Alumni · Donner · Se connecter), en-tête clair collé en haut, navigation inline,
+  bouton « S'inscrire » bleu à angles droits, héros sans motif triangle/Madagascar, boutons or à angles droits, bandeau bas
+  « Madagascar / Université francophone ». Le triangle et la silhouette restent dans « Notre devise ».
+- Le bleu `#3856a6` et l'or `#c9a84c` de la maquette sont ajoutés comme jetons (`royal`, `sun`) à côté de la palette du sceau :
+  ils servent à l'en-tête et aux boutons d'action de l'accueil ; le reste du site garde le marine du sceau.
+- Serif remplacé par **Libre Baskerville** (plus large que Fraunces) sur tout le site pour rester cohérent ; échelle des titres réduite.
+- Menu éditable « topbar » (barre du haut) ajouté ; le menu principal passe à À propos · Formations · Admissions · Vie étudiante · Recherche
+  (Actualités reste dans « Pied de page »). Sous 1280 px, le bouton « Menu » ouvre le menu plein écran.
+- Orthographe : « Vie étudiante » (la maquette écrit « Vie estudiantine », faute probable) ; apostrophes typographiques dans le titre.

@@ -12,7 +12,7 @@ const check = (ok, label) => {
     if (!ok) failures++;
 };
 
-for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['bureau', { width: 1440, height: 900 }]]) {
+for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['tablette', { width: 1100, height: 800 }]]) {
     const page = await (await browser.newContext({ viewport })).newPage();
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));

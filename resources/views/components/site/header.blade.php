@@ -1,62 +1,72 @@
-@props(['tone' => 'dark'])
-
 @php
-    $over = $tone === 'dark'; // transparent sur héros sombre tant que la page n'est pas défilée
     $socials = [
         'facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube',
     ];
+    // Le dernier lien de la barre du haut est mis en avant (« Se connecter » dans la maquette).
+    $topbarLinks = collect($topbarMenu);
+    $topbarCta = $topbarLinks->count() > 1 ? $topbarLinks->last() : null;
+    $topbarPlain = $topbarCta ? $topbarLinks->slice(0, -1) : $topbarLinks;
 @endphp
 
 <div x-data="siteMenu" @keydown.escape.window="close" class="contents">
-    <header
-        x-bind:data-scrolled="scrolled"
-        data-over="{{ $over ? 'true' : 'false' }}"
-        class="site-header fixed inset-x-0 top-0 z-50"
-    >
+    {{-- Barre du haut : devise et liens secondaires (menu « topbar » éditable) --}}
+    <div class="topbar text-[0.6875rem]" role="region" aria-label="Devise et liens secondaires">
+        <div class="container-site flex min-h-9 items-center justify-between gap-6">
+            <p class="tracking-[0.01em] text-sun-400 uppercase">Spiritus · Manus · Mens — Fondée en {{ config("uaz.founded_year") }}.</p>
+            <nav aria-label="Liens secondaires" class="hidden items-center gap-6 md:flex">
+                @foreach ($topbarPlain as $item)
+                    <a href="{{ $item['url'] }}" class="py-2" @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $item['label'] }}</a>
+                @endforeach
+                @if ($topbarCta)
+                    <a href="{{ $topbarCta['url'] }}" class="rounded-full bg-sun-400 px-4 py-1.5 font-semibold text-night-900 hover:text-night-900! hover:bg-sun-300" @if ($topbarCta['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $topbarCta['label'] }}</a>
+                @endif
+            </nav>
+        </div>
+    </div>
+
+    <header x-bind:data-scrolled="scrolled" class="site-header sticky top-0 z-50">
         <div class="container-site flex h-[var(--header-h)] items-center justify-between gap-6">
-            <a href="{{ url('/') }}" class="site-header__brand flex items-center gap-3" aria-label="{{ $site->site_name }} — accueil">
-                <x-seal :size="48" eager class="size-11 md:size-12" />
+            <a href="{{ url('/') }}" class="flex items-center gap-3.5" aria-label="{{ $site->site_name }} — accueil">
+                <x-seal :size="56" eager class="size-11 md:size-14" />
                 <span class="leading-none">
-                    <span class="block text-[0.6rem] font-semibold tracking-[0.22em] uppercase opacity-80">Université Adventiste</span>
-                    <span class="mt-1 block font-serif text-2xl tracking-[0.08em]">ZURCHER</span>
+                    <span class="block text-[0.6rem] font-medium tracking-[0.02em] text-navy-900 uppercase md:text-[0.65rem]">Université Adventiste</span>
+                    <span class="mt-1 block font-serif text-lg font-bold text-royal-600 uppercase md:text-[1.3rem]">Zurcher</span>
                 </span>
             </a>
 
-            {{-- Navigation principale (grands écrans) --}}
+            <div class="flex items-center gap-3 sm:gap-7">
+                {{-- Navigation principale (grands écrans) --}}
             <nav aria-label="Navigation principale" class="hidden xl:block">
-                <ul class="flex items-center gap-1">
-                    @foreach ($headerMenu as $item)
-                        <li class="group relative">
-                            <a href="{{ $item['url'] }}" class="site-header__link inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap"
-                               @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif
-                               @if (url()->current() === $item['url']) aria-current="page" @endif>
-                                {{ $item['label'] }}
-                                @if (count($item['children']))<x-ico name="chevron-down" class="size-3.5 opacity-70 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />@endif
-                            </a>
-                            @if (count($item['children']))
-                                <ul class="invisible absolute top-full left-0 z-10 min-w-56 translate-y-2 rounded-xl bg-paper-50 p-2 opacity-0 shadow-lift transition duration-200 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-                                    @foreach ($item['children'] as $child)
-                                        <li><a href="{{ $child['url'] }}" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-ink-800 hover:bg-paper-200 hover:text-navy-800">{{ $child['label'] }}</a></li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            </nav>
-
-            <div class="flex items-center gap-2 sm:gap-3">
-                <a href="{{ url('/recherche') }}" class="site-header__icon inline-flex size-11 items-center justify-center rounded-full" aria-label="Rechercher sur le site">
+                    <ul class="flex items-center gap-7">
+                        @foreach ($headerMenu as $item)
+                            <li class="group relative">
+                                <a href="{{ $item['url'] }}" class="site-header__link inline-flex items-center gap-1.5 py-2 text-[0.8125rem] font-medium whitespace-nowrap"
+                                   @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif
+                                   @if (url()->current() === $item['url']) aria-current="page" @endif>
+                                    {{ $item['label'] }}
+                                </a>
+                                @if (count($item['children']))
+                                    <ul class="invisible absolute top-full left-0 z-10 min-w-56 translate-y-2 bg-white p-2 opacity-0 shadow-lift transition duration-200 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                                        @foreach ($item['children'] as $child)
+                                            <li><a href="{{ $child['url'] }}" class="block px-4 py-2.5 text-sm font-medium text-ink-800 hover:bg-mist-100 hover:text-royal-600">{{ $child['label'] }}</a></li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                </nav>
+                <a href="{{ url('/recherche') }}" class="site-header__icon inline-flex size-11 items-center justify-center" aria-label="Rechercher sur le site">
                     <x-ico name="search" class="size-5" />
                 </a>
-                <x-button :href="url('/admissions')" variant="gold" size="sm" class="hidden md:inline-flex">Candidater</x-button>
+                <x-button :href="url('/admissions')" variant="royal" arrow class="btn-square hidden md:inline-flex">S'inscrire</x-button>
                 <button
                     type="button"
                     x-ref="trigger"
                     @click="toggle"
                     x-bind:aria-expanded="open"
                     aria-controls="site-menu"
-                    class="site-header__icon inline-flex h-11 items-center gap-2.5 rounded-full px-4 text-sm font-semibold"
+                    class="site-header__icon inline-flex h-11 items-center gap-2.5 px-1 text-[0.8125rem] font-semibold xl:hidden"
                 >
                     <span class="menu-burger" aria-hidden="true"><span></span><span></span></span>
                     <span>Menu</span>
@@ -95,7 +105,7 @@
                     <ul class="space-y-1">
                         @foreach ($headerMenu as $item)
                             <li class="menu-overlay__item" style="--i: {{ $loop->index }}">
-                                <a href="{{ $item['url'] }}" class="group flex items-baseline gap-4 py-1.5 font-serif text-[clamp(2rem,1.2rem+3.4vw,4rem)] leading-tight text-white hover:text-gold-300"
+                                <a href="{{ $item['url'] }}" class="group flex items-baseline gap-4 py-1.5 font-serif text-[clamp(1.75rem,1.1rem+2.8vw,3.25rem)] leading-tight text-white hover:text-gold-300"
                                    @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
                                     <span class="font-sans text-xs font-semibold tracking-[0.2em] text-gold-300" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                     <span class="transition-transform duration-300 group-hover:translate-x-2">{{ $item['label'] }}</span>
@@ -113,7 +123,14 @@
                 </nav>
 
                 <div class="menu-overlay__item space-y-8 self-end" style="--i: {{ count($headerMenu) + 1 }}">
-                    <x-button :href="url('/admissions')" variant="gold" arrow>Candidater maintenant</x-button>
+                    <x-button :href="url('/admissions')" variant="gold" arrow>S'inscrire</x-button>
+                    @if ($topbarLinks->isNotEmpty())
+                        <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-navy-100">
+                            @foreach ($topbarLinks as $item)
+                                <li><a href="{{ $item['url'] }}" class="underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</a></li>
+                            @endforeach
+                        </ul>
+                    @endif
                     <address class="space-y-3 text-sm not-italic text-navy-100">
                         @if ($site->address)<p class="flex gap-3"><x-ico name="map-pin" class="mt-0.5 size-4 text-gold-300" />{{ $site->address }}</p>@endif
                         @if ($site->email)<p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 text-gold-300" /><a href="mailto:{{ $site->email }}" class="hover:text-white">{{ $site->email }}</a></p>@endif

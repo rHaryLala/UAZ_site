@@ -60,3 +60,5 @@ Aucune donnée factuelle n'est inventée : tout ce qui manque est marqué `TODO-
 - [ ] **Vidéo YouTube** de l'article « ADMISSIONS 2026 – 2027 – LICENCE » et de « À propos » : remplacées par des liens, à intégrer proprement si souhaité.
 - [ ] **Newsletter MailPoet** : hors périmètre.
 - [ ] **Produire les variantes AVIF** : `php artisan media-library:regenerate --only-missing` (l'import les a désactivées).
+- [ ] **Année de fondation** : la maquette dit 1995 (PDF, chiffres clés) et 1996 (barre du haut de la capture). Réglage : `founded_year` dans `config/uaz.php` (1995 par défaut) ; à trancher.
+- [ ] **Liens de la barre du haut** sans page dédiée : « Étudiants » → Vie étudiante, « Alumni » et « Donner » → formulaire de contact pré-rempli, « Se connecter » → /admin (accès rédacteurs). À remplacer (menu « Barre du haut » du back-office) quand un espace étudiant, un réseau alumni et un dispositif de dons existeront.

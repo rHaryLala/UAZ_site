@@ -16,6 +16,12 @@ return [
     'default_locale' => 'fr',
 
     /*
+    | Année de fondation affichée dans la barre du haut. TODO-CONTENU : la maquette dit 1995 dans le PDF et 1996
+    | dans l'en-tête de la capture ; à confirmer par l'UAZ (voir docs/TODO-CONTENU.md).
+    */
+    'founded_year' => (int) env('UAZ_FOUNDED_YEAR', 1995),
+
+    /*
     |--------------------------------------------------------------------------
     | Médiathèque
     |--------------------------------------------------------------------------

@@ -16,7 +16,7 @@
         <x-triangle class="pointer-events-none absolute -bottom-1/3 left-[-8%] -z-10 w-[48rem] text-gold-300/10" />
     @endif
 
-    <div class="container-site pt-[calc(var(--header-h)+2.5rem)] pb-14 md:pb-20">
+    <div class="container-site pt-14 md:pt-16 pb-14 md:pb-20">
         @if (count($breadcrumbs))
             <x-breadcrumbs :items="$breadcrumbs" dark class="mb-8" />
         @endif
