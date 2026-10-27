@@ -686,6 +686,15 @@
         background: #fff;
         box-shadow: var(--shadow-lift);
         transform-origin: center;
+        /* Bords estompés pendant l'agrandissement / la réduction (--feather animé par team-profile.js) : la fiche se fond
+           visiblement dans sa carte. À 0 %, le masque est opaque et la fiche est nette. */
+        --feather: 0%;
+        -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent),
+            linear-gradient(to bottom, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent);
+        mask-image: linear-gradient(to right, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent),
+            linear-gradient(to bottom, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
     }
 
     @keyframes uaz-fade {
@@ -924,4 +933,10 @@ html.menu-open {
     @view-transition {
         navigation: none;
     }
+}
+
+@property --feather {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 0%;
 }

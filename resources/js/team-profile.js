@@ -49,7 +49,7 @@ export function initTeamProfile() {
         lock(true);
 
         if (reduced()) return;
-        panel.animate([{ transform: toCard(card), opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 480, easing: EASE });
+        panel.animate([{ transform: toCard(card), opacity: 0.55, '--feather': '22%' }, { transform: 'none', opacity: 1, '--feather': '0%' }], { duration: 480, easing: EASE });
         body.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, delay: 180, easing: 'ease-out', fill: 'backwards' });
     };
 
@@ -59,7 +59,7 @@ export function initTeamProfile() {
 
         if (!reduced()) {
             const animation = origin && visible(origin)
-                ? panel.animate([{ transform: 'none', opacity: 1 }, { transform: toCard(origin), opacity: 0 }], { duration: 340, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' })
+                ? panel.animate([{ transform: 'none', opacity: 1, '--feather': '0%' }, { transform: toCard(origin), opacity: 0.35, '--feather': '22%' }], { duration: 340, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' })
                 : panel.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(16px)' }], { duration: 200, fill: 'forwards' });
             await animation.finished.catch(() => {});
             animation.cancel();
