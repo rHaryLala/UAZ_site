@@ -7,7 +7,7 @@
 @endphp
 
 <x-layouts.app :title="$page->metaTitle()" :description="$page->metaDescription()" :image="$page->metaImage()" :noindex="$page->status !== \App\Enums\PublicationStatus::Published">
-    {{-- 1. Héros vidéo : le drone survole le campus (lecture une fois, puis arrêt sur la dernière image) --}}
+    {{-- 1. Héros vidéo : le drone survole le campus (lecture en boucle, fondu à chaque redémarrage) --}}
     <header class="on-dark relative isolate flex min-h-[calc(100svh-var(--header-h)-2.25rem)] flex-col justify-end overflow-hidden bg-night-900 text-white md:min-h-[88svh]">
         @if ($hasVideo)
             <video

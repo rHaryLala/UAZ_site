@@ -994,3 +994,12 @@ html.menu-open {
         transform: translateY(200%);
     }
 }
+
+/* Vidéo d'en-tête en boucle : fondu sur la fin (voir hero-video.js). */
+[data-hero-video] {
+    transition: opacity 0.6s ease-in-out;
+}
+
+[data-hero-video].is-fading {
+    opacity: 0;
+}
