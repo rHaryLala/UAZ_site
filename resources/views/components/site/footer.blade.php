@@ -54,8 +54,8 @@
                     <x-ico name="clock" class="mt-0.5 size-4 text-gold-300" />
                     <dl>
                         @foreach ($site->opening_hours as $line)
-                            {{-- Jours sur une ligne, horaires dessous avec un retrait. --}}
-                            <div class="mb-3 last:mb-0"><dt class="font-medium text-white">{{ $line['days'] }}</dt><dd class="mt-0.5 pl-5">{{ $line['hours'] }}</dd></div>
+                            {{-- Jours sur une ligne, horaires dessous. --}}
+                            <div class="mb-3 last:mb-0"><dt class="font-medium text-white">{{ $line['days'] }}</dt><dd class="mt-0.5">{{ $line['hours'] }}</dd></div>
                         @endforeach
                     </dl>
                 </div>
