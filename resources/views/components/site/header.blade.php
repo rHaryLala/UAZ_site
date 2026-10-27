@@ -7,7 +7,10 @@
     $topbarCta = $topbarLinks->count() > 1 ? $topbarLinks->last() : null;
     $topbarPlain = $topbarCta ? $topbarLinks->slice(0, -1) : $topbarLinks;
     // Dans le menu plein écran, on n'affiche pas deux fois la même page.
-    $spaces = $topbarLinks->reject(fn ($link) => collect($footerMenu)->pluck('url')->contains($link['url']));
+    // Les rubriques à choix (« Étudiant ») sont dépliées en leurs liens, sans le détail après « — ».
+    $spaces = $topbarLinks->flatMap(fn ($link) => count($link['children'])
+        ? collect($link['children'])->map(fn ($child) => ['label' => explode(' — ', $child['label'])[0]] + $child)->all()
+        : [$link])->reject(fn ($link) => collect($footerMenu)->pluck('url')->contains($link['url']));
 @endphp
 
 <div x-data="siteMenu" @keydown.escape.window="close" class="contents">
@@ -17,7 +20,28 @@
             <p class="tracking-[0.01em] text-sun-400 uppercase">Spiritus · Manus · Mens — Fondée en {{ config("uaz.founded_year") }}.</p>
             <nav aria-label="Liens secondaires" class="hidden items-center gap-6 md:flex">
                 @foreach ($topbarPlain as $item)
-                    <a href="{{ $item['url'] }}" class="py-2" @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $item['label'] }}</a>
+                    @if (count($item['children']))
+                        {{-- Rubrique à choix (ex. « Étudiant » : Registrar ou Moodle) : le titre ouvre la liste, il n'est pas un lien. --}}
+                        <div class="group relative">
+                            <button type="button" aria-haspopup="true" class="inline-flex cursor-default items-center gap-1 py-2 transition-colors group-hover:text-sun-400 group-focus-within:text-sun-400">
+                                {{ $item['label'] }}
+                                <x-ico name="chevron-down" class="size-3 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
+                            </button>
+                            <ul class="invisible absolute top-full right-0 z-[70] w-64 translate-y-1 bg-white p-2 text-ink-800 opacity-0 shadow-lift transition duration-200 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                                @foreach ($item['children'] as $child)
+                                    @php([$name, $hint] = array_pad(explode(' — ', $child['label'], 2), 2, null))
+                                    <li>
+                                        <a href="{{ $child['url'] }}" class="block px-4 py-3 text-ink-800 hover:bg-mist-100 hover:text-royal-600!" @if ($child['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
+                                            <span class="block text-sm font-semibold">{{ $name }}@if ($child['new_tab'])<span class="sr-only"> (nouvel onglet)</span>@endif</span>
+                                            @if ($hint)<span class="mt-0.5 block text-xs text-ink-600">{{ $hint }}</span>@endif
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @else
+                        <a href="{{ $item['url'] }}" class="py-2" @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $item['label'] }}</a>
+                    @endif
                 @endforeach
                 @if ($topbarCta)
                     <a href="{{ $topbarCta['url'] }}" class="rounded-full bg-sun-400 px-3 py-1 font-semibold text-night-900 hover:text-night-900! hover:bg-sun-300" @if ($topbarCta['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $topbarCta['label'] }}</a>

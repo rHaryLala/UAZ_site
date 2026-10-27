@@ -221,7 +221,10 @@ class StructureSeeder extends Seeder
         Menu::firstOrCreate(['handle' => 'topbar'], [
             'name' => 'Barre du haut',
             'items' => [
-                $page('Étudiants', 'library'),
+                array_merge($url('Étudiant', '#'), ['children' => [
+                    array_merge($url('Registrar — bureau académique', 'https://registrar.zurcher.edu.mg'), ['new_tab' => true]),
+                    array_merge($url('Moodle — cours en ligne', 'https://moodle.zurcher.edu.mg'), ['new_tab' => true]),
+                ]]),
                 $url('Notre équipe', '/equipe'),
                 array_merge($url('Alumni', 'https://alumni-auz.api.mg/'), ['new_tab' => true]),
                 $url('Yearbook', '/yearbook'),
