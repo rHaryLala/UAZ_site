@@ -6,7 +6,7 @@
     <x-madagascar class="pointer-events-none absolute -right-10 bottom-0 -z-10 h-[110%] translate-y-1/4 text-navy-900" />
 
     <div class="container-site grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1.1fr_1fr] lg:py-20">
-        <div>
+        <div class="flex flex-col">
             <a href="{{ url('/') }}" class="inline-flex items-center gap-3 text-white" aria-label="{{ $site->site_name }} — accueil">
                 <x-seal :size="64" class="size-16" />
                 <span class="leading-none">
@@ -36,7 +36,8 @@
                     <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" class="ml-auto self-end text-[0.65rem] text-white/70 underline-offset-4 hover:text-white hover:underline" aria-label="Données météo : Open-Meteo (nouvel onglet)">Open-Meteo</a>
                 </p>
             @endif
-            <ul class="mt-6 flex gap-3">
+            {{-- Réseaux sociaux : calés en bas de la colonne, indépendamment de ce qui les précède. --}}
+            <ul class="mt-auto flex gap-3 pt-8">
                 @foreach ($socials as $key => $label)
                     @if ($site->social($key))
                         <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/25 text-white hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
