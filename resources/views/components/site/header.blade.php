@@ -42,12 +42,20 @@
                     <ul class="flex items-center gap-7">
                         @foreach ($headerMenu as $item)
                             <li class="group relative">
-                                <a href="{{ $item['url'] }}" class="site-header__link inline-flex items-center gap-1.5 py-2 text-[0.8125rem] font-medium whitespace-nowrap"
-                                   @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif
-                                   @if ($item['url'] === url('/recherche')) @click.prevent="openSearch" aria-haspopup="dialog" @endif
-                                   @if (url()->current() === $item['url']) aria-current="page" @endif>
-                                    {{ $item['label'] }}
-                                </a>
+                                @if (count($item['children']))
+                                    {{-- Rubrique à sous-pages : pas de page « parent », le titre ouvre simplement la liste. --}}
+                                    <button type="button" aria-haspopup="true" class="site-header__link inline-flex cursor-default items-center gap-1.5 py-2 text-[0.8125rem] font-medium whitespace-nowrap">
+                                        {{ $item['label'] }}
+                                        <x-ico name="chevron-down" class="size-3.5 opacity-70 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
+                                    </button>
+                                @else
+                                    <a href="{{ $item['url'] }}" class="site-header__link inline-flex items-center gap-1.5 py-2 text-[0.8125rem] font-medium whitespace-nowrap"
+                                       @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif
+                                       @if ($item['url'] === url('/recherche')) @click.prevent="openSearch" aria-haspopup="dialog" @endif
+                                       @if (url()->current() === $item['url']) aria-current="page" @endif>
+                                        {{ $item['label'] }}
+                                    </a>
+                                @endif
                                 @if (count($item['children']))
                                     <ul class="invisible absolute top-full left-0 z-10 min-w-56 translate-y-2 bg-white p-2 opacity-0 shadow-lift transition duration-200 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
                                         @foreach ($item['children'] as $child)
@@ -173,15 +181,22 @@
                     <ul class="space-y-1">
                         @foreach ($headerMenu as $item)
                             <li class="menu-overlay__item" data-menu-item>
-                                <a href="{{ $item['url'] }}" class="group flex items-baseline gap-4 py-1 font-serif text-[clamp(1.5rem,1rem+2.2vw,2.75rem)] leading-tight text-white hover:text-gold-300"
-                                   @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
-                                    <span class="font-sans text-xs font-semibold tracking-[0.2em] text-gold-300" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                                    <span class="transition-transform duration-300 group-hover:translate-x-2">{{ $item['label'] }}</span>
-                                </a>
+                                @if (count($item['children']))
+                                    <p class="flex items-baseline gap-4 py-1 font-serif text-[clamp(1.5rem,1rem+2.2vw,2.75rem)] leading-tight text-white">
+                                        <span class="font-sans text-xs font-semibold tracking-[0.2em] text-gold-300" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                        <span>{{ $item['label'] }}</span>
+                                    </p>
+                                @else
+                                    <a href="{{ $item['url'] }}" class="group flex items-baseline gap-4 py-1 font-serif text-[clamp(1.5rem,1rem+2.2vw,2.75rem)] leading-tight text-white hover:text-gold-300"
+                                       @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
+                                        <span class="font-sans text-xs font-semibold tracking-[0.2em] text-gold-300" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                        <span class="transition-transform duration-300 group-hover:translate-x-2">{{ $item['label'] }}</span>
+                                    </a>
+                                @endif
                                 @if (count($item['children']))
                                     <ul class="mt-1 mb-3 ml-10 flex flex-wrap gap-x-6 gap-y-1">
                                         @foreach ($item['children'] as $child)
-                                            <li><a href="{{ $child['url'] }}" class="text-sm text-navy-100 underline-offset-4 hover:text-white hover:underline">{{ $child['label'] }}</a></li>
+                                            <li><a href="{{ $child['url'] }}" class="text-base text-navy-100 underline-offset-4 hover:text-gold-300 hover:underline">{{ $child['label'] }}</a></li>
                                         @endforeach
                                     </ul>
                                 @endif
