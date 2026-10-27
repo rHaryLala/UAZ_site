@@ -48,6 +48,7 @@
                 </div>
                 <span class="hidden h-1 w-24 bg-sun-400 md:block" aria-hidden="true"></span>
             </div>
+            <p class="-mt-6 mb-12 max-w-3xl text-lead text-ink-700 md:-mt-12 md:mb-16" data-reveal>{{ __('support.projects.lead') }}</p>
 
             @forelse ($projects as $project)
                 <article class="group grid items-stretch gap-0 border border-navy-800/10 bg-paper-100 shadow-card lg:grid-cols-2 {{ $loop->last ? '' : 'mb-10 md:mb-14' }}" data-reveal>
@@ -110,6 +111,15 @@
                     <x-ico name="mail" class="size-8 text-sun-400" />
                     <h3 class="mt-6 font-serif text-2xl text-white">{{ __('support.how.contact.title') }}</h3>
                     <p class="mt-4 text-navy-100">{{ __('support.how.contact.text') }}</p>
+                    @php($contacts = config('uaz.donation_contacts'))
+                    <ul class="mt-6 space-y-2 text-sm">
+                        @foreach ($contacts['phones'] ?? [] as $phone)
+                            <li class="flex items-center gap-3"><x-ico name="phone" class="size-4 text-sun-400" /><a href="tel:{{ preg_replace('/[^+\d]/', '', $phone) }}" class="hover:text-sun-400">{{ $phone }}</a></li>
+                        @endforeach
+                        @foreach ($contacts['emails'] ?? [] as $mail)
+                            <li class="flex items-center gap-3"><x-ico name="mail" class="size-4 text-sun-400" /><a href="mailto:{{ $mail }}" class="break-all hover:text-sun-400">{{ $mail }}</a></li>
+                        @endforeach
+                    </ul>
                     <x-button :href="$contact" variant="outline" arrow class="btn-square mt-8 w-fit">{{ __('support.cta.contact') }}</x-button>
                 </li>
             </ul>

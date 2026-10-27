@@ -203,7 +203,7 @@ it('serves the Soutenir page with its projects and an honest online-donation sta
     config(['uaz.donation_url' => null]);
 
     $this->get('/soutenir')->assertOk()
-        ->assertSee('Centre médical de Sambaina')
+        ->assertSee('Un grand dortoir pour les garçons')
         ->assertSee('Bientôt disponible')
         ->assertDontSee('Faire un don');
 
@@ -215,7 +215,7 @@ it('serves the Soutenir page with its projects and an honest online-donation sta
 });
 
 it('serves a project sheet and hides inactive projects', function () {
-    $this->get('/soutenir/centre-medical-de-sambaina')->assertOk()->assertSee('Budget prévu')->assertSee('100 000 €');
+    $this->get('/soutenir/un-grand-dortoir-pour-les-garcons')->assertOk()->assertSee('Budget prévu')->assertSee('275 000 €');
 
     \App\Models\Project::factory()->create(['title' => 'Projet caché', 'slug' => 'projet-cache', 'is_active' => false]);
 

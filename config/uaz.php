@@ -28,6 +28,14 @@ return [
     'donation_url' => env('UAZ_DONATION_URL'),
 
     /*
+    | Contacts de l'appel aux dons (document « Appel aux dons - UAZ »).
+    */
+    'donation_contacts' => [
+        'phones' => ['038 07 731 18', '034 08 725 37'],
+        'emails' => ['uaz.rector@zurcher.edu.mg', 'financedir@zurcher.edu.mg'],
+    ],
+
+    /*
     | Inscription en ligne (bureau académique) : cible des boutons « S'inscrire » et « Candidater ».
     */
     'registration_url' => env('UAZ_REGISTRATION_URL', 'https://registrar.zurcher.edu.mg/#pre-inscription'),

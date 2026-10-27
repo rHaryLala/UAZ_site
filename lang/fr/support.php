@@ -21,6 +21,7 @@ return [
     'projects' => [
         'eyebrow' => 'Nos projets',
         'title' => 'Des projets à soutenir',
+        'lead' => 'L\'Université Adventiste Zurcher (UAZ) lance un appel aux dons pour répondre aux besoins suivants.',
         'more' => 'Découvrir le projet',
         'empty' => 'Les projets à soutenir seront bientôt présentés ici.',
     ],

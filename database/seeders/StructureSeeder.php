@@ -165,24 +165,31 @@ class StructureSeeder extends Seeder
     }
 
     /**
-     * Premier projet : le centre médical de Sambaina, tel que présenté publiquement par la Fondation Zurcher Madagascar
-     * (fondation-zurcher-madagascar.ch). TODO-CONTENU : chiffres et avancement à faire valider et mettre à jour par l'UAZ.
+     * Projets de l'« Appel aux dons - UAZ » (document fourni par l'UAZ). TODO-CONTENU : photos de l'incendie et plan du
+     * dortoir à ajouter (image du projet / présentation détaillée dans le back-office).
      */
     private function projects(): void
     {
-        Project::firstOrCreate(['slug' => 'centre-medical-de-sambaina'], [
-            'title' => 'Centre médical de Sambaina',
-            'summary' => 'Transformer le poste de santé du campus en centre de soins ambulatoires abordables, ouvert aux étudiants, aux résidents du campus et à la communauté du district.',
-            'body' => '<p>Le projet transforme le poste de santé existant de l\'université en centre de soins ambulatoires abordables, ouvert aux étudiants, aux résidents du campus et à la communauté du district.</p>'
-                .'<h2>Ce que le centre prévoit</h2><ul><li>Consultations et soins d\'urgence de base</li><li>Une petite maternité avec vaccination</li><li>De l\'éducation sanitaire</li><li>Un laboratoire d\'analyses</li><li>Un centre de recherche en santé</li></ul>'
-                .'<h2>Budget prévu : 100 000 €</h2><ul><li>Études préliminaires : 15 000 €</li><li>Bâtiment : 60 000 €</li><li>Mobilier : 10 000 €</li><li>Matériel médical de base : 15 000 €</li></ul>'
-                .'<p>Le projet est porté par la Fondation Zurcher Madagascar et repose sur des dons. Les travaux ont commencé en août 2024.</p>'
-                .'<p>TODO-CONTENU : avancement actuel et plan de financement à confirmer par l\'UAZ.</p>',
-            'location' => 'Sambaina, campus de l\'UAZ (Antsirabe)',
-            'budget' => '100 000 €',
-            'status_label' => 'En construction',
-            'url' => 'https://www.fondation-zurcher-madagascar.ch/actions/projet-dun-centre-mdical',
+        Project::firstOrCreate(['slug' => 'un-grand-dortoir-pour-les-garcons'], [
+            'title' => 'Un grand dortoir pour les garçons',
+            'summary' => 'Le 9 octobre 2023, les logements des garçons ont brûlé en quelques instants. Les étudiants sont logés provisoirement dans le bâtiment de l\'orphelinat, en attendant une solution permanente.',
+            'body' => '<p>Le 9 octobre 2023 au petit matin, les logements des garçons ont brûlé en quelques instants. Les étudiants sont pour l\'instant logés dans le bâtiment de l\'orphelinat en attendant une solution permanente.</p>'
+                .'<p>Le projet : construire un grand dortoir pour les garçons.</p>'
+                .'<h2>Montant : 275 000 €</h2>',
+            'budget' => '275 000 €',
+            'status_label' => 'Appel aux dons',
             'sort_order' => 1,
+            'is_active' => true,
+        ]);
+
+        Project::firstOrCreate(['slug' => 'des-logements-pour-le-personnel'], [
+            'title' => 'Des logements pour le personnel',
+            'summary' => 'Pour accompagner le développement de l\'UAZ, 5 logements et 1 bâtiment d\'accueil de groupes sont nécessaires.',
+            'body' => '<p>Pour accompagner le développement de l\'UAZ, 5 logements et 1 bâtiment d\'accueil de groupes sont nécessaires.</p>'
+                .'<h2>Montant : 160 000 €</h2>',
+            'budget' => '160 000 €',
+            'status_label' => 'Appel aux dons',
+            'sort_order' => 2,
             'is_active' => true,
         ]);
     }
