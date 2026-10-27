@@ -23,9 +23,9 @@
                     @foreach ($element as $page => $url)
                         <li class="hidden sm:block">
                             @if ($page == $paginator->currentPage())
-                                <span aria-current="page" class="inline-flex size-10 items-center justify-center rounded-full bg-navy-800 text-sm font-semibold text-white">{{ $page }}</span>
+                                <span aria-current="page" class="inline-flex size-10 items-center justify-center rounded-none bg-navy-800 text-sm font-semibold text-white">{{ $page }}</span>
                             @else
-                                <a href="{{ $url }}" class="inline-flex size-10 items-center justify-center rounded-full text-sm font-semibold text-navy-800 hover:bg-paper-300" aria-label="Aller à la page {{ $page }}">{{ $page }}</a>
+                                <a href="{{ $url }}" class="inline-flex size-10 items-center justify-center rounded-none text-sm font-semibold text-navy-800 hover:bg-paper-300" aria-label="Aller à la page {{ $page }}">{{ $page }}</a>
                             @endif
                         </li>
                     @endforeach

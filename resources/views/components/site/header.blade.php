@@ -134,7 +134,7 @@
                     <p class="eyebrow mb-3 font-sans! text-[0.6875rem]! text-ink-600">Accès rapide</p>
                     <ul class="flex flex-wrap gap-2">
                         @foreach (collect($headerMenu)->reject(fn ($i) => $i['url'] === url('/recherche'))->merge($footerMenu)->unique('url')->take(10) as $item)
-                            <li><a href="{{ $item['url'] }}" data-search-quick class="inline-flex rounded-full bg-mist-100 px-3.5 py-1.5 text-sm font-medium text-navy-900 hover:bg-royal-600 hover:text-white">{{ $item['label'] }}</a></li>
+                            <li><a href="{{ $item['url'] }}" data-search-quick class="inline-flex rounded-none bg-mist-100 px-3.5 py-1.5 text-sm font-medium text-navy-900 hover:bg-royal-600 hover:text-white">{{ $item['label'] }}</a></li>
                         @endforeach
                     </ul>
                 </div>
@@ -170,7 +170,7 @@
                     <x-seal :size="44" class="size-11" />
                     <span class="font-serif text-xl tracking-[0.04em] uppercase">Zurcher</span>
                 </span>
-                <button type="button" x-ref="closer" @click="close" class="inline-flex h-11 items-center gap-2.5 rounded-full border border-white/40 px-4 text-sm font-semibold hover:bg-white hover:text-navy-900">
+                <button type="button" x-ref="closer" @click="close" class="inline-flex h-11 items-center gap-2.5 rounded-none border border-white/40 px-4 text-sm font-semibold hover:bg-white hover:text-navy-900">
                     <x-ico name="close" class="size-4" /> Fermer <span class="sr-only">le menu</span>
                 </button>
             </div>
@@ -242,7 +242,7 @@
                     <ul class="flex gap-3">
                         @foreach ($socials as $key => $label)
                             @if ($site->social($key))
-                                <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/30 hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
+                                <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-none border border-white/30 hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
                             @endif
                         @endforeach
                     </ul>

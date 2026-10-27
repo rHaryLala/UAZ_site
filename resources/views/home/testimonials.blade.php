@@ -11,9 +11,9 @@
 
             @if ($testimonials->count() > 1)
                 <div class="flex items-center gap-3" role="group" aria-label="Commandes du carrousel">
-                    <button type="button" @click="prev" x-bind:disabled="atStart" class="inline-flex size-12 items-center justify-center rounded-full border border-white/40 hover:bg-white hover:text-navy-900 disabled:opacity-30" aria-label="Témoignage précédent"><x-ico name="arrow-left" class="size-5" /></button>
+                    <button type="button" @click="prev" x-bind:disabled="atStart" class="inline-flex size-12 items-center justify-center rounded-none border border-white/40 hover:bg-white hover:text-navy-900 disabled:opacity-30" aria-label="Témoignage précédent"><x-ico name="arrow-left" class="size-5" /></button>
                     <span class="min-w-14 text-center text-sm tabular-nums text-navy-100" x-text="label" aria-live="polite">1 / {{ $testimonials->count() }}</span>
-                    <button type="button" @click="next" x-bind:disabled="atEnd" class="inline-flex size-12 items-center justify-center rounded-full border border-white/40 hover:bg-white hover:text-navy-900 disabled:opacity-30" aria-label="Témoignage suivant"><x-ico name="arrow-right" class="size-5" /></button>
+                    <button type="button" @click="next" x-bind:disabled="atEnd" class="inline-flex size-12 items-center justify-center rounded-none border border-white/40 hover:bg-white hover:text-navy-900 disabled:opacity-30" aria-label="Témoignage suivant"><x-ico name="arrow-right" class="size-5" /></button>
                 </div>
             @endif
         </header>

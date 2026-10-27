@@ -1,5 +1,5 @@
 @php
-    $pill = fn (bool $on) => 'inline-flex min-h-11 items-center rounded-full border px-5 text-sm font-semibold transition '.($on
+    $pill = fn (bool $on) => 'inline-flex min-h-11 items-center rounded-none border px-5 text-sm font-semibold transition '.($on
         ? 'border-navy-800 bg-navy-800 text-white'
         : 'border-ink-300 bg-paper-50 text-ink-800 hover:border-navy-800');
     $qs = fn (array $extra) => url('/formations').(count($q = array_filter(array_merge(['niveau' => $level?->value, 'faculte' => $faculty?->slug], $extra))) ? '?'.http_build_query($q) : '');
