@@ -9,13 +9,11 @@
 
     <div class="container-site">
         <div class="mx-auto grid max-w-5xl overflow-hidden shadow-lift md:grid-cols-[1.1fr_1fr]" data-reveal>
-            {{-- Message --}}
-            <div class="flex flex-col justify-between bg-white p-8 text-navy-900 sm:p-12 md:p-14">
-                <div>
-                    <span class="mb-8 block h-1.5 w-14 bg-sun-400" aria-hidden="true"></span>
-                    <h2 id="future-title" class="font-sans text-[clamp(2.6rem,1.6rem+4.4vw,5rem)] leading-[1.02] font-bold tracking-[-0.025em] text-navy-900!">{{ __('home.future.title') }}</h2>
-                </div>
-                <p class="mt-10 max-w-xs text-ink-700">{{ __('home.future.text') }}</p>
+            {{-- Message : quatre lignes, en IBM Plex Sans gras --}}
+            <div class="flex flex-col justify-center bg-white px-8 py-10 text-navy-900 sm:px-12 md:px-14">
+                <h2 id="future-title" class="font-display text-[clamp(3rem,1.6rem+5.6vw,5.75rem)] leading-[1.04] font-bold tracking-[-0.02em] text-navy-900!">
+                    @foreach (__('home.future.lines') as $line)<span class="block">{{ $line }}</span>@endforeach
+                </h2>
             </div>
 
             {{-- Vidéo verticale : chargée seulement au clic (aucun téléchargement tant qu'on ne lit pas) --}}

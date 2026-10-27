@@ -30,8 +30,8 @@ return [
     ],
 
     'future' => [
-        'title' => 'Votre futur commence ici.',
-        'text' => 'Découvrez en vidéo la vie sur le campus de l’UAZ.',
+        // Titre en quatre lignes (IBM Plex Sans gras).
+        'lines' => ['Votre', 'futur', 'commence', 'ici.'],
         'play' => 'Lire la vidéo « Votre futur commence ici »',
         'video_label' => 'Vidéo de présentation de l’UAZ',
     ],
