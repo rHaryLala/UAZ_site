@@ -20,12 +20,17 @@ export function initTeamProfile() {
         window.dispatchEvent(new CustomEvent('uaz:search', { detail: { open } }));
     };
 
-    // Transformation qui ramène la fiche sur la carte d'origine.
+    // Transformation qui ramène la fiche vers la carte d'origine : on déplace et on réduit de façon UNIFORME (même échelle en
+    // largeur et en hauteur), sinon la photo serait écrasée ; le fondu cache la différence de proportions.
     const toCard = (card) => {
         const from = card.getBoundingClientRect();
         const to = panel.getBoundingClientRect();
+        const scale = Math.max(from.width / to.width, from.height / to.height);
 
-        return `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`;
+        const dx = from.left + from.width / 2 - (to.left + to.width / 2);
+        const dy = from.top + from.height / 2 - (to.top + to.height / 2);
+
+        return `translate(${dx}px, ${dy}px) scale(${scale})`;
     };
 
     const visible = (card) => {
@@ -44,7 +49,7 @@ export function initTeamProfile() {
         lock(true);
 
         if (reduced()) return;
-        panel.animate([{ transform: toCard(card), borderRadius: '1rem', opacity: 0.4 }, { transform: 'none', borderRadius: '1rem', opacity: 1 }], { duration: 480, easing: EASE });
+        panel.animate([{ transform: toCard(card), opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 480, easing: EASE });
         body.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, delay: 180, easing: 'ease-out', fill: 'backwards' });
     };
 
@@ -54,7 +59,7 @@ export function initTeamProfile() {
 
         if (!reduced()) {
             const animation = origin && visible(origin)
-                ? panel.animate([{ transform: 'none', opacity: 1 }, { transform: toCard(origin), opacity: 0.2 }], { duration: 340, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' })
+                ? panel.animate([{ transform: 'none', opacity: 1 }, { transform: toCard(origin), opacity: 0 }], { duration: 340, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' })
                 : panel.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(16px)' }], { duration: 200, fill: 'forwards' });
             await animation.finished.catch(() => {});
             animation.cancel();
