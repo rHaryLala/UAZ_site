@@ -283,3 +283,14 @@ sudo systemctl reload php8.3-fpm        # vide l'OPcache (validate_timestamps = 
 - [ ] Sauvegarde automatique active **et restauration testée**
 - [ ] HTTPS valide, note A sur SSL Labs, en-têtes vérifiés (securityheaders.com)
 - [ ] `queue:work` actif (`systemctl status uaz-queue`), cron du planificateur présent
+
+## Vidéo d'en-tête de « À propos »
+
+La page `/a-propos` lit `public/videos/campus-1080.mp4` (écrans larges), `campus-720.mp4` (mobiles, < 768 px) et l'image d'affiche
+`campus-poster.webp` (versionnée). Les deux MP4 (≈ 18 Mo et ≈ 6 Mo) ne sont **pas dans Git** : à copier sur le serveur dans
+`public/videos/` (`rsync`/SFTP). Absents, la page garde la photo du campus (réglages du site) comme en-tête.
+Le script charge la vidéo uniquement si la connexion le permet (pas de mode économie de données, pas de 2G/3G, pas de mouvement réduit).
+
+Fichiers produits à partir du MP4 DJI d'origine (4K HEVC, 40 s, 227 Mo) : 24 premières secondes, redimensionnées (Lanczos), H.264 High,
+CRF 25 (1080p) / 26 (720p), sans audio, `+faststart` (lecture avant la fin du téléchargement) :
+`ffmpeg -t 24 -i DJI.MP4 -an -vf "scale=1920:-2:flags=lanczos,format=yuv420p" -c:v libx264 -preset slow -crf 25 -maxrate 7M -bufsize 14M -movflags +faststart campus-1080.mp4`

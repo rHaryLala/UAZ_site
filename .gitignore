@@ -37,3 +37,6 @@ Thumbs.db
 # Captures locales (non versionnées)
 /tests/e2e/.cache
 /storage/media-library
+
+# Vidéos lourdes (héros de À propos) : à déposer sur le serveur, pas dans Git (voir docs/DEPLOIEMENT.md)
+/public/videos/*.mp4

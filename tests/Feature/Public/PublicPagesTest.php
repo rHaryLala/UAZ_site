@@ -189,3 +189,12 @@ it('renders a download list block as a styled list with file types and safe link
         ->assertDontSee('javascript:alert', false)
         ->assertDontSee('Piégé');
 });
+
+it('serves the About page with its editorial sections and the hero video hooks', function () {
+    $this->get('/a-propos')->assertOk()
+        ->assertSee('À propos de l\'UAZ')
+        ->assertSee('Notre histoire')
+        ->assertSee('Préparer aujourd\'hui les leaders de demain')
+        ->assertSee('Retour d\'expérience')
+        ->assertSee('Voir toutes les formations');
+});

@@ -24,6 +24,14 @@ class PageController extends Controller
         }
         $trail[] = ['label' => $page->title];
 
+        // La page « À propos » a sa propre mise en page éditoriale (vidéo, histoire, campus…).
+        if ($page->key === 'about') {
+            return view('pages.about', [
+                'page' => $page,
+                'events' => \App\Models\Event::visible()->upcoming()->with('cover.media')->orderBy('starts_at')->limit(3)->get(),
+            ]);
+        }
+
         return view('pages.show', [
             'page' => $page,
             'trail' => $trail,

@@ -13,6 +13,9 @@ const hasLivewire = document.querySelector('[wire\\:id]') !== null;
 
 initAnimations();
 
+// Vidéo d'en-tête de la page À propos.
+if (document.querySelector('[data-hero-video]')) import('./hero-video.js').then((m) => m.initHeroVideo());
+
 // Page Équipe : fiche agrandie au clic sur une carte.
 if (document.querySelector('[data-team-grid]')) import('./team-profile.js').then((m) => m.initTeamProfile());
 
