@@ -85,6 +85,8 @@ class ManageSiteSettings extends Page
                             ->helperText('Titre affiché en grand en haut de l\'accueil.'),
                         Textarea::make('home_hero_subtitle')->label('Sous-titre')->rows(2)->maxLength(300),
                         MediaPicker::make('home_hero_image_id', 'Image d\'en-tête'),
+                        MediaPicker::make('home_cta_image_id', 'Image du bandeau final (« Votre avenir se dessine »)')
+                            ->helperText('Photo en fond du dernier bandeau de l\'accueil (laisser vide pour le fond marine).'),
                         Repeater::make('key_figures')->label('Chiffres clés')->schema([
                             TextInput::make('value')->label('Valeur')->required()->numeric()->maxValue(1_000_000_000),
                             TextInput::make('suffix')->label('Suffixe')->placeholder('+, %, ha…')->maxLength(10),

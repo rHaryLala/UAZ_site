@@ -35,6 +35,7 @@
     @endpush
 
     <x-cta-banner
+        :image="$site->homeCtaImage"
         :eyebrow="__('home.cta.eyebrow')"
         :title="__('home.cta.title')"
         :text="__('home.cta.text')"

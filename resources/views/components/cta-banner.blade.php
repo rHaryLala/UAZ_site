@@ -4,12 +4,19 @@
     'primary' => null, // ['label' => ..., 'url' => ...]
     'secondary' => null,
     'eyebrow' => null,
+    'image' => null, // MediaAsset : photo en fond (remplace les motifs)
 ])
 
 {{-- Bandeau d'appel à l'action : fond marine, triangle du sceau en filigrane. --}}
 <section {{ $attributes->class('on-dark relative isolate overflow-hidden bg-navy-900 text-white') }}>
-    <x-triangle class="pointer-events-none absolute top-1/2 left-1/2 -z-10 w-[min(90rem,160vw)] -translate-x-1/2 -translate-y-[44%] text-gold-300/15" />
-    <x-madagascar class="pointer-events-none absolute -right-8 bottom-0 -z-10 hidden h-[130%] translate-y-[28%] text-navy-800 lg:block" />
+    @if ($image)
+        <x-picture :asset="$image" conversion="hero" sizes="100vw" decorative class="absolute inset-0 -z-20 size-full object-cover object-[50%_72%]" />
+        <div class="absolute inset-0 -z-10 bg-navy-950/60" aria-hidden="true"></div>
+        <div class="absolute inset-0 -z-10 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/40" aria-hidden="true"></div>
+    @else
+        <x-triangle class="pointer-events-none absolute top-1/2 left-1/2 -z-10 w-[min(90rem,160vw)] -translate-x-1/2 -translate-y-[44%] text-gold-300/15" />
+        <x-madagascar class="pointer-events-none absolute -right-8 bottom-0 -z-10 hidden h-[130%] translate-y-[28%] text-navy-800 lg:block" />
+    @endif
 
     <div class="container-site section-y text-center">
         @if ($eyebrow)
