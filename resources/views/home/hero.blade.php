@@ -8,8 +8,8 @@
         <div class="absolute inset-0 -z-30 overflow-hidden" data-hero-bg>
             <x-picture :asset="$site->homeHeroImage" conversion="hero" sizes="100vw" decorative eager class="size-full scale-110 object-cover" />
         </div>
-        <div class="absolute inset-0 -z-20 bg-gradient-to-t from-navy-950 via-navy-950/55 to-navy-950/35" aria-hidden="true"></div>
-        <div class="absolute inset-0 -z-20 bg-gradient-to-r from-navy-950/80 via-transparent to-transparent" aria-hidden="true"></div>
+        <div class="absolute inset-0 -z-20 bg-gradient-to-t from-navy-950/95 via-navy-950/35 to-navy-950/10" aria-hidden="true"></div>
+        <div class="absolute inset-0 -z-20 bg-gradient-to-r from-navy-950/75 via-navy-950/25 to-transparent" aria-hidden="true"></div>
     @else
         <div class="absolute inset-0 -z-30 bg-[radial-gradient(120%_90%_at_75%_30%,var(--color-navy-700)_0%,var(--color-navy-900)_55%,var(--color-navy-950)_100%)]" aria-hidden="true"></div>
     @endif
