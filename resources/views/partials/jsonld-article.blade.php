@@ -7,7 +7,7 @@
         'datePublished' => $post->published_at?->toIso8601String(),
         'dateModified' => $post->updated_at?->toIso8601String(),
         'mainEntityOfPage' => $post->url(),
-        'image' => $post->metaImage()?->url('hero'),
+        'image' => ($img = $post->metaImage()?->url('hero')) ? url($img) : null,
         'author' => ['@type' => 'Person', 'name' => $post->author?->name ?? 'Rédaction UAZ'],
         'publisher' => [
             '@type' => 'CollegeOrUniversity',

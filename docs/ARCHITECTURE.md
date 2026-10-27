@@ -101,3 +101,30 @@ resources/js/
 Règles : `transform`/`opacity` seulement ; `gsap.matchMedia()` pour `prefers-reduced-motion` ; états initiaux masqués par CSS
 uniquement sous `html.js`, avec filet de sécurité (affichage forcé après 1,4 à 3,5 s) ; le contenu est toujours dans le HTML.
 Transitions entre pages : View Transitions API native (voir DECISIONS D-019).
+
+## Import WordPress (phase 5)
+
+```
+app/Services/Wordpress/
+  WordpressClient.php    GET uniquement, ≥ 600 ms entre requêtes, User-Agent identifié, refus des chemins du robots.txt
+  HtmlCleaner.php        Divi/Gutenberg → HTML propre ; images → <figure data-media> ; liens internes réécrits
+  MediaImporter.php      médias référencés → médiathèque (taille/type contrôlés, alt conservé, conversions)
+  WordpressImporter.php  orchestrateur : users, pages, posts, team, testimonials, redirects (idempotent)
+  ImportReport.php       compte rendu Markdown (docs/IMPORT-REPORT.md)
+app/Models/ImportRecord  correspondance source ↔ local (empreinte du contenu, date de synchronisation)
+```
+
+Les images d'un texte importé sont des `<figure data-media="ID">` : `App\Support\Html::render()` les remplace à l'affichage par une
+image responsive (AVIF/WebP, dimensions explicites) de la médiathèque, après assainissement.
+
+## Sécurité, SEO et performance (phase 6)
+
+| Sujet | Mise en œuvre |
+| --- | --- |
+| En-têtes | `SecurityHeaders` : CSP stricte **à nonce** (pas d'`unsafe-eval`, pas d'`unsafe-inline` pour les scripts), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, COOP, HSTS en production. Le back-office Filament n'a pas de CSP stricte (non compatible) |
+| Formulaire de contact | validation serveur, CSRF Livewire, 3 envois/min/IP, honeypot, délai minimal **verrouillé** (`#[Locked]`), IP stockée hachée |
+| Contenu riche | `App\Support\Html` : liste blanche (symfony/html-sanitizer), pas d'iframe, pas de style/script/handler |
+| Uploads | images JPEG/PNG/WebP et PDF, 10 Mo, extensions et MIME contrôlés ; compression automatique |
+| Comptes | 2FA TOTP, limitation de débit de la connexion, impossible de supprimer son compte ou le dernier super-admin |
+| SEO | `sitemap.xml` (cache 1 h), `robots.txt` dynamique (fermé hors production), canonical, Open Graph/Twitter, JSON-LD : `CollegeOrUniversity`, `WebSite`, `BreadcrumbList`, `Course`, `Article`, `Event` |
+| Performance | images AVIF/WebP responsives avec dimensions, polices latines préchargées, JS différé et découpé, mode Save-Data sans GSAP, HTML compressible (≈ 10×) |

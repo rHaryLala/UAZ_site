@@ -1,4 +1,4 @@
-@props(['formation', 'eager' => false])
+@props(['formation', 'eager' => false, 'level' => 'h3'])
 
 {{-- Carte formation : image plein cadre, voile marine, résumé qui apparaît au survol / focus (toujours visible sur mobile). --}}
 <article {{ $attributes->class('card on-dark group relative isolate flex min-h-[22rem] flex-col justify-end overflow-hidden bg-navy-900 text-white') }}>
@@ -14,9 +14,9 @@
         <p class="eyebrow mb-3">
             {{ $formation->level->getLabel() }}@if ($formation->faculty) · {{ $formation->faculty->name }}@endif
         </p>
-        <h3 class="text-h3 text-white!">
+        <{{ $level }} class="text-h3 text-white!">
             <a href="{{ $formation->url() }}" class="stretched-link">{{ $formation->title }}</a>
-        </h3>
+        </{{ $level }}>
 
         @if ($formation->summary)
             <p class="mt-3 max-h-0 overflow-hidden text-sm text-navy-100 opacity-0 transition-all duration-500 ease-out group-hover:max-h-32 group-hover:opacity-100 group-focus-within:max-h-32 group-focus-within:opacity-100 max-md:max-h-none max-md:opacity-100">

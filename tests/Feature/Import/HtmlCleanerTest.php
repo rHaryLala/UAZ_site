@@ -85,6 +85,20 @@ it('turns text-less image links to documents into accessible text links', functi
         .'<p><a href="https://zurcher.edu.mg/wp-content/uploads/2026/03/Calendrier.pdf">Télécharger : Calendrier 2027 (PDF)</a></p>');
 });
 
+it('never skips a heading level and drops filename-like gallery captions', function () {
+    [$html] = clean('<h5>Retour</h5><h4>Mission</h4><h3>_UAZ1103</h3><h3>IMG_6536-retouche</h3><h2>Titre</h2><h5>Détail</h5><h3>Deux mots</h3>');
+
+    // h5 → h2 (le premier niveau possible), h4 → h3, légendes de fichiers supprimées, h5 après h2 → h3.
+    expect($html)->toBe('<h2>Retour</h2><h3>Mission</h3><h2>Titre</h2><h3>Détail</h3><h3>Deux mots</h3>');
+});
+
+it('replaces externally hosted emoji images by their text and never keeps third-party images', function () {
+    [$html, $cleaner] = clean('<p><img src="https://static.xx.fbcdn.net/images/emoji.php/v9/t2b/1/16/1f399.png" alt="🎙"> Discours <img src="https://tracker.example/pixel.gif"></p>');
+
+    expect($html)->toBe('<p>🎙 Discours </p>')->and($html)->not->toContain('<img')
+        ->and($cleaner->warnings())->toHaveCount(2);
+});
+
 it('replaces embedded YouTube videos with a link and drops other iframes', function () {
     [$html, $cleaner] = clean('<iframe src="https://www.youtube.com/embed/nLhy-kbE6T0?feature=oembed"></iframe><iframe src="https://tracker.example/x"></iframe>');
 

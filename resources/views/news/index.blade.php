@@ -22,7 +22,7 @@
         @else
             <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($posts as $post)
-                    <li data-reveal data-reveal-delay="{{ ($loop->index % 3) * 0.08 }}"><x-news-card :post="$post" /></li>
+                    <li data-reveal data-reveal-delay="{{ ($loop->index % 3) * 0.08 }}"><x-news-card :post="$post" level="h2" :eager="$loop->first" /></li>
                 @endforeach
             </ul>
             {{ $posts->links() }}

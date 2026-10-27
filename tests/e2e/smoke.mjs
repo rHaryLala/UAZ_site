@@ -112,5 +112,17 @@ for (const path of ['/', '/formations', '/actualites', '/evenements', '/galerie'
     await context.close();
 }
 
+// 8. Back-office : la connexion fonctionne dans un vrai navigateur (Livewire/Alpine de Filament chargés).
+{
+    const { page, context, errors } = await open('/admin/login');
+    await page.waitForFunction(() => window.Livewire, null, { timeout: 8000 }).catch(() => {});
+    await page.locator('input[type=email]').fill(process.env.ADMIN_EMAIL ?? 'admin@uaz.test');
+    await page.locator('input[type=password]').fill(process.env.ADMIN_PASSWORD ?? 'password');
+    await page.getByRole('button', { name: 'Connexion' }).click();
+    const logged = await page.waitForURL('**/admin', { timeout: 15000 }).then(() => true).catch(() => false);
+    check(logged && errors.length === 0, `back-office : connexion réussie, tableau de bord affiché${errors.length ? ' — ' + errors.join('; ') : ''}`);
+    await context.close();
+}
+
 await browser.close();
 process.exit(failures ? 1 : 0);

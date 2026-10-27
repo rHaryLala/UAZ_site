@@ -200,7 +200,7 @@ class WordpressImporter
             $hash = md5(($wp['modified'] ?? '').$wp['content']['rendered']);
             $record = ImportRecord::lookup('page', $wp['id']);
 
-            if ($record && $record->hash === $hash) {
+            if ($record && ! $this->force && $record->hash === $hash) {
                 $this->report->count('page', 'skipped');
 
                 continue;
@@ -254,7 +254,7 @@ class WordpressImporter
             $record = ImportRecord::lookup('post', $wp['id']);
             $post = $record ? NewsPost::find($record->model_id) : null;
 
-            if ($post && $record->hash === $hash) {
+            if ($post && ! $this->force && $record->hash === $hash) {
                 $this->report->count('post', 'skipped');
 
                 continue;

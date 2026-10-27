@@ -13,8 +13,8 @@
     $description ??= $site->tagline;
     $canonical ??= url()->current();
     $ogImage = $image instanceof \App\Models\MediaAsset
-        ? $image->url('hero')
-        : ($image ?: ($site->defaultOgImage ? $site->defaultOgImage->url('hero') : null));
+        ? url($image->url('hero'))
+        : ($image ?: ($site->defaultOgImage ? url($site->defaultOgImage->url('hero')) : null));
 @endphp
 
 <title>{{ $fullTitle }}</title>

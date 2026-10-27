@@ -54,12 +54,14 @@ class MediaPicker
             return new HtmlString('');
         }
 
+        // Styles en ligne : le CSS de Filament ne contient pas les classes Tailwind du site.
+        $box = 'width:2.5rem;height:2.5rem;flex:none;border-radius:.375rem;';
         $thumb = $asset->isImage()
-            ? '<img src="'.e($asset->url('thumb')).'" alt="" class="h-10 w-10 shrink-0 rounded object-cover" loading="lazy">'
-            : '<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-gray-100 text-xs font-semibold text-gray-600">PDF</span>';
+            ? '<img src="'.e($asset->url('thumb')).'" alt="" loading="lazy" style="'.$box.'object-fit:cover">'
+            : '<span style="'.$box.'display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#4b5563;font-size:.7rem;font-weight:600">PDF</span>';
 
         return new HtmlString(
-            '<span class="flex items-center gap-3">'.$thumb.'<span class="truncate">'.e($asset->label()).'</span></span>',
+            '<span style="display:flex;align-items:center;gap:.75rem">'.$thumb.'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'.e($asset->label()).'</span></span>',
         );
     }
 

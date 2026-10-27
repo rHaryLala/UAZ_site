@@ -69,6 +69,7 @@ class HtmlCleaner
         $this->cleanAttributes($root);
         $this->rewriteLinks($root, $linkResolver);
         $this->wrapLooseInline($dom, $root);
+        $this->normalizeHeadings($dom, $root);
         $this->unwrapArtifactBold($root);
         $this->removeEmpty($root);
 
@@ -177,6 +178,17 @@ class HtmlCleaner
     {
         foreach ($this->elements($root, 'img') as $img) {
             $url = $img->getAttribute('src') ?: $img->getAttribute('data-src') ?: $img->getAttribute('data-lazy-src');
+
+            // Image hébergée ailleurs (typiquement les émojis collés depuis Facebook) : jamais reprise telle quelle
+            // (suivi par un tiers, bloquée par la CSP). On garde l'émoji sous forme de texte (via « alt »), sinon rien.
+            if ($url && preg_match('~^https?://~i', $url) && ! $this->isInternal($url)) {
+                $alt = trim($img->getAttribute('alt'));
+                $img->parentNode->replaceChild($dom->createTextNode($alt), $img);
+                $this->warnings[] = 'Image externe retirée : '.parse_url($url, PHP_URL_HOST);
+
+                continue;
+            }
+
             $id = ($url && $resolver) ? $resolver($url) : null;
 
             // Cible à remplacer : le lien enveloppant (vers le fichier) ou le <figure> existant, sinon l'image seule.
@@ -355,6 +367,42 @@ class HtmlCleaner
             }
         }
         $flush();
+    }
+
+    /**
+     * Hiérarchie des titres : le <h1> de la page est posé par le gabarit, donc le contenu commence en <h2> et ne saute
+     * aucun niveau (accessibilité, WCAG 1.3.1). Les « titres » qui sont en réalité des noms de fichiers (légendes
+     * automatiques des galeries Divi : « IMG_6536-retouche », « UAZ1103 ») sont supprimés.
+     */
+    private function normalizeHeadings(DOMDocument $dom, DOMElement $root): void
+    {
+        $previous = 1;
+
+        foreach ($this->elements($root) as $node) {
+            if (! preg_match('/^h([2-6])$/', $node->tagName, $m)) {
+                continue;
+            }
+
+            $text = trim($node->textContent);
+
+            if ($text === '' || (! preg_match('/\s/u', $text) && preg_match('/[\d_]/', $text) && mb_strlen($text) < 60)) {
+                $node->parentNode->removeChild($node);
+
+                continue;
+            }
+
+            $level = min((int) $m[1], $previous + 1);
+
+            if ($level !== (int) $m[1]) {
+                $new = $dom->createElement('h'.$level);
+                while ($node->firstChild) {
+                    $new->appendChild($node->firstChild);
+                }
+                $node->parentNode->replaceChild($new, $node);
+            }
+
+            $previous = $level;
+        }
     }
 
     /**

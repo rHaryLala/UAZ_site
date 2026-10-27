@@ -9,7 +9,7 @@
         'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
         'eventStatus' => 'https://schema.org/EventScheduled',
         'url' => $event->url(),
-        'image' => $event->metaImage()?->url('hero'),
+        'image' => ($img = $event->metaImage()?->url('hero')) ? url($img) : null,
         'location' => $event->location ? ['@type' => 'Place', 'name' => $event->location] : null,
         'organizer' => ['@type' => 'CollegeOrUniversity', 'name' => 'Université Adventiste Zurcher', 'url' => url('/')],
     ], fn ($v) => filled($v));

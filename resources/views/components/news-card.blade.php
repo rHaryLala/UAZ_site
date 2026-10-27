@@ -1,4 +1,4 @@
-@props(['post', 'eager' => false])
+@props(['post', 'eager' => false, 'level' => 'h3'])
 
 <article {{ $attributes->class('card group flex h-full flex-col') }}>
     <div class="relative aspect-[3/2] overflow-hidden bg-navy-800">
@@ -18,9 +18,9 @@
             <time datetime="{{ $post->published_at?->toDateString() }}" class="text-ink-600">{{ $post->published_at?->translatedFormat('j F Y') }}</time>
         </p>
 
-        <h3 class="text-h4 font-serif">
+        <{{ $level }} class="text-h4 font-serif">
             <a href="{{ $post->url() }}" class="stretched-link hover:text-navy-600">{{ $post->title }}</a>
-        </h3>
+        </{{ $level }}>
 
         @if ($post->excerpt)
             <p class="mt-3 line-clamp-3 text-sm text-ink-700">{{ $post->excerpt }}</p>

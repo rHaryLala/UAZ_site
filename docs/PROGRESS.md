@@ -7,9 +7,9 @@
 | 2 · Modèles et back-office | ✅ Terminée | `feat: modèles, ressources Filament et médiathèque` |
 | 3 · Direction artistique | ✅ Terminée | `feat: design system aux couleurs du sceau` |
 | 4 · Pages publiques et animations | ✅ Terminée | `feat: pages publiques et animations` |
-| 5 · Import WordPress | ⏳ À faire | |
-| 6 · Qualité, SEO, a11y, sécurité | ⏳ À faire | |
-| 7 · Déploiement et passation | ⏳ À faire | |
+| 5 · Import WordPress | ✅ Terminée | `feat: import WordPress idempotent` |
+| 6 · Qualité, SEO, a11y, sécurité | ✅ Terminée | `feat: SEO, sécurité et accessibilité` |
+| 7 · Déploiement et passation | ✅ Terminée | `docs: déploiement, sauvegardes et guide du rédacteur` |
 
 ## Phase 0 — notes
 
@@ -57,3 +57,20 @@
 - Vérifié visuellement à 390/768/1440 px.
 - Poids JS (gzip) : entrée 1 Ko ; Alpine 23 Ko ; GSAP 47 Ko et Lenis 6 Ko chargés après le rendu ; Livewire +99 Ko seulement sur /contact et /recherche.
 - Limites connues : photos réelles absentes (visuels de substitution aux couleurs du sceau) ; pages légales (confidentialité, accessibilité) à créer ; liens de la maquette sans page non implémentés.
+
+## Phase 5 — notes
+
+- `php artisan import:wordpress` (`--dry-run`, `--only`, `--force`) : lecture seule de l'API (GET espacés de 600 ms, robots.txt), idempotent, ne réécrit jamais un contenu retouché dans le back-office.
+- **Import réel exécuté le 26-27 octobre 2026** : 3 auteurs, 12 pages mappées sur les pages système, 18 articles (dates d'origine), 92 membres de l'équipe, 3 témoignages vidéo (désactivés), ≈ 145 médias, 41 redirections. **0 échec.** Voir `docs/IMPORT-REPORT.md`.
+- Défauts trouvés grâce à l'import réel et corrigés : émojis Facebook hotlinkés, légendes de galerie Divi devenues des titres, sauts de niveau de titres, pages d'images-liens vers des PDF.
+
+## Phase 6 — notes
+
+- Lighthouse mobile (réseau lent émulé, serveur en mode production) : **performance 92–98, accessibilité 100, bonnes pratiques 100, SEO 100** (docs/QUALITE.md). axe-core : **0 violation** sur 13 pages × 2 largeurs.
+- 190 tests Pest ; 24 contrôles Playwright (smoke), menu plein écran (18), parcours rédacteur complet (9).
+- Défauts réels trouvés en navigateur et corrigés : Livewire non chargé dans le back-office (`inject_assets`), CSP bloquant les médias servis depuis `APP_URL`, miniatures du sélecteur d'images en taille réelle, `#[Locked]` sans import, suppression possible de son propre compte super-admin, script de sauvegarde interrompu par `set -e`.
+
+## Phase 7 — notes
+
+- `docs/DEPLOIEMENT.md` (VPS Ubuntu, Nginx/Caddy, PHP-FPM, MariaDB, HTTPS, queue, cron, sauvegardes, retour arrière), `docs/PLAN-DE-BASCULE.md`, `docs/GUIDE-REDACTEUR.md` (captures dans `docs/screenshots/`), `docs/QUALITE.md`.
+- `scripts/backup.sh` (testé), `restore.sh`, `deploy.sh` ; `Dockerfile` et `docker-compose.yml` optionnels : **syntaxe validée (`docker compose config`) mais image non construite** (démon Docker arrêté sur la machine de développement).

@@ -41,7 +41,8 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            // Relatif : même origine que la page (compatible CSP « img-src 'self' »), indépendant d'APP_URL.
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
