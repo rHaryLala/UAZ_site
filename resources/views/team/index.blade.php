@@ -16,8 +16,11 @@
                 <h2 class="sr-only">Liste des membres</h2>
                 <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @foreach ($members as $member)
-                        <li data-reveal data-reveal-delay="{{ ($loop->index % 4) * 0.06 }}" @class(['xl:translate-y-10' => $loop->index % 4 === 1 || $loop->index % 4 === 3])>
-                            <x-person-card :member="$member" />
+                        <li data-reveal data-reveal-delay="{{ ($loop->index % 4) * 0.06 }}">
+                            {{-- Le décalage est sur un conteneur interne : l'apparition (data-reveal) anime le <li>, les deux ne se mélangent pas. --}}
+                            <div @class(['xl:translate-y-10' => $loop->index % 4 === 1 || $loop->index % 4 === 3])>
+                                <x-person-card :member="$member" />
+                            </div>
                         </li>
                     @endforeach
                 </ul>
