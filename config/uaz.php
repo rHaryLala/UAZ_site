@@ -22,6 +22,12 @@ return [
     'founded_year' => (int) env('UAZ_FOUNDED_YEAR', 1995),
 
     /*
+    | Don en ligne : adresse de la page de paiement (Stripe Checkout, PayPal, mobile money, site de la fondation…).
+    | Vide : la page « Soutenir l'UAZ » propose de contacter l'équipe et annonce que le don en ligne arrive bientôt.
+    */
+    'donation_url' => env('UAZ_DONATION_URL'),
+
+    /*
     | Inscription en ligne (bureau académique) : cible des boutons « S'inscrire » et « Candidater ».
     */
     'registration_url' => env('UAZ_REGISTRATION_URL', 'https://registrar.zurcher.edu.mg/#pre-inscription'),

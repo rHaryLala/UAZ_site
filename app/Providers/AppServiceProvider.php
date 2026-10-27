@@ -13,6 +13,7 @@ use App\Models\NewsCategory;
 use App\Models\NewsPost;
 use App\Models\Page;
 use App\Models\Partner;
+use App\Models\Project;
 use App\Models\PhotoAlbum;
 use App\Models\Redirect;
 use App\Models\TeamMember;
@@ -47,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         TeamMember::class => ManagedContentPolicy::class,
         Testimonial::class => ManagedContentPolicy::class,
         Partner::class => ManagedContentPolicy::class,
+        Project::class => ManagedContentPolicy::class,
         NewsCategory::class => ManagedContentPolicy::class,
         MediaAsset::class => MediaAssetPolicy::class,
         Menu::class => SettingsPolicy::class,

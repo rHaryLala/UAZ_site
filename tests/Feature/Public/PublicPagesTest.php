@@ -198,3 +198,27 @@ it('serves the About page with its editorial sections and the hero video hooks',
         ->assertSee('Retour d\'expérience')
         ->assertSee('Voir toutes les formations');
 });
+
+it('serves the Soutenir page with its projects and an honest online-donation state', function () {
+    config(['uaz.donation_url' => null]);
+
+    $this->get('/soutenir')->assertOk()
+        ->assertSee('Centre médical de Sambaina')
+        ->assertSee('Bientôt disponible')
+        ->assertDontSee('Faire un don');
+
+    config(['uaz.donation_url' => 'https://pay.example.test/uaz']);
+
+    $this->get('/soutenir')->assertOk()
+        ->assertSee('https://pay.example.test/uaz', false)
+        ->assertSee('Faire un don');
+});
+
+it('serves a project sheet and hides inactive projects', function () {
+    $this->get('/soutenir/centre-medical-de-sambaina')->assertOk()->assertSee('Budget prévu')->assertSee('100 000 €');
+
+    \App\Models\Project::factory()->create(['title' => 'Projet caché', 'slug' => 'projet-cache', 'is_active' => false]);
+
+    $this->get('/soutenir/projet-cache')->assertNotFound();
+    $this->get('/soutenir')->assertDontSee('Projet caché');
+});

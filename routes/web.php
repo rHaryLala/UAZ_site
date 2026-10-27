@@ -48,6 +48,7 @@ Route::get('/galerie/{album}', [AlbumController::class, 'show'])->name('albums.s
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
+Route::get('/soutenir/{slug}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
 Route::get('/equipe', TeamController::class)->name('team');
 Route::get('/contact', ContactController::class)->name('contact');
 Route::get('/recherche', SearchController::class)->name('search');

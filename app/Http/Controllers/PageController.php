@@ -32,6 +32,14 @@ class PageController extends Controller
             ]);
         }
 
+        // « Soutenir l'UAZ » : page dédiée aux dons et aux projets.
+        if ($page->key === 'support') {
+            return view('pages.support', [
+                'page' => $page,
+                'projects' => \App\Models\Project::active()->with('cover.media')->get(),
+            ]);
+        }
+
         return view('pages.show', [
             'page' => $page,
             'trail' => $trail,
