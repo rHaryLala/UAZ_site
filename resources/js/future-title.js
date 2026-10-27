@@ -1,6 +1,6 @@
-// Titre « Votre futur commence ici. » en trois langues (français, anglais, malgache) : chaque version reste 5 secondes, puis un effet de
+// Titre « Votre futur commence ici. » en trois langues (français, anglais, malgache) : chaque version reste 8 secondes, puis un effet de
 // glitch (tremblement, tranches décalées, double contour or/bleu) la remplace par la suivante. Mouvement réduit : le français seul.
-const STAY = 5000;
+const STAY = 8000;
 const OUT = 420;
 const IN = 520;
 
