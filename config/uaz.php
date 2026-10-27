@@ -22,6 +22,11 @@ return [
     'founded_year' => (int) env('UAZ_FOUNDED_YEAR', 1995),
 
     /*
+    | Carte Google Maps du campus (lien de l'adresse dans le pied de page).
+    */
+    'map_url' => env('UAZ_MAP_URL', 'https://maps.app.goo.gl/stjXGTSu6bDFScS69'),
+
+    /*
     | Yearbooks numériques : pages WebP dans public/books/yearbook/{année}/ (page-001.webp…, thumbs/ pour les miniatures).
     | Générées à partir du PDF d'origine ; le PDF reste téléchargeable depuis son adresse d'origine.
     */

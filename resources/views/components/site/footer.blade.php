@@ -15,8 +15,15 @@
                     <span class="mt-1 block font-serif text-3xl tracking-[0.03em]">ZURCHER</span>
                 </span>
             </a>
+            {{-- Adresse au-dessus de la devise ; un clic ouvre la carte Google Maps du campus. --}}
+            @if ($site->address)
+                <a href="{{ config('uaz.map_url') }}" target="_blank" rel="noopener noreferrer" class="group mt-6 flex max-w-xs gap-3 text-sm text-white/90 hover:text-white">
+                    <x-ico name="map-pin" class="mt-0.5 size-4 text-gold-300" />
+                    <span class="underline decoration-gold-300/60 decoration-1 underline-offset-4 group-hover:decoration-gold-300">{{ $site->address }}<span class="sr-only"> — voir sur Google Maps (nouvel onglet)</span></span>
+                </a>
+            @endif
             @if ($site->footer_text)
-                <p class="mt-6 max-w-xs text-sm text-white/90">{{ $site->footer_text }}</p>
+                <p class="mt-4 max-w-xs text-sm text-white/90">{{ $site->footer_text }}</p>
             @endif
             <ul class="mt-6 flex gap-3">
                 @foreach ($socials as $key => $label)
@@ -39,7 +46,6 @@
         <div>
             <h2 class="eyebrow mb-5 font-sans text-xs! text-gold-300!">Contact</h2>
             <address class="space-y-3 text-sm not-italic">
-                @if ($site->address)<p class="flex gap-3"><x-ico name="map-pin" class="mt-0.5 size-4 text-gold-300" />{{ $site->address }}</p>@endif
                 @if ($site->email)<p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 text-gold-300" /><a href="mailto:{{ $site->email }}" class="text-white/90 hover:text-white hover:underline">{{ $site->email }}</a></p>@endif
                 @if ($site->phone)<p class="flex gap-3"><x-ico name="phone" class="mt-0.5 size-4 text-gold-300" /><a href="tel:{{ preg_replace('/[^+\d]/', '', $site->phone) }}" class="text-white/90 hover:text-white hover:underline">{{ $site->phone }}</a></p>@endif
                 @if (! empty($site->opening_hours))
