@@ -34,6 +34,8 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->passwordReset()
             ->brandName('UAZ · Administration')
+            // Logo de l'UAZ dans l'onglet du navigateur (mêmes fichiers que le site public).
+            ->favicon(asset('favicon-32.png'))
             ->colors([
                 // Bleu marine du sceau (docs/DESIGN-SYSTEM.md).
                 'primary' => [
