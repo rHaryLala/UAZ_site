@@ -16,7 +16,10 @@ initAnimations();
 // Fenêtre « Étudiant » de la barre du haut (choix Registrar / Moodle).
 if (document.querySelector('[data-student-dialog]')) import('./student-dialog.js').then((m) => m.initStudentDialog());
 
-// Vidéo « Votre futur commence ici » de l'accueil (lecture au clic).
+// Titre « Votre futur commence ici. » en trois langues, avec glitch.
+if (document.querySelector('[data-future-title]')) import('./future-title.js').then((m) => m.initFutureTitle());
+
+// Vidéo « Votre futur commence ici » de l'accueil (lecture automatique).
 if (document.querySelector('[data-future]')) import('./future-video.js').then((m) => m.initFutureVideo());
 
 // Météo du campus (pied de page) : rafraîchie toutes les 10 minutes.

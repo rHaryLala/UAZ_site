@@ -31,7 +31,10 @@ return [
 
     'future' => [
         // Titre en quatre lignes (IBM Plex Sans gras).
+        // Trois langues, glitch entre chaque version. TODO-CONTENU : faire relire le malgache.
         'lines' => ['Votre', 'futur', 'commence', 'ici.'],
+        'lines_en' => ['Your', 'future', 'starts', 'here.'],
+        'lines_mg' => ['Eto no', 'manomboka', 'ny', 'hoavanao.'],
         'sound_on' => 'Activer le son de la vidéo',
         'sound_off' => 'Couper le son de la vidéo',
         'play' => 'Lire la vidéo « Votre futur commence ici »',

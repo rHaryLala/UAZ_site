@@ -11,8 +11,13 @@
         <div class="mx-auto grid max-w-5xl overflow-hidden shadow-lift md:grid-cols-[1.1fr_1fr]" data-reveal>
             {{-- Message : quatre lignes, en IBM Plex Sans gras --}}
             <div class="flex flex-col justify-center bg-white px-8 py-10 text-navy-900 sm:px-12 md:px-14">
-                <h2 id="future-title" class="font-display text-[clamp(3rem,1.6rem+5.6vw,5.75rem)] leading-[1.04] font-bold tracking-[-0.02em] text-navy-900!">
-                    @foreach (__('home.future.lines') as $line)<span class="block">{{ $line }}</span>@endforeach
+                <h2 id="future-title" data-future-title class="glitch-title font-display text-[clamp(3rem,1.6rem+5.6vw,5.75rem)] leading-[1.04] font-bold tracking-[-0.02em] text-navy-900!">
+                    {{-- Trois versions superposées (même cellule : la hauteur ne bouge pas) ; le glitch les alterne (resources/js/future-title.js). --}}
+                    @foreach (['fr' => 'lines', 'en' => 'lines_en', 'mg' => 'lines_mg'] as $lang => $key)
+                        <span lang="{{ $lang }}" @if ($loop->first) data-state="current" @else aria-hidden="true" @endif>
+                            @foreach (__('home.future.'.$key) as $line)<span class="block">{{ $line }}</span>@endforeach
+                        </span>
+                    @endforeach
                 </h2>
             </div>
 
