@@ -24,6 +24,16 @@ class ListMediaAssets extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            // Bascule liste / grille (choix conservé en session) : la grille montre de grandes vignettes, plus pratique pour retrouver une photo.
+            Action::make('toggleLayout')
+                ->label(fn () => MediaAssetResource::isGrid() ? 'Vue liste' : 'Vue grille')
+                ->icon(fn () => MediaAssetResource::isGrid() ? Heroicon::OutlinedListBullet : Heroicon::OutlinedSquares2x2)
+                ->color('gray')
+                ->action(function () {
+                    session(['media_layout' => MediaAssetResource::isGrid() ? 'list' : 'grid']);
+
+                    return redirect(MediaAssetResource::getUrl());
+                }),
             Action::make('bulkUpload')
                 ->label('Envoi multiple')
                 ->icon(Heroicon::OutlinedArrowUpTray)

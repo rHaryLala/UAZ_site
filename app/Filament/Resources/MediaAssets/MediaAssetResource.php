@@ -17,6 +17,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -72,10 +73,41 @@ class MediaAssetResource extends Resource
         ]);
     }
 
+    /** Mise en page choisie par l'utilisateur (bouton « Grille / Liste » de la page), conservée en session. */
+    public static function isGrid(): bool
+    {
+        return session('media_layout', 'list') === 'grid';
+    }
+
+    /** @return array<int, FilamentTablesColumnsColumn|FilamentTablesColumnsLayoutComponent> */
+    private static function gridColumns(): array
+    {
+        return [
+            Stack::make([
+                SpatieMediaLibraryImageColumn::make('file')
+                    ->collection(MediaAsset::COLLECTION)
+                    ->conversion('card')
+                    // Styles en ligne : le CSS de Filament ne contient pas les classes Tailwind du site.
+                    ->imageSize('100%')
+                    ->extraImgAttributes(['style' => 'width:100%;height:11rem;max-width:100%;object-fit:cover;border-radius:.5rem']),
+                TextColumn::make('title')->weight('medium')->searchable()->limit(36)->extraAttributes(['style' => 'overflow-wrap:anywhere'])
+                    ->state(fn (MediaAsset $record) => $record->label()),
+                TextColumn::make('alt')->searchable()->limit(60)->size('xs')->placeholder('Texte alternatif manquant')->color('warning'),
+                TextColumn::make('type')->badge()
+                    ->state(fn (MediaAsset $record) => $record->isImage() ? 'Image' : 'PDF')
+                    ->color(fn (string $state) => $state === 'PDF' ? 'info' : 'gray'),
+            ])->space(2),
+        ];
+    }
+
     public static function table(Table $table): Table
     {
+        $grid = static::isGrid();
+
         return $table
-            ->columns([
+            ->contentGrid($grid ? ['default' => 2, 'md' => 3, 'xl' => 4, '2xl' => 6] : null)
+            ->recordUrl($grid ? fn (MediaAsset $record) => static::getUrl('edit', ['record' => $record]) : null)
+            ->columns($grid ? static::gridColumns() : [
                 SpatieMediaLibraryImageColumn::make('file')
                     ->label('Aperçu')
                     ->collection(MediaAsset::COLLECTION)
@@ -96,6 +128,8 @@ class MediaAssetResource extends Resource
                 TextColumn::make('created_at')->label('Ajouté le')->dateTime('d/m/Y')->sortable()->toggleable(),
             ])
             ->defaultSort('id', 'desc')
+            ->paginated($grid ? [24, 48, 96] : [10, 25, 50, 100])
+            ->defaultPaginationPageOption($grid ? 24 : 25)
             ->filters([
                 SelectFilter::make('type')->label('Type')
                     ->options(['image' => 'Images', 'pdf' => 'PDF'])

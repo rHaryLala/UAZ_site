@@ -216,3 +216,8 @@ Supprimez ceux dont vous n'avez plus besoin : ce sont des données personnelles.
 | Ajouter un événement | Contenus → Événements → Nouvel événement |
 | Lire les messages | Communauté → Messages de contact |
 | Changer le menu | Site → Menus |
+
+## Médiathèque : vue liste ou vue grille
+En haut de la page **Médias**, le bouton **Vue grille** affiche les images en grandes vignettes (4 par ligne sur un écran standard), pratique pour retrouver
+une photo ; **Vue liste** revient au tableau avec le poids et la date. Le choix est mémorisé pour votre session. Cliquez sur une vignette pour modifier le média ;
+la recherche et les filtres (type, sans texte alternatif) fonctionnent dans les deux vues.

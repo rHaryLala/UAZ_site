@@ -56,3 +56,16 @@ it('renders the dashboard', function () {
 
     Livewire::test(ContentOverview::class)->assertOk()->assertSee('Actualités publiées');
 });
+
+it('lets the media library switch between list and grid layouts', function () {
+    $this->actingAs(\App\Models\User::factory()->create()->assignRole('super-admin'));
+    \App\Models\MediaAsset::create(['title' => 'Photo test', 'alt' => 'Description']);
+
+    session(['media_layout' => 'list']);
+    \Livewire\Livewire::test(\App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class)
+        ->assertSee('Vue grille')->assertDontSee('Vue liste');
+
+    session(['media_layout' => 'grid']);
+    \Livewire\Livewire::test(\App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class)
+        ->assertSee('Vue liste')->assertSee('Photo test');
+});
