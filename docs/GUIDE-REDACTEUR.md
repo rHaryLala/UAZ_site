@@ -221,3 +221,8 @@ Supprimez ceux dont vous n'avez plus besoin : ce sont des données personnelles.
 En haut de la page **Médias**, le bouton **Vue grille** affiche les images en grandes vignettes (4 par ligne sur un écran standard), pratique pour retrouver
 une photo ; **Vue liste** revient au tableau avec le poids et la date. Le choix est mémorisé pour votre session. Cliquez sur une vignette pour modifier le média ;
 la recherche et les filtres (type, sans texte alternatif) fonctionnent dans les deux vues.
+
+## Médiathèque : glisser-déposer
+Au-dessus de la médiathèque, une zone **« Glissez-déposez vos images ici »** accepte des fichiers déposés depuis votre ordinateur (JPEG, PNG, WebP, PDF ; 30 maximum).
+Vous pouvez aussi les lâcher n'importe où sur la page. Le formulaire d'envoi s'ouvre alors déjà rempli : il reste à saisir le **texte alternatif** de chaque fichier
+(obligatoire) puis à enregistrer.

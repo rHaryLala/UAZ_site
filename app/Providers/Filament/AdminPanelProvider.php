@@ -53,6 +53,12 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Site'),
                 NavigationGroup::make('Administration'),
             ])
+            // Zone de glisser-déposer au-dessus de la médiathèque.
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_BEFORE,
+                fn (): \Illuminate\Contracts\View\View => view('filament.media.dropzone'),
+                scopes: \App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class,
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

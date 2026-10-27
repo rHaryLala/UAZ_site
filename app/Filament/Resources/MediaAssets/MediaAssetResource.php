@@ -105,7 +105,7 @@ class MediaAssetResource extends Resource
         $grid = static::isGrid();
 
         return $table
-            ->contentGrid($grid ? ['default' => 2, 'md' => 3, 'xl' => 4, '2xl' => 6] : null)
+            ->contentGrid($grid ? ['default' => 2, 'md' => 3, 'xl' => 4, '2xl' => 5] : null)
             ->recordUrl($grid ? fn (MediaAsset $record) => static::getUrl('edit', ['record' => $record]) : null)
             ->columns($grid ? static::gridColumns() : [
                 SpatieMediaLibraryImageColumn::make('file')
@@ -141,11 +141,11 @@ class MediaAssetResource extends Resource
                 Filter::make('missing_alt')->label('Sans texte alternatif')
                     ->query(fn (Builder $query) => $query->where(fn ($q) => $q->whereNull('alt')->orWhere('alt', ''))),
             ])
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
+            // Grille : boutons-icônes (le libellé s'affiche au survol) et pas de cases à cocher, qui décalaient l'image dans la carte.
+            ->recordActions($grid
+                ? [EditAction::make()->iconButton()->tooltip('Modifier'), DeleteAction::make()->iconButton()->tooltip('Supprimer')]
+                : [EditAction::make(), DeleteAction::make()])
+            ->toolbarActions($grid ? [] : [
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ])
             ->emptyStateHeading('La médiathèque est vide')

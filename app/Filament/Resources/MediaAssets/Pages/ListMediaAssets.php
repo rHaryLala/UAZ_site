@@ -16,10 +16,33 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ListMediaAssets extends ListRecords
 {
     protected static string $resource = MediaAssetResource::class;
+
+    /** @var array<int, TemporaryUploadedFile> Fichiers glissés-déposés sur la zone de dépôt (resources/views/filament/media/dropzone.blade.php). */
+    public array $dropped = [];
+
+    /**
+     * Fichiers déposés : on les contrôle, on les range dans le dossier temporaire de l'envoi multiple, puis on ouvre ce formulaire déjà rempli
+     * (le texte alternatif de chaque fichier reste à saisir : il est obligatoire).
+     */
+    public function updatedDropped(): void
+    {
+        $this->validate([
+            'dropped' => ['max:30'],
+            'dropped.*' => ['file', 'mimetypes:'.implode(',', config('uaz.media.accepted_mime_types')), 'max:'.config('uaz.media.max_file_size_kb')],
+        ], [], ['dropped.*' => 'fichier']);
+
+        $paths = collect($this->dropped)
+            ->map(fn (TemporaryUploadedFile $file) => $file->storeAs('uploads-tmp', str($file->getClientOriginalName())->afterLast('/')->toString(), 'local'))
+            ->all();
+        $this->dropped = [];
+
+        $this->mountAction('bulkUpload', ['files' => $paths]);
+    }
 
     protected function getHeaderActions(): array
     {
@@ -40,6 +63,10 @@ class ListMediaAssets extends ListRecords
                 ->modalHeading('Envoyer plusieurs images')
                 ->modalSubmitActionLabel('Enregistrer dans la médiathèque')
                 ->visible(fn () => auth()->user()?->can('create', MediaAsset::class))
+                ->fillForm(fn (array $arguments): array => isset($arguments['files']) ? [
+                    'files' => $arguments['files'],
+                    'items' => collect($arguments['files'])->map(fn (string $path) => ['file' => basename($path), 'alt' => ''])->all(),
+                ] : [])
                 ->schema([
                     FileUpload::make('files')
                         ->label('Fichiers')
