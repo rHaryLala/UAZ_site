@@ -13,6 +13,7 @@
                     <span class="hidden h-1 w-24 bg-sun-400 sm:block" aria-hidden="true"></span>
                 </div>
 
+                <h2 class="sr-only">Liste des membres</h2>
                 <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @foreach ($members as $member)
                         <li data-reveal data-reveal-delay="{{ ($loop->index % 4) * 0.06 }}" @class(['xl:translate-y-8' => $loop->index % 4 === 1 || $loop->index % 4 === 3])>
