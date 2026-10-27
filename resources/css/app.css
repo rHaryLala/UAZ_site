@@ -656,6 +656,57 @@
         }
     }
 
+    /* Fenêtre de recherche : fond qui se voile, panneau qui descend légèrement (repli : simple fondu). */
+    .search-modal {
+        visibility: hidden;
+        opacity: 0;
+        transition:
+            opacity 0.2s,
+            visibility 0s 0.2s;
+    }
+
+    .search-modal[data-open='true'] {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.2s;
+    }
+
+    .search-modal__panel {
+        transform: translateY(-14px) scale(0.98);
+        transition: transform 0.35s var(--ease-out-expo);
+    }
+
+    .search-modal[data-open='true'] .search-modal__panel {
+        transform: none;
+    }
+
+    .search-modal__spinner {
+        opacity: 0;
+    }
+
+    .search-modal__spinner[data-loading='true'] {
+        opacity: 1;
+        animation: uaz-spin 0.7s linear infinite;
+    }
+
+    @keyframes uaz-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .search-modal__panel,
+        .search-modal[data-open='true'] .search-modal__panel {
+            transform: none;
+            transition: none;
+        }
+
+        .search-modal__spinner[data-loading='true'] {
+            animation: none;
+        }
+    }
+
     /* Rideau or : uniquement piloté par GSAP (animations/menu.js) ; masqué dans tous les autres cas. */
     .menu-curtain {
         visibility: hidden;

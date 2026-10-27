@@ -161,3 +161,10 @@ Format : **décision** — alternatives — raison.
   Notre équipe, Événements, Galerie, Emplois du temps, Téléchargements, Contact), liens de la barre du haut non déjà présents,
   bouton « S'inscrire », coordonnées et réseaux.
 - Repli : sans GSAP (économiseur de données, chargement en cours) ou en mouvement réduit, le menu s'affiche avec un simple fondu CSS.
+
+## D-030 · Recherche en fenêtre modale
+- La loupe (et « Recherche » dans la navigation, Ctrl/Cmd + K, « / ») ouvre une fenêtre de recherche avec résultats en direct,
+  groupés (formations, actualités, événements, pages). Sans JavaScript, la loupe reste un lien vers `/recherche`.
+- Pas de Livewire sur toutes les pages (≈ 99 Ko) : la fenêtre charge un fragment HTML (`/recherche/apercu`, limité à 60 requêtes/min)
+  rendu par le serveur ; le moteur (`App\Services\SiteSearch`) est partagé avec la page `/recherche`.
+- Alpine CSP interdit `x-html` : le fragment est inséré par `innerHTML` depuis notre propre serveur (valeurs échappées par Blade).

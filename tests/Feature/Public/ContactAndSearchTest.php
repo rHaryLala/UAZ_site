@@ -155,3 +155,29 @@ it('locks the anti-robot timestamp and the sent flag against browser tampering',
         expect((new ReflectionProperty(ContactForm::class, $property))->getAttributes(Locked::class))->toHaveCount(1);
     }
 });
+
+it('serves the search modal results as an HTML fragment with the same engine', function () {
+    NewsPost::factory()->create(['title' => 'Concert de la chorale']);
+    NewsPost::factory()->draft()->create(['title' => 'Concert secret']);
+
+    $this->get('/recherche/apercu?q=concert')
+        ->assertOk()
+        ->assertSee('Concert de la chorale')
+        ->assertDontSee('Concert secret')
+        ->assertSee('data-search-result', false)
+        ->assertSee('Voir tous les résultats');
+});
+
+it('keeps the search modal fragment safe and bounded', function () {
+    $this->get('/recherche/apercu?q=a')->assertOk()->assertSee('au moins 2 caractères');
+    $this->get('/recherche/apercu?q=<script>alert(1)</script>')->assertOk()->assertDontSee('<script>alert(1)</script>', false);
+    $this->get('/recherche/apercu?q='.str_repeat('x', 500))->assertOk();
+});
+
+it('shows the search modal markup on public pages while keeping the magnifier a working link', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('x-data="searchModal"', false)
+        ->assertSee(route('search.preview'), false)
+        ->assertSee('aria-label="Rechercher sur le site"', false);
+});

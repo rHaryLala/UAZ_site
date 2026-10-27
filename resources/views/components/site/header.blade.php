@@ -44,6 +44,7 @@
                             <li class="group relative">
                                 <a href="{{ $item['url'] }}" class="site-header__link inline-flex items-center gap-1.5 py-2 text-[0.8125rem] font-medium whitespace-nowrap"
                                    @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif
+                                   @if ($item['url'] === url('/recherche')) @click.prevent="openSearch" aria-haspopup="dialog" @endif
                                    @if (url()->current() === $item['url']) aria-current="page" @endif>
                                     {{ $item['label'] }}
                                 </a>
@@ -58,7 +59,7 @@
                         @endforeach
                     </ul>
                 </nav>
-                <a href="{{ url('/recherche') }}" class="site-header__icon inline-flex size-11 items-center justify-center" aria-label="Rechercher sur le site">
+                <a href="{{ url('/recherche') }}" @click.prevent="openSearch" class="site-header__icon inline-flex size-11 items-center justify-center" aria-label="Rechercher sur le site" aria-haspopup="dialog">
                     <x-ico name="search" class="size-5" />
                 </a>
                 <x-button :href="url('/admissions')" variant="royal" arrow class="btn-square hidden md:inline-flex">S'inscrire</x-button>
@@ -76,6 +77,68 @@
             </div>
         </div>
     </header>
+
+    {{-- Fenêtre de recherche : s'ouvre avec la loupe, Ctrl/Cmd + K ou « / » ; résultats en direct (components/search-modal.js) --}}
+    <div
+        x-data="searchModal"
+        data-endpoint="{{ route('search.preview') }}"
+        @keydown.escape.window="close"
+        x-bind:data-open="open"
+        data-open="false"
+        class="search-modal fixed inset-0 z-[70]"
+    >
+        <div class="search-modal__backdrop absolute inset-0 bg-night-900/60 backdrop-blur-sm" @click="close" aria-hidden="true"></div>
+
+        <div
+            x-ref="panel"
+            x-trap.noscroll="open"
+            @keydown="onKey"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Rechercher sur le site"
+            class="search-modal__panel relative mx-auto mt-[8vh] w-[calc(100%-2rem)] max-w-2xl overflow-hidden rounded-2xl bg-white text-ink-800 shadow-lift sm:mt-[12vh]"
+        >
+            <form method="get" action="{{ url('/recherche') }}" role="search" class="flex items-center gap-3 border-b border-paper-300 px-5">
+                <x-ico name="search" class="size-5 text-royal-600" />
+                <label for="search-modal-q" class="sr-only">Rechercher sur le site</label>
+                <input
+                    id="search-modal-q"
+                    x-ref="input"
+                    @input="onInput"
+                    type="search"
+                    name="q"
+                    autocomplete="off"
+                    placeholder="Formation, actualité, événement…"
+                    class="h-16 min-w-0 flex-1 bg-transparent [&::-webkit-search-cancel-button]:hidden text-base text-ink-900 placeholder:text-ink-500 focus:outline-none"
+                >
+                <span class="search-modal__spinner size-4 shrink-0 rounded-full border-2 border-royal-600 border-t-transparent" x-bind:data-loading="loading" aria-hidden="true"></span>
+                <button type="button" @click="close" class="rounded-md border border-paper-300 px-2 py-1 text-[0.6875rem] font-semibold text-ink-600 hover:bg-mist-100">
+                    <span aria-hidden="true">Échap</span><span class="sr-only">Fermer la recherche</span>
+                </button>
+            </form>
+
+            <div class="max-h-[58vh] overflow-y-auto overscroll-contain pb-2" x-bind:aria-busy="loading">
+                {{-- Résultats insérés par JavaScript --}}
+                <div x-ref="results" aria-live="polite"></div>
+
+                {{-- Accès rapides tant qu'aucune recherche n'est saisie --}}
+                <div x-show="empty" class="px-6 py-6">
+                    <p class="eyebrow mb-3 font-sans! text-[0.6875rem]! text-ink-600">Accès rapide</p>
+                    <ul class="flex flex-wrap gap-2">
+                        @foreach (collect($headerMenu)->reject(fn ($i) => $i['url'] === url('/recherche'))->merge($footerMenu)->unique('url')->take(10) as $item)
+                            <li><a href="{{ $item['url'] }}" data-search-quick class="inline-flex rounded-full bg-mist-100 px-3.5 py-1.5 text-sm font-medium text-navy-900 hover:bg-royal-600 hover:text-white">{{ $item['label'] }}</a></li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+
+            <p class="hidden items-center gap-4 border-t border-paper-300 bg-mist-100 px-5 py-2.5 text-[0.6875rem] text-ink-600 sm:flex">
+                <span><kbd class="font-sans font-semibold">↑ ↓</kbd> naviguer</span>
+                <span><kbd class="font-sans font-semibold">Entrée</kbd> tous les résultats</span>
+                <span><kbd class="font-sans font-semibold">Échap</kbd> fermer</span>
+            </p>
+        </div>
+    </div>
 
     {{-- Menu plein écran : rideau or puis panneau marine ouverts en cercle depuis le bouton, liens en cascade.
          Animation GSAP (animations/menu.js) ; sans GSAP ou en mouvement réduit, repli CSS (voir app.css). --}}

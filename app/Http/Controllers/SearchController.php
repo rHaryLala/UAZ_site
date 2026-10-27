@@ -9,6 +9,6 @@ class SearchController extends Controller
 {
     public function __invoke(): View
     {
-        return view('search');
+        return view('search.index');
     }
 }

@@ -37,6 +37,12 @@ export default () => ({
         return Boolean(section) && section.getBoundingClientRect().width >= window.innerWidth * 0.9;
     },
 
+    // La loupe (ou « Recherche » dans la navigation) ouvre la fenêtre de recherche, pas la page.
+    openSearch() {
+        this.close();
+        window.dispatchEvent(new CustomEvent('uaz:search-open'));
+    },
+
     toggle() {
         this.set(!this.open);
     },

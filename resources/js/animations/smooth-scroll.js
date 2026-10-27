@@ -18,6 +18,7 @@ export function initSmoothScroll() {
         // Menu plein écran, visionneuse… : on suspend le défilement.
         const onLock = (event) => (event.detail.open ? lenis.stop() : lenis.start());
         window.addEventListener('uaz:menu', onLock);
+        window.addEventListener('uaz:search', onLock);
 
         // Recalcul des positions une fois les images chargées (évite des déclencheurs mal placés).
         const refresh = () => ScrollTrigger.refresh();
@@ -26,6 +27,7 @@ export function initSmoothScroll() {
         // Nettoyage (changement de media query ou rechargement dynamique de la page).
         return () => {
             window.removeEventListener('uaz:menu', onLock);
+            window.removeEventListener('uaz:search', onLock);
             window.removeEventListener('load', refresh);
             gsap.ticker.remove(tick);
             lenis.destroy();

@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SearchPreviewController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TeamController;
 use App\Models\Event;
@@ -50,6 +51,7 @@ Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 Route::get('/equipe', TeamController::class)->name('team');
 Route::get('/contact', ContactController::class)->name('contact');
 Route::get('/recherche', SearchController::class)->name('search');
+Route::get('/recherche/apercu', SearchPreviewController::class)->middleware('throttle:60,1')->name('search.preview');
 
 // Pages libres (arbre de pages du back-office) : toujours en dernier. Les chemins techniques sont exclus.
 Route::get('/{path}', PageController::class)
