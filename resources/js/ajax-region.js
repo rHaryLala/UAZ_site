@@ -36,6 +36,11 @@ async function load(url, { push }) {
         document.title = doc.title;
         if (push) history.pushState({ ajax: true }, '', url);
 
+        // Pagination : si le haut de la zone est hors écran, on y remonte.
+        if (current.getBoundingClientRect().top < 0) {
+            current.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        }
+
         // Le lien qui avait le focus est remplacé : on le retrouve pour ne pas perdre la navigation au clavier.
         if (focusedHref) current.querySelector(`a[href="${CSS.escape(focusedHref)}"]`)?.focus({ preventScroll: true });
     } catch (error) {

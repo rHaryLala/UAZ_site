@@ -8,6 +8,7 @@
     <x-page-hero eyebrow="Les dernières nouvelles de l'UAZ" title="Actualités de l'UAZ" :breadcrumbs="[['label' => 'Actualités']]" />
 
     <x-section tone="paper" tight>
+      <div data-ajax-region>
         @if ($categories->count() > 1)
             <nav aria-label="Catégories d'actualités" class="mb-10 flex flex-wrap items-center gap-3">
                 <a href="{{ url('/actualites') }}" class="{{ $pill(! $category) }}" @if (! $category) aria-current="true" @endif>Toutes</a>
@@ -27,5 +28,6 @@
             </ul>
             {{ $posts->links() }}
         @endif
+      </div>
     </x-section>
 </x-layouts.app>
