@@ -15,7 +15,10 @@ return [
         'subtitle' => 'Excellence académique, vie étudiante dynamique et développement personnel : l’UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
         'cta_primary' => 'Découvrir l\'UAZ',
         'cta_secondary' => 'Planifier votre visite',
-        'note' => 'Apprendre, grandir et servir, au cœur de la nature malgache.',
+        // Phrase du bas du héros, en trois langues (défilement : français, anglais, malgache). TODO-CONTENU : traduction malgache à faire relire.
+        'note' => 'Votre futur commence ici !',
+        'note_en' => 'Your future starts here!',
+        'note_mg' => 'Eto no manomboka ny hoavanao!',
         'scroll' => 'Faire défiler',
     ],
 

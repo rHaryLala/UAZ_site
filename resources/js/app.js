@@ -13,6 +13,9 @@ const hasLivewire = document.querySelector('[wire\\:id]') !== null;
 
 initAnimations();
 
+// Phrase du héros de l'accueil en trois langues.
+if (document.querySelector('[data-hero-ticker]')) import('./hero-ticker.js').then((m) => m.initHeroTicker());
+
 // Yearbook : livre numérique à feuilleter.
 if (document.querySelector('[data-yearbook]')) import('./yearbook.js').then((m) => m.initYearbook());
 

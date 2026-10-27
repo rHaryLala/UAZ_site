@@ -33,7 +33,14 @@
 
     <div class="container-site relative mt-14 pb-6 md:mt-20 md:pb-7" data-reveal data-reveal-delay="0.8">
         <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 text-[0.75rem] text-white/85">
-            <p class="flex max-w-xl items-center gap-3"><span class="size-2 shrink-0 bg-sun-400" aria-hidden="true"></span>{{ __('home.hero.note') }}</p>
+            <p class="flex max-w-xl items-center gap-3 text-[0.9375rem] font-medium"><span class="size-2 shrink-0 bg-sun-400" aria-hidden="true"></span>
+                {{-- Trois versions qui défilent de bas en haut, 5 s chacune (animations : resources/js/hero-ticker.js) ; sans JavaScript, le français seul. --}}
+                <span class="hero-ticker" data-hero-ticker>
+                    <span lang="fr" data-state="current">{{ __('home.hero.note') }}</span>
+                    <span lang="en" aria-hidden="true">{{ __('home.hero.note_en') }}</span>
+                    <span lang="mg" aria-hidden="true">{{ __('home.hero.note_mg') }}</span>
+                </span>
+            </p>
             <p class="tracking-[0.02em] uppercase">{{ __('home.hero.region') }}</p>
         </div>
     </div>

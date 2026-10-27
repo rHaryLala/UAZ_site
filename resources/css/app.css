@@ -1178,3 +1178,34 @@ html.menu-open {
     right: 1rem;
     margin: 0;
 }
+
+/* Phrase du héros en trois langues : défilement de bas en haut (hero-ticker.js). */
+.hero-ticker {
+    display: inline-grid;
+    overflow: hidden;
+}
+
+.hero-ticker > span {
+    grid-area: 1 / 1;
+    transform: translateY(120%);
+    transition: transform 0.8s var(--ease-out-expo);
+}
+
+.hero-ticker > span[data-state='current'] {
+    transform: none;
+}
+
+.hero-ticker > span[data-state='leaving'] {
+    transform: translateY(-120%);
+}
+
+.hero-ticker > span.is-reset {
+    transition: none;
+}
+
+/* Sans JavaScript (ou mouvement réduit) : seule la première version est visible. */
+@media (prefers-reduced-motion: reduce) {
+    .hero-ticker > span {
+        transition: none;
+    }
+}
