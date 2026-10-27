@@ -29,8 +29,9 @@
                 ></video>
                 @if ($videoReady)
                     <button type="button" data-future-play class="group absolute inset-0 flex items-center justify-center bg-navy-950/25 transition hover:bg-navy-950/10 focus-visible:outline-offset-[-6px]" aria-label="{{ __('home.future.play') }}">
-                        <span class="flex h-9 w-14 items-center justify-center bg-sun-400 text-night-900 shadow-lift transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-16">
-                            <x-ico name="play" class="size-4 translate-x-px sm:size-5" />
+                        <span class="flex h-9 w-14 items-center justify-center rounded-[0.6rem] bg-sun-400 text-night-900 shadow-lift transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-16 sm:rounded-xl">
+                            {{-- Triangle dessiné pour être centré dans le rectangle (boîte 24×24, triangle de x 7,5 à 17,5, sans décalage). --}}
+                            <svg viewBox="0 0 24 24" class="block size-5 sm:size-6" aria-hidden="true" focusable="false"><path d="M7.5 5.5v13L17.5 12z" fill="currentColor"/></svg>
                         </span>
                     </button>
                 @endif
