@@ -15,7 +15,7 @@ return [
         'subtitle' => 'Excellence académique, vie étudiante dynamique et développement personnel : l’UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
         'cta_primary' => 'Découvrir l\'UAZ',
         'cta_secondary' => 'Planifier votre visite',
-        'note' => 'Esprit, Main, Intelligence — au service de chacun.',
+        'note' => 'Apprendre, grandir et servir, au cœur de la nature malgache.',
         'scroll' => 'Faire défiler',
     ],
 
