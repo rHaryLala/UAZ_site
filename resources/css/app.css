@@ -656,6 +656,54 @@
         }
     }
 
+    /* Fiche agrandie d'un membre de l'équipe (<dialog> natif). */
+    .team-dialog {
+        width: calc(100% - 2rem);
+        max-width: 60rem;
+        max-height: calc(100dvh - 2rem);
+        margin: auto;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        overflow: visible;
+    }
+
+    .team-dialog::backdrop {
+        background: rgb(10 22 40 / 0.7);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+    }
+
+    .team-dialog[open]::backdrop {
+        animation: uaz-fade 0.3s ease-out;
+    }
+
+    .team-dialog__panel {
+        position: relative;
+        max-height: calc(100dvh - 2rem);
+        overflow-y: auto;
+        border-radius: var(--radius-card);
+        background: #fff;
+        box-shadow: var(--shadow-lift);
+        transform-origin: 0 0;
+    }
+
+    @keyframes uaz-fade {
+        from {
+            opacity: 0;
+        }
+    }
+
+    html.profile-open {
+        overflow: hidden;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .team-dialog[open]::backdrop {
+            animation: none;
+        }
+    }
+
     /* Zones rechargées par AJAX (data-ajax-region) : léger voile pendant le chargement, fondu à l'arrivée. */
     .ajax-loading {
         opacity: 0.55;

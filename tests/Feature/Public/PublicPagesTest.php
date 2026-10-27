@@ -161,3 +161,14 @@ it('sends the enrol buttons to the online registration site', function () {
     $this->get('/')->assertOk()->assertSee('href="'.config('uaz.registration_url').'"', false);
     expect(config('uaz.registration_url'))->toBe('https://registrar.zurcher.edu.mg/#pre-inscription');
 });
+
+it('renders team profile cards that open an enlarged sheet with the quote and message', function () {
+    $member = \App\Models\TeamMember::factory()->create(['name' => 'Dr Test Exemple', 'quote' => 'Servir avec excellence.', 'bio' => 'Bienvenue à l\'UAZ.']);
+
+    $this->get('/equipe')->assertOk()
+        ->assertSee('data-team-grid', false)
+        ->assertSee('data-profile-open', false)
+        ->assertSee('Servir avec excellence.')
+        ->assertSee('Message aux lecteurs')
+        ->assertSee('id="team-profile"', false);
+});

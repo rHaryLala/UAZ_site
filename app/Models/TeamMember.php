@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['faculty_id', 'name', 'job_title', 'category', 'bio', 'email', 'phone', 'photo_id', 'sort_order', 'is_active'])]
+#[Fillable(['faculty_id', 'name', 'job_title', 'category', 'bio', 'quote', 'email', 'phone', 'photo_id', 'sort_order', 'is_active'])]
 class TeamMember extends Model
 {
     use HasFactory;

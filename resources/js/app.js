@@ -13,5 +13,8 @@ const hasLivewire = document.querySelector('[wire\\:id]') !== null;
 
 initAnimations();
 
+// Page Équipe : fiche agrandie au clic sur une carte.
+if (document.querySelector('[data-team-grid]')) import('./team-profile.js').then((m) => m.initTeamProfile());
+
 // Filtres sans rechargement complet (zones data-ajax-region) : chargé seulement si la page en contient.
 if (document.querySelector('[data-ajax-region]')) import('./ajax-region.js').then((m) => m.initAjaxRegion());

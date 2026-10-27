@@ -51,7 +51,10 @@ class TeamMemberResource extends Resource
                 ->default(TeamCategory::Administration)->required()->selectablePlaceholder(false),
             Select::make('faculty_id')->label('Faculté / département')
                 ->relationship('faculty', 'name')->searchable()->preload(),
-            Textarea::make('bio')->label('Courte biographie')->rows(3)->maxLength(600)->columnSpanFull(),
+            Textarea::make('quote')->label('Citation')->rows(2)->maxLength(400)->columnSpanFull()
+                ->helperText('Une phrase de la personne, affichée en grand quand on ouvre sa carte sur la page Équipe.'),
+            Textarea::make('bio')->label('Message aux lecteurs')->rows(4)->maxLength(1200)->columnSpanFull()
+                ->helperText('Ce que la personne souhaite partager (parcours, mot d\'accueil…). Texte validé par l\'intéressé(e).'),
             TextInput::make('email')->label('E-mail')->email()->maxLength(255),
             TextInput::make('phone')->label('Téléphone')->tel()->maxLength(50),
             MediaPicker::make('photo_id', 'Photo'),

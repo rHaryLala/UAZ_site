@@ -14,17 +14,28 @@
                 </div>
 
                 <h2 class="sr-only">Liste des membres</h2>
-                <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-team-grid>
                     @foreach ($members as $member)
                         <li data-reveal data-reveal-delay="{{ ($loop->index % 4) * 0.06 }}">
                             {{-- Le décalage est sur un conteneur interne : l'apparition (data-reveal) anime le <li>, les deux ne se mélangent pas. --}}
                             <div @class(['xl:translate-y-10' => $loop->index % 4 === 1 || $loop->index % 4 === 3])>
-                                <x-person-card :member="$member" />
+                                <x-person-card :member="$member" :profile="true" />
                             </div>
+                            <template data-profile-template>@include('team._profile', ['member' => $member])</template>
                         </li>
                     @endforeach
                 </ul>
             @endif
         </div>
     </section>
+
+    {{-- Fiche agrandie : <dialog> natif (focus piégé, Échap) ; l'animation d'agrandissement part de la carte cliquée. --}}
+    <dialog id="team-profile" class="team-dialog" aria-label="Profil">
+        <div class="team-dialog__panel" data-profile-panel>
+            <button type="button" data-profile-close class="absolute top-4 right-4 z-10 inline-flex size-11 items-center justify-center rounded-full bg-white/90 text-navy-900 shadow-card hover:bg-sun-400" aria-label="Fermer le profil">
+                <x-ico name="close" class="size-5" />
+            </button>
+            <div data-profile-body></div>
+        </div>
+    </dialog>
 </x-layouts.app>
