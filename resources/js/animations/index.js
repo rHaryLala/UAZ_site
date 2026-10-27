@@ -5,7 +5,6 @@ const MODULES = [
     ['[data-reveal]', () => import('./reveal.js').then((m) => m.initReveal())],
     ['[data-hero]', () => import('./hero.js').then((m) => m.initHero())],
     ['[data-counter]', () => import('./counters.js').then((m) => m.initCounters())],
-    ['[data-pillars]', () => import('./pillars.js').then((m) => m.initPillars())],
     ['[data-parallax]', () => import('./parallax.js').then((m) => m.initParallax())],
 ];
 
@@ -22,7 +21,6 @@ function showEverything() {
     document.querySelectorAll('[data-reveal]').forEach((el) => el.setAttribute('data-revealed', ''));
     document.querySelectorAll('[data-hero-title]').forEach((el) => el.setAttribute('data-split', ''));
     document.querySelectorAll('[data-hero]').forEach((el) => el.setAttribute('data-hero-started', ''));
-    document.querySelectorAll('[data-pillars]').forEach((el) => el.setAttribute('data-pillars-started', ''));
 }
 
 export function initAnimations() {

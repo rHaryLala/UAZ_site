@@ -272,3 +272,11 @@ it('describes weather codes in French with a matching icon', function () {
 it('shows the footer address without the country and with a Google Maps link', function () {
     $this->get('/contact')->assertSee('PK 135, Route Nationale 7, Antsirabe', false)->assertSee(config('uaz.map_url'), false);
 });
+
+it('shows the "Votre futur commence ici" video section on the home page instead of the old motto block', function () {
+    $this->get('/')->assertOk()
+        ->assertSee('Votre futur commence ici.')
+        ->assertSee('data-future', false)
+        ->assertSee('videos/futur-960.mp4', false)
+        ->assertDontSee('Notre devise');
+});

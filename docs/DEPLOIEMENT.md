@@ -299,3 +299,9 @@ CRF 25 (1080p) / 26 (720p), sans audio, `+faststart` (lecture avant la fin du t�
 Les images « hero » sont converties en **WebP 2560 px, qualité 90** (sans AVIF : à cette taille, l'AVIF compressé donnait un rendu pâteux).
 Après un déploiement ou un changement de ces réglages (`config/uaz.php`, `media.conversions.hero`), régénérer les conversions :
 `php artisan media-library:regenerate --only=hero --with-responsive-images --force`.
+
+## Vidéo « Votre futur commence ici » (accueil)
+La section « Votre futur commence ici » de l'accueil lit `public/videos/futur-960.mp4` (≈ 27 Mo) et `futur-640.mp4` (≈ 12 Mo, mobiles) ; l'image d'affiche
+`futur-poster.webp` est versionnée, pas les MP4 (comme pour `campus-*.mp4`). Elles viennent de « X vertical 4-5 (960 x 1200)_1.mp4 » (1:59, 4:5, avec son),
+**coupées à 1 min 37**. Rien n'est téléchargé avant le clic sur ▶. Sans fichiers vidéo, la section n'affiche que l'image d'affiche, sans bouton de lecture.
+`ffmpeg -t 97 -i source.mp4 -vf "scale=960:1200:flags=lanczos,format=yuv420p" -c:v libx264 -preset slow -crf 23 -maxrate 3500k -c:a aac -b:a 128k -movflags +faststart futur-960.mp4`

@@ -6,7 +6,7 @@
 <x-layouts.app :title="$homePage?->seo_title" :description="$homePage?->metaDescription() ?: $description" :image="$homePage?->metaImage()" header-tone="dark">
     @include('home.hero')
     @include('home.difference')
-    @include('home.pillars')
+    @include('home.future')
     @include('home.formations')
     @include('home.admissions')
     @include('home.life')

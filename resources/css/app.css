@@ -940,25 +940,11 @@
     animation: uaz-failsafe 0.01s 1.4s forwards;
 }
 
-.js [data-pillars]:not([data-pillars-started]) [data-pillars-triangle] {
-    stroke-dashoffset: 1;
-    animation: uaz-draw-failsafe 0.01s 3.5s forwards;
-}
 
-.js [data-pillars]:not([data-pillars-started]) :is([data-pillars-island], [data-pillars-word]) {
-    opacity: 0;
-    animation: uaz-failsafe 0.01s 3.5s forwards;
-}
 
 @media (prefers-reduced-motion: reduce) {
-    .js [data-hero-title]:not([data-split]),
-    .js [data-pillars]:not([data-pillars-started]) :is([data-pillars-island], [data-pillars-word]) {
+    .js [data-hero-title]:not([data-split]) {
         opacity: 1;
-        animation: none;
-    }
-
-    .js [data-pillars]:not([data-pillars-started]) [data-pillars-triangle] {
-        stroke-dashoffset: 0;
         animation: none;
     }
 }

@@ -29,14 +29,11 @@ return [
         'link' => 'Mieux nous connaître',
     ],
 
-    'pillars' => [
-        'eyebrow' => 'Notre devise',
-        'title' => 'Esprit, Main, Intelligence — au Service',
-        'intro' => 'Trois dimensions de la formation, réunies autour d\'une même mission : servir.',
-        'spiritus' => ['word' => 'Spiritus', 'label' => 'L\'esprit', 'text' => 'Un accompagnement spirituel pour grandir en cohérence avec ses valeurs.'],
-        'manus' => ['word' => 'Manus', 'label' => 'La main', 'text' => 'Projets pratiques, stages et engagements collectifs pour apprendre en faisant.'],
-        'mens' => ['word' => 'Mens', 'label' => 'L\'intelligence', 'text' => 'L\'excellence académique au service d\'une pensée rigoureuse et libre.'],
-        'service' => 'Service',
+    'future' => [
+        'title' => 'Votre futur commence ici.',
+        'text' => 'Découvrez en vidéo la vie sur le campus de l’UAZ.',
+        'play' => 'Lire la vidéo « Votre futur commence ici »',
+        'video_label' => 'Vidéo de présentation de l’UAZ',
     ],
 
     'formations' => [
