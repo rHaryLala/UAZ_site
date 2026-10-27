@@ -1,7 +1,7 @@
 @props(['member', 'eager' => false, 'profile' => false])
 
 {{-- Carte portrait : photo plein cadre, nom et fonction sur un dégradé marine, liseré or et e-mail qui se révèlent au survol. --}}
-<article {{ $attributes->class('group relative isolate overflow-hidden rounded-card bg-navy-900 text-white shadow-card transition-shadow duration-300 hover:shadow-lift focus-within:shadow-lift') }}>
+<article {{ $attributes->class('ornament group relative isolate overflow-hidden bg-navy-900 text-white shadow-card transition-shadow duration-300 hover:shadow-lift focus-within:shadow-lift') }}>
     <div class="relative aspect-[4/5] overflow-hidden">
         @if ($member->photo)
             <x-picture :asset="$member->photo" conversion="card" sizes="(min-width: 1280px) 20rem, (min-width: 640px) 30vw, 92vw" :eager="$eager"

@@ -29,13 +29,19 @@
         </div>
     </section>
 
-    {{-- Fiche agrandie : <dialog> natif (focus piégé, Échap) ; l'animation d'agrandissement part de la carte cliquée. --}}
+    {{-- Fiche : <dialog> natif (focus piégé, Échap). La carte cliquée se retourne en 3D (GSAP, resources/js/team-profile.js) :
+         face avant = copie de la carte, face arrière = la fiche. --}}
     <dialog id="team-profile" class="team-dialog" aria-label="Profil">
-        <div class="team-dialog__panel" data-profile-panel>
-            <button type="button" data-profile-close class="absolute top-4 right-4 z-10 inline-flex size-11 items-center justify-center rounded-full bg-white/90 text-navy-900 shadow-card hover:bg-sun-400" aria-label="Fermer le profil">
-                <x-ico name="close" class="size-5" />
-            </button>
-            <div data-profile-body></div>
+        <div class="team-flip" data-flip>
+            <div class="team-flip__front" data-flip-front aria-hidden="true"></div>
+            <div class="team-flip__back ornament" data-flip-back>
+                <div class="team-flip__inner" data-flip-inner>
+                    <button type="button" data-profile-close class="absolute top-4 right-4 z-20 inline-flex size-11 items-center justify-center bg-white text-navy-900 shadow-card hover:bg-sun-400" aria-label="Fermer le profil">
+                        <x-ico name="close" class="size-5" />
+                    </button>
+                    <div data-profile-body></div>
+                </div>
+            </div>
         </div>
     </dialog>
 </x-layouts.app>

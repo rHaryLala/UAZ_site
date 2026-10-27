@@ -656,45 +656,68 @@
         }
     }
 
-    /* Fiche agrandie d'un membre de l'équipe (<dialog> natif). */
+    /* Fiche d'un membre de l'équipe : <dialog> plein écran en perspective ; la carte se retourne (GSAP, team-profile.js). */
     .team-dialog {
-        width: calc(100% - 2rem);
-        max-width: 60rem;
-        max-height: calc(100dvh - 2rem);
-        margin: auto;
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        max-height: none;
+        margin: 0;
         padding: 0;
         border: 0;
         background: transparent;
-        overflow: visible;
+        overflow: hidden;
+        perspective: 1900px;
     }
 
     .team-dialog::backdrop {
-        background: rgb(10 22 40 / 0.7);
+        background: rgb(10 22 40 / 0.72);
         -webkit-backdrop-filter: blur(6px);
         backdrop-filter: blur(6px);
     }
 
     .team-dialog[open]::backdrop {
-        animation: uaz-fade 0.3s ease-out;
+        animation: uaz-fade 0.4s ease-out;
     }
 
-    .team-dialog__panel {
-        position: relative;
-        max-height: calc(100dvh - 2rem);
-        overflow-y: auto;
-        border-radius: var(--radius-card);
+    .team-flip {
+        position: absolute;
+        transform-style: preserve-3d;
+        will-change: transform;
+    }
+
+    .team-flip__front,
+    .team-flip__back {
+        position: absolute;
+        inset: 0;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+
+    .team-flip__front > article {
+        height: 100%;
+    }
+
+    .team-flip__front .aspect-\[4\/5\] {
+        aspect-ratio: auto;
+        height: 100%;
+    }
+
+    .team-flip__back {
+        transform: rotateY(180deg);
+        overflow: hidden;
         background: #fff;
-        box-shadow: var(--shadow-lift);
-        transform-origin: center;
-        /* Bords estompés pendant l'agrandissement / la réduction (--feather animé par team-profile.js) : la fiche se fond
-           visiblement dans sa carte. À 0 %, le masque est opaque et la fiche est nette. */
-        --feather: 0%;
-        -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent),
-            linear-gradient(to bottom, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent);
-        mask-image: linear-gradient(to right, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent),
-            linear-gradient(to bottom, transparent, #000 var(--feather), #000 calc(100% - var(--feather)), transparent);
-        -webkit-mask-composite: source-in;
-        mask-composite: intersect;
+    }
+
+    /* Contenu à sa taille finale, centré : la face arrière est une « fenêtre » qui grandit, rien ne se déforme. */
+    .team-flip__inner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        overflow-y: auto;
+        transform: translate(-50%, -50%);
     }
 
     @keyframes uaz-fade {
@@ -705,6 +728,33 @@
 
     html.profile-open {
         overflow: hidden;
+    }
+
+    /* Ornement minimaliste : liseré fin à l'intérieur du bord et petits carrés dorés aux quatre coins. */
+    .ornament {
+        --orn: rgb(201 168 76);
+    }
+
+    .ornament::before,
+    .ornament::after {
+        content: '';
+        position: absolute;
+        pointer-events: none;
+        z-index: 15;
+    }
+
+    .ornament::before {
+        inset: 0.5rem;
+        border: 1px solid rgb(201 168 76 / 0.5);
+    }
+
+    .ornament::after {
+        inset: calc(0.5rem - 2px);
+        background:
+            linear-gradient(var(--orn), var(--orn)) top left / 5px 5px no-repeat,
+            linear-gradient(var(--orn), var(--orn)) top right / 5px 5px no-repeat,
+            linear-gradient(var(--orn), var(--orn)) bottom left / 5px 5px no-repeat,
+            linear-gradient(var(--orn), var(--orn)) bottom right / 5px 5px no-repeat;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -935,8 +985,3 @@ html.menu-open {
     }
 }
 
-@property --feather {
-    syntax: "<percentage>";
-    inherits: false;
-    initial-value: 0%;
-}
