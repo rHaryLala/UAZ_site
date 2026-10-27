@@ -95,7 +95,7 @@ it('shows the scheduled status in the news list', function () {
     NewsPost::factory()->scheduled()->create(['title' => 'Bientôt']);
     actingAs(userWith(RolesAndPermissionsSeeder::EDITOR));
 
-    Livewire::test(ListNewsPosts::class)->assertSee('Bientôt')->assertSee('Programmé');
+    Livewire::test(ListNewsPosts::class)->loadTable()->assertSee('Bientôt')->assertSee('Programmé');
 });
 
 it('keeps an existing draft editable and publishable by an editor', function () {

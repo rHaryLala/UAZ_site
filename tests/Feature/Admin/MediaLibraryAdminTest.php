@@ -28,7 +28,7 @@ it('lists media for editors', function () {
 
     actingAs(editorUser());
 
-    Livewire::test(ListMediaAssets::class)
+    Livewire::test(ListMediaAssets::class)->loadTable()
         ->assertOk()
         ->assertSee('Campus vu du ciel');
 });

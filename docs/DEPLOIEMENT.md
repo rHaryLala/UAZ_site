@@ -305,3 +305,14 @@ La section « Votre futur commence ici » de l'accueil lit `public/videos/futur-
 `futur-poster.webp` est versionnée, pas les MP4 (comme pour `campus-*.mp4`). Elles viennent de « X vertical 4-5 (960 x 1200)_1.mp4 » (1:59, 4:5, avec son),
 **coupées à 1 min 37**. La vidéo démarre seule (muette, en boucle) quand la section approche de l'écran ; seule commande : couper/remettre le son. Connexion lente ou mouvement réduit : bouton ▶. Sans fichiers vidéo, la section n'affiche que l'image d'affiche, sans bouton de lecture.
 `ffmpeg -t 97 -i source.mp4 -vf "scale=960:1200:flags=lanczos,format=yuv420p" -c:v libx264 -preset slow -crf 23 -maxrate 3500k -c:a aac -b:a 128k -movflags +faststart futur-960.mp4`
+
+## Performance du back-office (étape 2 de l'audit)
+- **Mesure** (nombre de requêtes SQL par liste, avec 15 lignes de contenu) : total de **165 → 59** pour les 15 écrans ; Équipe 47 → 7, Actualités 47 → 9, Médias 7 → 4.
+  Les listes chargent leurs relations et vignettes en une requête (`modifyQueryUsing(... ->with(...))`) au lieu d'une requête par ligne.
+- **Tableau de bord** : plus de rafraîchissement automatique (Filament le faisait toutes les 5 s), chargement différé, chiffres et compteur « messages non lus » en cache 2 min,
+  vidé dès qu'une actualité, un événement ou un message change (`App\Support\AdminStats`).
+- **Tables** : `deferLoading` (le squelette s'affiche tout de suite) et pagination 10 / 25 / 50 (25 par défaut) pour tous les écrans (`AppServiceProvider::boot`).
+- **Index** ajoutés (`2026_10_27_160000_add_admin_list_indexes`) : `is_active + sort_order` (équipe, témoignages, partenaires, projets), `read_at` et `created_at` (messages).
+- **Production** : `scripts/deploy.sh` exécute déjà `php artisan optimize` (config, routes, vues, événements) et `php artisan filament:optimize` ; OPcache est réglé plus haut.
+- **Développement (Laragon)** : OPcache est **désactivé** dans le PHP de Laragon, ce qui rend chaque page 2 à 5 fois plus lente (la première page après un vidage de cache peut dépasser 20 s).
+  Pour des mesures réalistes, activer `opcache.enable=1` (et `opcache.enable_cli=0`) dans `php.ini` de Laragon puis redémarrer Apache/Nginx ; ne pas le faire en `validate_timestamps=0` en développement.

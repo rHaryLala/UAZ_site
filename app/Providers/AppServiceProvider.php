@@ -70,6 +70,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Chiffres du tableau de bord et compteur de messages : cache vidé dès qu'un contenu concerné change.
+        foreach ([NewsPost::class, EventModel::class, ContactMessage::class] as $model) {
+            $model::saved(fn () => \App\Support\AdminStats::flush());
+            $model::deleted(fn () => \App\Support\AdminStats::flush());
+        }
+
+        // Tableaux du back-office : chargement différé (le squelette s'affiche tout de suite, les lignes arrivent ensuite),
+        // pagination 10 / 25 / 50 (25 par défaut). Chaque écran peut surcharger ces réglages.
+        \Filament\Tables\Table::configureUsing(fn (\Filament\Tables\Table $table) => $table
+            ->deferLoading()
+            ->paginationPageOptions([10, 25, 50])
+            ->defaultPaginationPageOption(25));
+
         // Le super-admin passe toutes les autorisations, sauf pour se supprimer lui-même ou supprimer le dernier super-admin
         // (garde-fou : on ne doit jamais pouvoir verrouiller le back-office par erreur).
         Gate::before(function ($user, string $ability, array $arguments) {

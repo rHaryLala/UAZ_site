@@ -67,5 +67,37 @@ it('lets the media library switch between list and grid layouts', function () {
 
     session(['media_layout' => 'grid']);
     \Livewire\Livewire::test(\App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class)
+        ->loadTable()
         ->assertSee('Vue liste')->assertSee('Photo test');
+});
+
+it('serves the dashboard stats from a cache that is flushed when content changes', function () {
+    $this->actingAs(\App\Models\User::factory()->create()->assignRole('super-admin'));
+    \Illuminate\Support\Facades\Cache::flush();
+
+    expect(\App\Support\AdminStats::get()['messages_unread'])->toBe(0);
+
+    \App\Models\ContactMessage::factory()->create();
+
+    expect(\App\Support\AdminStats::get()['messages_unread'])->toBe(1);
+});
+
+it('does not poll the dashboard stats and loads them lazily', function () {
+    $widget = new \ReflectionClass(\App\Filament\Widgets\ContentOverview::class);
+
+    expect($widget->getProperty('pollingInterval')->getDefaultValue())->toBeNull()
+        ->and($widget->getProperty('isLazy')->getDefaultValue())->toBeTrue();
+});
+
+it('keeps the admin list screens under a small SQL query budget', function () {
+    $this->actingAs(\App\Models\User::factory()->create()->assignRole('super-admin'));
+    \App\Models\TeamMember::factory()->count(12)->create();
+    \Livewire\Livewire::test(\App\Filament\Resources\TeamMembers\Pages\ManageTeamMembers::class)->loadTable(); // échauffement (permissions)
+
+    $count = 0;
+    \Illuminate\Support\Facades\DB::listen(function () use (&$count) { $count++; });
+    \Livewire\Livewire::test(\App\Filament\Resources\TeamMembers\Pages\ManageTeamMembers::class)->loadTable();
+
+    // Avant le chargement groupé : 15 requêtes par membre affiché.
+    expect($count)->toBeLessThan(40);
 });
