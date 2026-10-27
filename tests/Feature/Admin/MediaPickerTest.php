@@ -1,11 +1,11 @@
 <?php
 
+use App\Filament\Forms\MediaField;
 use App\Filament\Resources\NewsPosts\Pages\CreateNewsPost;
+use App\Filament\Support\MediaPicker;
 use App\Models\MediaAsset;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
-use Filament\Actions\Testing\TestAction;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
@@ -19,26 +19,18 @@ beforeEach(function () {
     actingAs(tap(User::factory()->create())->assignRole(RolesAndPermissionsSeeder::EDITOR));
 });
 
-it('uploads a new image from the news form, with mandatory alt text, and selects it', function () {
-    Livewire::test(CreateNewsPost::class)
-        ->callAction(
-            TestAction::make('createOption')->schemaComponent('cover_id'),
-            ['file' => UploadedFile::fake()->image('une.jpg', 1600, 900), 'alt' => 'Étudiants sur le campus'],
-        )
-        ->assertHasNoActionErrors();
+it('describes a media for the picker and renders the field in the news form', function () {
+    $asset = MediaAsset::create(['title' => 'Campus', 'alt' => 'Vue du campus']);
 
-    $asset = MediaAsset::sole();
+    $described = MediaField::describe($asset);
 
-    expect($asset->alt)->toBe('Étudiants sur le campus')->and($asset->file())->not->toBeNull();
+    expect($described)->toMatchArray(['id' => $asset->id, 'title' => 'Campus', 'alt' => 'Vue du campus'])
+        ->and($described)->toHaveKeys(['thumb', 'card', 'filename', 'size', 'type', 'date', 'edit_url']);
+
+    Livewire::test(CreateNewsPost::class)->assertSeeHtml('uaz-mp');
 });
 
-it('refuses to create the image without alt text', function () {
-    Livewire::test(CreateNewsPost::class)
-        ->callAction(
-            TestAction::make('createOption')->schemaComponent('cover_id'),
-            ['file' => UploadedFile::fake()->image('une.jpg', 1600, 900), 'alt' => ''],
-        )
-        ->assertHasActionErrors(['alt' => 'required']);
-
-    expect(MediaAsset::count())->toBe(0);
+it('keeps the single and multiple modes of the field apart', function () {
+    expect(MediaPicker::make('cover_id')->isMultiple())->toBeFalse()
+        ->and(MediaPicker::make('photos')->multiple()->isMultiple())->toBeTrue();
 });

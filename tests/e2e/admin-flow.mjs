@@ -43,17 +43,18 @@ try {
     await page.getByLabel('Titre', { exact: false }).first().fill(title);
     await page.getByLabel('Extrait').fill('Résumé de l\'actualité de test.');
 
-    // Image à la une : « + » → envoi d'une nouvelle image avec texte alternatif obligatoire.
-    const cover = page.locator('.fi-fo-field', { has: page.getByText('Image à la une', { exact: true }) }).first();
-    await cover.locator('button').last().click();
-    const modal = page.locator('.fi-modal-window').filter({ hasText: 'Envoyer une image' }).last();
+    // Image à la une : sélecteur façon WordPress → onglet d'envoi, texte alternatif obligatoire.
+    const cover = page.locator('.uaz-mp').first();
+    await cover.getByRole('button', { name: 'Choisir une image' }).click();
+    const modal = page.locator('.uaz-mp-modal:visible');
     await modal.waitFor({ timeout: 8000 });
+    await modal.getByRole('tab', { name: 'Envoyer des fichiers' }).click();
     await modal.locator('input[type=file]').setInputFiles(image);
-    await modal.getByText('Traitement effectué').first().waitFor({ timeout: 20000 });
-    await modal.getByLabel('Texte alternatif').fill('Fond bleu marine de test');
-    await modal.getByRole('button', { name: /Créer|Envoyer|Enregistrer/ }).last().click();
-    await page.waitForTimeout(3000);
-    check((await page.locator('body').innerText()).includes('Texte alternatif') === false || true, 'image envoyée depuis le formulaire');
+    await modal.locator('.uaz-mp-pending input[type=text]').fill('Fond bleu marine de test');
+    await modal.getByRole('button', { name: /Envoyer dans la médiathèque/ }).click();
+    await page.waitForSelector('.uaz-mp-tile.is-selected', { timeout: 20000 });
+    await modal.getByRole('button', { name: 'Choisir cette image' }).click();
+    check((await cover.locator('.uaz-mp__thumb').count()) === 1, 'image envoyée et choisie depuis le formulaire');
 
     // Texte riche
     await page.locator('.tiptap, [contenteditable=true]').first().click();

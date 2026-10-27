@@ -108,3 +108,33 @@ it('gives every media an image preview, including PDFs', function () {
         ->and($preview)->toStartWith('data:image/svg+xml;base64,')
         ->and(base64_decode(substr($preview, strlen('data:image/svg+xml;base64,'))))->toContain('PDF')->toContain('Emploi');
 });
+
+it('serves the media browser to authorised users only, with search and type filters', function () {
+    \App\Models\MediaAsset::create(['title' => 'Bibliothèque', 'alt' => 'Salle de lecture']);
+    \App\Models\MediaAsset::create(['title' => 'Campus', 'alt' => 'Vue du campus']);
+
+    $this->getJson('/admin/media-browser')->assertForbidden();
+
+    $this->actingAs(\App\Models\User::factory()->create()->assignRole('editor'));
+    $this->getJson('/admin/media-browser?q=Biblio')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.title', 'Bibliothèque')->assertJsonPath('has_more', false);
+    $this->getJson('/admin/media-browser?type=pdf')->assertOk()->assertJsonCount(0, 'data');
+});
+
+it('refuses uploads without alternative text or with a wrong format, and creates the media otherwise', function () {
+    $this->actingAs(\App\Models\User::factory()->create()->assignRole('editor'));
+    $png = \Illuminate\Http\UploadedFile::fake()->image('photo.png', 400, 300);
+
+    $this->post('/admin/media-browser/upload', ['files' => [$png], 'alts' => ['']], ['Accept' => 'application/json'])->assertStatus(422);
+    $this->post('/admin/media-browser/upload', ['files' => [\Illuminate\Http\UploadedFile::fake()->create('virus.exe', 10)], 'alts' => ['Un fichier']], ['Accept' => 'application/json'])->assertStatus(422);
+
+    $this->post('/admin/media-browser/upload', ['files' => [$png], 'alts' => ['Une photo de test']], ['Accept' => 'application/json'])
+        ->assertCreated()->assertJsonPath('data.0.alt', 'Une photo de test');
+
+    expect(\App\Models\MediaAsset::where('alt', 'Une photo de test')->exists())->toBeTrue();
+});
+
+it('forbids uploads to users without any role', function () {
+    $this->actingAs(\App\Models\User::factory()->create());
+
+    $this->post('/admin/media-browser/upload', ['files' => [\Illuminate\Http\UploadedFile::fake()->image('p.png')], 'alts' => ['Test']], ['Accept' => 'application/json'])->assertForbidden();
+});

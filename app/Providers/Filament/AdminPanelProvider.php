@@ -55,6 +55,11 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Personnes & messages'),
                 NavigationGroup::make('Site & médias'),
             ])
+            // Sélecteur de médias façon WordPress (composant Alpine chargé une fois pour tout le panneau).
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::HEAD_END,
+                fn (): string => '<script src="'.asset('js/admin/media-picker.js').'?v='.filemtime(public_path('js/admin/media-picker.js')).'" defer></script>',
+            )
             // Zone de glisser-déposer au-dessus de la médiathèque.
             ->renderHook(
                 \Filament\View\PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_BEFORE,

@@ -50,6 +50,11 @@ Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
 Route::get('/meteo', \App\Http\Controllers\WeatherController::class)->middleware('throttle:30,1')->name('weather');
 Route::get('/yearbook/{year?}', [\App\Http\Controllers\YearbookController::class, 'show'])->where('year', '[0-9]{4}')->name('yearbook');
+// Sélecteur de médias du back-office (parcourir et envoyer) : réservé aux comptes autorisés (vérifié dans le contrôleur).
+Route::prefix('admin/media-browser')->name('admin.media-browser.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\MediaBrowserController::class, 'browse'])->name('browse');
+    Route::post('/upload', [\App\Http\Controllers\Admin\MediaBrowserController::class, 'upload'])->middleware('throttle:60,1')->name('upload');
+});
 Route::get('/soutenir/{slug}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
 Route::get('/equipe', TeamController::class)->name('team');
 Route::get('/contact', ContactController::class)->name('contact');

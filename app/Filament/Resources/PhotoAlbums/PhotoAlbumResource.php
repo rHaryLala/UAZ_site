@@ -61,17 +61,13 @@ class PhotoAlbumResource extends Resource
                         MediaPicker::make('cover_id', 'Image de couverture'),
                     ]),
                     Section::make('Photos')->schema([
-                        Select::make('quick_add')
-                            ->label('Ajouter plusieurs photos d\'un coup')
+                        MediaPicker::make('quick_add', 'Ajouter plusieurs photos d\'un coup')
                             ->multiple()
-                            ->searchable()
-                            ->allowHtml()
                             ->dehydrated(false)
-                            ->options(fn () => MediaPicker::search(''))
-                            ->getSearchResultsUsing(fn (string $search) => MediaPicker::search($search))
                             ->live()
                             ->afterStateUpdated(function (?array $state, Get $get, Set $set): void {
-                                $photos = $get('photos') ?? [];
+                                // On écarte la ligne vide proposée par défaut avant d'ajouter les photos choisies.
+                                $photos = collect($get('photos') ?? [])->filter(fn ($photo) => filled($photo['media_asset_id'] ?? null))->all();
                                 foreach ($state ?? [] as $id) {
                                     $photos[(string) Str::uuid()] = ['media_asset_id' => $id];
                                 }

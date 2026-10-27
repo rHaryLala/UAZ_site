@@ -239,3 +239,12 @@ Le back-office fonctionne en « application monopage » : un clic dans le menu o
 - Seules les personnes autorisées à publier voient ces boutons de publication ; un contributeur garde ses contenus en brouillon.
 - **Votre recherche, vos filtres et votre tri sont mémorisés** pendant la session : en revenant sur une liste, elle est comme vous l'avez laissée.
 - **Navigation** : quatre groupes — Contenus, Formations, Personnes & messages (messages de contact en premier, avec leur compteur), Site & médias. L'entrée Actualités affiche le nombre de brouillons en attente.
+
+## Choisir une image (comme sur WordPress)
+
+Dans chaque formulaire (actualité, événement, page, album…), le champ image affiche un bouton **Choisir une image**. Il ouvre la médiathèque dans une fenêtre :
+
+- **Médiathèque** : toutes les images en grille ; la recherche filtre par titre, texte alternatif ou nom de fichier ; la grille se prolonge en descendant. Cliquez une vignette pour voir ses détails à droite, puis **Choisir cette image** (ou double-cliquez).
+- **Envoyer des fichiers** : glissez ou choisissez vos fichiers, saisissez le **texte alternatif** de chacun (obligatoire), puis **Envoyer dans la médiathèque** : le fichier est ajouté et déjà sélectionné.
+- Dans un album, **Ajouter plusieurs photos d'un coup** permet de cocher plusieurs images avant de valider.
+- **Changer** rouvre la fenêtre, **Retirer** vide le champ.

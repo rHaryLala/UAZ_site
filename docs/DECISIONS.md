@@ -199,3 +199,9 @@ Format : **décision** — alternatives — raison.
 - Vérifié par `tests/e2e/admin-spa.mjs` (document conservé entre menu, liste, édition et médiathèque ; retour arrière ; zone de dépôt montée après navigation).
 - Les scripts personnalisés du back-office doivent survivre à la navigation : la zone de dépôt utilise Alpine (`x-data`), nettoyé et remonté par Livewire ;
   éviter les `DOMContentLoaded` ou les écouteurs `window` hors Alpine dans les vues du back-office.
+
+## D-035 · Sélecteur de médias façon WordPress
+
+**Contexte :** l'ancien champ (liste déroulante Filament) affichait « [object Object] » et ne montrait pas les images.
+**Décision :** champ dédié `App\Filament\Forms\MediaField` (fenêtre Alpine, grille, recherche, détails, envoi avec texte alternatif obligatoire, sélection multiple pour les albums), alimenté par `MediaBrowserController` (`/admin/media-browser`, soumis aux droits `MediaAsset`). `MediaPicker::make()` garde sa signature : aucun formulaire à modifier. Grille à cellules de taille fixe (les hauteurs en pourcentage s'écrasaient au chargement de la suite).
+**Limites :** les PDF sont représentés par une vignette dessinée, pas par leur première page.
