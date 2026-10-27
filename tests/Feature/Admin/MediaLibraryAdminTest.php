@@ -95,3 +95,16 @@ it('refuses a bulk upload when an alt text is missing', function () {
 
     expect(MediaAsset::count())->toBe(0);
 });
+
+it('gives every media an image preview, including PDFs', function () {
+    $pdf = \App\Models\MediaAsset::create(['title' => 'Emploi du temps de Théologie', 'alt' => 'Planning']);
+    $path = sys_get_temp_dir().'/edt-'.uniqid().'.pdf';
+    file_put_contents($path, "%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF");
+    $pdf->addMedia($path)->toMediaCollection(\App\Models\MediaAsset::COLLECTION);
+
+    $preview = $pdf->refresh()->previewUrl('thumb');
+
+    expect($pdf->isPdf())->toBeTrue()
+        ->and($preview)->toStartWith('data:image/svg+xml;base64,')
+        ->and(base64_decode(substr($preview, strlen('data:image/svg+xml;base64,'))))->toContain('PDF')->toContain('Emploi');
+});

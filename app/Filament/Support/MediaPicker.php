@@ -56,9 +56,8 @@ class MediaPicker
 
         // Styles en ligne : le CSS de Filament ne contient pas les classes Tailwind du site.
         $box = 'width:2.5rem;height:2.5rem;flex:none;border-radius:.375rem;';
-        $thumb = $asset->isImage()
-            ? '<img src="'.e($asset->url('thumb')).'" alt="" loading="lazy" style="'.$box.'object-fit:cover">'
-            : '<span style="'.$box.'display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#4b5563;font-size:.7rem;font-weight:600">PDF</span>';
+        // Image : miniature ; PDF : « page de document » dessinée (voir MediaAsset::previewUrl).
+        $thumb = '<img src="'.e($asset->previewUrl('thumb')).'" alt="" loading="lazy" style="'.$box.'object-fit:cover">';
 
         return new HtmlString(
             '<span style="display:flex;align-items:center;gap:.75rem">'.$thumb.'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'.e($asset->label()).'</span></span>',

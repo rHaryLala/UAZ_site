@@ -47,6 +47,40 @@ class MediaAsset extends Model implements HasMedia
         return $this->title ?: ($this->file()?->file_name ?? 'Média #'.$this->getKey());
     }
 
+    /**
+     * Aperçu pour les listes et sélecteurs : la miniature d'une image, ou, pour un PDF, une « page de document » dessinée en SVG
+     * (adresse de type data:, sans fichier à générer ni outil externe : le serveur n'a pas à savoir convertir un PDF en image).
+     */
+    public function previewUrl(string $conversion = 'thumb'): ?string
+    {
+        if ($this->isPdf()) {
+            return $this->pdfPreview();
+        }
+
+        return $this->absoluteUrl($conversion);
+    }
+
+    private function pdfPreview(): string
+    {
+        $name = $this->file()?->file_name ?? 'document.pdf';
+        $label = e(str($this->title ?: pathinfo($name, PATHINFO_FILENAME))->limit(46, '…')->toString());
+        $lines = array_slice(explode("\n", wordwrap($label, 13, "\n", true)), 0, 3);
+        $text = collect($lines)->map(fn (string $line, int $i) => '<text x="52" y="'.(188 + $i * 20).'" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#232E66">'.$line.'</text>')->implode('');
+        $size = $this->file()?->human_readable_size;
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 300" width="240" height="300">'
+            .'<rect width="240" height="300" fill="#eef1f8"/>'
+            .'<path d="M44 20h112l40 40v212a8 8 0 0 1-8 8H44a8 8 0 0 1-8-8V28a8 8 0 0 1 8-8z" fill="#fff" stroke="#c6d2f7" stroke-width="2"/>'
+            .'<path d="M156 20v32a8 8 0 0 0 8 8h32z" fill="#dfe6fa"/>'
+            .'<rect x="52" y="86" width="64" height="30" rx="4" fill="#c0392b"/>'
+            .'<text x="84" y="107" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" fill="#fff">PDF</text>'
+            .'<rect x="52" y="130" width="104" height="6" rx="3" fill="#dfe6fa"/><rect x="52" y="144" width="80" height="6" rx="3" fill="#dfe6fa"/>'
+            .$text
+            .($size ? '<text x="52" y="262" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#6371a3">'.e($size).'</text>' : '')
+            .'</svg>';
+
+        return 'data:image/svg+xml;base64,'.base64_encode($svg);
+    }
+
     /** Adresse complète (http://…) : requise par les colonnes d'image de Filament, qui traiteraient un chemin relatif comme un chemin du disque. */
     public function absoluteUrl(string $conversion = ''): ?string
     {

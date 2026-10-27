@@ -18,7 +18,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -84,9 +84,8 @@ class MediaAssetResource extends Resource
     {
         return [
             Stack::make([
-                SpatieMediaLibraryImageColumn::make('file')
-                    ->collection(MediaAsset::COLLECTION)
-                    ->conversion('card')
+                ImageColumn::make('preview')
+                    ->state(fn (MediaAsset $record) => $record->previewUrl('card'))
                     // Styles en ligne : le CSS de Filament ne contient pas les classes Tailwind du site.
                     ->imageSize('100%')
                     ->extraImgAttributes(['style' => 'width:100%;height:11rem;max-width:100%;object-fit:cover;border-radius:.5rem']),
@@ -110,10 +109,9 @@ class MediaAssetResource extends Resource
             ->contentGrid($grid ? ['default' => 2, 'md' => 3, 'xl' => 4, '2xl' => 5] : null)
             ->recordUrl($grid ? fn (MediaAsset $record) => static::getUrl('edit', ['record' => $record]) : null)
             ->columns($grid ? static::gridColumns() : [
-                SpatieMediaLibraryImageColumn::make('file')
+                ImageColumn::make('preview')
                     ->label('Aperçu')
-                    ->collection(MediaAsset::COLLECTION)
-                    ->conversion('thumb')
+                    ->state(fn (MediaAsset $record) => $record->previewUrl('thumb'))
                     ->square()
                     ->size(56),
                 TextColumn::make('title')->label('Titre')->searchable()->placeholder('—')->limit(40),
