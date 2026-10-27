@@ -70,6 +70,7 @@ class StructureSeeder extends Seeder
                     'instagram' => 'https://www.instagram.com/adventist.university.zurcher/',
                     'linkedin' => 'https://www.linkedin.com/school/zurcher/',
                     'youtube' => 'https://www.youtube.com/@uaz-universiteadventistezu6053',
+                    'tiktok' => 'https://www.tiktok.com/@uaz_zurcher',
                 ],
                 'footer_text' => 'Spiritus · Manus · Mens — Service.',
                 'footer_legal' => '© Université Adventiste Zurcher',
