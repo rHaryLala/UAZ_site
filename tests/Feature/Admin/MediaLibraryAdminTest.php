@@ -138,3 +138,21 @@ it('forbids uploads to users without any role', function () {
 
     $this->post('/admin/media-browser/upload', ['files' => [\Illuminate\Http\UploadedFile::fake()->image('p.png')], 'alts' => ['Test']], ['Accept' => 'application/json'])->assertForbidden();
 });
+
+it('loads the grid progressively, like the WordPress media library', function () {
+    $this->actingAs(\App\Models\User::factory()->create()->assignRole('editor'));
+    session(['media_layout' => 'grid']);
+    foreach (range(1, 40) as $i) {
+        \App\Models\MediaAsset::create(['title' => "Image $i", 'alt' => "Image numéro $i"]);
+    }
+
+    $page = \Livewire\Livewire::test(\App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class)->loadTable();
+
+    expect($page->instance()->mediaCounts())->toBe(['shown' => 36, 'total' => 40]);
+
+    $page->call('loadMoreMedia');
+    expect($page->instance()->mediaCounts())->toBe(['shown' => 40, 'total' => 40]);
+
+    $page->set('tableSearch', 'numéro 7');
+    expect($page->instance()->mediaCounts()['shown'])->toBe(4);
+});

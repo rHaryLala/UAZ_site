@@ -128,8 +128,9 @@ class MediaAssetResource extends Resource
                 TextColumn::make('created_at')->label('Ajouté le')->dateTime('d/m/Y')->sortable()->toggleable(),
             ])
             ->defaultSort('id', 'desc')
-            ->paginated($grid ? [24, 48, 96] : [10, 25, 50, 100])
-            ->defaultPaginationPageOption($grid ? 24 : 25)
+            // Grille : chargement progressif (voir ListMediaAssets::loadMoreMedia) ; liste : pagination classique.
+            ->paginated($grid ? [36, 72, 144] : [10, 25, 50, 100])
+            ->defaultPaginationPageOption($grid ? 36 : 25)
             ->filters([
                 SelectFilter::make('type')->label('Type')
                     ->options(['image' => 'Images', 'pdf' => 'PDF'])

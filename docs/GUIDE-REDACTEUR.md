@@ -248,3 +248,7 @@ Dans chaque formulaire (actualité, événement, page, album…), le champ image
 - **Envoyer des fichiers** : glissez ou choisissez vos fichiers, saisissez le **texte alternatif** de chacun (obligatoire), puis **Envoyer dans la médiathèque** : le fichier est ajouté et déjà sélectionné.
 - Dans un album, **Ajouter plusieurs photos d'un coup** permet de cocher plusieurs images avant de valider.
 - **Changer** rouvre la fenêtre, **Retirer** vide le champ.
+
+## Médiathèque en grille : chargement progressif
+
+En vue grille, la médiathèque n'a plus de numéros de page : 36 fichiers s'affichent d'abord, puis la suite se charge toute seule en descendant (ou avec le bouton **Charger plus**). Un compteur indique « 36 sur 186 fichier(s) affiché(s) ». Une nouvelle recherche ou un nouveau filtre repart du début. La vue liste garde sa pagination classique.

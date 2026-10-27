@@ -25,6 +25,36 @@ class ListMediaAssets extends ListRecords
     /** @var array<int, TemporaryUploadedFile> Fichiers glissés-déposés sur la zone de dépôt (resources/views/filament/media/dropzone.blade.php). */
     public array $dropped = [];
 
+    /** Nombre de fichiers ajoutés à la grille à chaque « Charger plus ». */
+    public const GRID_STEP = 36;
+
+    /** Mode grille : on ajoute des fichiers à la suite au lieu de changer de page (comme la médiathèque de WordPress). */
+    public function loadMoreMedia(): void
+    {
+        $this->tableRecordsPerPage = min((int) $this->tableRecordsPerPage + self::GRID_STEP, 1000);
+    }
+
+    /** @return array{shown: int, total: int} */
+    public function mediaCounts(): array
+    {
+        $records = $this->getTableRecords();
+
+        return ['shown' => $records->count(), 'total' => $records->total()];
+    }
+
+    // Une nouvelle recherche ou un nouveau filtre repart du début de la médiathèque.
+    public function updatedTableSearch(): void
+    {
+        parent::updatedTableSearch();
+        $this->tableRecordsPerPage = self::GRID_STEP;
+    }
+
+    public function updatedTableFilters(): void
+    {
+        parent::updatedTableFilters();
+        $this->tableRecordsPerPage = self::GRID_STEP;
+    }
+
     /**
      * Fichiers déposés : on les contrôle, on les range dans le dossier temporaire de l'envoi multiple, puis on ouvre ce formulaire déjà rempli
      * (le texte alternatif de chaque fichier reste à saisir : il est obligatoire).

@@ -66,6 +66,12 @@ class AdminPanelProvider extends PanelProvider
                 fn (): \Illuminate\Contracts\View\View => view('filament.media.dropzone'),
                 scopes: \App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class,
             )
+            // « Charger plus » de la médiathèque en grille (la vue liste garde sa pagination).
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER,
+                fn (): string => \App\Filament\Resources\MediaAssets\MediaAssetResource::isGrid() ? view('filament.media.load-more', ['counts' => \Livewire\Livewire::current()->mediaCounts()])->render() : '',
+                scopes: \App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class,
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
