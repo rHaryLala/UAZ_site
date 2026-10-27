@@ -13,6 +13,9 @@ const hasLivewire = document.querySelector('[wire\\:id]') !== null;
 
 initAnimations();
 
+// Yearbook : livre numérique à feuilleter.
+if (document.querySelector('[data-yearbook]')) import('./yearbook.js').then((m) => m.initYearbook());
+
 // Vidéo d'en-tête de la page À propos.
 if (document.querySelector('[data-hero-video]')) import('./hero-video.js').then((m) => m.initHeroVideo());
 

@@ -175,3 +175,14 @@ Format : **décision** — alternatives — raison.
   Dans la navigation, ces rubriques ouvrent une liste et ne sont pas des liens.
 - Les boutons « S'inscrire » / « Candidater » mènent à `config('uaz.registration_url')`
   (https://registrar.zurcher.edu.mg/#pre-inscription, réglable par `UAZ_REGISTRATION_URL`), dans un nouvel onglet.
+
+## D-032 · Yearbook numérique (livre à feuilleter)
+- Lien « Yearbook » dans la barre du haut → `/yearbook` : livre 3D à feuilleter (bibliothèque `page-flip`, MIT) avec ombres de pages,
+  couvertures rigides, curseur, miniatures, plein écran, flèches du clavier ; page seule sur mobile.
+- Le PDF d'origine (66,8 Mo, 44 pages A4) n'est pas servi tel quel : ses pages sont rendues en WebP (1100 px, ≈ 190 Ko chacune, 9 Mo au total
+  avec les miniatures) dans `public/books/yearbook/2025/` (versionné), générées par `scripts/yearbook-pages.mjs`. Les images ne se chargent
+  qu'à l'approche de la page courante. Le PDF reste téléchargeable depuis l'ancien site.
+- Le dossier n'est pas `public/yearbook` : un dossier du même nom que la route `/yearbook` serait servi à sa place par le serveur web.
+- CSP : `page-flip` crée sa propre balise `<style>` ; on lui donne le nonce de la page pendant son chargement (`resources/js/yearbook.js`)
+  plutôt que d'assouplir la politique.
+- Nouvelle édition : générer les images, ajouter l'année dans `config/uaz.php` (`yearbooks`), le sélecteur d'éditions s'affiche tout seul.

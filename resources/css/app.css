@@ -1003,3 +1003,150 @@ html.menu-open {
 [data-hero-video].is-fading {
     opacity: 0;
 }
+
+/* ---------- Yearbook : livre numérique ---------- */
+.yb-stage {
+    background: radial-gradient(ellipse 70% 60% at 50% 38%, #1a2b63 0%, #0d1535 55%, #05081c 100%);
+}
+
+/* Ombre portée au sol, sous le livre. */
+.yb-book-wrap::after {
+    content: '';
+    position: absolute;
+    right: 8%;
+    bottom: -2.2rem;
+    left: 8%;
+    height: 2rem;
+    background: radial-gradient(ellipse at center, rgb(0 0 0 / 0.55) 0%, transparent 70%);
+    filter: blur(8px);
+    pointer-events: none;
+}
+
+.yb-book-wrap {
+    width: min(100%, calc(66vh * 1.448), 1180px);
+}
+
+/* Livre fermé : la couverture (ou le dos) est centrée au lieu de laisser une moitié vide. */
+.yb-book-wrap {
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.yb[data-landscape][data-at-start] .yb-book-wrap {
+    transform: translateX(-25%);
+}
+
+.yb[data-landscape][data-at-end] .yb-book-wrap {
+    transform: translateX(25%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .yb-book-wrap {
+        transition: none;
+    }
+}
+
+.yb-book {
+    width: 100%;
+    aspect-ratio: 1190 / 822;
+    filter: drop-shadow(0 28px 40px rgb(0 0 0 / 0.45));
+}
+
+@media (max-width: 767px) {
+    .yb-book-wrap {
+        width: min(100%, calc(70vh * 0.724));
+    }
+
+    .yb-book {
+        aspect-ratio: 595 / 822;
+    }
+}
+
+.yb-page {
+    background: #fff;
+    overflow: hidden;
+}
+
+.yb-page img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.yb-btn {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(255 255 255 / 0.35);
+    color: #fff;
+    transition:
+        background-color 0.2s,
+        color 0.2s,
+        border-color 0.2s;
+}
+
+.yb-btn:hover:not(:disabled) {
+    border-color: var(--color-sun-400);
+    background: var(--color-sun-400);
+    color: var(--color-night-900);
+}
+
+.yb-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.yb-chip {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgb(255 255 255 / 0.25);
+    padding-inline: 1rem;
+    font-weight: 600;
+    color: rgb(255 255 255 / 0.9);
+    transition:
+        border-color 0.2s,
+        color 0.2s;
+}
+
+.yb-chip:hover,
+.yb-chip[aria-pressed='true'],
+.yb-chip[aria-expanded='true'] {
+    border-color: var(--color-sun-400);
+    color: var(--color-sun-400);
+}
+
+.yb-slider {
+    height: 1.5rem;
+    accent-color: var(--color-sun-400);
+    cursor: pointer;
+}
+
+.yb-thumb {
+    border: 2px solid transparent;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.yb-thumb:hover {
+    transform: translateY(-2px);
+}
+
+.yb-thumb[data-current] {
+    border-color: var(--color-sun-400);
+}
+
+/* Plein écran : le livre occupe tout l'écran. */
+.yb-stage:fullscreen {
+    justify-content: center;
+    padding: 1rem;
+    background: radial-gradient(ellipse 70% 60% at 50% 38%, #1a2b63 0%, #0d1535 55%, #05081c 100%);
+}
+
+.yb-stage:fullscreen .yb-book-wrap {
+    width: min(100%, calc(80vh * 1.448));
+}

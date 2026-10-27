@@ -23,7 +23,7 @@ class Page extends Model
     /** Chemins de premier niveau réservés aux sections dynamiques ou techniques. */
     public const RESERVED_SLUGS = [
         'admin', 'actualites', 'evenements', 'formations', 'galerie', 'equipe', 'contact',
-        'recherche', 'design-system', 'storage', 'build', 'livewire', 'sitemap.xml', 'robots.txt', 'up',
+        'recherche', 'yearbook', 'design-system', 'storage', 'build', 'livewire', 'sitemap.xml', 'robots.txt', 'up',
     ];
 
     protected function casts(): array

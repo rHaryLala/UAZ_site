@@ -222,3 +222,24 @@ it('serves a project sheet and hides inactive projects', function () {
     $this->get('/soutenir/projet-cache')->assertNotFound();
     $this->get('/soutenir')->assertDontSee('Projet caché');
 });
+
+it('serves the yearbook flipbook with every page image and a safe download link', function () {
+    $total = config('uaz.yearbooks.2025.pages');
+
+    $this->get('/yearbook')->assertOk()
+        ->assertSee('data-yearbook', false)
+        ->assertSee('Yearbook 2025')
+        ->assertSee('books/yearbook/2025/page-001.webp', false)
+        ->assertSee('books/yearbook/2025/page-'.str_pad((string) $total, 3, '0', STR_PAD_LEFT).'.webp', false)
+        ->assertSee('Page 1 / '.$total);
+
+    $this->get('/yearbook/2025')->assertOk();
+    $this->get('/yearbook/1999')->assertNotFound();
+});
+
+it('has the page images the config announces', function () {
+    $total = config('uaz.yearbooks.2025.pages');
+
+    expect(glob(public_path('books/yearbook/2025/page-*.webp')))->toHaveCount($total)
+        ->and(glob(public_path('books/yearbook/2025/thumbs/page-*.webp')))->toHaveCount($total);
+});

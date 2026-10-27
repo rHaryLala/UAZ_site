@@ -22,6 +22,19 @@ return [
     'founded_year' => (int) env('UAZ_FOUNDED_YEAR', 1995),
 
     /*
+    | Yearbooks numériques : pages WebP dans public/books/yearbook/{année}/ (page-001.webp…, thumbs/ pour les miniatures).
+    | Générées à partir du PDF d'origine ; le PDF reste téléchargeable depuis son adresse d'origine.
+    */
+    'yearbooks' => [
+        '2025' => [
+            'title' => 'Yearbook 2025',
+            'subtitle' => 'Clic',
+            'pages' => 44,
+            'pdf' => 'https://zurcher.edu.mg/wp-content/uploads/2025/12/Yearbook-2025-.pdf',
+        ],
+    ],
+
+    /*
     | Don en ligne : adresse de la page de paiement (Stripe Checkout, PayPal, mobile money, site de la fondation…).
     | Vide : la page « Soutenir l'UAZ » propose de contacter l'équipe et annonce que le don en ligne arrive bientôt.
     */
