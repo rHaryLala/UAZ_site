@@ -9,14 +9,15 @@
 {{-- En-tête des pages intérieures : marine, silhouette de Madagascar en filigrane, image facultative. --}}
 <header {{ $attributes->class('on-dark relative isolate overflow-hidden bg-navy-900 text-white') }}>
     @if ($image)
-        <x-picture :asset="$image" conversion="hero" sizes="100vw" decorative eager class="absolute inset-0 -z-20 size-full object-cover opacity-35" />
-        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950/90 via-navy-900/70 to-navy-900/30" aria-hidden="true"></div>
+        <x-picture :asset="$image" conversion="hero" sizes="100vw" decorative eager class="absolute inset-0 -z-20 size-full object-cover object-[50%_30%]" />
+        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950/90 via-navy-950/55 to-navy-950/5" aria-hidden="true"></div>
+        <div class="absolute inset-0 -z-10 bg-gradient-to-t from-navy-950/60 to-transparent" aria-hidden="true"></div>
     @else
         <x-madagascar class="pointer-events-none absolute top-1/2 -right-6 -z-10 h-[150%] -translate-y-1/2 text-navy-800/80 sm:right-[6%]" />
         <x-triangle class="pointer-events-none absolute -bottom-1/3 left-[-8%] -z-10 w-[48rem] text-gold-300/10" />
     @endif
 
-    <div class="container-site pt-14 md:pt-16 pb-14 md:pb-20">
+    <div @class(["container-site pt-14 pb-14 md:pt-16 md:pb-20", "md:min-h-[26rem] md:pt-20 md:pb-24" => $image])>
         @if (count($breadcrumbs))
             <x-breadcrumbs :items="$breadcrumbs" dark class="mb-8" />
         @endif

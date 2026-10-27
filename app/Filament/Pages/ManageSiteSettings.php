@@ -91,6 +91,10 @@ class ManageSiteSettings extends Page
                             ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                             ->helperText('Ne saisissez que des chiffres officiels et vérifiés.'),
                     ])->columns(2),
+                    Tab::make('Pages intérieures')->icon(Heroicon::OutlinedPhoto)->schema([
+                        MediaPicker::make('formations_hero_image_id', 'Image d\'en-tête — page Formations')
+                            ->helperText('Photo affichée derrière le titre de la page Formations (laisser vide pour le fond marine).'),
+                    ]),
                     Tab::make('Pied de page')->icon(Heroicon::OutlinedRectangleGroup)->schema([
                         Textarea::make('footer_text')->label('Texte de présentation')->rows(3)->maxLength(500)->columnSpanFull(),
                         TextInput::make('footer_legal')->label('Mention légale')->maxLength(255)

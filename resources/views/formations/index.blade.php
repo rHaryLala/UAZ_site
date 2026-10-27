@@ -6,7 +6,7 @@
 @endphp
 
 <x-layouts.app title="Formations" description="Licences, masters et formations de l'Université Adventiste Zurcher : mentions, parcours, durée et conditions d'admission.">
-    <x-page-hero eyebrow="Formations" title="Une formation. Un avenir. Une vision." intro="Découvrez les mentions de l'UAZ et trouvez le parcours adapté à vos objectifs." :breadcrumbs="[['label' => 'Formations']]" />
+    <x-page-hero :image="\App\Models\SiteSetting::current()->formationsHeroImage" eyebrow="Formations" title="Une formation. Un avenir. Une vision." intro="Découvrez les mentions de l'UAZ et trouvez le parcours adapté à vos objectifs." :breadcrumbs="[['label' => 'Formations']]" />
 
     <x-section tone="paper" tight>
         <form method="get" action="{{ url('/formations') }}" aria-label="Filtrer les formations" class="mb-12 space-y-4">
