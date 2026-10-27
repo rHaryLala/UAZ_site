@@ -25,7 +25,7 @@ Aucune donnée factuelle n'est inventée : tout ce qui manque est marqué `TODO-
 
 - [ ] **Chiffres clés de l'accueil** (préremplis depuis la maquette, à valider) : fondation 1995, 7 mentions,
       180 crédits ECTS, 200+ hectares.
-- [ ] **Téléphone** : la maquette donne deux numéros (+261 34 44 931 07 et +261 34 76 076 98) : lequel publier ?
+- [x] **Téléphone** : +261 34 44 931 07 confirmé comme numéro de l'UAZ (27 octobre 2026) ; l'autre numéro de la maquette (+261 34 76 076 98) n'est pas publié.
 - [ ] **E-mail général** `office@zurcher.edu.mg`, bureau académique `registrar@zurcher.edu.mg` + téléphone
       (+261 34 46 000 08) : à valider.
 - [ ] **Horaires** (lundi–jeudi 7 h 30–12 h / 13 h 30–17 h 30 ; vendredi 7 h 30–12 h) : à valider.

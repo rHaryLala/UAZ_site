@@ -24,7 +24,7 @@ it('never publishes invented facts: every unknown field is flagged TODO-CONTENU'
     $this->seed(StructureSeeder::class);
 
     expect(Formation::first()->description)->toContain('TODO-CONTENU')
-        ->and(SiteSetting::current()->phone)->toBeNull();
+        ->and(SiteSetting::current()->phone)->toBe('+261 34 44 931 07');
 });
 
 it('keeps the seeded header menu resolvable with sub-menus', function () {

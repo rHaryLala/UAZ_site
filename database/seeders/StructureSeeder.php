@@ -59,7 +59,7 @@ class StructureSeeder extends Seeder
                 'tagline' => 'Préparer aujourd’hui les leaders de demain',
                 'address' => 'PK 135, Route Nationale 7, Antsirabe, Madagascar',
                 'email' => 'office@zurcher.edu.mg', // à valider (maquette)
-                'phone' => null, // TODO-CONTENU : la maquette donne deux numéros différents
+                'phone' => '+261 34 44 931 07', // numéro de l'UAZ confirmé par l'équipe (27 octobre 2026)
                 'latitude' => null,
                 'longitude' => null,
                 'opening_hours' => [

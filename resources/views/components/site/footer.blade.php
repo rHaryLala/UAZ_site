@@ -48,17 +48,20 @@
             <address class="space-y-3 text-sm not-italic">
                 @if ($site->email)<p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 text-gold-300" /><a href="mailto:{{ $site->email }}" class="text-white/90 hover:text-white hover:underline">{{ $site->email }}</a></p>@endif
                 @if ($site->phone)<p class="flex gap-3"><x-ico name="phone" class="mt-0.5 size-4 text-gold-300" /><a href="tel:{{ preg_replace('/[^+\d]/', '', $site->phone) }}" class="text-white/90 hover:text-white hover:underline">{{ $site->phone }}</a></p>@endif
-                @if (! empty($site->opening_hours))
-                    <div class="flex gap-3">
-                        <x-ico name="clock" class="mt-0.5 size-4 text-gold-300" />
-                        <dl>
-                            @foreach ($site->opening_hours as $line)
-                                <div class="mb-1"><dt class="inline font-medium text-white">{{ $line['days'] }} :</dt> <dd class="inline">{{ $line['hours'] }}</dd></div>
-                            @endforeach
-                        </dl>
-                    </div>
-                @endif
             </address>
+
+            {{-- Les horaires ont leur propre rubrique : ce n'est pas un moyen de contact. --}}
+            @if (! empty($site->opening_hours))
+                <h2 class="eyebrow mt-9 mb-4 font-sans text-xs! text-gold-300!">Horaires</h2>
+                <div class="flex gap-3 text-sm">
+                    <x-ico name="clock" class="mt-0.5 size-4 text-gold-300" />
+                    <dl>
+                        @foreach ($site->opening_hours as $line)
+                            <div class="mb-1"><dt class="inline font-medium text-white">{{ $line['days'] }} :</dt> <dd class="inline">{{ $line['hours'] }}</dd></div>
+                        @endforeach
+                    </dl>
+                </div>
+            @endif
         </div>
 
         <nav aria-labelledby="footer-links">
