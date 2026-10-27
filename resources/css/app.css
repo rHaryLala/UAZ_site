@@ -508,8 +508,19 @@
         transition: box-shadow 0.3s var(--ease-out-expo);
     }
 
+    /* Page défilée : l'en-tête devient translucide (verre dépoli) et laisse voir le contenu qui passe dessous. */
+    .site-header {
+        transition:
+            box-shadow 0.3s var(--ease-out-expo),
+            background-color 0.4s var(--ease-out-expo),
+            backdrop-filter 0.4s;
+    }
+
     .site-header[data-scrolled='true'] {
-        box-shadow: 0 8px 24px -12px rgb(10 22 40 / 0.35);
+        background-color: rgb(244 244 248 / 0.62);
+        -webkit-backdrop-filter: blur(16px) saturate(1.4);
+        backdrop-filter: blur(16px) saturate(1.4);
+        box-shadow: none;
     }
 
     .site-header__link {
