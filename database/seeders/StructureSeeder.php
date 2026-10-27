@@ -151,6 +151,8 @@ class StructureSeeder extends Seeder
         $pages['cafeteria'] = $make('student-life-cafeteria', 'Cafétéria', 'cafeteria', $pages['student-life'], null, 2);
         $pages['dorms'] = $make('student-life-dorms', 'Dortoirs', 'dortoirs', $pages['student-life'], null, 3);
         $pages['lmd'] = $make('lmd', 'Système LMD', 'systeme-lmd', null, 'Licence, Master, Doctorat : le système d\'études de l’UAZ.', 4);
+        // Seuls faits connus (page « Personnel » du site actuel, repris dans l'équipe) ; mission, axes et publications à fournir.
+        $pages['research'] = $make('research', 'Centre de recherche (ZRC)', 'centre-de-recherche', null, 'Le centre de recherche de l\'Université Adventiste Zurcher.', 6);
         $pages['timetables'] = $make('timetables', 'Emplois du temps', 'emplois-du-temps', null, null, 5);
 
         return $pages;
@@ -174,7 +176,7 @@ class StructureSeeder extends Seeder
                 array_merge($page('Vie étudiante', 'student-life'), ['children' => [
                     $page('Bibliothèque', 'library'), $page('Cafétéria', 'cafeteria'), $page('Dortoirs', 'dorms'),
                 ]]),
-                $url('Recherche', '/recherche'),
+                $page('Centre de recherche', 'research'),
             ],
         ]);
 
