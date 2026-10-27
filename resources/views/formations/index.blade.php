@@ -9,6 +9,7 @@
     <x-page-hero :image="\App\Models\SiteSetting::current()->formationsHeroImage" eyebrow="Formations" title="Une formation. Un avenir. Une vision." intro="Découvrez les mentions de l'UAZ et trouvez le parcours adapté à vos objectifs." :breadcrumbs="[['label' => 'Formations']]" />
 
     <x-section tone="paper" tight>
+      <div data-ajax-region>
         <form method="get" action="{{ url('/formations') }}" aria-label="Filtrer les formations" class="mb-12 space-y-4">
             <div class="flex flex-wrap items-center gap-3">
                 <span class="mr-2 text-sm font-semibold text-ink-700">Niveau</span>
@@ -39,6 +40,7 @@
                 @endforeach
             </ul>
         @endif
+      </div>
     </x-section>
 
     <x-cta-banner title="Une question sur une formation ?" text="Le bureau académique vous accompagne dans votre choix et votre candidature." :primary="['label' => 'Nous contacter', 'url' => url('/contact')]" :secondary="['label' => 'Conditions d\'admission', 'url' => url('/admissions/licence')]" />

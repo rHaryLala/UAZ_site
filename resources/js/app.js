@@ -12,3 +12,6 @@ const hasLivewire = document.querySelector('[wire\\:id]') !== null;
 (hasLivewire ? import('./boot/livewire.js') : import('./boot/alpine.js')).then((boot) => boot.default());
 
 initAnimations();
+
+// Filtres sans rechargement complet (zones data-ajax-region) : chargé seulement si la page en contient.
+if (document.querySelector('[data-ajax-region]')) import('./ajax-region.js').then((m) => m.initAjaxRegion());
