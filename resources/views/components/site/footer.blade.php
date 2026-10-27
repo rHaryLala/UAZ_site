@@ -22,9 +22,6 @@
                     <span class="underline decoration-gold-300/60 decoration-1 underline-offset-4 group-hover:decoration-gold-300">{{ $site->address }}<span class="sr-only"> — voir sur Google Maps (nouvel onglet)</span></span>
                 </a>
             @endif
-            @if ($site->footer_text)
-                <p class="mt-4 max-w-xs text-sm text-white/90">{{ $site->footer_text }}</p>
-            @endif
             <ul class="mt-6 flex gap-3">
                 @foreach ($socials as $key => $label)
                     @if ($site->social($key))
@@ -57,7 +54,8 @@
                     <x-ico name="clock" class="mt-0.5 size-4 text-gold-300" />
                     <dl>
                         @foreach ($site->opening_hours as $line)
-                            <div class="mb-1"><dt class="inline font-medium text-white">{{ $line['days'] }} :</dt> <dd class="inline">{{ $line['hours'] }}</dd></div>
+                            {{-- Jours sur une ligne, horaires dessous avec un retrait. --}}
+                            <div class="mb-3 last:mb-0"><dt class="font-medium text-white">{{ $line['days'] }}</dt><dd class="mt-0.5 pl-5">{{ $line['hours'] }}</dd></div>
                         @endforeach
                     </dl>
                 </div>
