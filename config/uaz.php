@@ -22,6 +22,16 @@ return [
     'founded_year' => (int) env('UAZ_FOUNDED_YEAR', 1995),
 
     /*
+    | Météo du campus (pied de page) via Open-Meteo. Coordonnées approximatives : Sambaina, commune d'Antsirabe II
+    | (GeoNames) ; suffisant pour la météo, à ne pas utiliser pour placer un repère exact sur une carte.
+    */
+    'weather' => [
+        'enabled' => (bool) env('UAZ_WEATHER', true),
+        'latitude' => -19.61667,
+        'longitude' => 47.13333,
+    ],
+
+    /*
     | Carte Google Maps du campus (lien de l'adresse dans le pied de page).
     */
     'map_url' => env('UAZ_MAP_URL', 'https://maps.app.goo.gl/stjXGTSu6bDFScS69'),

@@ -13,6 +13,9 @@ const hasLivewire = document.querySelector('[wire\\:id]') !== null;
 
 initAnimations();
 
+// Météo du campus (pied de page) : rafraîchie toutes les 10 minutes.
+if (document.querySelector('[data-weather]')) import('./weather.js').then((m) => m.initWeather());
+
 // Phrase du héros de l'accueil en trois langues.
 if (document.querySelector('[data-hero-ticker]')) import('./hero-ticker.js').then((m) => m.initHeroTicker());
 

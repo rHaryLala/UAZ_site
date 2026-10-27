@@ -243,3 +243,32 @@ it('has the page images the config announces', function () {
     expect(glob(public_path('books/yearbook/2025/page-*.webp')))->toHaveCount($total)
         ->and(glob(public_path('books/yearbook/2025/thumbs/page-*.webp')))->toHaveCount($total);
 });
+
+it('shows the campus weather in the footer when the service answers, and nothing when it fails', function () {
+    config(['uaz.weather.enabled' => true]);
+    Cache::flush();
+    \Illuminate\Support\Facades\Http::fake(['api.open-meteo.com/*' => \Illuminate\Support\Facades\Http::response(['current' => ['temperature_2m' => 21.6, 'weather_code' => 2, 'is_day' => 1]])]);
+
+    $this->get('/contact')->assertOk()->assertSee('22 °C', false)->assertSee('Partiellement nuageux')->assertSee('data-weather', false);
+    $this->getJson('/meteo')->assertOk()->assertJson(['temperature' => 22, 'label' => 'Partiellement nuageux', 'icon' => 'cloud-sun']);
+
+    Cache::flush();
+    // Http::fake() n'écrase pas les stubs précédents : on repart d'une fabrique neuve.
+    \Illuminate\Support\Facades\Http::swap(new \Illuminate\Http\Client\Factory);
+    \Illuminate\Support\Facades\Http::fake(['api.open-meteo.com/*' => \Illuminate\Support\Facades\Http::response('erreur', 500)]);
+
+    $this->get('/contact')->assertOk()->assertDontSee('data-weather', false);
+});
+
+it('describes weather codes in French with a matching icon', function () {
+    $weather = app(\App\Services\CampusWeather::class);
+
+    expect($weather->describe(0, true))->toBe(['Ciel dégagé', 'sun'])
+        ->and($weather->describe(0, false))->toBe(['Ciel dégagé', 'moon'])
+        ->and($weather->describe(63))->toBe(['Pluie', 'rain'])
+        ->and($weather->describe(95)[0])->toBe('Orage');
+});
+
+it('shows the footer address without the country and with a Google Maps link', function () {
+    $this->get('/contact')->assertSee('PK 135, Route Nationale 7, Antsirabe', false)->assertSee(config('uaz.map_url'), false);
+});

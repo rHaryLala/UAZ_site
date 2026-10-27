@@ -19,8 +19,22 @@
             @if ($site->address)
                 <a href="{{ config('uaz.map_url') }}" target="_blank" rel="noopener noreferrer" class="group mt-6 flex max-w-xs gap-3 text-sm text-white/90 hover:text-white">
                     <x-ico name="map-pin" class="mt-0.5 size-4 text-gold-300" />
-                    <span class="underline decoration-gold-300/60 decoration-1 underline-offset-4 group-hover:decoration-gold-300">{{ $site->address }}<span class="sr-only"> — voir sur Google Maps (nouvel onglet)</span></span>
+                    {{-- Le pays est sous-entendu dans le pied de page ; soulignement au survol seulement. --}}
+                    <span class="decoration-gold-300 decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline">{{ preg_replace('/,\s*Madagascar\s*$/iu', '', $site->address) }}<span class="sr-only"> — voir sur Google Maps (nouvel onglet)</span></span>
                 </a>
+            @endif
+
+            {{-- Météo du campus, mise à jour toutes les 10 minutes (Open-Meteo) --}}
+            @if ($weather)
+                <p class="mt-3 flex max-w-xs items-center gap-3 text-sm text-white/90" data-weather data-url="{{ route('weather') }}" title="Météo au campus de l'UAZ, mise à jour toutes les 10 minutes">
+                    <span class="relative size-4 shrink-0 text-gold-300">
+                        @foreach (['sun', 'moon', 'cloud-sun', 'cloud', 'fog', 'rain', 'storm'] as $icon)
+                            <x-ico :name="$icon" class="absolute inset-0 size-4" data-weather-icon="{{ $icon }}" :hidden="$icon !== $weather['icon']" />
+                        @endforeach
+                    </span>
+                    <span><span class="font-semibold text-white" data-weather-temp>{{ $weather['temperature'] }} °C</span> · <span data-weather-label>{{ $weather['label'] }}</span> <span class="text-white/60">à l'UAZ</span></span>
+                    <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" class="ml-auto self-end text-[0.65rem] text-white/40 underline-offset-4 hover:text-white/80 hover:underline" aria-label="Données météo : Open-Meteo (nouvel onglet)">Open-Meteo</a>
+                </p>
             @endif
             <ul class="mt-6 flex gap-3">
                 @foreach ($socials as $key => $label)

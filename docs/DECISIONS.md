@@ -186,3 +186,10 @@ Format : **décision** — alternatives — raison.
 - CSP : `page-flip` crée sa propre balise `<style>` ; on lui donne le nonce de la page pendant son chargement (`resources/js/yearbook.js`)
   plutôt que d'assouplir la politique.
 - Nouvelle édition : générer les images, ajouter l'année dans `config/uaz.php` (`yearbooks`), le sélecteur d'éditions s'affiche tout seul.
+
+## D-033 · Météo du campus dans le pied de page
+- Température et temps du campus sous l'adresse, via **Open-Meteo** (gratuit, sans clé ni cookie ; attribution « Open-Meteo » affichée).
+  L'appel est fait par le serveur (`App\Services\CampusWeather`), mis en cache 10 minutes avec rafraîchissement en arrière-plan : pas d'adresse
+  IP de visiteur envoyée à un tiers, aucun assouplissement de la CSP, et une panne du service n'affiche simplement rien.
+- Rafraîchi toutes les 10 minutes dans la page ouverte (`/meteo`, `resources/js/weather.js`). Désactivable : `UAZ_WEATHER=false` (désactivé dans les tests).
+- Coordonnées approximatives (Sambaina, Antsirabe II, GeoNames) dans `config/uaz.php` : suffisantes pour la météo, pas pour un repère de carte.

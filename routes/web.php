@@ -48,6 +48,7 @@ Route::get('/galerie/{album}', [AlbumController::class, 'show'])->name('albums.s
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
+Route::get('/meteo', \App\Http\Controllers\WeatherController::class)->middleware('throttle:30,1')->name('weather');
 Route::get('/yearbook/{year?}', [\App\Http\Controllers\YearbookController::class, 'show'])->where('year', '[0-9]{4}')->name('yearbook');
 Route::get('/soutenir/{slug}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
 Route::get('/equipe', TeamController::class)->name('team');
