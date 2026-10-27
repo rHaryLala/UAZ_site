@@ -66,6 +66,8 @@ class TeamMemberResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Chargement groupé des relations affichées dans la liste (évite une requête par ligne).
+            ->modifyQueryUsing(fn ($query) => $query->with(['photo.media', 'faculty']))
             ->columns([
                 ImageColumn::make('photo_thumb')->label('Photo')->circular()->size(44)
                     ->state(fn (TeamMember $record) => $record->photo?->url('thumb')),

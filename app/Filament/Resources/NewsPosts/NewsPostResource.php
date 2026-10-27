@@ -86,6 +86,8 @@ class NewsPostResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Chargement groupé des relations affichées dans la liste (évite une requête par ligne).
+            ->modifyQueryUsing(fn ($query) => $query->with(['cover.media', 'category', 'author']))
             ->columns([
                 PublicationTable::imageColumn(),
                 TextColumn::make('title')->label('Titre')->searchable()->sortable()->limit(60)->weight('medium'),

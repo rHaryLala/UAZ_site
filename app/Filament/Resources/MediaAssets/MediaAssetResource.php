@@ -105,6 +105,8 @@ class MediaAssetResource extends Resource
         $grid = static::isGrid();
 
         return $table
+            // Chargement groupé des relations affichées dans la liste (évite une requête par ligne).
+            ->modifyQueryUsing(fn ($query) => $query->with(['media']))
             ->contentGrid($grid ? ['default' => 2, 'md' => 3, 'xl' => 4, '2xl' => 5] : null)
             ->recordUrl($grid ? fn (MediaAsset $record) => static::getUrl('edit', ['record' => $record]) : null)
             ->columns($grid ? static::gridColumns() : [

@@ -103,6 +103,8 @@ class PhotoAlbumResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Chargement groupé des relations affichées dans la liste (évite une requête par ligne).
+            ->modifyQueryUsing(fn ($query) => $query->with(['cover.media']))
             ->columns([
                 PublicationTable::imageColumn(),
                 TextColumn::make('title')->label('Titre')->searchable()->sortable()->weight('medium'),

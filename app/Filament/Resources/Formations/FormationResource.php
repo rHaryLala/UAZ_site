@@ -95,6 +95,8 @@ class FormationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Chargement groupé des relations affichées dans la liste (évite une requête par ligne).
+            ->modifyQueryUsing(fn ($query) => $query->with(['cover.media', 'faculty']))
             ->columns([
                 PublicationTable::imageColumn(),
                 TextColumn::make('title')->label('Formation')->searchable()->sortable()->limit(60)->weight('medium'),

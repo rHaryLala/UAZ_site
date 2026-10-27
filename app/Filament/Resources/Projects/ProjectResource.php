@@ -59,6 +59,8 @@ class ProjectResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Chargement groupé des relations affichées dans la liste (évite une requête par ligne).
+            ->modifyQueryUsing(fn ($query) => $query->with(['cover.media']))
             ->columns([
                 ImageColumn::make('cover_thumb')->label('Image')->size(44)
                     ->state(fn (Project $record) => $record->cover?->url('thumb')),

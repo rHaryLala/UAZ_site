@@ -50,6 +50,8 @@ class PartnerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            // Chargement groupé des relations affichées dans la liste (évite une requête par ligne).
+            ->modifyQueryUsing(fn ($query) => $query->with(['logo.media']))
             ->columns([
                 ImageColumn::make('logo_thumb')->label('Logo')->size(44)
                     ->state(fn (Partner $record) => $record->logo?->url('thumb')),
