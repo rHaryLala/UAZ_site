@@ -216,7 +216,7 @@ class StructureSeeder extends Seeder
             ],
         ]);
 
-        // Barre du haut de la maquette. La dernière entrée est la pastille dorée : « Étudiant » ouvre une fenêtre de choix
+        // Barre du haut de la maquette. La dernière entrée est la pastille dorée : « Se connecter » ouvre une fenêtre de choix
         // (Registrar / Moodle). TODO-CONTENU : « Alumni » et « Donner » restent à confirmer (docs/TODO-CONTENU.md).
         Menu::firstOrCreate(['handle' => 'topbar'], [
             'name' => 'Barre du haut',
@@ -225,7 +225,7 @@ class StructureSeeder extends Seeder
                 array_merge($url('Alumni', 'https://alumni-auz.api.mg/'), ['new_tab' => true]),
                 $url('Yearbook', '/yearbook'),
                 $page('Donner', 'support'),
-                array_merge($url('Étudiant', '#'), ['children' => [
+                array_merge($url('Se connecter', '#'), ['children' => [
                     array_merge($url('Registrar — bureau académique', 'https://registrar.zurcher.edu.mg'), ['new_tab' => true]),
                     array_merge($url('Moodle — cours en ligne', 'https://moodle.zurcher.edu.mg'), ['new_tab' => true]),
                 ]]),
