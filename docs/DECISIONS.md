@@ -193,3 +193,9 @@ Format : **décision** — alternatives — raison.
   IP de visiteur envoyée à un tiers, aucun assouplissement de la CSP, et une panne du service n'affiche simplement rien.
 - Rafraîchi toutes les 10 minutes dans la page ouverte (`/meteo`, `resources/js/weather.js`). Désactivable : `UAZ_WEATHER=false` (désactivé dans les tests).
 - Coordonnées approximatives (Sambaina, Antsirabe II, GeoNames) dans `config/uaz.php` : suffisantes pour la météo, pas pour un repère de carte.
+
+## D-034 · Back-office en mode SPA
+- `->spa(hasPrefetching: true)` sur le panneau Filament : navigation Livewire (`wire:navigate`) sans rechargement du document, préchargement au survol.
+- Vérifié par `tests/e2e/admin-spa.mjs` (document conservé entre menu, liste, édition et médiathèque ; retour arrière ; zone de dépôt montée après navigation).
+- Les scripts personnalisés du back-office doivent survivre à la navigation : la zone de dépôt utilise Alpine (`x-data`), nettoyé et remonté par Livewire ;
+  éviter les `DOMContentLoaded` ou les écouteurs `window` hors Alpine dans les vues du back-office.

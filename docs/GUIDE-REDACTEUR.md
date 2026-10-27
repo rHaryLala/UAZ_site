@@ -226,3 +226,7 @@ la recherche et les filtres (type, sans texte alternatif) fonctionnent dans les 
 Au-dessus de la médiathèque, une zone **« Glissez-déposez vos images ici »** accepte des fichiers déposés depuis votre ordinateur (JPEG, PNG, WebP, PDF ; 30 maximum).
 Vous pouvez aussi les lâcher n'importe où sur la page. Le formulaire d'envoi s'ouvre alors déjà rempli : il reste à saisir le **texte alternatif** de chaque fichier
 (obligatoire) puis à enregistrer.
+
+## Navigation du back-office (mode SPA)
+Le back-office fonctionne en « application monopage » : un clic dans le menu ou sur un lien remplace uniquement le contenu, sans recharger toute la page
+(plus rapide, plus fluide, et le survol d'un lien précharge l'écran suivant). Les boutons précédent / suivant du navigateur fonctionnent normalement.

@@ -29,6 +29,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            // Mode SPA : la navigation remplace le contenu sans recharger la page (scripts et styles conservés), avec préchargement au survol.
+            ->spa(hasPrefetching: true)
             ->login()
             ->passwordReset()
             ->brandName('UAZ · Administration')
