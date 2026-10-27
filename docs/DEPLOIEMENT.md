@@ -294,3 +294,8 @@ Le script charge la vidéo uniquement si la connexion le permet (pas de mode éc
 Fichiers produits à partir du MP4 DJI d'origine (4K HEVC, 40 s, 227 Mo) : 24 premières secondes, redimensionnées (Lanczos), H.264 High,
 CRF 25 (1080p) / 26 (720p), sans audio, `+faststart` (lecture avant la fin du téléchargement) :
 `ffmpeg -t 24 -i DJI.MP4 -an -vf "scale=1920:-2:flags=lanczos,format=yuv420p" -c:v libx264 -preset slow -crf 25 -maxrate 7M -bufsize 14M -movflags +faststart campus-1080.mp4`
+
+## Qualité des photos de héros
+Les images « hero » sont converties en **WebP 2560 px, qualité 90** (sans AVIF : à cette taille, l'AVIF compressé donnait un rendu pâteux).
+Après un déploiement ou un changement de ces réglages (`config/uaz.php`, `media.conversions.hero`), régénérer les conversions :
+`php artisan media-library:regenerate --only=hero --with-responsive-images --force`.

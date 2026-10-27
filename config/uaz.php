@@ -89,7 +89,8 @@ return [
         'conversions' => [
             'thumb' => ['width' => 400, 'responsive' => false],
             'card' => ['width' => 960, 'responsive' => true],
-            'hero' => ['width' => 2000, 'responsive' => true],
+            // Héros plein écran : pleine largeur de l'original et compression douce (la photo est vue en grand, parfois sur écran dense).
+            'hero' => ['width' => 2560, 'responsive' => true, 'webp_quality' => 90, 'avif' => false],
         ],
         'webp_quality' => 80,
         'avif_quality' => 55,

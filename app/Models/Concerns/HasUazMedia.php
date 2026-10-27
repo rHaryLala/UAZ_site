@@ -29,18 +29,18 @@ trait HasUazMedia
             $webp = $this->addMediaConversion($name)
                 ->width($options['width'])
                 ->format('webp')
-                ->quality($config['webp_quality'])
+                ->quality($options['webp_quality'] ?? $config['webp_quality'])
                 ->nonOptimized();
 
             if ($options['responsive']) {
                 $webp->withResponsiveImages();
             }
 
-            if ($avif) {
+            if ($avif && ($options['avif'] ?? true)) {
                 $conversion = $this->addMediaConversion($name.'-avif')
                     ->width($options['width'])
                     ->format('avif')
-                    ->quality($config['avif_quality'])
+                    ->quality($options['avif_quality'] ?? $config['avif_quality'])
                     ->nonOptimized();
 
                 if ($options['responsive']) {
