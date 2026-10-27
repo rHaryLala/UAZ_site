@@ -17,7 +17,7 @@
         <x-triangle class="pointer-events-none absolute -bottom-1/3 left-[-8%] -z-10 w-[48rem] text-gold-300/10" />
     @endif
 
-    <div @class(["container-site pt-14 pb-14 md:pt-16 md:pb-20", "md:min-h-[34rem] md:pt-24 md:pb-32" => $image])>
+    <div @class(["container-site pt-14 pb-14 md:pt-16 md:pb-20", "md:min-h-[42rem] md:pt-28 md:pb-40" => $image])>
         @if (count($breadcrumbs))
             <x-breadcrumbs :items="$breadcrumbs" dark class="mb-8" />
         @endif
