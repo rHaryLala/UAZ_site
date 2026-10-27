@@ -3,13 +3,38 @@
 export default () => ({
     open: false,
     scrolled: false,
+    dark: false, // l'en-tête translucide passe au-dessus d'une section sombre (texte clair)
 
     init() {
-        const onScroll = () => {
+        let queued = false;
+        const update = () => {
+            queued = false;
             this.scrolled = window.scrollY > 24;
+            this.dark = this.scrolled && this.sectionIsDark();
         };
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
+        update();
+        window.addEventListener(
+            'scroll',
+            () => {
+                if (queued) return;
+                queued = true;
+                requestAnimationFrame(update);
+            },
+            { passive: true },
+        );
+    },
+
+    // Section pleine largeur (et non une simple carte) sombre située sous le milieu de l'en-tête.
+    sectionIsDark() {
+        const header = document.querySelector('.site-header');
+        if (!header) return false;
+        const box = header.getBoundingClientRect();
+        const under = document
+            .elementsFromPoint(window.innerWidth / 2, box.top + box.height / 2)
+            .find((el) => !header.contains(el) && el.closest('.on-dark, main > *, footer'));
+        const section = under?.closest('.on-dark');
+
+        return Boolean(section) && section.getBoundingClientRect().width >= window.innerWidth * 0.9;
     },
 
     toggle() {

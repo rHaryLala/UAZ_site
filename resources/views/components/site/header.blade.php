@@ -24,13 +24,13 @@
         </div>
     </div>
 
-    <header x-bind:data-scrolled="scrolled" class="site-header sticky top-0 z-50">
+    <header x-bind:data-scrolled="scrolled" x-bind:data-dark="dark" class="site-header sticky top-0 z-50">
         <div class="container-site flex h-[var(--header-h)] items-center justify-between gap-6">
             <a href="{{ url('/') }}" class="flex items-center gap-3.5" aria-label="{{ $site->site_name }} — accueil">
                 <x-seal :size="56" eager class="size-11 md:size-14" />
                 <span class="leading-none">
-                    <span class="block text-[0.6rem] font-medium tracking-[0.02em] text-navy-900 uppercase md:text-[0.65rem]">Université Adventiste</span>
-                    <span class="mt-1 block font-serif text-lg font-bold text-royal-600 uppercase md:text-[1.3rem]">Zurcher</span>
+                    <span class="brand-tag block text-[0.6rem] font-medium tracking-[0.02em] text-navy-900 uppercase md:text-[0.65rem]">Université Adventiste</span>
+                    <span class="brand-name mt-1 block font-serif text-lg font-bold text-royal-600 uppercase md:text-[1.3rem]">Zurcher</span>
                 </span>
             </a>
 
