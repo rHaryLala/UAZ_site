@@ -1209,3 +1209,37 @@ html.menu-open {
         transition: none;
     }
 }
+
+/* Fenêtre « Étudiant » (barre du haut) : <dialog> centré, fond flouté. */
+.student-dialog {
+    width: calc(100% - 2rem);
+    max-width: 36rem;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+}
+
+.student-dialog::backdrop {
+    background: rgb(10 22 40 / 0.7);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+.student-dialog[open],
+.student-dialog[open]::backdrop {
+    animation: uaz-fade 0.25s ease-out;
+}
+
+.student-dialog[open] > div {
+    animation: uaz-enter 0.4s var(--ease-out-expo) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .student-dialog[open],
+    .student-dialog[open]::backdrop,
+    .student-dialog[open] > div {
+        animation: none;
+    }
+}

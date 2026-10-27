@@ -13,6 +13,9 @@ const hasLivewire = document.querySelector('[wire\\:id]') !== null;
 
 initAnimations();
 
+// Fenêtre « Étudiant » de la barre du haut (choix Registrar / Moodle).
+if (document.querySelector('[data-student-dialog]')) import('./student-dialog.js').then((m) => m.initStudentDialog());
+
 // Météo du campus (pied de page) : rafraîchie toutes les 10 minutes.
 if (document.querySelector('[data-weather]')) import('./weather.js').then((m) => m.initWeather());
 

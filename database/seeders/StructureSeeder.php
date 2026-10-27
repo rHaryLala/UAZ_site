@@ -216,20 +216,19 @@ class StructureSeeder extends Seeder
             ],
         ]);
 
-        // Barre du haut de la maquette. TODO-CONTENU : « Étudiants », « Alumni », « Donner » et « Se connecter » n'ont
-        // pas encore de page dédiée ; les destinations ci-dessous sont provisoires (docs/TODO-CONTENU.md).
+        // Barre du haut de la maquette. La dernière entrée est la pastille dorée : « Étudiant » ouvre une fenêtre de choix
+        // (Registrar / Moodle). TODO-CONTENU : « Alumni » et « Donner » restent à confirmer (docs/TODO-CONTENU.md).
         Menu::firstOrCreate(['handle' => 'topbar'], [
             'name' => 'Barre du haut',
             'items' => [
-                array_merge($url('Étudiant', '#'), ['children' => [
-                    array_merge($url('Registrar — bureau académique', 'https://registrar.zurcher.edu.mg'), ['new_tab' => true]),
-                    array_merge($url('Moodle — cours en ligne', 'https://moodle.zurcher.edu.mg'), ['new_tab' => true]),
-                ]]),
                 $url('Notre équipe', '/equipe'),
                 array_merge($url('Alumni', 'https://alumni-auz.api.mg/'), ['new_tab' => true]),
                 $url('Yearbook', '/yearbook'),
                 $page('Donner', 'support'),
-                $url('Se connecter', '/admin'),
+                array_merge($url('Étudiant', '#'), ['children' => [
+                    array_merge($url('Registrar — bureau académique', 'https://registrar.zurcher.edu.mg'), ['new_tab' => true]),
+                    array_merge($url('Moodle — cours en ligne', 'https://moodle.zurcher.edu.mg'), ['new_tab' => true]),
+                ]]),
             ],
         ]);
 

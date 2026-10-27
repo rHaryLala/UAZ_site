@@ -43,7 +43,10 @@
                         <a href="{{ $item['url'] }}" class="py-2" @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $item['label'] }}</a>
                     @endif
                 @endforeach
-                @if ($topbarCta)
+                @if ($topbarCta && count($topbarCta['children']))
+                    {{-- Pastille à choix (« Étudiant ») : ouvre une fenêtre pour choisir où aller (resources/js/student-dialog.js). --}}
+                    <button type="button" data-student-open aria-haspopup="dialog" class="rounded-full bg-sun-400 px-3 py-1 font-semibold text-night-900 hover:bg-sun-300">{{ $topbarCta['label'] }}</button>
+                @elseif ($topbarCta)
                     <a href="{{ $topbarCta['url'] }}" class="rounded-full bg-sun-400 px-3 py-1 font-semibold text-night-900 hover:text-night-900! hover:bg-sun-300" @if ($topbarCta['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $topbarCta['label'] }}</a>
                 @endif
             </nav>
@@ -110,6 +113,32 @@
             </div>
         </div>
     </header>
+
+    {{-- Fenêtre « Étudiant » : choix entre les services en ligne (Registrar, Moodle…) --}}
+    @if ($topbarCta && count($topbarCta['children']))
+        <dialog data-student-dialog class="student-dialog" aria-labelledby="student-dialog-title">
+            <div class="ornament relative bg-white p-8 text-ink-800 shadow-lift sm:p-10">
+                <button type="button" data-student-close class="absolute top-4 right-4 z-20 inline-flex size-10 items-center justify-center text-navy-900 hover:bg-sun-400" aria-label="Fermer">
+                    <x-ico name="close" class="size-5" />
+                </button>
+                <p class="eyebrow mb-3">Espace étudiant</p>
+                <h2 id="student-dialog-title" class="font-serif text-2xl text-navy-900 sm:text-3xl">Où souhaitez-vous aller ?</h2>
+                <span class="mt-4 mb-7 block h-0.5 w-12 bg-sun-400" aria-hidden="true"></span>
+                <ul class="grid gap-4 sm:grid-cols-2">
+                    @foreach ($topbarCta['children'] as $child)
+                        @php([$name, $hint] = array_pad(explode(' — ', $child['label'], 2), 2, null))
+                        <li>
+                            <a href="{{ $child['url'] }}" class="group flex h-full flex-col border border-navy-800/15 bg-paper-100 p-6 transition hover:-translate-y-0.5 hover:border-sun-400 hover:bg-navy-900 hover:text-white hover:shadow-lift focus-visible:border-sun-400" @if ($child['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
+                                <span class="font-serif text-xl text-navy-900 transition-colors group-hover:text-white">{{ $name }}</span>
+                                @if ($hint)<span class="mt-1 text-sm text-ink-600 transition-colors group-hover:text-navy-100">{{ $hint }}</span>@endif
+                                <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-royal-600 transition-colors group-hover:text-sun-400">Ouvrir <x-ico name="arrow-up-right" class="size-4" /><span class="sr-only"> (nouvel onglet)</span></span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </dialog>
+    @endif
 
     {{-- Fenêtre de recherche : s'ouvre avec la loupe, Ctrl/Cmd + K ou « / » ; résultats en direct (components/search-modal.js) --}}
     <div
