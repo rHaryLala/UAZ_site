@@ -32,6 +32,8 @@ return [
     'future' => [
         // Titre en quatre lignes (IBM Plex Sans gras).
         'lines' => ['Votre', 'futur', 'commence', 'ici.'],
+        'sound_on' => 'Activer le son de la vidéo',
+        'sound_off' => 'Couper le son de la vidéo',
         'play' => 'Lire la vidéo « Votre futur commence ici »',
         'video_label' => 'Vidéo de présentation de l’UAZ',
     ],

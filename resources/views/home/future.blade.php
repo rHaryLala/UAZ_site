@@ -24,11 +24,16 @@
                     data-src-sd="{{ asset('videos/futur-640.mp4') }}"
                     @if ($poster) poster="{{ $poster }}" @endif
                     class="absolute inset-0 size-full object-cover"
-                    preload="none" playsinline
+                    preload="none" playsinline muted loop
                     aria-label="{{ __('home.future.video_label') }}"
                 ></video>
+                {{-- Seule commande : couper / remettre le son (la vidéo démarre muette, c'est la règle des navigateurs). --}}
                 @if ($videoReady)
-                    <button type="button" data-future-play class="group absolute inset-0 flex items-center justify-center bg-navy-950/25 transition hover:bg-navy-950/10 focus-visible:outline-offset-[-6px]" aria-label="{{ __('home.future.play') }}">
+                    <button type="button" data-future-sound aria-pressed="false" class="absolute right-3 bottom-3 z-10 inline-flex size-11 items-center justify-center bg-night-900/75 text-white backdrop-blur-sm transition hover:bg-sun-400 hover:text-night-900" aria-label="{{ __('home.future.sound_on') }}" data-label-on="{{ __('home.future.sound_on') }}" data-label-off="{{ __('home.future.sound_off') }}">
+                        <x-ico name="volume-off" class="size-5" data-sound-icon="off" />
+                        <x-ico name="volume" class="size-5" data-sound-icon="on" hidden />
+                    </button>
+                    <button type="button" data-future-play hidden class="group absolute inset-0 flex items-center justify-center bg-navy-950/25 transition hover:bg-navy-950/10 focus-visible:outline-offset-[-6px]" aria-label="{{ __('home.future.play') }}">
                         <span class="flex h-9 w-14 items-center justify-center rounded-[0.6rem] bg-sun-400 text-night-900 shadow-lift transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-16 sm:rounded-xl">
                             {{-- Triangle dessiné pour être centré dans le rectangle (boîte 24×24, triangle de x 7,5 à 17,5, sans décalage). --}}
                             <svg viewBox="0 0 24 24" class="block size-5 sm:size-6" aria-hidden="true" focusable="false"><path d="M7.5 5.5v13L17.5 12z" fill="currentColor"/></svg>
