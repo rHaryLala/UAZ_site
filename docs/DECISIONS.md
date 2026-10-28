@@ -218,3 +218,9 @@ Format : **décision** — alternatives — raison.
 
 **Constat :** le site ne dépose que deux cookies techniques (session `universite-adventiste-zurcher-session` et `XSRF-TOKEN`, 2 h), n'a aucun outil de mesure ni traceur tiers (CSP `connect-src 'self'`, météo récupérée côté serveur). Ces cookies sont exemptés de consentement : **pas de bandeau**.
 **Décision :** page d'information `privacy` (créée en brouillon par `StructureSeeder`, éditable dans le back-office), liée dans le bas du pied de page seulement quand elle est publiée (`SiteComposer::privacyPage`). Un bandeau ne sera nécessaire que si un outil de statistiques ou un contenu tiers intégré est ajouté.
+
+## D-039 · Fenêtre d'abonnement à la lettre d'information
+
+**Décision :** fenêtre `<dialog>` (`components/site/newsletter-dialog.blade.php`, `resources/js/newsletter.js`) ouverte à la première visite (après 6 s), puis 20 jours après la dernière ouverture tant que l'abonnement n'a pas été demandé. Mémoire dans `localStorage` (`uaz.newsletter` : `seenAt`, `subscribed`), donc **sans cookie** ; si le stockage est interdit, pas d'ouverture automatique. Jamais par-dessus une autre fenêtre ni sur le Yearbook. Bouton « S'abonner » (`#newsletter`) dans la barre du haut juste après Yearbook (migration + seeder) et dans le menu plein écran.
+**Abonnement :** `POST /newsletter` (JSON, 6 requêtes/min, champ piège) → table `newsletter_subscribers` → e-mail de confirmation (lien signé, 7 jours) ; désinscription par lien signé. Pas de double inscription ni d'e-mail répété sous 10 min ; réponse identique pour une adresse déjà inscrite (on ne révèle pas qui l'est).
+**Limites :** l'envoi de la lettre n'est pas implémenté (export CSV des abonnés actifs depuis l'admin). Le mailer de développement est `log` : en production, configurer un vrai SMTP.

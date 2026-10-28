@@ -39,6 +39,9 @@
                                 @endforeach
                             </ul>
                         </div>
+                    @elseif ($item['url'] === '#newsletter')
+                        {{-- « S'abonner » : ouvre la fenêtre de la lettre d'information (resources/js/newsletter.js). --}}
+                        <button type="button" data-newsletter-open aria-haspopup="dialog" class="py-2">{{ $item['label'] }}</button>
                     @else
                         <a href="{{ $item['url'] }}" class="py-2" @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $item['label'] }}</a>
                     @endif
@@ -139,6 +142,8 @@
             </div>
         </dialog>
     @endif
+
+    <x-site.newsletter-dialog />
 
     {{-- Fenêtre de recherche : s'ouvre avec la loupe, Ctrl/Cmd + K ou « / » ; résultats en direct (components/search-modal.js) --}}
     <div
@@ -279,7 +284,13 @@
                             <p class="eyebrow mt-10 mb-4 menu-overlay__item" data-menu-item>Espaces</p>
                             <ul class="menu-overlay__item flex flex-wrap gap-x-6 gap-y-2 text-sm text-navy-100" data-menu-item>
                                 @foreach ($spaces as $item)
-                                    <li><a href="{{ $item['url'] }}" class="underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</a></li>
+                                    <li>
+                                        @if ($item['url'] === '#newsletter')
+                                            <button type="button" data-newsletter-open aria-haspopup="dialog" class="underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</button>
+                                        @else
+                                            <a href="{{ $item['url'] }}" class="underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</a>
+                                        @endif
+                                    </li>
                                 @endforeach
                             </ul>
                         @endif

@@ -252,3 +252,10 @@ Dans chaque formulaire (actualité, événement, page, album…), le champ image
 ## Médiathèque en grille : chargement progressif
 
 En vue grille, la médiathèque n'a plus de numéros de page : 36 fichiers s'affichent d'abord, puis la suite se charge toute seule en descendant (ou avec le bouton **Charger plus**). Un compteur indique « 36 sur 186 fichier(s) affiché(s) ». Une nouvelle recherche ou un nouveau filtre repart du début. La vue liste garde sa pagination classique.
+
+## Lettre d'information : fenêtre « S'abonner »
+
+- Les **nouveaux visiteurs** voient une fenêtre d'abonnement quelques secondes après leur arrivée. Si elle est fermée sans abonnement, elle **revient 20 jours plus tard** sur le même navigateur ; une fois abonné, elle ne revient plus. Le bouton **S'abonner** de la barre du haut l'ouvre à tout moment.
+- Chaque demande déclenche un **e-mail de confirmation** : l'abonné n'est actif qu'après clic sur le lien. Personne ne peut inscrire l'adresse d'un tiers.
+- **Personnes & messages → Abonnés à la lettre** : liste des abonnés (Abonné / En attente / Désinscrit), export CSV des abonnés actifs, suppression sur demande.
+- Le site **n'envoie pas encore la lettre elle-même** : exportez le CSV vers votre outil d'envoi (Brevo, Mailchimp…) ou voyez avec l'équipe technique pour automatiser l'envoi.

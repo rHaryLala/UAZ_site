@@ -80,3 +80,10 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Journaux de l'hébergeur** (adresses IP des visites) : à préciser selon l'hébergeur retenu.
 - [ ] Retirer les mentions `TODO-CONTENU` du texte avant de publier.
 - À relire si le site ajoute des statistiques, une vidéo YouTube intégrée ou une carte Google : un bandeau de consentement deviendrait alors nécessaire.
+
+## Lettre d'information
+
+- [ ] **Texte de la fenêtre** (« Restez proche de l'UAZ ») : à valider par l'UAZ.
+- [ ] **Outil d'envoi** de la lettre (Brevo, Mailchimp…) ou envoi depuis le site : à décider ; contenu et fréquence à définir.
+- [ ] **SMTP de production** : sans lui, aucun e-mail de confirmation ne part (`MAIL_*` dans `.env`).
+- [ ] Page « Confidentialité et cookies » : durée de conservation après désinscription (`TODO-CONTENU` dans la page).

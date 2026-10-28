@@ -16,6 +16,9 @@ initAnimations();
 // Fenêtre « Étudiant » de la barre du haut (choix Registrar / Moodle).
 if (document.querySelector('[data-student-dialog]')) import('./student-dialog.js').then((m) => m.initStudentDialog());
 
+// Fenêtre « Lettre d'information » : ouverture à la première visite, puis tous les 20 jours si non abonné.
+if (document.querySelector('[data-newsletter-dialog]')) import('./newsletter.js').then((m) => m.initNewsletter());
+
 // Titre « Votre futur commence ici. » en trois langues, avec glitch.
 if (document.querySelector('[data-future-title]')) import('./future-title.js').then((m) => m.initFutureTitle());
 

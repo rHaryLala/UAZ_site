@@ -58,6 +58,11 @@ Route::prefix('admin/media-browser')->name('admin.media-browser.')->group(functi
 Route::get('/soutenir/{slug}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
 Route::get('/equipe', TeamController::class)->name('team');
 Route::get('/contact', ContactController::class)->name('contact');
+
+// Lettre d'information : demande (JSON, depuis la fenêtre du site), confirmation et désinscription par liens signés.
+Route::post('/newsletter', [\App\Http\Controllers\NewsletterController::class, 'subscribe'])->middleware('throttle:6,1')->name('newsletter.subscribe');
+Route::get('/newsletter/confirmation/{subscriber}', [\App\Http\Controllers\NewsletterController::class, 'confirm'])->middleware('signed')->name('newsletter.confirm');
+Route::get('/newsletter/desinscription/{subscriber}', [\App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->middleware('signed')->name('newsletter.unsubscribe');
 Route::get('/recherche', SearchController::class)->name('search');
 Route::get('/recherche/apercu', SearchPreviewController::class)->middleware('throttle:60,1')->name('search.preview');
 
