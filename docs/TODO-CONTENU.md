@@ -69,3 +69,14 @@ Aucune donnée factuelle n'est inventée : tout ce qui manque est marqué `TODO-
 - [ ] **Phrase du héros de l'accueil** (« Votre futur commence ici ! » / « Your future starts here! » / « Eto no manomboka ny hoavanao! ») : faire relire la version **malgache** par un locuteur (textes dans `lang/fr/home.php`, clés `note`, `note_en`, `note_mg`).
 - [x] **Barre du haut « Étudiant »** : liste à choix vers Registrar (https://registrar.zurcher.edu.mg) et Moodle (https://moodle.zurcher.edu.mg), nouvel onglet. « Se connecter » (→ /admin, accès rédacteurs) a été retiré de la barre du haut ; la pastille dorée « Se connecter » ouvre une fenêtre de choix (Registrar ou Moodle).
 - [ ] **Titre « Votre futur commence ici. »** (accueil) en trois langues : « Your future starts here. » et « Eto no manomboka ny hoavanao. » — la version **malgache** est à faire relire par un locuteur (`lang/fr/home.php`, clés `lines_en` et `lines_mg`).
+
+## Page « Confidentialité et cookies » (brouillon, à valider avant publication)
+
+La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; le lien du pied de page apparaît dès qu'elle est publiée.
+
+- [ ] **Durée de conservation** des messages du formulaire de contact : à fixer par l'UAZ.
+- [ ] **Responsable des données** : confirmer l'adresse `office@zurcher.edu.mg` et le service concerné.
+- [ ] **Cadre légal** (loi malgache sur la protection des données personnelles) : à faire valider par la direction ou un juriste, puis compléter la rubrique « Vos droits ».
+- [ ] **Journaux de l'hébergeur** (adresses IP des visites) : à préciser selon l'hébergeur retenu.
+- [ ] Retirer les mentions `TODO-CONTENU` du texte avant de publier.
+- À relire si le site ajoute des statistiques, une vidéo YouTube intégrée ou une carte Google : un bandeau de consentement deviendrait alors nécessaire.

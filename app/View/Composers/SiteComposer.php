@@ -17,6 +17,8 @@ class SiteComposer
             'topbarMenu' => Menu::resolved('topbar'),
             'headerMenu' => Menu::resolved('header'),
             'footerMenu' => Menu::resolved('footer'),
+            // Page « Confidentialité et cookies » : le lien du pied de page n'apparaît que lorsqu'elle est publiée.
+            'privacyPage' => \App\Models\Page::byKey('privacy'),
         ]);
     }
 }

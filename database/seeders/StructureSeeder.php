@@ -159,9 +159,55 @@ class StructureSeeder extends Seeder
         // Page de dons et de projets (vue dédiée) ; l'image d'en-tête se choisit dans le back-office (champ « Image »).
         $pages['support'] = $make('support', 'Soutenir l\'UAZ', 'soutenir', null, 'Accompagnez l\'Université Adventiste Zurcher et ses étudiants : découvrez les projets de l\'UAZ et soutenez-les.', 7);
 
+        $pages['privacy'] = $this->privacyPage();
+
         $this->projects();
 
         return $pages;
+    }
+
+    /**
+     * Confidentialité et cookies. Rédigée d'après ce que le site fait réellement (deux cookies techniques, formulaire de contact,
+     * aucun outil de mesure) ; reste en brouillon tant que l'UAZ n'a pas validé les points TODO-CONTENU (docs/TODO-CONTENU.md).
+     * Le lien du pied de page n'apparaît qu'une fois la page publiée.
+     */
+    private function privacyPage(): Page
+    {
+        $block = fn (string $heading, string $html) => ['type' => 'rich_text', 'data' => ['heading' => $heading, 'content' => $html, 'width' => 'normal']];
+
+        return Page::firstOrCreate(['key' => 'privacy'], [
+            'title' => 'Confidentialité et cookies',
+            'slug' => 'confidentialite',
+            'summary' => 'Les données que ce site utilise, les cookies qu\'il dépose et vos droits.',
+            'sort_order' => 8,
+            'status' => PublicationStatus::Draft,
+            'published_at' => now(),
+            'blocks' => [
+                $block('En bref', '<p>Ce site n\'utilise <strong>aucun cookie publicitaire, aucun outil de mesure d\'audience et aucun traceur de réseau social</strong>. '
+                    .'Il ne dépose que deux cookies techniques, indispensables à son fonctionnement, qui ne nécessitent donc pas de bandeau de consentement. '
+                    .'Les seules données personnelles que nous recueillons sont celles que vous nous envoyez vous-même par le formulaire de contact.</p>'),
+                $block('Qui est responsable de ces données ?', '<p>Université Adventiste Zurcher, PK 135, Route Nationale 7, Antsirabe, Madagascar. '
+                    .'Pour toute question sur vos données : <a href="mailto:office@zurcher.edu.mg">office@zurcher.edu.mg</a>. '
+                    .self::TODO.' : confirmer l\'adresse et le service chargé des données personnelles.</p>'),
+                $block('Les cookies de ce site', '<p>Deux cookies sont déposés lors de votre visite :</p>'
+                    .'<ul><li><strong>universite-adventiste-zurcher-session</strong> : relie vos actions pendant la visite (par exemple l\'envoi du formulaire de contact). Il disparaît au bout de 2 heures.</li>'
+                    .'<li><strong>XSRF-TOKEN</strong> : protège les formulaires contre les envois frauduleux. Même durée de vie.</li></ul>'
+                    .'<p>Ils ne servent ni à vous suivre d\'une visite à l\'autre, ni à des statistiques, ni à de la publicité. Ils ne contiennent aucune information vous identifiant. '
+                    .'Vous pouvez les refuser dans les réglages de votre navigateur : le site reste lisible, mais le formulaire de contact risque de ne plus fonctionner.</p>'),
+                $block('Le formulaire de contact', '<p>Quand vous nous écrivez, nous recevons les informations que vous saisissez : <strong>nom, adresse e-mail, téléphone (facultatif), sujet et message</strong>. '
+                    .'Elles servent uniquement à vous répondre. Votre message est transmis par e-mail à l\'UAZ et conservé dans l\'espace d\'administration du site, accessible aux seules personnes autorisées.</p>'
+                    .'<p>Pour limiter les messages automatiques (spam), nous enregistrons aussi une <strong>empreinte chiffrée et non réversible de votre adresse IP</strong> '
+                    .'(l\'adresse elle-même n\'est pas conservée) et le nom de votre navigateur.</p>'
+                    .'<p>Durée de conservation : '.self::TODO.' (à fixer par l\'UAZ).</p>'),
+                $block('Services externes', '<ul><li><strong>Météo du pied de page</strong> : récupérée par notre serveur auprès d\'Open-Meteo. Votre navigateur ne contacte pas ce service.</li>'
+                    .'<li><strong>Carte de la page Contact</strong> : fournie par OpenStreetMap. Son affichage lui transmet votre adresse IP, comme tout contenu intégré ; nous n\'y ajoutons aucun cookie.</li>'
+                    .'<li><strong>Liens vers d\'autres sites</strong> (Facebook, Instagram, LinkedIn, YouTube, TikTok, Registrar, Moodle, Alumni) : ce sont de simples liens. '
+                    .'Une fois sur ces sites, leurs propres règles s\'appliquent.</li></ul>'),
+                $block('Vos droits', '<p>Vous pouvez nous demander l\'accès aux informations que vous nous avez envoyées, leur correction ou leur suppression, en écrivant à '
+                    .'<a href="mailto:office@zurcher.edu.mg">office@zurcher.edu.mg</a>. '.self::TODO.' : compléter avec le cadre légal retenu par l\'UAZ (loi malgache sur la protection des données personnelles) après validation.</p>'),
+                $block('Mise à jour', '<p>Dernière mise à jour : 28 octobre 2026. Cette page est modifiée si le site change sa façon d\'utiliser des cookies ou des données (par exemple en ajoutant un outil de statistiques).</p>'),
+            ],
+        ]);
     }
 
     /**

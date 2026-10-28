@@ -89,7 +89,12 @@
 
     <div class="border-t border-white/10">
         <div class="container-site flex flex-col gap-2 py-6 text-xs text-[#6d7bae] sm:flex-row sm:items-center sm:justify-between">
-            <p>{{ $site->footer_legal ?: '© '.$site->site_name }} — {{ now()->year }}</p>
+            <p>
+                {{ $site->footer_legal ?: '© '.$site->site_name }} — {{ now()->year }}
+                @if ($privacyPage)
+                    <span aria-hidden="true" class="mx-1.5">·</span><a href="{{ $privacyPage->url() }}" class="underline-offset-4 hover:text-white hover:underline">Confidentialité et cookies</a>
+                @endif
+            </p>
             <p class="font-serif tracking-[0.2em] uppercase text-gold-300">Spiritus · Manus · Mens</p>
         </div>
     </div>

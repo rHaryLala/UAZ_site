@@ -213,3 +213,8 @@ Format : **décision** — alternatives — raison.
 ## D-037 · Médiathèque : grille par défaut et bascule rapide
 
 **Décision :** la vue grille est la vue par défaut. La bascule grille/liste utilise `redirect(..., navigate: true)` (navigation SPA, sans recharger CSS/JS/polices) et la table de la médiathèque n'est plus en chargement différé. Mesure en développement : bascule de ~8-11 s à ~1,4 s.
+
+## D-038 · Pas de bandeau de cookies ; page « Confidentialité et cookies »
+
+**Constat :** le site ne dépose que deux cookies techniques (session `universite-adventiste-zurcher-session` et `XSRF-TOKEN`, 2 h), n'a aucun outil de mesure ni traceur tiers (CSP `connect-src 'self'`, météo récupérée côté serveur). Ces cookies sont exemptés de consentement : **pas de bandeau**.
+**Décision :** page d'information `privacy` (créée en brouillon par `StructureSeeder`, éditable dans le back-office), liée dans le bas du pied de page seulement quand elle est publiée (`SiteComposer::privacyPage`). Un bandeau ne sera nécessaire que si un outil de statistiques ou un contenu tiers intégré est ajouté.
