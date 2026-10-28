@@ -85,7 +85,7 @@ class ListMediaAssets extends ListRecords
                 ->action(function () {
                     session(['media_layout' => MediaAssetResource::isGrid() ? 'list' : 'grid']);
 
-                    return redirect(MediaAssetResource::getUrl());
+                    $this->redirect(MediaAssetResource::getUrl(), navigate: true);
                 }),
             Action::make('bulkUpload')
                 ->label('Envoi multiple')

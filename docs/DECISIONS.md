@@ -209,3 +209,7 @@ Format : **décision** — alternatives — raison.
 ## D-036 · Médiathèque en grille : chargement progressif
 
 **Décision :** en vue grille, `ListMediaAssets::loadMoreMedia()` augmente de 36 le nombre de fichiers par page (plafond 1000) au lieu de changer de page ; un crochet de rendu (`resources/views/filament/media/load-more.blade.php`) déclenche l'appel à l'arrivée en bas et propose un bouton de secours. La pagination Filament est masquée en grille, conservée en liste. Recherche et filtres remettent le compteur à 36.
+
+## D-037 · Médiathèque : grille par défaut et bascule rapide
+
+**Décision :** la vue grille est la vue par défaut. La bascule grille/liste utilise `redirect(..., navigate: true)` (navigation SPA, sans recharger CSS/JS/polices) et la table de la médiathèque n'est plus en chargement différé. Mesure en développement : bascule de ~8-11 s à ~1,4 s.

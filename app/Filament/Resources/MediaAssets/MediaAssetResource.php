@@ -76,7 +76,7 @@ class MediaAssetResource extends Resource
     /** Mise en page choisie par l'utilisateur (bouton « Grille / Liste » de la page), conservée en session. */
     public static function isGrid(): bool
     {
-        return session('media_layout', 'list') === 'grid';
+        return session('media_layout', 'grid') === 'grid';
     }
 
     /** @return array<int, FilamentTablesColumnsColumn|FilamentTablesColumnsLayoutComponent> */
@@ -128,6 +128,8 @@ class MediaAssetResource extends Resource
                 TextColumn::make('created_at')->label('Ajouté le')->dateTime('d/m/Y')->sortable()->toggleable(),
             ])
             ->defaultSort('id', 'desc')
+            // Les 36 premiers fichiers sont rendus avec la page : pas d'aller-retour de plus pour les charger.
+            ->deferLoading(false)
             // Grille : chargement progressif (voir ListMediaAssets::loadMoreMedia) ; liste : pagination classique.
             ->paginated($grid ? [36, 72, 144] : [10, 25, 50, 100])
             ->defaultPaginationPageOption($grid ? 36 : 25)
