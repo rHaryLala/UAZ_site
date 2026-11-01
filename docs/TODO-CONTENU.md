@@ -114,3 +114,13 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 
 - [ ] **Photos de chambres en production** : ajouter les six photos dans la médiathèque (texte alternatif obligatoire), puis les insérer à la suite des trois photos du texte de la page « Dortoirs », dans cet ordre : chambre (héros), 2 photos des garçons, 3 photos des filles. Les identifiants diffèrent de ceux du développement.
 - [ ] **Consentement à l'image** : six photos montrent des étudiants et étudiantes identifiables (plusieurs sont probablement mineurs ou jeunes adultes) : confirmer l'autorisation de publication avant la mise en ligne.
+
+## Pages Admission Licence et Master
+
+- [ ] **Chaque année** : mettre à jour `config/admissions.php` (année, dates, liste des pièces, frais de dossier du Master) et l'affiche officielle (figure du texte de la page). Au 1er novembre 2026, seules les dates du 2nd semestre 2027 sont à venir : les autres s'affichent « Passé ».
+- [ ] **Écart Master** : le texte du site demande « Lettres de recommandation (2) », l'affiche 2026-2027 ne les liste pas (elle ajoute une lettre de demande d'admission et la preuve de paiement). La page suit l'affiche ; confirmer.
+- [ ] **Écart Licence** : le texte du site et l'affiche diffèrent légèrement (certificat de bonne santé scanné, visa d'études pour les étrangers, « test de niveau d'informatique » pour la Théologie). La page suit l'affiche pour le dossier et le texte pour les matières et séries de Bac ; confirmer.
+- [ ] **Éducation** : citée dans les matières de test et les séries de Bac, mais sans parcours ni fiche de formation sur le site : à compléter ou à retirer.
+- [ ] **Master** : durée et crédits non fournis (aucune fiche de formation Master dans le site) ; fiches des mentions de Master à créer pour lier les cartes.
+- [ ] **Photo du Master** : recadrage de l'affiche officielle (faute de photo haute définition) ; la remplacer par une photo de remise de diplômes de Master (champ « Image » de la page).
+- [ ] **Médias en production** : l'affiche et la photo de couverture de chaque page (Licence : « Diplômés de l'UAZ en toge et étole jaune » ; Master : « Diplômés du Master ») sont à reprendre dans la médiathèque et à choisir comme image de la page.

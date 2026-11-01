@@ -90,6 +90,26 @@ class PageController extends Controller
             ]);
         }
 
+        // Admission Licence / Master : mise en page immersive (données : config/admissions.php ; l'affiche officielle est la figure du texte importé).
+        if (in_array($page->key, ['admissions-licence', 'admissions-master'], true)) {
+            $level = $page->key === 'admissions-licence' ? 'licence' : 'master';
+            $content = collect($page->blocks)->pluck('data.content')->implode(' ');
+            preg_match_all('/data-media="(\\d+)"/', $content, $found);
+            preg_match_all('/<a href="(https:\\/\\/[^"]+\\.docx?)"/i', $content, $docs);
+            $poster = \App\Models\MediaAsset::query()->with('media')->find((int) ($found[1][0] ?? 0));
+
+            return view('pages.admissions', [
+                'page' => $page,
+                'trail' => $trail,
+                'level' => $level,
+                'data' => config('admissions.levels.'.$level),
+                'common' => config('admissions'),
+                'poster' => $poster,
+                'forms' => collect(config('admissions.levels.'.$level.'.downloads'))->zip(array_values(array_unique($docs[1])))->filter(fn ($pair) => $pair->count() === 2 && $pair[1])->values()->all(),
+                'formations' => \App\Models\Formation::visible()->where('level', $level)->get()->keyBy('mention'),
+            ]);
+        }
+
         return view('pages.show', [
             'page' => $page,
             'trail' => $trail,

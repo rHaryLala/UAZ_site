@@ -3,6 +3,7 @@
 @import './library.css';
 @import './cafeteria.css';
 @import './dormitories.css';
+@import './admissions.css';
 
 @plugin '@tailwindcss/typography';
 
