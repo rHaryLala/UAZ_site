@@ -499,12 +499,20 @@
         color: rgb(255 255 255 / 0.85);
     }
 
-    .topbar a {
+    /* « S'abonner » est un bouton (il ouvre une fenêtre) : même transition, même couleur au survol et même curseur que les liens voisins. */
+    .topbar a,
+    .topbar button[data-newsletter-open] {
         transition: color 0.2s;
     }
 
-    .topbar a:hover {
+    .topbar a:hover,
+    .topbar button[data-newsletter-open]:hover {
         color: var(--color-sun-400);
+    }
+
+    .topbar button[data-newsletter-open],
+    .topbar button[data-student-open] {
+        cursor: pointer;
     }
 
     .site-header {

@@ -286,7 +286,7 @@
                                 @foreach ($spaces as $item)
                                     <li>
                                         @if ($item['url'] === '#newsletter')
-                                            <button type="button" data-newsletter-open aria-haspopup="dialog" class="underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</button>
+                                            <button type="button" data-newsletter-open aria-haspopup="dialog" class="cursor-pointer underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</button>
                                         @else
                                             <a href="{{ $item['url'] }}" class="underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</a>
                                         @endif
