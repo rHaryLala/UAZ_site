@@ -1,0 +1,262 @@
+/* Éditeur visuel : habillage de la page affichée dans l'iframe (repères de blocs, textes éditables, barre de mise en forme). */
+:root {
+    --ve-gold: #c9a84c;
+    --ve-navy: #131a3f;
+}
+
+html {
+    scroll-behavior: auto;
+}
+
+body.ve-canvas {
+    min-height: 100vh;
+    background: #fbf9f4;
+}
+
+/* Repères de blocs */
+[data-ve-block],
+[data-ve-hero] {
+    position: relative;
+    cursor: pointer;
+}
+
+[data-ve-block]:hover::after,
+[data-ve-hero]:hover::after,
+[data-ve-block].is-selected::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    outline: 2px dashed rgb(201 168 76 / 0.85);
+    outline-offset: -2px;
+}
+
+[data-ve-block].is-selected::after {
+    outline: 3px solid var(--ve-gold);
+    background: rgb(201 168 76 / 0.04);
+}
+
+/* Les contenus restent visibles : aucune animation d'apparition dans l'éditeur. */
+[data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* Textes éditables en place */
+.ve-text {
+    cursor: text;
+    border-radius: 2px;
+    outline: 0;
+    transition: background-color 0.15s, box-shadow 0.15s;
+}
+
+.ve-text:hover {
+    background: rgb(201 168 76 / 0.2);
+    box-shadow: 0 0 0 3px rgb(201 168 76 / 0.2);
+}
+
+.ve-text:focus {
+    background: rgb(201 168 76 / 0.14);
+    box-shadow: 0 0 0 3px rgb(201 168 76 / 0.55);
+}
+
+.on-dark .ve-text:focus,
+.on-dark .ve-text:hover {
+    background: rgb(255 255 255 / 0.12);
+}
+
+[data-ve-rich] {
+    cursor: text;
+    outline: 0;
+    min-height: 3rem;
+    border-radius: 3px;
+    transition: box-shadow 0.15s;
+}
+
+[data-ve-rich]:hover {
+    box-shadow: 0 0 0 4px rgb(201 168 76 / 0.2);
+}
+
+[data-ve-rich]:focus {
+    box-shadow: 0 0 0 4px rgb(201 168 76 / 0.55);
+}
+
+[data-ve-fig] {
+    position: relative;
+    user-select: none;
+}
+
+[data-ve-fig]::after {
+    content: 'Image (modifiable dans la médiathèque)';
+    position: absolute;
+    left: 0.5rem;
+    top: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    background: rgb(19 26 63 / 0.85);
+    font: 600 11px/1.2 Inter, system-ui, sans-serif;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+[data-ve-fig]:hover::after {
+    opacity: 1;
+}
+
+/* Barre d'outils du bloc sélectionné */
+.ve-chrome {
+    position: absolute;
+    z-index: 40;
+    pointer-events: none;
+    font: 600 12px/1 Inter, system-ui, sans-serif;
+}
+
+.ve-chrome > * {
+    pointer-events: auto;
+}
+
+.ve-chrome {
+    display: block;
+}
+
+.ve-chrome__label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0.4rem 0.7rem;
+    background: var(--ve-gold);
+    color: var(--ve-navy);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 11px;
+    pointer-events: none;
+}
+
+.ve-chrome__btn {
+    position: relative;
+}
+
+.ve-chrome__btn {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: var(--ve-navy);
+    color: #fff;
+    cursor: pointer;
+}
+
+.ve-chrome__btn:hover {
+    background: #2b3a82;
+}
+
+.ve-chrome__btn.is-danger:hover {
+    background: #b4452f;
+}
+
+.ve-chrome > .ve-chrome__btn {
+    position: absolute;
+    top: 0;
+}
+
+.ve-chrome > .ve-chrome__btn:nth-of-type(1) {
+    right: 6rem;
+}
+.ve-chrome > .ve-chrome__btn:nth-of-type(2) {
+    right: 4rem;
+}
+.ve-chrome > .ve-chrome__btn:nth-of-type(3) {
+    right: 2rem;
+}
+.ve-chrome > .ve-chrome__btn:nth-of-type(4) {
+    right: 0;
+}
+
+.ve-add {
+    position: absolute;
+    left: 50%;
+    z-index: 41;
+    display: inline-flex;
+    width: 2.2rem;
+    height: 2.2rem;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #fbf9f4;
+    border-radius: 50%;
+    background: var(--ve-gold);
+    color: var(--ve-navy);
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s;
+}
+
+.ve-add:hover {
+    transform: translate(-50%, -50%) scale(1.15);
+}
+
+.ve-add--top {
+    top: 0;
+}
+
+.ve-add--bottom {
+    top: 100%;
+}
+
+/* Page vide */
+.ve-empty {
+    display: grid;
+    min-height: 40vh;
+    place-content: center;
+    gap: 1rem;
+    margin: 3rem;
+    border: 3px dashed rgb(201 168 76 / 0.7);
+    text-align: center;
+    font: 500 1.1rem Inter, system-ui, sans-serif;
+    color: #4c5a8e;
+}
+
+.ve-empty__btn {
+    padding: 0.8rem 1.4rem;
+    border: 0;
+    background: var(--ve-navy);
+    font: 700 0.95rem Inter, system-ui, sans-serif;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Mise en forme du texte riche */
+.ve-toolbar {
+    position: absolute;
+    z-index: 60;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 30rem;
+    gap: 2px;
+    padding: 4px;
+    border-radius: 6px;
+    background: var(--ve-navy);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
+}
+
+.ve-toolbar[hidden] {
+    display: none;
+}
+
+.ve-toolbar__btn {
+    min-width: 2rem;
+    padding: 0.4rem 0.55rem;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    font: 600 12px/1.2 Inter, system-ui, sans-serif;
+    color: #fff;
+    cursor: pointer;
+}
+
+.ve-toolbar__btn:hover {
+    background: rgb(255 255 255 / 0.18);
+}

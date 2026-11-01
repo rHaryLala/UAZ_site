@@ -55,6 +55,17 @@ Route::prefix('admin/media-browser')->name('admin.media-browser.')->group(functi
     Route::get('/', [\App\Http\Controllers\Admin\MediaBrowserController::class, 'browse'])->name('browse');
     Route::post('/upload', [\App\Http\Controllers\Admin\MediaBrowserController::class, 'upload'])->middleware('throttle:60,1')->name('upload');
 });
+// Éditeur visuel des pages (droits vérifiés dans le contrôleur : politique « update » de la page).
+Route::prefix('admin/visual-editor/{page}')->name('admin.visual-editor.')->group(function () {
+    $controller = \App\Http\Controllers\Admin\VisualEditorController::class;
+    Route::get('/', [$controller, 'show'])->name('show');
+    Route::get('/canvas', [$controller, 'canvas'])->name('canvas');
+    Route::get('/preview', [$controller, 'preview'])->name('preview');
+    Route::post('/render', [$controller, 'render'])->middleware('throttle:240,1')->name('render');
+    Route::put('/draft', [$controller, 'saveDraft'])->middleware('throttle:120,1')->name('draft');
+    Route::delete('/draft', [$controller, 'discardDraft'])->name('draft.discard');
+    Route::post('/publish', [$controller, 'publish'])->middleware('throttle:30,1')->name('publish');
+});
 Route::get('/soutenir/{slug}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
 Route::get('/equipe', TeamController::class)->name('team');
 Route::get('/contact', ContactController::class)->name('contact');

@@ -259,3 +259,17 @@ En vue grille, la médiathèque n'a plus de numéros de page : 36 fichiers s'aff
 - Chaque demande déclenche un **e-mail de confirmation** : l'abonné n'est actif qu'après clic sur le lien. Personne ne peut inscrire l'adresse d'un tiers.
 - **Personnes & messages → Abonnés à la lettre** : liste des abonnés (Abonné / En attente / Désinscrit), export CSV des abonnés actifs, suppression sur demande.
 - Le site **n'envoie pas encore la lettre elle-même** : exportez le CSV vers votre outil d'envoi (Brevo, Mailchimp…) ou voyez avec l'équipe technique pour automatiser l'envoi.
+
+## Éditeur visuel : modifier la page elle-même
+
+Sur la page de modification d'une page, le bouton **Éditeur visuel** ouvre la page telle que les visiteurs la verront, et on la modifie directement.
+
+- **Les textes** : cliquez sur un titre, un paragraphe, une citation, un libellé, et écrivez. Pour le texte mis en forme, sélectionnez des mots : une barre apparaît (gras, italique, titres, listes, citation, lien).
+- **Les blocs** : cliquez sur un bloc pour le sélectionner ; sa barre d'outils permet de le monter, le descendre, le dupliquer ou le supprimer. Les boutons **+** au-dessus et en dessous ajoutent un bloc à cet endroit.
+- **Le panneau de gauche** : *Ajouter* (la bibliothèque de blocs : texte, image, galerie, citation, appel à l'action, chiffres clés, cartes, téléchargements), *Structure* (la liste des blocs, que l'on peut faire glisser pour changer leur ordre), *Réglages* (les champs du bloc sélectionné : images, liens, options, listes d'éléments).
+- **Les écrans** : les icônes en haut permettent de voir la page sur ordinateur, tablette et téléphone.
+- **Annuler / Rétablir** : Ctrl+Z et Ctrl+Y, ou les flèches en haut. Après une suppression, un message propose aussi d'annuler.
+- **Le brouillon** : tout est enregistré automatiquement dans un **brouillon** ; la page visible par les visiteurs ne change pas. **Aperçu** ouvre le brouillon avec la vraie mise en page du site. **Publier** applique le brouillon à la page. **Abandonner le brouillon** revient à la version publiée.
+- **Qui peut publier** : seules les personnes qui ont le droit de publier. Un contributeur garde son brouillon.
+
+**Limite actuelle :** les pages à mise en page dessinée sur mesure (Accueil, À propos, Soutenir, Bibliothèque, Cafétéria, Dortoirs, Admission Licence et Master, Frais académiques) ne sont pas faites de blocs : l'éditeur visuel affiche une explication et renvoie au formulaire classique. Leurs textes se trouvent dans le code du site.

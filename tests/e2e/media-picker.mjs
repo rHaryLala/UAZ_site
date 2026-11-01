@@ -53,7 +53,8 @@ try {
     if (out) await page.screenshot({ path: path.join(out, 'selecteur-grille.png') });
     // « Charger plus » au défilement : les vignettes gardent leur forme carrée (pas de bandes écrasées).
     await page.locator('.uaz-mp-modal:visible .uaz-mp-grid').evaluate((el) => { el.scrollTop = el.scrollHeight; });
-    await page.waitForTimeout(1500);
+    // On attend la suite (réponse du serveur) plutôt qu'un délai fixe : le serveur de développement répond en 0,3 à 2,5 s.
+    await page.waitForFunction((n) => document.querySelectorAll('.uaz-mp-modal .uaz-mp-tile').length > n, tiles, { timeout: 12000 }).catch(() => {});
     const more = await page.locator('.uaz-mp-modal:visible .uaz-mp-tile').count();
     const flat = await page.evaluate(() => [...document.querySelectorAll('.uaz-mp-modal .uaz-mp-tile')].filter((t) => t.offsetParent && t.getBoundingClientRect().height < 100).length);
     check(more > tiles && flat === 0, `après défilement (${more} vignettes), aucune vignette écrasée (${flat})`);

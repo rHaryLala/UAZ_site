@@ -31,6 +31,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             // Mode SPA : la navigation remplace le contenu sans recharger la page (scripts et styles conservés), avec préchargement au survol.
             ->spa(hasPrefetching: true)
+            // L'éditeur visuel est une page plein écran à part : il se charge normalement (pas par la navigation SPA du panneau).
+            ->spaUrlExceptions(fn (): array => [url('/admin/visual-editor/*')])
             ->login()
             ->passwordReset()
             ->brandName('UAZ · Administration')

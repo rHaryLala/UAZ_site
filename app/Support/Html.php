@@ -48,7 +48,12 @@ class Html
                 return ''; // image supprimée de la médiathèque
             }
 
-            return view('partials.rich-image', ['asset' => $asset, 'caption' => $m[2] ?? null])->render();
+            $figure = view('partials.rich-image', ['asset' => $asset, 'caption' => $m[2] ?? null])->render();
+
+            // Éditeur visuel : l'image reste intouchable dans le texte, et sa balise d'origine est reconstituée à l'enregistrement.
+            return EditMode::on()
+                ? '<div data-ve-fig="'.(int) $m[1].'" data-ve-cap="'.e(strip_tags((string) ($m[2] ?? ''))).'" contenteditable="false">'.$figure.'</div>'
+                : $figure;
         }, $clean);
 
         return new HtmlString($clean);

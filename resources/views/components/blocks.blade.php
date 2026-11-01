@@ -16,5 +16,8 @@
 
 @foreach ($blocks ?? [] as $block)
     @continue(! in_array($block['type'] ?? null, $known, true))
+    {{-- Éditeur visuel : chaque bloc est enveloppé pour pouvoir être sélectionné (jamais présent sur le site public). --}}
+    @if (\App\Support\EditMode::on())<div data-ve-block="{{ $loop->index }}" data-ve-type="{{ $block['type'] }}">@endif
     @include('blocks.'.$block['type'], ['data' => $block['data'] ?? [], 'assets' => $assets])
+    @if (\App\Support\EditMode::on())</div>@endif
 @endforeach

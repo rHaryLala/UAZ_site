@@ -14,7 +14,7 @@ use Spatie\Sluggable\SlugOptions;
 
 #[Fillable([
     'parent_id', 'key', 'title', 'slug', 'path', 'summary', 'cover_id', 'blocks',
-    'seo_title', 'seo_description', 'og_image_id', 'status', 'published_at', 'sort_order', 'user_id',
+    'seo_title', 'seo_description', 'og_image_id', 'status', 'published_at', 'sort_order', 'user_id', 'draft',
 ])]
 class Page extends Model
 {
@@ -28,7 +28,7 @@ class Page extends Model
 
     protected function casts(): array
     {
-        return ['blocks' => 'array'];
+        return ['blocks' => 'array', 'draft' => 'array'];
     }
 
     public function getSlugOptions(): SlugOptions
