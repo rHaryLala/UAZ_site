@@ -70,3 +70,14 @@ it('links the library website as an external link, without trying to embed it', 
         ->and($html)->toContain('href="https://library.zurcher.edu.mg"')
         ->and($html)->not->toContain('<iframe');
 });
+
+it('uses the scroll-driven tour video as the hero when its files are present, and the room photo otherwise', function () {
+    $html = $this->get('/vie-etudiante/bibliotheque')->assertOk()->getContent();
+
+    // Les .mp4 ne sont pas dans Git (voir docs/DEPLOIEMENT.md) : la page doit fonctionner dans les deux cas.
+    if (is_file(public_path('videos/library-720.mp4'))) {
+        expect($html)->toContain('data-lib-video')->toContain('videos/library-720.mp4')->toContain('videos/library-360.mp4');
+    } else {
+        expect($html)->not->toContain('data-lib-video');
+    }
+});

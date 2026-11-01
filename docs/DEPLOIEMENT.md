@@ -316,3 +316,8 @@ La section « Votre futur commence ici » de l'accueil lit `public/videos/futur-
 - **Production** : `scripts/deploy.sh` exécute déjà `php artisan optimize` (config, routes, vues, événements) et `php artisan filament:optimize` ; OPcache est réglé plus haut.
 - **Développement (Laragon)** : OPcache est **désactivé** dans le PHP de Laragon, ce qui rend chaque page 2 à 5 fois plus lente (la première page après un vidage de cache peut dépasser 20 s).
   Pour des mesures réalistes, activer `opcache.enable=1` (et `opcache.enable_cli=0`) dans `php.ini` de Laragon puis redémarrer Apache/Nginx ; ne pas le faire en `validate_timestamps=0` en développement.
+
+### Vidéo de la page Bibliothèque
+
+La page `/vie-etudiante/bibliotheque` lit `public/videos/library-720.mp4` (≈ 8 Mo), `library-360.mp4` (≈ 3 Mo, mobiles) et l'affiche `library-poster.webp`, au rythme du défilement. Les `.mp4` ne sont pas dans Git : à copier dans
+`public/videos/` (`rsync`/SFTP). Absents, la page garde la photo de la salle de lecture (image de la page) comme en-tête fixe. La politique de sécurité autorise `media-src 'self' blob:` (la vidéo est chargée en mémoire).

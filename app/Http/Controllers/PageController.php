@@ -49,7 +49,6 @@ class PageController extends Controller
             return view('pages.library', [
                 'page' => $page,
                 'trail' => $trail,
-                'exterior' => $media->get((int) ($found[1][0] ?? 0)),
                 'hoursPoster' => $media->get((int) ($found[1][1] ?? 0)),
                 'interior' => $page->cover ?? $media->get((int) ($found[1][0] ?? 0)),
             ]);

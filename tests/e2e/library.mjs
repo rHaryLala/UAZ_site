@@ -23,7 +23,7 @@ async function desktop() {
     // La fenêtre de la lettre d'information ne doit pas masquer la page pendant le test.
     await page.addInitScript(() => localStorage.setItem('uaz.newsletter', JSON.stringify({ subscribed: true })));
 
-    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => document.querySelector('[data-lib-intro]')?.classList.contains('lib-live'), null, { timeout: 15000 }).catch(() => {});
     check(await page.evaluate(() => document.querySelector('[data-lib-intro]').classList.contains('lib-live')), 'le mode immersif s\'active (lib-live)');
     await page.waitForTimeout(1800);
@@ -37,9 +37,19 @@ async function desktop() {
     const top = (selector) => page.evaluate((s) => document.querySelector(s).getBoundingClientRect().top + window.scrollY, selector);
 
     const introY = await top('[data-lib-stage]');
-    await shot('2-zoom.png', introY + 300);
-    await shot('3-iris.png', introY + 750);
-    await shot('4-bienvenue.png', introY + 1250);
+    const time = () => page.evaluate(() => document.querySelector('[data-lib-video]').currentTime);
+    check(await page.evaluate(() => document.querySelector('[data-lib-video]').readyState >= 1), 'vidéo : chargée par le script (métadonnées disponibles)');
+    const t0 = await time();
+    await shot('2-debut.png', introY + 900, 1800);
+    const t1 = await time();
+    await shot('3-milieu.png', introY + 1800, 1800);
+    const t2 = await time();
+    await shot('4-bienvenue.png', introY + 3450, 2000);
+    const t3 = await time();
+    check(t0 < t1 && t1 < t2 && t2 < t3, `vidéo : plus on défile, plus elle avance (${t0.toFixed(1)} s → ${t1.toFixed(1)} s → ${t2.toFixed(1)} s → ${t3.toFixed(1)} s)`);
+    check(t3 > 18 && t3 <= 22.05, `vidéo : la fin de la visite approche 22 s (${t3.toFixed(1)} s)`);
+    await shot('3b-retour.png', introY + 900, 1800);
+    check((await time()) < t2, 'vidéo : en remontant, elle recule');
     const quoteY = await top('[data-lib-quote]');
     await shot('5-citation.png', quoteY - 250);
     await shot('5b-citation-lue.png', quoteY + 120);
@@ -84,7 +94,7 @@ async function desktop() {
 async function mobile() {
     const page = await (await browser.newContext({ viewport: { width: 390, height: 800 }, locale: 'fr-FR' })).newPage();
     await page.addInitScript(() => localStorage.setItem('uaz.newsletter', JSON.stringify({ subscribed: true })));
-    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.goto(url, { waitUntil: 'load' });
     await page.waitForTimeout(2000);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(overflow <= 1, `mobile : aucun défilement horizontal (${overflow}px)`);
@@ -102,7 +112,7 @@ async function reducedMotion() {
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce', locale: 'fr-FR' });
     const page = await context.newPage();
     await page.addInitScript(() => localStorage.setItem('uaz.newsletter', JSON.stringify({ subscribed: true })));
-    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.goto(url, { waitUntil: 'load' });
     await page.waitForTimeout(1200);
     check(!(await page.evaluate(() => document.querySelector('[data-lib-intro]').classList.contains('lib-live'))), 'mouvement réduit : pas de scène épinglée');
     check(await page.locator('[data-lib-title]').isVisible(), 'mouvement réduit : le titre est visible');

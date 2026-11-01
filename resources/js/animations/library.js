@@ -1,6 +1,6 @@
 // Page « Bibliothèque Paul Pichot » : une visite en six scènes (voir resources/views/pages/library.blade.php).
 //
-//  1. Entrer     : l'enseigne se rapproche (zoom), la porte s'ouvre en iris sur la salle de lecture (défilement épinglé, scrub).
+//  1. Entrer     : vidéo de la visite en drone, lue au rythme du défilement (écran épinglé, 22 secondes).
 //  2. Citation   : les mots de la citation s'allument au fil du défilement (SplitText) ; des « livres » dérivent en parallaxe.
 //  3. Le lieu    : panorama horizontal de la salle, épinglé, avec trois cartes qui apparaissent à leur passage (containerAnimation).
 //  4. Rayonnage  : cinq livres cliquables ; le livre choisi se détache, sa fiche apparaît (clavier : flèches).
@@ -50,19 +50,16 @@ export function initLibrary() {
     });
 }
 
-/* ───────── 1. Entrer ───────── */
+/* ───────── 1. Entrer : la vidéo avance quand on défile ───────── */
 function intro() {
     const root = $('[data-lib-intro]');
     if (!root) return;
 
     const stage = $('[data-lib-stage]', root);
-    const outside = $('[data-lib-outside]', root);
-    const inside = $('[data-lib-inside]', root);
-    const insideImg = $('img', inside ?? root);
+    const video = $('[data-lib-video]', root);
+    const shade = $('[data-lib-shade]', root);
     const content = $('[data-lib-content]', root);
     const welcome = $('[data-lib-welcome]', root);
-
-    root.classList.add('lib-live');
 
     // Entrée du titre : lignes masquées qui montent, puis le reste en fondu.
     SplitText.create($('[data-lib-title]', root), {
@@ -73,29 +70,95 @@ function intro() {
     });
     gsap.from($$('[data-lib-fade]', root), { autoAlpha: 0, y: 22, duration: 0.9, stagger: 0.12, delay: 0.55, ease: 'power3.out' });
 
-    // Scène épinglée : zoom vers la porte, iris, « Bienvenue chez vous ! ».
+    // Sans vidéo (fichiers absents) : héros fixe avec la photo de la salle, pas de scène épinglée.
+    if (!video) return;
+
+    root.classList.add('lib-live');
+    const scrub = createVideoScrub(video);
+
     const chars = SplitText.create($('[data-lib-welcome-text]', welcome), { type: 'words,chars', wordsClass: 'word', charsClass: 'char' }).chars;
     const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
             trigger: stage,
             start: () => `top top+=${headerHeight()}`,
-            end: () => `+=${Math.round(window.innerHeight * 1.5)}`,
+            // Environ quatre écrans de défilement pour les 22 secondes : la vidéo avance à la vitesse du doigt ou de la molette.
+            end: () => `+=${Math.round(window.innerHeight * 4)}`,
             pin: true,
-            scrub: 0.7,
+            scrub: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            onUpdate: (self) => scrub.seek(self.progress),
+            onRefresh: (self) => scrub.seek(self.progress),
         },
     });
 
-    tl.to(content, { autoAlpha: 0, y: -80, duration: 0.3 }, 0);
-    if (outside) tl.to(outside, { scale: 2.1, ease: 'power2.in', duration: 1 }, 0);
-    if (inside) {
-        tl.fromTo(inside, { clipPath: 'circle(0% at 50% 86%)' }, { clipPath: 'circle(145% at 50% 86%)', ease: 'power2.inOut', duration: 0.75 }, 0.3);
-        tl.fromTo(insideImg, { scale: 1.4 }, { scale: 1, duration: 0.8 }, 0.3);
-    }
-    tl.from(chars, { yPercent: 130, opacity: 0, rotate: 7, stagger: 0.035, duration: 0.45, ease: 'power3.out' }, 0.85);
-    tl.to({}, { duration: 0.4 });
+    // Le titre s'efface dès que la visite commence ; le voile s'assombrit pour la phrase finale.
+    tl.to(content, { autoAlpha: 0, y: -70, duration: 0.1 }, 0);
+    tl.to(shade, { opacity: 0.35, duration: 0.1 }, 0);
+    tl.to(shade, { opacity: 0.6, duration: 0.14 }, 0.82);
+    tl.from(chars, { yPercent: 130, opacity: 0, rotate: 7, stagger: 0.012, duration: 0.1, ease: 'power3.out' }, 0.86);
+    tl.to({}, { duration: 1 - 0.96 }, 0.96);
+}
+
+/**
+ * Lecture pilotée par le défilement : la position de la vidéo suit celle de la page, avec un lissage pour éviter les à-coups.
+ * La vidéo est d'abord téléchargée une fois en mémoire (blob) : le déplacement est alors instantané dans les deux sens et ne dépend
+ * ni du serveur (requêtes par plages d'octets) ni du réseau. En attendant, l'affiche (première image) reste affichée.
+ * Version allégée sur petit écran ou connexion limitée. Chaque image de la vidéo est une image clé (encodage « intra ») : se placer
+ * sur n'importe quelle image est immédiat, dans les deux sens, ce qui garde le défilement fluide.
+ */
+function createVideoScrub(video) {
+    const connection = navigator.connection;
+    const light = window.innerWidth < 768 || ['slow-2g', '2g', '3g'].includes(connection?.effectiveType);
+    let target = 0;
+    let shown = 0;
+    let ready = false;
+    let objectUrl = null;
+    let destroyed = false;
+
+    video.muted = true;
+    video.addEventListener('loadedmetadata', () => {
+        ready = true;
+        // Certains navigateurs mobiles n'autorisent le déplacement qu'après un premier « play ».
+        video.play().then(() => video.pause()).catch(() => {});
+    });
+
+    fetch(light ? video.dataset.srcSd : video.dataset.srcHd)
+        .then((response) => (response.ok ? response.blob() : Promise.reject(new Error('vidéo indisponible'))))
+        .then((blob) => {
+            if (destroyed) return;
+            objectUrl = URL.createObjectURL(blob);
+            video.src = objectUrl;
+        })
+        .catch(() => {
+            // Échec : l'affiche reste en place, la page reste utilisable.
+        });
+
+    const FRAME = 1 / 24;
+    let last = -1;
+    const tick = (time, deltaTime) => {
+        if (!ready || !video.duration) return;
+        // Lissage indépendant de la fréquence d'écran : la vidéo rattrape le défilement en ~0,2 s, sans à-coups.
+        shown += (target - shown) * (1 - Math.exp(-(deltaTime / 1000) * 14));
+        // On se cale sur une image précise : pas de position « entre deux images » à décoder, et pas de demande répétée pour la même.
+        const frame = Math.round((Math.min(shown, 0.999) * video.duration) / FRAME);
+        if (frame === last) return;
+        last = frame;
+        video.currentTime = frame * FRAME;
+    };
+    gsap.ticker.add(tick);
+
+    return {
+        seek: (progress) => {
+            target = progress;
+        },
+        destroy: () => {
+            destroyed = true;
+            gsap.ticker.remove(tick);
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+        },
+    };
 }
 
 /* ───────── 2. La citation ───────── */

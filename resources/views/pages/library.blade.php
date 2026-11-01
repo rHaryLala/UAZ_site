@@ -1,4 +1,6 @@
 @php
+    $hasVideo = is_file(public_path('videos/library-720.mp4'));
+    $videoPoster = is_file(public_path('videos/library-poster.webp')) ? asset('videos/library-poster.webp') : null;
     // Horaires de l'affiche officielle de la bibliothèque (jours : 0 = dimanche … 6 = samedi). Le samedi n'y figure pas : on ne l'invente pas.
     $schedule = [
         'open' => [
@@ -37,26 +39,29 @@
 @endphp
 
 <x-layouts.app :title="$page->metaTitle()" :description="$page->metaDescription()" :image="$page->metaImage()" :noindex="$page->status !== \App\Enums\PublicationStatus::Published">
-    {{-- 1. ENTRER : l'enseigne se rapproche, la porte s'ouvre en iris sur la salle de lecture (défilement épinglé, resources/js/animations/library.js) --}}
+    {{-- 1. ENTRER : la vidéo de la visite est lue au rythme du défilement (écran épinglé ; resources/js/animations/library.js) --}}
     <section class="lib-intro on-dark" data-library data-lib-intro aria-labelledby="lib-title">
         <div class="lib-intro__stage" data-lib-stage>
-            @if ($exterior)
-                <div class="lib-intro__outside" data-lib-outside>
-                    <x-picture :asset="$exterior" conversion="hero" sizes="100vw" eager alt="Enseigne « Bibliothèque — Université Adventiste Zurcher » sur le toit du bâtiment" />
-                </div>
-            @endif
-            @if ($interior)
-                <div class="lib-intro__inside" data-lib-inside aria-hidden="true">
-                    <x-picture :asset="$interior" conversion="hero" sizes="100vw" decorative />
-                </div>
-            @endif
-            <div class="lib-intro__shade" aria-hidden="true"></div>
+            <div class="lib-intro__media" aria-hidden="true">
+                @if ($hasVideo)
+                    <video
+                        data-lib-video
+                        data-src-hd="{{ asset('videos/library-720.mp4') }}"
+                        data-src-sd="{{ asset('videos/library-360.mp4') }}"
+                        @if ($videoPoster) poster="{{ $videoPoster }}" @endif
+                        muted playsinline preload="none" disablepictureinpicture tabindex="-1"
+                    ></video>
+                @elseif ($interior)
+                    <x-picture :asset="$interior" conversion="hero" sizes="100vw" eager decorative />
+                @endif
+            </div>
+            <div class="lib-intro__shade" data-lib-shade aria-hidden="true"></div>
 
             <div class="lib-intro__content container-site" data-lib-content>
                 <x-breadcrumbs :items="$trail" dark />
                 <h1 id="lib-title" class="lib-title mt-10" data-lib-hide data-lib-title>Bibliothèque <em>Paul Pichot</em></h1>
                 <p class="mt-6 max-w-xl text-lead text-white/85" data-lib-hide data-lib-fade>Un lieu où l'esprit se renouvelle.</p>
-                <a href="#lib-quote" class="lib-cue" data-lib-hide data-lib-fade><span aria-hidden="true"></span>Entrez</a>
+                <p class="lib-cue" data-lib-hide data-lib-fade><span aria-hidden="true"></span>Faites défiler pour visiter</p>
             </div>
 
             <p class="lib-intro__welcome" data-lib-welcome aria-hidden="true"><span data-lib-welcome-text>Bienvenue chez vous&nbsp;!</span></p>

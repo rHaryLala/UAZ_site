@@ -54,6 +54,8 @@ class SecurityHeaders
             "style-src-attr 'unsafe-inline'",
             "img-src 'self' data:",
             "font-src 'self'",
+            // Vidéo de la page Bibliothèque : chargée une fois en mémoire pour pouvoir avancer et reculer au défilement.
+            "media-src 'self' blob:",
             "connect-src 'self'",
             // Carte OpenStreetMap de la page Contact (chargée seulement au clic de l'utilisateur).
             'frame-src https://www.openstreetmap.org',
