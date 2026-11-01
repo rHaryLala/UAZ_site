@@ -834,7 +834,7 @@
     display: block;
     perspective: 1200px;
     justify-self: center;
-    width: min(100%, 38rem);
+    width: min(100%, 44rem);
 }
 
 .lib-window__sheet {
@@ -874,46 +874,28 @@
 
 .lib-window__body {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    aspect-ratio: 16 / 10;
-    padding: 1.5rem;
-    background: linear-gradient(to bottom, var(--color-navy-900), #0b1233);
+    display: block;
+    overflow: hidden;
+    background: var(--color-navy-900);
 }
 
-.lib-window__shelf {
-    position: absolute;
-    inset: auto 1.5rem 1.5rem 1.5rem;
-    display: flex;
-    align-items: flex-end;
-    gap: 0.35rem;
-    height: 62%;
-    border-bottom: 6px solid #8a5a35;
+.lib-window__body img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.9s var(--ease-out-expo, ease-out);
 }
 
-.lib-window__shelf b {
-    flex: 1;
-    height: var(--h);
-    border-radius: 0.15rem 0.15rem 0 0;
-    background: linear-gradient(90deg, rgb(255 255 255 / 0.2), transparent 30%, rgb(0 0 0 / 0.3)), var(--c);
-    transition: transform 0.45s var(--ease-out-expo, ease-out);
-}
-
-.lib-window:hover .lib-window__shelf b:nth-child(odd),
-.lib-window:focus-visible .lib-window__shelf b:nth-child(odd) {
-    transform: translateY(-0.6rem);
-}
-
-.lib-window:hover .lib-window__shelf b:nth-child(even),
-.lib-window:focus-visible .lib-window__shelf b:nth-child(even) {
-    transform: translateY(-0.25rem);
+.lib-window:hover .lib-window__body img,
+.lib-window:focus-visible .lib-window__body img {
+    transform: scale(1.03);
 }
 
 .lib-window__go {
-    position: relative;
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
     z-index: 1;
-    align-self: flex-start;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -930,7 +912,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .lib-window__shelf b {
+    .lib-window__body img {
         transition: none;
     }
 }

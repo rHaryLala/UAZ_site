@@ -66,6 +66,7 @@ it('links the library website as an external link, without trying to embed it', 
         ->getContent();
 
     // Le site interdit d'être affiché dans une autre page : un simple lien (nouvel onglet), pas d'iframe.
-    expect($html)->toContain('href="https://library.zurcher.edu.mg"')
+    expect($html)->toContain('images/library-site-1600.webp')
+        ->and($html)->toContain('href="https://library.zurcher.edu.mg"')
         ->and($html)->not->toContain('<iframe');
 });

@@ -207,7 +207,7 @@
 
     {{-- 5 bis. LE SITE DE LA BIBLIOTHÈQUE : le site n'autorise pas l'affichage dans une autre page (X-Frame-Options), on le met donc en vitrine avec un lien --}}
     <section class="lib-online" data-lib-online aria-labelledby="lib-online-title">
-        <div class="container-site grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        <div class="container-site grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <div>
                 <p class="eyebrow" data-reveal>En ligne</p>
                 <h2 id="lib-online-title" class="mt-4 text-h2 text-navy-900" data-reveal data-reveal-delay="0.1">Le site de la bibliothèque</h2>
@@ -224,11 +224,7 @@
                         <span class="lib-window__url">library.zurcher.edu.mg</span>
                     </span>
                     <span class="lib-window__body">
-                        <span class="lib-window__shelf">
-                            @foreach ([['#7a2e3d', 62], ['#16204f', 48], ['#b0915a', 74], ['#2f5d62', 55], ['#8a5a35', 68], ['#7a2e3d', 44], ['#16204f', 70], ['#b0915a', 52]] as [$color, $height])
-                                <b style="--c: {{ $color }}; --h: {{ $height }}%"></b>
-                            @endforeach
-                        </span>
+                        <img src="{{ asset('images/library-site-1600.webp') }}" srcset="{{ asset('images/library-site-800.webp') }} 800w, {{ asset('images/library-site-1600.webp') }} 1600w" sizes="(min-width: 1024px) 40rem, 90vw" width="1600" height="729" alt="" loading="lazy" decoding="async">
                         <span class="lib-window__go">Ouvrir le site <x-ico name="arrow-up-right" class="size-4" /></span>
                     </span>
                 </span>
