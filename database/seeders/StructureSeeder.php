@@ -279,6 +279,7 @@ class StructureSeeder extends Seeder
                 $url('Yearbook', '/yearbook'),
                 // « S'abonner » ouvre la fenêtre de la lettre d'information (pas une page).
                 $url('S\'abonner', '#newsletter'),
+                $url('Actualités', '/actualites'),
                 $page('Donner', 'support'),
                 array_merge($url('Se connecter', '#'), ['children' => [
                     array_merge($url('Registrar — bureau académique', 'https://registrar.zurcher.edu.mg'), ['new_tab' => true]),

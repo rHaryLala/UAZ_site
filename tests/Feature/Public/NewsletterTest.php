@@ -97,3 +97,11 @@ it('lists subscribers in the admin only for people allowed to read messages', fu
     $subscriber = NewsletterSubscriber::sole();
     \Livewire\Livewire::test(\App\Filament\Resources\NewsletterSubscribers\Pages\ListNewsletterSubscribers::class)->loadTable()->assertCanSeeTableRecords([$subscriber]);
 });
+
+it('puts "Actualités" right after "S\'abonner" in the top bar', function () {
+    $this->seed(StructureSeeder::class);
+
+    $labels = collect(\App\Models\Menu::where('handle', 'topbar')->firstOrFail()->items)->pluck('label')->all();
+
+    expect(array_search('Actualités', $labels))->toBe(array_search('S\'abonner', $labels) + 1);
+});
