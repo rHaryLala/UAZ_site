@@ -40,6 +40,21 @@ class PageController extends Controller
             ]);
         }
 
+        // Bibliothèque Paul Pichot : mise en page immersive. Les deux images du texte importé (enseigne, affiche des horaires)
+        // sont reprises dans l'ordre ; la salle de lecture est l'image de couverture de la page (champ « Image » du back-office).
+        if ($page->key === 'student-life-library') {
+            preg_match_all('/data-media="(\d+)"/', collect($page->blocks)->pluck('data.content')->implode(' '), $found);
+            $media = \App\Models\MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
+
+            return view('pages.library', [
+                'page' => $page,
+                'trail' => $trail,
+                'exterior' => $media->get((int) ($found[1][0] ?? 0)),
+                'hoursPoster' => $media->get((int) ($found[1][1] ?? 0)),
+                'interior' => $page->cover ?? $media->get((int) ($found[1][0] ?? 0)),
+            ]);
+        }
+
         return view('pages.show', [
             'page' => $page,
             'trail' => $trail,

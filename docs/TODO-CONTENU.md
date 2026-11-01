@@ -87,3 +87,10 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Outil d'envoi** de la lettre (Brevo, Mailchimp…) ou envoi depuis le site : à décider ; contenu et fréquence à définir.
 - [ ] **SMTP de production** : sans lui, aucun e-mail de confirmation ne part (`MAIL_*` dans `.env`).
 - [ ] Page « Confidentialité et cookies » : durée de conservation après désinscription (`TODO-CONTENU` dans la page).
+
+## Page Bibliothèque
+
+- [ ] **Image de couverture** (back-office → Pages → Bibliothèque → « Image ») : choisir la photo de la salle de lecture (« Bibliothèque de l'UAZ »). Sans elle, la scène d'ouverture et le panorama reprennent la photo de l'enseigne. À refaire en production (les identifiants d'images diffèrent).
+- [ ] **Horaires** : recopiés de l'affiche (non datée). Confirmer qu'ils sont à jour et **préciser le samedi** (absent de l'affiche).
+- [ ] **Adresse** : la page importée indique « Vohitsoa – PK 136 RN7 – BP 325 » alors que le pied de page indique « PK 135 » : à harmoniser.
+- [ ] **Photos supplémentaires** (rayonnages, espace enfants, postes de lecture…) : le panorama et le rayonnage gagneraient à des vues variées.

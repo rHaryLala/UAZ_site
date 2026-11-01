@@ -6,6 +6,7 @@ const MODULES = [
     ['[data-hero]', () => import('./hero.js').then((m) => m.initHero())],
     ['[data-counter]', () => import('./counters.js').then((m) => m.initCounters())],
     ['[data-parallax]', () => import('./parallax.js').then((m) => m.initParallax())],
+    ['[data-library]', () => import('./library.js').then((m) => m.initLibrary())],
 ];
 
 /** Connexion lente ou « économiseur de données » : aucune animation, aucun téléchargement de GSAP (~50 Ko). */
@@ -17,7 +18,7 @@ function saveDataEnabled() {
 
 /** Lève tous les états initiaux d'animation : le contenu s'affiche tel quel, sans mouvement. */
 function showEverything() {
-    document.documentElement.classList.add('anim-ready', 'save-data');
+    document.documentElement.classList.add('anim-ready', 'save-data', 'lib-ready');
     document.querySelectorAll('[data-reveal]').forEach((el) => el.setAttribute('data-revealed', ''));
     document.querySelectorAll('[data-hero-title]').forEach((el) => el.setAttribute('data-split', ''));
     document.querySelectorAll('[data-hero]').forEach((el) => el.setAttribute('data-hero-started', ''));
@@ -38,7 +39,7 @@ export function initAnimations() {
     };
 
     // Le héros prime : on ne le fait pas attendre une période d'inactivité du navigateur.
-    if (document.querySelector('[data-hero]')) start();
+    if (document.querySelector('[data-hero], [data-library]')) start();
     else if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 600 });
     else setTimeout(start, 0);
 }
