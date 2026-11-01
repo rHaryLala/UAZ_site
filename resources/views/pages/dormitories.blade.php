@@ -24,6 +24,10 @@
         ],
     ];
 
+    // Mur de photos : un mot du texte de présentation par photo (garçons d'abord, puis filles), dans l'ordre des figures.
+    $wallCaptions = ['Camaraderie', 'Apprentissage', 'Concentration', 'Amitié', 'Croissance personnelle'];
+    $wallTilts = [-3.5, 2.5, -2, 3, -1.5];
+
     $outline = fn (string $name) => '<svg class="dor-outline" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect x="2" y="2" width="396" height="56" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" rx="3"/></svg>';
 @endphp
 
@@ -40,9 +44,9 @@
             </div>
 
             <div class="dor-door" data-dor-door aria-hidden="true">
-                @if ($path)
+                @if ($room ?? $path)
                     <div class="dor-door__photo" data-dor-door-photo>
-                        <x-picture :asset="$path" conversion="hero" sizes="100vw" eager decorative />
+                        <x-picture :asset="$room ?? $path" conversion="hero" sizes="100vw" eager decorative />
                     </div>
                 @endif
             </div>
@@ -53,7 +57,14 @@
     <section class="dor-statement" data-dor-statement aria-labelledby="dor-statement-title">
         <div class="container-site grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-20">
             <h2 id="dor-statement-title" class="dor-statement__text" data-dor-statement-text>Bien plus qu'un simple lieu d'hébergement&nbsp;: le cœur de la vie étudiante sur le campus.</h2>
-            <p class="max-w-md text-lead text-ink-700" data-reveal>Un cadre de vie sécurisé, propice à l'étude et au développement communautaire et spirituel.</p>
+            <div class="grid gap-8">
+                <p class="max-w-md text-lead text-ink-700" data-reveal>Un cadre de vie sécurisé, propice à l'étude et au développement communautaire et spirituel.</p>
+                @if ($room && $path)
+                    <div class="dor-lane" data-dor-lane data-reveal>
+                        <x-picture :asset="$path" conversion="card" sizes="(min-width: 1024px) 28rem, 90vw" alt="Des étudiants marchent sur l'allée du campus, bordée de pins" />
+                    </div>
+                @endif
+            </div>
         </div>
     </section>
 
@@ -83,6 +94,24 @@
             @endforeach
         </div>
     </section>
+
+    {{-- 3 bis. LE MUR : des photos des chambres, épinglées de travers ; on peut les déplacer à la main --}}
+    @if ($wall->isNotEmpty())
+        <section class="dor-wall" data-dor-wall aria-labelledby="dor-wall-title">
+            <div class="container-site">
+                <h2 id="dor-wall-title" class="dor-wall__title" data-reveal>Dans les chambres</h2>
+                <p class="dor-wall__hint" data-dor-hint hidden>Faites glisser les photos</p>
+                <div class="dor-wall__board" data-dor-board>
+                    @foreach ($wall as $i => $photo)
+                        <figure class="dor-polaroid" data-dor-polaroid data-tilt="{{ $wallTilts[$i] ?? 0 }}">
+                            <div class="dor-polaroid__img"><x-picture :asset="$photo" conversion="card" sizes="(min-width: 1024px) 24rem, 80vw" /></div>
+                            <figcaption>{{ $wallCaptions[$i] ?? '' }}</figcaption>
+                        </figure>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
 
     {{-- 4. LE PROJET R+2 : le bâtiment se construit et ses fenêtres s'allument (schéma illustratif) --}}
     <section id="dor-plan" class="dor-plan on-dark" data-dor-plan aria-labelledby="dor-plan-title">

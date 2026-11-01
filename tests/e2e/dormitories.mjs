@@ -52,6 +52,24 @@ async function desktop() {
     const counts = await page.evaluate(() => [...document.querySelectorAll('[data-dor-count]')].map((e) => e.textContent.trim()));
     check(counts.join() === '80,68', `les chiffres atteignent 80 et 68 (${counts})`);
 
+    // Mur de photos : cinq photos, légendées, que l'on peut déplacer à la souris.
+    const wallY = await top('[data-dor-wall]');
+    await shot('5b-mur.png', wallY + 60, 2600);
+    check((await page.locator('[data-dor-polaroid]').count()) === 5, 'le mur compte cinq photos de chambres');
+    const captions = await page.locator('.dor-polaroid figcaption').allInnerTexts();
+    check(captions.join('|') === 'Camaraderie|Apprentissage|Concentration|Amitié|Croissance personnelle', `chaque photo a un seul mot du texte pour légende (${captions.join(', ')})`);
+    check(await page.locator('[data-dor-hint]').isVisible(), 'l\'invitation « Faites glisser les photos » est affichée');
+    const card = page.locator('[data-dor-polaroid]').nth(1);
+    const before = await card.boundingBox();
+    await page.mouse.move(before.x + before.width / 2, before.y + before.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(before.x + before.width / 2 - 260, before.y + before.height / 2 + 40, { steps: 12 });
+    await page.mouse.up();
+    await page.waitForTimeout(1500);
+    const after = await card.boundingBox();
+    check(Math.abs(after.x - before.x) > 150, `une photo se déplace à la souris (${Math.round(before.x)} → ${Math.round(after.x)} px)`);
+    if (out) await page.screenshot({ path: path.join(out, '5c-mur-deplace.png') });
+
     // Schéma R+2 : 12 cases (8 chambres, réception, salle à manger, 2 chambres du précepteur), étages tracés.
     const planY = await top('[data-dor-plan-stage]');
     const visibleCells = () => page.evaluate(() => [...document.querySelectorAll('[data-dor-cell]')].filter((c) => +getComputedStyle(c).opacity > 0.9).length);
@@ -87,6 +105,7 @@ async function mobile() {
     await page.evaluate(() => document.querySelector('[data-dor-building]').scrollIntoView({ block: 'center' }));
     await page.waitForTimeout(3500);
     if (out) await page.screenshot({ path: path.join(out, 'm2-plan.png') });
+    check(!(await page.evaluate(() => document.querySelector('[data-dor-wall]').classList.contains('is-live'))), 'mobile : pas de glisser-déposer (le défilement de la page reste libre)');
     const n = await page.evaluate(() => [...document.querySelectorAll('[data-dor-cell]')].filter((c) => +getComputedStyle(c).opacity > 0.9).length);
     check(n === 12, `mobile : le schéma se construit à son arrivée (${n}/12)`);
 }
@@ -100,6 +119,7 @@ async function reducedMotion() {
     check(!(await page.evaluate(() => document.querySelector('[data-dor-hero]').classList.contains('is-live'))), 'mouvement réduit : pas de scène épinglée');
     const hidden = await page.evaluate(() => [...document.querySelectorAll('[data-dor-cell]')].filter((c) => +getComputedStyle(c).opacity < 0.9).length);
     check(hidden === 0, 'mouvement réduit : les 12 cases du schéma sont visibles');
+    check((await page.locator('[data-dor-polaroid]').count()) === 5 && (await page.evaluate(() => [...document.querySelectorAll('[data-dor-polaroid]')].every((c) => +getComputedStyle(c).opacity === 1))), 'mouvement réduit : les cinq photos du mur sont visibles');
     check((await page.evaluate(() => +getComputedStyle(document.querySelector('[data-dor-count]')).opacity)) === 1 && (await page.locator('[data-dor-count]').first().innerText()) === '80', 'mouvement réduit : les chiffres sont affichés tels quels');
 }
 

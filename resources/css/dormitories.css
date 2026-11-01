@@ -138,7 +138,7 @@
 /* ───────── 3. Les deux résidences ───────── */
 .dor-houses {
     padding: clamp(2rem, 4vw, 4rem) 0 clamp(5rem, 10vw, 9rem);
-    background: linear-gradient(to bottom, #f3d9bd, var(--dor-sunset) 45%, #8a5a78);
+    background: linear-gradient(to bottom, #f3d9bd, var(--dor-sunset) 45%, #c98b7a);
 }
 
 .dor-house {
@@ -448,4 +448,135 @@
 .dor-skyline__block i.is-lit {
     background: var(--dor-lamp);
     box-shadow: 0 0 0.9rem 0.1rem rgb(255 200 87 / 0.65);
+}
+
+/* ───────── 2 bis. L'allée, dans une arche ───────── */
+.dor-lane {
+    width: min(100%, 22rem);
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 999px 999px 0 0;
+    box-shadow: 0 1.6rem 3rem -1rem rgb(40 25 20 / 0.45);
+}
+
+.dor-lane picture {
+    display: block;
+    height: 100%;
+}
+
+.dor-lane img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: 45% 60%;
+}
+
+/* ───────── 3 bis. Le mur de photos ───────── */
+.dor-wall {
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 7rem) 0 clamp(5rem, 9vw, 8rem);
+    background: linear-gradient(to bottom, #c98b7a, #8a5a78);
+    color: #fff;
+}
+
+.dor-wall__title {
+    font-size: clamp(2.2rem, 1rem + 3.6vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.04;
+    color: #fff;
+}
+
+.dor-wall__hint {
+    margin-top: 0.75rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: rgb(255 255 255 / 0.9);
+}
+
+.dor-wall__board {
+    display: grid;
+    gap: 2.5rem 1.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+@media (min-width: 1024px) {
+    .dor-wall__board {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 3rem 1.5rem;
+    }
+
+    .dor-polaroid {
+        grid-column: span 2;
+    }
+
+    .dor-polaroid:nth-child(2) {
+        margin-top: 3.5rem;
+    }
+
+    .dor-polaroid:nth-child(3) {
+        margin-top: 0.5rem;
+    }
+
+    .dor-polaroid:nth-child(4) {
+        grid-column: 2 / span 2;
+    }
+
+    .dor-polaroid:nth-child(5) {
+        grid-column: 4 / span 2;
+        margin-top: 2.5rem;
+    }
+}
+
+.dor-polaroid {
+    position: relative;
+    align-self: start;
+    margin: 0;
+    padding: 0.7rem 0.7rem 0;
+    background: #fffdf8;
+    color: var(--dor-ink);
+    box-shadow: 0 1.4rem 2.4rem -0.8rem rgb(30 10 40 / 0.55);
+    will-change: transform;
+}
+
+.dor-polaroid::before {
+    content: '';
+    position: absolute;
+    top: -0.9rem;
+    left: 50%;
+    width: 5rem;
+    height: 1.6rem;
+    background: rgb(255 232 160 / 0.8);
+    transform: translateX(-50%) rotate(-3deg);
+}
+
+.dor-polaroid__img picture {
+    display: block;
+}
+
+.dor-polaroid__img img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.dor-polaroid figcaption {
+    padding: 0.9rem 0.3rem 1.1rem;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-style: italic;
+    text-align: center;
+}
+
+.dor-wall.is-live .dor-polaroid {
+    cursor: grab;
+}
+
+.dor-wall.is-live .dor-polaroid.is-dragging {
+    cursor: grabbing;
 }

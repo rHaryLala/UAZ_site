@@ -111,3 +111,6 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Plan réel** du rez-de-chaussée (agencement des chambres, de la réception et de la salle à manger) pour remplacer le schéma illustratif.
 - [ ] **Photos** : intérieurs des chambres (non fournis), vues du chantier R+2 ; les trois photos actuelles montrent les extérieurs.
 - [ ] **Textes alternatifs** des trois photos : rédigés dans la page ; à vérifier dans la médiathèque (champs vides).
+
+- [ ] **Photos de chambres en production** : ajouter les six photos dans la médiathèque (texte alternatif obligatoire), puis les insérer à la suite des trois photos du texte de la page « Dortoirs », dans cet ordre : chambre (héros), 2 photos des garçons, 3 photos des filles. Les identifiants diffèrent de ceux du développement.
+- [ ] **Consentement à l'image** : six photos montrent des étudiants et étudiantes identifiables (plusieurs sont probablement mineurs ou jeunes adultes) : confirmer l'autorisation de publication avant la mise en ligne.

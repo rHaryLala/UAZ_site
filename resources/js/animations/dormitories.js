@@ -3,14 +3,17 @@
 //  1. La porte      : « Dortoirs » pousse lettre à lettre ; l'arche sur l'allée du campus s'ouvre en défilant jusqu'au plein écran (pin + clip-path).
 //  2. Le cœur       : la phrase d'accueil se révèle ligne à ligne.
 //  3. Résidences    : les chiffres montent (80, 68) ; les deux cartes se croisent en défilant ; la photo suit la souris.
+//  3b. Le mur       : les photos des chambres tombent de travers, puis se déplacent et se lancent à la main (Draggable + Inertia, souris).
 //  4. Projet R+2    : le schéma du bâtiment se construit depuis le centre, ses fenêtres s'allument, les étages prévus se tracent (DrawSVG).
 //  5. La nuit tombe : les fenêtres de la silhouette du campus s'allument une à une, puis vacillent doucement.
 //
 // Renforcement progressif : sans JavaScript ou avec « réduire les animations », la page reste complète (voir resources/css/dormitories.css).
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { Draggable } from 'gsap/Draggable';
+import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { gsap, ScrollTrigger, SplitText, MOTION_OK } from './gsap.js';
 
-gsap.registerPlugin(DrawSVGPlugin);
+gsap.registerPlugin(DrawSVGPlugin, Draggable, InertiaPlugin);
 
 const DESKTOP = '(min-width: 1024px)';
 const headerHeight = () => document.querySelector('.site-header')?.offsetHeight ?? 0;
@@ -26,6 +29,7 @@ export function initDormitories() {
             hero();
             statement();
             houses();
+            wall();
             plan();
             night();
             ScrollTrigger.refresh();
@@ -147,6 +151,43 @@ function houses() {
         cards.forEach((card, i) => {
             gsap.fromTo(card, { y: i === 0 ? 70 : -30 }, { y: i === 0 ? -50 : 60, ease: 'none', scrollTrigger: { trigger: '[data-dor-houses]', start: 'top bottom', end: 'bottom top', scrub: true } });
         });
+    });
+}
+
+/* ───────── 3b. Le mur de photos ───────── */
+function wall() {
+    const root = $('[data-dor-wall]');
+    const board = $('[data-dor-board]', root ?? document);
+    const cards = $$('[data-dor-polaroid]', root ?? document);
+    if (!root || !board || !cards.length) return;
+
+    // Chaque photo est épinglée de travers ; à l'arrivée, elles tombent l'une après l'autre.
+    cards.forEach((card) => gsap.set(card, { rotation: Number(card.dataset.tilt) || 0 }));
+    gsap.from(cards, { y: 160, rotation: () => gsap.utils.random(-20, 20), autoAlpha: 0, duration: 1.2, stagger: 0.16, ease: 'back.out(1.4)', scrollTrigger: { trigger: board, start: 'top 80%', once: true } });
+
+    // Souris et écran assez large seulement : sur écran tactile ou petit, glisser sur une photo empêcherait de défiler la page.
+    if (!window.matchMedia('(min-width: 768px) and (hover: hover) and (pointer: fine)').matches) return;
+
+    root.classList.add('is-live');
+    const hint = $('[data-dor-hint]', root);
+    if (hint) hint.hidden = false;
+
+    Draggable.create(cards, {
+        type: 'x,y',
+        bounds: root,
+        inertia: true,
+        edgeResistance: 0.75,
+        zIndexBoost: true,
+        onPress() {
+            this.target.classList.add('is-dragging');
+            gsap.to(this.target, { scale: 1.06, rotation: 0, duration: 0.3, ease: 'power2.out' });
+            if (hint) gsap.to(hint, { autoAlpha: 0, duration: 0.4 });
+        },
+        onRelease() {
+            this.target.classList.remove('is-dragging');
+            // La photo se repose, légèrement de travers, là où on l'a lâchée.
+            gsap.to(this.target, { scale: 1, rotation: Number(this.target.dataset.tilt) || 0, duration: 0.8, ease: 'elastic.out(1, 0.55)' });
+        },
     });
 }
 

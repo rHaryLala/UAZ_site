@@ -58,3 +58,26 @@ it('hides the extra links section when the imported text has none, and tolerates
 it('does not use the dormitories layout for the cafeteria', function () {
     $this->get('/vie-etudiante/cafeteria')->assertOk()->assertDontSee('data-dor-hero', false);
 });
+
+it('shows the room photos in the hero and on the wall when the text carries nine photos, each with a one-word caption', function () {
+    $ids = collect(range(1, 9))->map(fn ($i) => MediaAsset::create(['title' => "Photo $i", 'alt' => "Photo $i"])->id);
+
+    Page::where('key', 'student-life-dorms')->firstOrFail()->update([
+        'blocks' => [['type' => 'rich_text', 'data' => ['content' => $ids->map(fn ($id) => '<figure data-media="'.$id.'"></figure>')->implode('')]]],
+    ]);
+
+    $html = $this->get('/vie-etudiante/dortoirs')->assertOk()->getContent();
+
+    expect(substr_count($html, 'data-dor-polaroid'))->toBe(5)
+        ->and($html)->toContain('Camaraderie')->toContain('Apprentissage')->toContain('Concentration')->toContain('Amitié')->toContain('Croissance personnelle');
+});
+
+it('has no photo wall when the text only carries the three outdoor photos', function () {
+    $ids = collect(range(1, 3))->map(fn ($i) => MediaAsset::create(['title' => "Photo $i", 'alt' => "Photo $i"])->id);
+
+    Page::where('key', 'student-life-dorms')->firstOrFail()->update([
+        'blocks' => [['type' => 'rich_text', 'data' => ['content' => $ids->map(fn ($id) => '<figure data-media="'.$id.'"></figure>')->implode('')]]],
+    ]);
+
+    $this->get('/vie-etudiante/dortoirs')->assertOk()->assertDontSee('data-dor-wall', false)->assertSee('data-dor-plan', false);
+});
