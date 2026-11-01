@@ -32,10 +32,10 @@ it('lists the opening and loan hours of the official poster, without inventing S
         ->not->toContain('data-days="6"');
 });
 
-it('keeps every scene readable without JavaScript: five shelf cards listed and three pillars', function () {
+it('keeps every scene readable without JavaScript: four shelf cards listed and three pillars', function () {
     $html = $this->get('/vie-etudiante/bibliotheque')->assertOk()->getContent();
 
-    expect(substr_count($html, 'data-lib-panel="'))->toBe(5)
+    expect(substr_count($html, 'data-lib-panel="'))->toBe(4)
         ->and(substr_count($html, 'data-lib-card'))->toBeGreaterThanOrEqual(3)
         ->and($html)->toContain('Savoir')->toContain('Réflexion')->toContain('Inspiration');
 });

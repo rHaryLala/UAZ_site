@@ -51,16 +51,16 @@ async function desktop() {
     await shot('7-rayonnage.png', shelfY + 80, 1500);
 
     // Rayonnage : choisir « Ebooks » (3e livre).
-    const book = page.locator('[data-lib-book="2"]');
+    const book = page.locator('[data-lib-book="1"]');
     await book.click();
     await page.waitForTimeout(1000);
     check((await book.getAttribute('aria-pressed')) === 'true', 'rayonnage : le livre cliqué est sélectionné');
-    check(await page.locator('[data-lib-panel="2"]').isVisible(), 'rayonnage : sa fiche s\'affiche');
+    check(await page.locator('[data-lib-panel="1"]').isVisible(), 'rayonnage : sa fiche s\'affiche');
     check(!(await page.locator('[data-lib-panel="0"]').isVisible()), 'rayonnage : la fiche précédente se masque');
-    check((await page.locator('[data-lib-panel="2"] a').getAttribute('href')).includes('ebookcentral'), 'rayonnage : la fiche Ebooks propose le lien vers les ebooks');
+    check((await page.locator('[data-lib-panel="1"] a').getAttribute('href')).includes('ebookcentral'), 'rayonnage : la fiche Ebooks propose le lien vers les ebooks');
     await page.keyboard.press('ArrowRight');
     await page.waitForTimeout(500);
-    check((await page.locator('[data-lib-book="3"]').getAttribute('aria-pressed')) === 'true', 'rayonnage : la flèche droite passe au livre suivant');
+    check((await page.locator('[data-lib-book="2"]').getAttribute('aria-pressed')) === 'true', 'rayonnage : la flèche droite passe au livre suivant');
     if (out) await page.screenshot({ path: path.join(out, '7b-rayonnage-choisi.png') });
 
     // Horaires : état calculé à l'heure de Madagascar + onglets.

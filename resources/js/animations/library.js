@@ -396,7 +396,8 @@ function contact() {
     const big = $('[data-lib-big]', root);
     if (big) {
         SplitText.create(big, {
-            type: 'chars',
+            type: 'words,chars',
+            wordsClass: 'word',
             charsClass: 'char',
             autoSplit: true,
             onSplit: (self) =>
@@ -410,11 +411,5 @@ function contact() {
                     scrollTrigger: { trigger: big, start: 'top 85%', once: true },
                 }),
         });
-    }
-
-    const frame = $('[data-lib-frame-img]', root);
-    if (frame) {
-        gsap.fromTo(frame, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 1.4, ease: 'expo.inOut', scrollTrigger: { trigger: frame, start: 'top 80%', once: true } });
-        gsap.fromTo($('img', frame), { scale: 1.3 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: frame, start: 'top bottom', end: 'bottom top', scrub: true } });
     }
 }

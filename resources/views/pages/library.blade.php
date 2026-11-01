@@ -24,16 +24,15 @@
     $pillars = [
         ['Savoir', 'Ici, chaque livre, chaque ressource électronique, chaque moment de lecture est une porte ouverte sur la découverte et la croissance intellectuelle.'],
         ['Réflexion', 'Un environnement accueillant et calme, où trouver la sérénité nécessaire pour étudier, réfléchir et approfondir votre compréhension du monde et de la Parole de Dieu.'],
-        ['Inspiration', 'À la bibliothèque Paul Pichot, chaque visite est une expérience, chaque lecture est une lumière, et chaque étudiant est un chercheur en devenir.'],
+        ['Inspiration', 'Chaque visite est une expérience, chaque lecture est une lumière, et chaque étudiant est un chercheur en devenir.'],
     ];
 
     // Le rayonnage : chaque « livre » ouvre une fiche. Les textes viennent de la présentation de la bibliothèque.
     $books = [
-        ['Espace calme', 'Un lieu pour lire', 'Un environnement accueillant et calme, pensé pour étudier, réfléchir et lire sans être dérangé.', null, '#7a2e3d', '#4a1623', 17.5],
-        ['Ressources fiables', 'Des ressources à jour', 'Des ressources actualisées et fiables, accessibles surtout sur place et peu à peu en ligne, pour soutenir vos études, vos recherches et vos projets académiques.', null, '#16204f', '#0b1233', 15],
-        ['Ebooks', 'Des livres numériques', 'Chaque ressource électronique est une porte ouverte sur la découverte : parcourez la collection de livres numériques de la bibliothèque.', ['Parcourir les ebooks', 'http://ebookcentral.proquest.com/lib/zurcheradve/home.action'], '#b0915a', '#7f6535', 19],
-        ['Bases de données', 'Savoir où chercher', 'L\'équipe vous accompagne dans l\'utilisation des bases de données.', null, '#2f5d62', '#173236', 16],
-        ['Accompagnement', 'Une équipe disponible', 'Une équipe pour vous guider dans la recherche d\'information et le développement de vos compétences documentaires.', null, '#8a5a35', '#55341a', 18],
+        ['Ressources fiables', 'Collection', 'Des documents actualisés, accessibles surtout sur place et peu à peu en ligne, pour soutenir vos études, vos recherches et vos projets académiques.', null, '#16204f', '#0b1233', 15],
+        ['Ebooks', 'Numérique', 'Des livres numériques, à consulter à distance.', ['Accéder aux livres', 'http://ebookcentral.proquest.com/lib/zurcheradve/home.action'], '#b0915a', '#7f6535', 19],
+        ['Bases de données', 'Savoir où chercher', 'L\'équipe vous aide à les utiliser.', null, '#2f5d62', '#173236', 16],
+        ['Accompagnement', 'Une équipe disponible', 'Pour vous guider dans la recherche d\'information et le développement de vos compétences documentaires.', null, '#8a5a35', '#55341a', 18],
     ];
 @endphp
 
@@ -55,9 +54,8 @@
 
             <div class="lib-intro__content container-site" data-lib-content>
                 <x-breadcrumbs :items="$trail" dark />
-                <p class="eyebrow mt-10 mb-5 text-sun-400!" data-lib-hide data-lib-fade>Vie étudiante · Université Adventiste Zurcher</p>
-                <h1 id="lib-title" class="lib-title" data-lib-hide data-lib-title>Bibliothèque <em>Paul Pichot</em></h1>
-                <p class="mt-6 max-w-xl text-lead text-white/85" data-lib-hide data-lib-fade>Un espace de savoir, de réflexion et d'inspiration.</p>
+                <h1 id="lib-title" class="lib-title mt-10" data-lib-hide data-lib-title>Bibliothèque <em>Paul Pichot</em></h1>
+                <p class="mt-6 max-w-xl text-lead text-white/85" data-lib-hide data-lib-fade>Un lieu où l'esprit se renouvelle.</p>
                 <a href="#lib-quote" class="lib-cue" data-lib-hide data-lib-fade><span aria-hidden="true"></span>Entrez</a>
             </div>
 
@@ -87,8 +85,8 @@
     <section class="lib-pan" data-lib-pan aria-labelledby="lib-pan-title">
         <div class="lib-pan__sticky" data-lib-pan-sticky>
             <div class="lib-pan__head container-site">
-                <p class="eyebrow">Un lieu vivant</p>
-                <h2 id="lib-pan-title" class="lib-pan__title">Le cœur du savoir, au cœur du campus</h2>
+                <p class="eyebrow">Le lieu</p>
+                <h2 id="lib-pan-title" class="lib-pan__title">Là où la pensée s'élève</h2>
             </div>
             <div class="lib-pan__track" data-lib-track>
                 @if ($interior)
@@ -191,7 +189,6 @@
                     </div>
                 @endforeach
 
-                <p class="mt-8 text-sm text-ink-600" data-reveal>Pour toute demande particulière ou requête spécifique, écrivez à <a href="mailto:uazlibrarydir@zurcher.edu.mg" class="font-semibold text-royal-600 underline underline-offset-4">uazlibrarydir@zurcher.edu.mg</a>.</p>
             </div>
 
             @if ($hoursPoster)
@@ -209,9 +206,8 @@
     <section class="lib-online" data-lib-online aria-labelledby="lib-online-title">
         <div class="container-site grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <div>
-                <p class="eyebrow" data-reveal>En ligne</p>
-                <h2 id="lib-online-title" class="mt-4 text-h2 text-navy-900" data-reveal data-reveal-delay="0.1">Le site de la bibliothèque</h2>
-                <p class="mt-5 max-w-xl text-lead text-ink-700" data-reveal data-reveal-delay="0.2">La bibliothèque a aussi son propre site, à découvrir à tout moment&nbsp;: <strong class="font-semibold text-navy-900">library.zurcher.edu.mg</strong>.</p>
+                <h2 id="lib-online-title" class="mt-4 text-h2 text-navy-900" data-reveal data-reveal-delay="0.1">La bibliothèque en ligne</h2>
+                <p class="mt-5 max-w-xl text-lead text-ink-700" data-reveal data-reveal-delay="0.2">Son propre site est accessible à tout moment, de partout.</p>
                 <div class="mt-9" data-reveal data-reveal-delay="0.3">
                     <x-button href="https://library.zurcher.edu.mg" target="_blank" rel="noopener noreferrer" variant="navy" arrow class="btn-square">Visiter le site<span class="sr-only"> library.zurcher.edu.mg (nouvel onglet)</span></x-button>
                 </div>
@@ -225,7 +221,6 @@
                     </span>
                     <span class="lib-window__body">
                         <img src="{{ asset('images/library-site-1600.webp') }}" srcset="{{ asset('images/library-site-800.webp') }} 800w, {{ asset('images/library-site-1600.webp') }} 1600w" sizes="(min-width: 1024px) 40rem, 90vw" width="1600" height="729" alt="" loading="lazy" decoding="async">
-                        <span class="lib-window__go">Ouvrir le site <x-ico name="arrow-up-right" class="size-4" /></span>
                     </span>
                 </span>
             </a>
@@ -234,29 +229,16 @@
 
     {{-- 6. BIENVENUE CHEZ VOUS : contact et livres numériques --}}
     <section class="lib-contact on-dark" data-lib-contact aria-labelledby="lib-contact-title">
-        <div class="container-site grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-            <div>
-                <h2 id="lib-contact-title" class="lib-big" data-lib-big>Bienvenue chez vous&nbsp;!</h2>
-                <p class="mt-8 max-w-xl text-lead text-white/85" data-reveal>La bibliothèque Paul Pichot n'est pas seulement un lieu où l'on conserve des livres : c'est un centre vivant d'apprentissage, un point de rencontre entre la foi, la connaissance et le service.</p>
-                <div class="mt-10 flex flex-wrap gap-4" data-reveal data-reveal-delay="0.1">
-                    <x-button href="http://ebookcentral.proquest.com/lib/zurcheradve/home.action" target="_blank" rel="noopener noreferrer" variant="sun" arrow class="btn-square">Parcourir les ebooks<span class="sr-only"> (nouvel onglet)</span></x-button>
-                    <x-button href="mailto:uazlibrarydir@zurcher.edu.mg" variant="outline" class="btn-square">Écrire à la bibliothèque</x-button>
-                </div>
-                <address class="mt-12 space-y-3 text-sm not-italic text-navy-100" data-reveal>
+        <div class="container-site">
+            <h2 id="lib-contact-title" class="lib-big" data-lib-big>Votre deuxième maison</h2>
+            <div class="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-20">
+                <p class="max-w-xl text-lead text-white/85" data-reveal>Bien plus que des rayonnages : un centre vivant d'apprentissage, un point de rencontre entre la foi, la connaissance et le service.</p>
+                <address class="space-y-4 border-l-2 border-sun-400 pl-6 text-base not-italic text-navy-100" data-reveal>
                     <p class="flex gap-3"><x-ico name="map-pin" class="mt-0.5 size-4 shrink-0 text-gold-300" />Université Adventiste Zurcher, Vohitsoa – PK 136 RN7 – BP 325, Antsirabe 110, Madagascar</p>
                     <p class="flex gap-3"><x-ico name="phone" class="mt-0.5 size-4 shrink-0 text-gold-300" /><a href="tel:+261340201906" class="hover:text-white">+261 34 02 019 06</a></p>
                     <p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 shrink-0 text-gold-300" /><a href="mailto:uazlibrarydir@zurcher.edu.mg" class="hover:text-white">uazlibrarydir@zurcher.edu.mg</a></p>
-                    <p class="flex gap-3"><x-ico name="arrow-up-right" class="mt-0.5 size-4 shrink-0 text-gold-300" /><a href="https://library.zurcher.edu.mg" target="_blank" rel="noopener noreferrer" class="hover:text-white">library.zurcher.edu.mg<span class="sr-only"> (nouvel onglet)</span></a></p>
                 </address>
             </div>
-
-            @if ($exterior)
-                <div class="lib-frame" data-lib-frame>
-                    <div class="lib-frame__img" data-lib-frame-img>
-                        <x-picture :asset="$exterior" conversion="hero" sizes="(min-width: 1024px) 34rem, 90vw" alt="Enseigne de la bibliothèque de l'Université Adventiste Zurcher" />
-                    </div>
-                </div>
-            @endif
         </div>
     </section>
 </x-layouts.app>
