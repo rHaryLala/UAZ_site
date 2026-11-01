@@ -54,6 +54,20 @@ class PageController extends Controller
             ]);
         }
 
+        // Cafétéria : mise en page immersive. Les trois photos du texte importé sont reprises dans l'ordre (service au buffet, cuisine, équipe).
+        if ($page->key === 'student-life-cafeteria') {
+            preg_match_all('/data-media="(\d+)"/', collect($page->blocks)->pluck('data.content')->implode(' '), $found);
+            $media = \App\Models\MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
+
+            return view('pages.cafeteria', [
+                'page' => $page,
+                'trail' => $trail,
+                'service' => $media->get((int) ($found[1][0] ?? 0)),
+                'kitchen' => $media->get((int) ($found[1][1] ?? 0)),
+                'team' => $media->get((int) ($found[1][2] ?? 0)),
+            ]);
+        }
+
         return view('pages.show', [
             'page' => $page,
             'trail' => $trail,

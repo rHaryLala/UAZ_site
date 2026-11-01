@@ -95,8 +95,8 @@ function intro() {
 
     // Le titre s'efface dès que la visite commence ; le voile s'assombrit pour la phrase finale.
     tl.to(content, { autoAlpha: 0, y: -70, duration: 0.1 }, 0);
-    tl.to(shade, { opacity: 0.35, duration: 0.1 }, 0);
-    tl.to(shade, { opacity: 0.6, duration: 0.14 }, 0.82);
+    tl.to(shade, { opacity: 0.08, duration: 0.1 }, 0);
+    tl.to(shade, { opacity: 0.5, duration: 0.14 }, 0.82);
     tl.from(chars, { yPercent: 130, opacity: 0, rotate: 7, stagger: 0.012, duration: 0.1, ease: 'power3.out' }, 0.86);
     tl.to({}, { duration: 1 - 0.96 }, 0.96);
 }
@@ -110,7 +110,11 @@ function intro() {
  */
 function createVideoScrub(video) {
     const connection = navigator.connection;
-    const light = window.innerWidth < 768 || ['slow-2g', '2g', '3g'].includes(connection?.effectiveType);
+    const slow = Boolean(connection?.saveData) || ['slow-2g', '2g', '3g'].includes(connection?.effectiveType);
+    // Trois niveaux : mobile / connexion limitée (≈ 3 Mo), tablette (≈ 13 Mo), ordinateur haute définition (≈ 19 Mo).
+    const light = window.innerWidth < 768 || slow;
+    const wide = !light && video.dataset.srcUhd && window.innerWidth * (window.devicePixelRatio || 1) >= 1300;
+    const url = light ? video.dataset.srcSd : wide ? video.dataset.srcUhd : video.dataset.srcHd;
     let target = 0;
     let shown = 0;
     let ready = false;
@@ -124,7 +128,7 @@ function createVideoScrub(video) {
         video.play().then(() => video.pause()).catch(() => {});
     });
 
-    fetch(light ? video.dataset.srcSd : video.dataset.srcHd)
+    fetch(url)
         .then((response) => (response.ok ? response.blob() : Promise.reject(new Error('vidéo indisponible'))))
         .then((blob) => {
             if (destroyed) return;

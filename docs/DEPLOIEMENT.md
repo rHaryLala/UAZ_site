@@ -319,5 +319,5 @@ La section « Votre futur commence ici » de l'accueil lit `public/videos/futur-
 
 ### Vidéo de la page Bibliothèque
 
-La page `/vie-etudiante/bibliotheque` lit `public/videos/library-720.mp4` (≈ 8 Mo), `library-360.mp4` (≈ 3 Mo, mobiles) et l'affiche `library-poster.webp`, au rythme du défilement. Les `.mp4` ne sont pas dans Git : à copier dans
+La page `/vie-etudiante/bibliotheque` lit `public/videos/library-1080.mp4` (≈ 19 Mo, ordinateurs), `library-720.mp4` (≈ 13 Mo, tablettes), `library-360.mp4` (≈ 5 Mo, mobiles) et l'affiche `library-poster.webp`, au rythme du défilement. Les `.mp4` ne sont pas dans Git : à copier dans
 `public/videos/` (`rsync`/SFTP). Absents, la page garde la photo de la salle de lecture (image de la page) comme en-tête fixe. La politique de sécurité autorise `media-src 'self' blob:` (la vidéo est chargée en mémoire).

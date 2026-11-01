@@ -1,0 +1,475 @@
+/*
+ * Page « Cafétéria » (resources/views/pages/cafeteria.blade.php, animations : resources/js/animations/cafeteria.js).
+ * Identité chaude, tirée des photos : terracotta (le riz aux carottes), vert feuille (la salade), bleu de la nappe, crème de la salle.
+ * Base complète et lisible sans JavaScript ni animation ; le script ajoute `is-live` pour les scènes épinglées et le triptyque.
+ */
+:root {
+    --caf-cream: #f7efe0;
+    --caf-terra: #b84a26;
+    --caf-leaf: #24402a;
+    --caf-sea: #1d5470;
+    --caf-ink: #1c2540;
+}
+
+.js:not(.caf-ready) [data-caf-hide] {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 3s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .js:not(.caf-ready) [data-caf-hide] {
+        opacity: 1;
+        animation: none;
+    }
+}
+
+.caf-h2 {
+    max-width: 16ch;
+    font-size: clamp(2rem, 1.2rem + 3vw, 4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--caf-ink);
+    text-wrap: balance;
+}
+
+/* ───────── 1. L'assiette ───────── */
+.caf-hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(2rem, 5vw, 4rem) 0 clamp(4rem, 9vw, 8rem);
+    background:
+        radial-gradient(40rem 26rem at 85% 20%, rgb(184 74 38 / 0.14), transparent 70%),
+        var(--caf-cream);
+}
+
+.caf-hero__grid {
+    display: grid;
+    align-items: center;
+    gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+    .caf-hero__grid {
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 2rem;
+        min-height: min(78svh, 46rem);
+    }
+}
+
+.caf-title {
+    margin-top: 2.5rem;
+    font-size: clamp(3rem, 0.5rem + 8.6vw, 9.25rem);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    color: var(--caf-ink);
+}
+
+.caf-title .char {
+    display: inline-block;
+}
+
+.caf-title__stroke {
+    display: block;
+    width: min(26rem, 80%);
+    height: 1.1rem;
+    margin-top: 0.8rem;
+    color: var(--caf-terra);
+}
+
+.caf-hero__lead {
+    max-width: 24rem;
+    margin-top: 2rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    line-height: 1.35;
+    color: var(--caf-ink);
+}
+
+.caf-plate {
+    position: relative;
+    justify-self: center;
+    width: min(88vw, 34rem);
+    aspect-ratio: 1;
+}
+
+.caf-plate__ring {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.caf-plate__ring text {
+    font-family: var(--font-sans);
+    font-size: 8.6px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    fill: var(--caf-terra);
+}
+
+.caf-plate__photo {
+    position: absolute;
+    inset: 13%;
+    z-index: 1;
+    overflow: hidden;
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 0.55rem #fff,
+        0 0 0 0.7rem rgb(60 30 10 / 0.12),
+        0 3rem 5rem -1.5rem rgb(70 35 12 / 0.45);
+}
+
+.caf-plate__photo picture {
+    display: block;
+    height: 100%;
+}
+
+.caf-plate__photo img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: 50% 45%;
+    will-change: transform;
+}
+
+/* ───────── 2. Trois nourritures ───────── */
+.caf-nourish {
+    position: relative;
+    background: var(--caf-leaf);
+    color: #fff;
+}
+
+.caf-nourish__stage {
+    display: flex;
+    align-items: center;
+    min-height: min(100svh, 56rem);
+    padding: 5rem 0;
+}
+
+.caf-nourish__lead {
+    display: block;
+    margin-bottom: 1.2rem;
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
+    letter-spacing: 0.04em;
+    color: rgb(255 255 255 / 0.78);
+}
+
+.caf-nourish__quote p {
+    font-family: var(--font-serif);
+    font-size: clamp(2.3rem, 0.8rem + 6.4vw, 7.25rem);
+    line-height: 1.04;
+}
+
+.caf-phrase {
+    position: relative;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    padding-bottom: 0.18em;
+    margin-bottom: 0.1em;
+    color: #fff;
+}
+
+.caf-phrase__text {
+    font-style: italic;
+}
+
+.caf-stroke {
+    position: absolute;
+    inset: auto 0 0 0;
+    width: 100%;
+    height: 0.2em;
+    min-height: 8px;
+    color: var(--accent);
+}
+
+/* Écran épinglé uniquement quand le script est actif. */
+.caf-nourish.is-live .caf-nourish__stage {
+    height: calc(100svh - var(--header-h));
+    min-height: 0;
+    padding: 0;
+}
+
+/* ───────── 3. À l'assiette ───────── */
+.caf-plate-section {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: var(--caf-cream);
+}
+
+.caf-tiles {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.caf-tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 5rem;
+    padding: 0.5rem 1.5rem;
+    border: 1px solid rgb(28 37 64 / 0.14);
+    background: #fff;
+    font-family: var(--font-serif);
+    font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+    font-style: italic;
+    color: var(--caf-ink);
+    transition: background-color 0.35s, color 0.35s, transform 0.35s var(--ease-out-expo, ease-out);
+}
+
+.caf-tile:hover {
+    background: var(--caf-terra);
+    color: #fff;
+    transform: translateY(-4px) rotate(-1deg);
+}
+
+.caf-loop {
+    position: absolute;
+    inset: -0.35rem;
+    width: calc(100% + 0.7rem);
+    height: calc(100% + 0.7rem);
+    color: var(--caf-terra);
+    pointer-events: none;
+}
+
+.caf-tile:hover .caf-loop {
+    color: #fff;
+}
+
+/* ───────── 4. Le triptyque ───────── */
+.caf-triptych-section {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: var(--caf-ink);
+    color: #fff;
+}
+
+.caf-triptych-section .caf-h2 {
+    color: #fff;
+}
+
+.caf-triptych {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.caf-panel {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    min-height: 22rem;
+}
+
+.caf-panel__img,
+.caf-panel__img picture {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    display: block;
+}
+
+.caf-panel__img img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out-expo, ease-out);
+}
+
+.caf-panel:hover .caf-panel__img img {
+    transform: scale(1.05);
+}
+
+.caf-panel__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgb(14 20 40 / 0.88), rgb(14 20 40 / 0.1) 62%);
+}
+
+.caf-panel__title {
+    padding: 1.5rem 1.5rem 0;
+    font-size: inherit;
+}
+
+.caf-panel__btn {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+}
+
+.caf-panel__num {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    letter-spacing: 0.2em;
+    color: var(--color-sun-400);
+}
+
+.caf-panel__label {
+    font-family: var(--font-serif);
+    font-size: clamp(1.9rem, 1.3rem + 2vw, 3rem);
+    font-style: italic;
+    line-height: 1.05;
+}
+
+.caf-panel__btn:focus-visible {
+    outline: 3px solid var(--color-sun-400);
+    outline-offset: 4px;
+}
+
+.caf-panel__text {
+    padding: 0.75rem 1.5rem 1.75rem;
+    max-width: 34ch;
+    line-height: 1.6;
+    color: rgb(255 255 255 / 0.9);
+}
+
+@media (min-width: 1024px) {
+    .caf-triptych-section.is-live .caf-triptych {
+        display: flex;
+        height: min(32rem, 70svh);
+    }
+
+    .caf-triptych-section.is-live .caf-panel {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 0;
+        cursor: pointer;
+    }
+
+    .caf-triptych-section.is-live .caf-panel.is-open {
+        flex-grow: 4;
+    }
+
+    /* Volet fermé : le titre se lit à la verticale, le texte est masqué. */
+    .caf-triptych-section.is-live .caf-panel:not(.is-open) .caf-panel__label {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        font-size: 1.7rem;
+    }
+
+    .caf-triptych-section.is-live .caf-panel:not(.is-open) .caf-panel__text {
+        display: none;
+    }
+
+    /* Volet fermé : le titre vertical se place en haut du volet. */
+    .caf-triptych-section.is-live .caf-panel:not(.is-open) {
+        justify-content: flex-start;
+    }
+
+    .caf-triptych-section.is-live .caf-panel:not(.is-open) .caf-panel__btn {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+
+    .caf-triptych-section.is-live .caf-panel:not(.is-open) .caf-panel__title {
+        padding-bottom: 1.5rem;
+    }
+}
+
+/* ───────── 5. Ambiance : bandeau défilant ───────── */
+.caf-marquee-section {
+    padding: clamp(4rem, 8vw, 7rem) 0 clamp(4.5rem, 9vw, 8rem);
+    background: var(--caf-cream);
+    overflow: hidden;
+}
+
+.caf-marquee {
+    padding: 1.5rem 0;
+    background: var(--caf-terra);
+    transform: rotate(-2deg);
+    margin-inline: -3rem;
+}
+
+.caf-marquee__track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+}
+
+.caf-marquee__group {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    padding-right: clamp(1.5rem, 3vw, 3rem);
+}
+
+.caf-marquee__word {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 1.5rem + 7vw, 8rem);
+    font-style: italic;
+    line-height: 1;
+    color: #fff;
+}
+
+.caf-marquee__word.is-outline {
+    color: transparent;
+    -webkit-text-stroke: 2px #fff;
+}
+
+.caf-marquee i {
+    font-size: clamp(1.5rem, 1rem + 2vw, 3rem);
+    font-style: normal;
+    color: var(--color-sun-400);
+}
+
+/* Sans JavaScript ni animation : un seul groupe, pas de défilement. */
+@media (prefers-reduced-motion: reduce) {
+    .caf-marquee {
+        transform: none;
+        margin-inline: 0;
+    }
+
+    .caf-marquee__track {
+        width: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .caf-marquee__group:not(:first-child) {
+        display: none;
+    }
+}
+
+/* ───────── 6. L'invitation ───────── */
+.caf-invite {
+    overflow-x: clip;
+    padding: clamp(5rem, 11vw, 10rem) 0;
+    background: var(--caf-sea);
+    color: #fff;
+}
+
+.caf-invite__text {
+    max-width: 18ch;
+    font-size: clamp(2.6rem, 0.8rem + 6.4vw, 7rem);
+    font-weight: 400;
+    line-height: 1.02;
+    color: #fff;
+    text-wrap: balance;
+}
+
+.caf-invite__text .word {
+    display: inline-block;
+}

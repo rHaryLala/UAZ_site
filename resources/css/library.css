@@ -59,8 +59,8 @@
     z-index: 2;
     pointer-events: none;
     background:
-        linear-gradient(to top, rgb(10 22 40 / 0.88), rgb(10 22 40 / 0.1) 62%),
-        linear-gradient(to right, rgb(10 22 40 / 0.6), transparent 62%);
+        linear-gradient(to top, rgb(10 22 40 / 0.7), transparent 55%),
+        linear-gradient(to right, rgb(10 22 40 / 0.4), transparent 60%);
 }
 
 .lib-intro__content {

@@ -46,6 +46,7 @@
                 @if ($hasVideo)
                     <video
                         data-lib-video
+                        @if (is_file(public_path('videos/library-1080.mp4'))) data-src-uhd="{{ asset('videos/library-1080.mp4') }}" @endif
                         data-src-hd="{{ asset('videos/library-720.mp4') }}"
                         data-src-sd="{{ asset('videos/library-360.mp4') }}"
                         @if ($videoPoster) poster="{{ $videoPoster }}" @endif

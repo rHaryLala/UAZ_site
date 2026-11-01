@@ -97,3 +97,9 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Site de la bibliothèque (`library.zurcher.edu.mg`)** : lié depuis la page Bibliothèque (section « En ligne » avec une capture d'écran, `public/images/library-site-*.webp`, à refaire si le site change, et coordonnées). Il interdit son affichage dans une autre page (`X-Frame-Options`), donc simple lien en nouvel onglet. Son contenu n'étant pas visible sans JavaScript, le texte de la section reste volontairement neutre : à préciser (catalogue, ressources…) quand l'UAZ le décrira.
 
 - [ ] **Vidéo de la Bibliothèque** : fichiers `public/videos/library-720.mp4`, `library-360.mp4` et `library-poster.webp` à copier sur le serveur (les .mp4 ne sont pas dans Git). Source : `DJI_20260819095635_0097_D.MP4` (33 s), seules les 22 premières secondes sont utilisées. L'enseigne de la bibliothèque (photo) n'est plus utilisée dans la page.
+
+## Page Cafétéria
+
+- [ ] **Horaires, menu et contact de la cafétéria** : absents du texte importé, donc absents de la page. À fournir si l'UAZ souhaite les afficher.
+- [ ] **Textes alternatifs** des trois photos : rédigés dans la page (service au buffet, cuisine, équipe) ; à vérifier dans la médiathèque (les champs « texte alternatif » des images importées sont vides).
+- [ ] **Nom de l'équipe et photos supplémentaires** (salle, plats) si l'UAZ veut enrichir le triptyque.
