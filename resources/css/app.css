@@ -4,6 +4,7 @@
 @import './cafeteria.css';
 @import './dormitories.css';
 @import './admissions.css';
+@import './fees.css';
 
 @plugin '@tailwindcss/typography';
 
@@ -864,8 +865,11 @@
     }
 
     /* Sans JavaScript : le menu complet est affiché à plat sous l'en-tête. */
+    /* « !important » : la classe utilitaire « fixed » du balisage l'emporterait sinon, et le menu masquerait la page. */
     html:not(.js) .menu-overlay {
-        position: static;
+        position: static !important;
+        height: auto !important;
+        min-height: 0 !important;
         visibility: visible;
         clip-path: none;
         opacity: 1;

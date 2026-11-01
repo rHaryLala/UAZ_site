@@ -1,0 +1,859 @@
+/*
+ * Page « Frais académiques » (resources/views/pages/fees.blade.php ; logique : resources/js/fees-sim.js ; animations : resources/js/animations/fees.js).
+ * Univers : le registre de comptes et le ticket de caisse. Papier crème, filets verts de comptabilité, marine et or de l'université,
+ * terracotta pour les « tampons ». Sobre : l'argent demande de la clarté, pas de gadgets ; le mouvement sert à comprendre (un relevé qui s'imprime,
+ * une barre qui se répartit, des plans qui se découpent). Base complète sans JavaScript ni animation (les tableaux restent lisibles).
+ */
+.fee {
+    --fee-paper: #f6f0e1;
+    --fee-sheet: #fffdf6;
+    --fee-ink: #1b2455;
+    --fee-ledger: #2f7d6b;
+    --fee-gold: #c9a84c;
+    --fee-gold-ink: #7f6535;
+    --fee-terra: #c4572d;
+    --fee-line: color-mix(in srgb, #1b2455 16%, transparent);
+}
+
+[data-group='general'] {
+    --g: #1b2455;
+}
+[data-group='tuition'] {
+    --g: #c9a84c;
+}
+[data-group='housing'] {
+    --g: #2f7d6b;
+}
+[data-group='labs'] {
+    --g: #5a6fc4;
+}
+[data-group='extras'] {
+    --g: #c4572d;
+}
+
+.js:not(.fee-ready) [data-fee-hide] {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 3s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .js:not(.fee-ready) [data-fee-hide] {
+        opacity: 1;
+        animation: none;
+    }
+}
+
+.fee-h2 {
+    max-width: 18ch;
+    font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--fee-ink);
+    text-wrap: balance;
+}
+
+.fee-h2--light {
+    color: #fff;
+}
+
+.fee-h3 {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--fee-ink);
+}
+
+.fee-h3--light {
+    color: #fff;
+}
+
+.fee-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 1rem 1.6rem;
+    background: var(--fee-ink);
+    font-weight: 700;
+    color: #fff;
+    transition: background-color 0.25s;
+}
+
+.fee-btn:hover,
+.fee-btn:focus-visible {
+    background: var(--fee-terra);
+}
+
+/* ───────── 1. Le registre ───────── */
+.fee-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(4.5rem, 9vw, 8rem);
+    background: var(--fee-paper);
+}
+
+.fee-ledger {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.fee-ledger path {
+    fill: none;
+    stroke: var(--fee-ledger);
+    stroke-width: 1.5;
+    opacity: 0.28;
+    vector-effect: non-scaling-stroke;
+}
+
+.fee-ledger path.is-double {
+    stroke: var(--fee-terra);
+    opacity: 0.4;
+}
+
+.fee-badge {
+    display: inline-block;
+    margin-top: 2.25rem;
+    padding: 0.4rem 0.9rem;
+    background: var(--fee-ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.fee-title {
+    margin-top: 1rem;
+    max-width: 12ch;
+    font-size: clamp(3.4rem, 0.8rem + 9.6vw, 9.5rem);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--fee-ink);
+    text-wrap: balance;
+}
+
+.fee-title .word {
+    display: inline-block;
+}
+
+.fee-hero__lead {
+    max-width: 34rem;
+    margin-top: 1.75rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.2rem, 1rem + 0.9vw, 1.7rem);
+    line-height: 1.4;
+    color: var(--fee-ink);
+}
+
+.fee-hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+    margin-top: 2.25rem;
+}
+
+/* ───────── 2. Le simulateur ───────── */
+.fee-sim {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+    background: #fff;
+}
+
+.fee-sim[hidden] {
+    display: none;
+}
+
+.fee-sim__grid {
+    display: grid;
+    gap: 2.5rem;
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+@media (min-width: 1024px) {
+    .fee-sim__grid {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        grid-template-areas:
+            'controls receipt'
+            'insight receipt';
+        gap: 2.5rem 4.5rem;
+        align-items: start;
+    }
+
+    .fee-controls {
+        grid-area: controls;
+    }
+
+    .fee-receipt-col {
+        grid-area: receipt;
+        position: sticky;
+        top: calc(var(--header-h) + 1.5rem);
+    }
+
+    .fee-insight {
+        grid-area: insight;
+    }
+}
+
+.fee-controls {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.fee-field {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.fee-field[hidden] {
+    display: none;
+}
+
+.fee-field legend {
+    margin-bottom: 0.65rem;
+    padding: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fee-gold-ink);
+}
+
+.fee-field__hint {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    color: var(--color-ink-600);
+}
+
+.fee-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.fee-chip {
+    position: relative;
+    cursor: pointer;
+}
+
+.fee-chip input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.fee-chip span {
+    display: block;
+    padding: 0.7rem 1.1rem;
+    border: 1px solid var(--fee-ink);
+    background: #fff;
+    font-weight: 600;
+    color: var(--fee-ink);
+    transition: background-color 0.2s, color 0.2s, transform 0.3s var(--ease-out-expo, ease-out);
+}
+
+.fee-chip small {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.78rem;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.fee-chip:hover span {
+    transform: translateY(-2px);
+}
+
+.fee-chip input:checked + span {
+    background: var(--fee-ink);
+    color: #fff;
+}
+
+.fee-chip input:focus-visible + span {
+    outline: 3px solid var(--fee-gold);
+    outline-offset: 2px;
+}
+
+.fee-chip.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.fee-chip.is-disabled input {
+    cursor: not-allowed;
+}
+
+/* Le ticket */
+.fee-receipt {
+    position: relative;
+    max-width: 34rem;
+    margin-inline: auto;
+    filter: drop-shadow(0 1.6rem 1.6rem rgb(27 36 85 / 0.22));
+}
+
+.fee-receipt__slot {
+    position: relative;
+    z-index: 2;
+    height: 0.9rem;
+    margin-inline: -0.75rem;
+    border-radius: 999px;
+    background: linear-gradient(to bottom, #11183d, #2a3470);
+    box-shadow: inset 0 -0.2rem 0.3rem rgb(0 0 0 / 0.35);
+}
+
+.fee-receipt__paper {
+    --z: 0.55rem;
+    position: relative;
+    margin: -0.35rem 0.4rem 0;
+    padding: 2rem 1.75rem calc(2.25rem + var(--z));
+    background: var(--fee-sheet);
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--z) * 2) 100%;
+    mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--z) * 2) 100%;
+}
+
+.fee-receipt__brand {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fee-gold-ink);
+}
+
+.fee-receipt__title {
+    margin-top: 0.4rem;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: 1.7rem;
+    color: var(--fee-ink);
+}
+
+.fee-receipt__summary {
+    margin: 0.9rem 0 1.4rem;
+    padding: 0.7rem 0;
+    border-block: 2px double var(--fee-ledger);
+    text-align: center;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--fee-ink);
+}
+
+.fee-lines {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fee-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.65rem 0 0.65rem 1rem;
+    position: relative;
+}
+
+.fee-line::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.05rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--g, var(--fee-ink));
+}
+
+.fee-line__label {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    color: var(--fee-ink);
+}
+
+.fee-line__name {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+}
+
+.fee-line__note {
+    margin-top: 0.1rem;
+    font-size: 0.74rem;
+    line-height: 1.35;
+    color: var(--color-ink-600);
+}
+
+.fee-line__dots {
+    flex: 1 1 1rem;
+    min-width: 1rem;
+    align-self: flex-end;
+    margin-bottom: 0.35rem;
+    border-bottom: 2px dotted color-mix(in srgb, var(--fee-ink) 30%, transparent);
+}
+
+.fee-line__amount {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--fee-ink);
+}
+
+.fee-total {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--fee-ink);
+    color: var(--fee-ink);
+}
+
+.fee-total span {
+    flex: 1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.fee-total strong {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 1.4rem + 2.6vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--fee-terra);
+}
+
+.fee-total small {
+    font-size: 1.1rem;
+    font-style: italic;
+}
+
+.fee-receipt__foot {
+    margin-top: 1.2rem;
+    text-align: center;
+    font-size: 0.74rem;
+    color: var(--color-ink-600);
+}
+
+.fee-test {
+    max-width: 34rem;
+    margin: 1.5rem auto 0;
+    padding: 0.9rem 1.1rem;
+    border-left: 4px solid var(--fee-gold);
+    background: var(--fee-paper);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--fee-ink);
+}
+
+.fee-test[hidden] {
+    display: none;
+}
+
+/* Répartition et comparaison */
+.fee-insight {
+    display: grid;
+    gap: 2rem;
+}
+
+.fee-mix__bar {
+    display: flex;
+    gap: 3px;
+    height: 1.2rem;
+    margin-top: 0.9rem;
+    overflow: hidden;
+}
+
+.fee-mix__seg {
+    min-width: 4px;
+    background: var(--g);
+    transform-origin: left center;
+}
+
+.fee-mix__legend {
+    display: grid;
+    gap: 0.35rem 1.2rem;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    list-style: none;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.fee-mix__item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--fee-ink);
+}
+
+.fee-mix__item i {
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    background: var(--g);
+}
+
+.fee-mix__item strong {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+.fee-compare[hidden] {
+    display: none;
+}
+
+.fee-cmp {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr auto;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 0.8rem;
+    color: var(--fee-ink);
+}
+
+.fee-cmp__bar {
+    height: 0.9rem;
+    background: color-mix(in srgb, var(--fee-ink) 28%, transparent);
+    transform-origin: left center;
+}
+
+.fee-cmp.is-current .fee-cmp__bar {
+    background: var(--fee-terra);
+}
+
+.fee-cmp__value {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95rem;
+}
+
+/* ───────── 3. Le paiement ───────── */
+.fee-pay {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: var(--fee-ink);
+    color: #fff;
+}
+
+.fee-pay__lead {
+    margin-top: 1.25rem;
+    font-size: 1.15rem;
+    color: rgb(255 255 255 / 0.85);
+}
+
+.fee-plans {
+    display: grid;
+    gap: 1.6rem;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fee-plan__label {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+}
+
+.fee-plan__bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 0.7rem;
+}
+
+.fee-plan__part {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3rem;
+    background: var(--fee-gold);
+    transform-origin: left center;
+    font-size: 0.95rem;
+    color: var(--fee-ink);
+}
+
+.fee-plan__text {
+    margin-top: 0.6rem;
+    color: rgb(255 255 255 / 0.8);
+}
+
+.fee-pay__licence {
+    margin-top: 2.25rem;
+    padding: 1rem 1.2rem;
+    border-left: 4px solid var(--fee-gold);
+    background: rgb(255 255 255 / 0.06);
+    color: rgb(255 255 255 / 0.9);
+}
+
+.fee-methods ul {
+    display: grid;
+    gap: 1rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fee-method {
+    padding: 1.1rem 1.2rem;
+    border: 1px solid rgb(255 255 255 / 0.25);
+}
+
+.fee-method__label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fee-gold);
+}
+
+.fee-method__label small {
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: rgb(255 255 255 / 0.75);
+}
+
+.fee-method__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem 1rem;
+    margin-top: 0.5rem;
+}
+
+.fee-method__value {
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.7rem);
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.fee-copy {
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--fee-gold);
+    background: transparent;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--fee-gold);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.fee-copy:hover,
+.fee-copy:focus-visible {
+    background: var(--fee-gold);
+    color: var(--fee-ink);
+}
+
+.fee-method__note {
+    margin-top: 1.2rem;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: rgb(255 255 255 / 0.8);
+}
+
+/* ───────── 4. Les tableaux ───────── */
+.fee-tables {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: var(--fee-paper);
+}
+
+.fee-tables__lead {
+    max-width: 38rem;
+    margin-top: 1.25rem;
+    font-size: 1.1rem;
+    color: var(--color-ink-700);
+}
+
+.fee-tables__list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.fee-detail {
+    border: 1px solid var(--fee-line);
+    background: #fff;
+}
+
+.fee-detail summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1.2rem;
+    padding: 1.1rem 1.3rem;
+    cursor: pointer;
+    list-style: none;
+    color: var(--fee-ink);
+}
+
+.fee-detail summary::-webkit-details-marker {
+    display: none;
+}
+
+.fee-detail summary::after {
+    content: '+';
+    margin-left: auto;
+    font-size: 1.6rem;
+    line-height: 1;
+    transition: transform 0.35s var(--ease-out-expo, ease-out);
+}
+
+.fee-detail[open] summary::after {
+    transform: rotate(45deg);
+}
+
+.fee-detail summary:focus-visible {
+    outline: 3px solid var(--fee-gold);
+    outline-offset: -3px;
+}
+
+.fee-detail summary span {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+}
+
+.fee-detail summary em {
+    font-size: 0.9rem;
+    color: var(--color-ink-600);
+}
+
+.fee-detail__scroll {
+    overflow-x: auto;
+    padding: 0 1.3rem 1.3rem;
+}
+
+.fee-grid {
+    width: 100%;
+    min-width: 46rem;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: var(--fee-ink);
+}
+
+.fee-grid--master {
+    min-width: 28rem;
+}
+
+.fee-grid th,
+.fee-grid td {
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--fee-line);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.fee-grid thead th {
+    background: var(--fee-ink);
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #fff;
+}
+
+.fee-grid tbody th,
+.fee-grid tfoot th {
+    position: sticky;
+    left: 0;
+    min-width: 11rem;
+    background: var(--fee-sheet);
+    text-align: left;
+    font-weight: 600;
+}
+
+.fee-grid tbody th small {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--color-ink-600);
+}
+
+.fee-grid tfoot th,
+.fee-grid tfoot td {
+    background: var(--fee-paper);
+    font-weight: 700;
+    color: var(--fee-terra);
+}
+
+.fee-grid tfoot th {
+    color: var(--fee-ink);
+}
+
+.fee-grid__obs {
+    text-align: left !important;
+    font-size: 0.82rem;
+    color: var(--color-ink-600);
+}
+
+.fee-posters {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.fee-posters ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fee-posters a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--fee-ink);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--fee-ink);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.fee-posters a:hover,
+.fee-posters a:focus-visible {
+    background: var(--fee-ink);
+    color: #fff;
+}
+
+/* ───────── 5. La finance ───────── */
+.fee-contact {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: #0d1438;
+    color: #fff;
+}
+
+.fee-contact__title {
+    font-size: clamp(2.6rem, 1rem + 5.6vw, 6rem);
+    font-weight: 400;
+    line-height: 1;
+    color: #fff;
+}
+
+.fee-contact__lead {
+    max-width: 30rem;
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    color: rgb(255 255 255 / 0.85);
+}
+
+.fee-address {
+    display: grid;
+    gap: 1rem;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--fee-gold);
+    font-size: 1.1rem;
+    color: rgb(255 255 255 / 0.92);
+}
+
+.fee-address a:hover {
+    color: var(--fee-gold);
+}

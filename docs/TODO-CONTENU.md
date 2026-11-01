@@ -124,3 +124,15 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Master** : durée et crédits non fournis (aucune fiche de formation Master dans le site) ; fiches des mentions de Master à créer pour lier les cartes.
 - [ ] **Photo du Master** : recadrage de l'affiche officielle (faute de photo haute définition) ; la remplacer par une photo de remise de diplômes de Master (champ « Image » de la page).
 - [ ] **Médias en production** : l'affiche et la photo de couverture de chaque page (Licence : « Diplômés de l'UAZ en toge et étole jaune » ; Master : « Diplômés du Master ») sont à reprendre dans la médiathèque et à choisir comme image de la page.
+
+## Page Frais académiques
+
+- [ ] **Chaque année** : remplacer les tableaux (images de la page) **et** `config/fees.php` ; le test `FeesPageTest` refuse les totaux qui ne correspondent pas aux lignes. Année affichée : `fees.year`.
+- [ ] **Coordonnées de paiement du Master (MVola 038 53 849 49, BMOI 00004 00006 070112 001 28 32)** : transcrites de l'affiche M1 ; **à relire par la Finance avant mise en ligne**, une erreur redirigerait des paiements.
+- [ ] **Définition d'« interne »** : la page dit « l'interne ajoute le dortoir et la cantine du campus », déduit des remarques « Pour les internes » des tableaux ; à confirmer (ou à reformuler).
+- [ ] **Licence : plans de paiement** : aucun plan n'est publié (seul le Master en a) ; la page renvoie vers la Finance. À compléter si un échéancier existe.
+- [ ] **Master M2** : seul le second semestre figure sur le tableau (étudiants sortants) ; fournir le premier semestre si besoin.
+- [ ] **« Remise à niveau »** : colonne reprise telle quelle des tableaux ; ajouter une phrase d'explication si l'UAZ le souhaite.
+- [ ] **Tableaux Licence** : ceux de Sciences infirmières et des autres départements ne diffèrent que par les laboratoires, le dortoir et la cantine ; les écarts de frais généraux entre semestres (213 000 / 228 000 / 168 000 selon le département et le semestre) sont ceux des tableaux.
+- [ ] **Texte alternatif des six tableaux** (médiathèque) : champs vides ; la page les décrit en texte.
+- [ ] **Médias en production** : reprendre les six images dans la médiathèque, dans cet ordre, à la suite du texte de la page.

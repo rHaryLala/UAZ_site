@@ -19,6 +19,10 @@ if (document.querySelector('[data-student-dialog]')) import('./student-dialog.js
 // Fenêtre « Lettre d'information » : ouverture à la première visite, puis tous les 20 jours si non abonné.
 if (document.querySelector('[data-newsletter-dialog]')) import('./newsletter.js').then((m) => m.initNewsletter());
 
+// Frais académiques : simulateur de relevé et boutons « Copier » (indépendants des animations).
+if (document.querySelector('[data-fee-sim]')) import('./fees-sim.js').then((m) => m.initFeesSim());
+if (document.querySelector('[data-fee-copy]')) import('./fees-sim.js').then((m) => m.initFeeCopy());
+
 // Titre « Votre futur commence ici. » en trois langues, avec glitch.
 if (document.querySelector('[data-future-title]')) import('./future-title.js').then((m) => m.initFutureTitle());
 

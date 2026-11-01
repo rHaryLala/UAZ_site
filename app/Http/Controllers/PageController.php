@@ -110,6 +110,21 @@ class PageController extends Controller
             ]);
         }
 
+        // Frais académiques : simulateur et tableaux (données : config/fees.php). Les tableaux officiels sont les figures du texte importé, dans l'ordre.
+        if ($page->key === 'admissions-fees') {
+            $content = collect($page->blocks)->pluck('data.content')->implode(' ');
+            preg_match_all('/data-media="(\d+)"/', $content, $found);
+            $media = \App\Models\MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
+
+            return view('pages.fees', [
+                'page' => $page,
+                'trail' => $trail,
+                'fees' => config('fees'),
+                'catalog' => \App\Support\FeeCatalog::catalog(),
+                'posters' => collect($found[1])->map(fn ($id) => $media->get((int) $id))->filter()->values(),
+            ]);
+        }
+
         return view('pages.show', [
             'page' => $page,
             'trail' => $trail,
