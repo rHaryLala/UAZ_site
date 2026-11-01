@@ -68,6 +68,25 @@ class PageController extends Controller
             ]);
         }
 
+        // Dortoirs : mise en page immersive. Photos du texte importé dans l'ordre (allée, résidence des filles, résidence des garçons) ;
+        // les deux liens Facebook (« Open House », « MJA ») sont repris tels qu'ils figurent dans le texte.
+        if ($page->key === 'student-life-dorms') {
+            $content = collect($page->blocks)->pluck('data.content')->implode(' ');
+            preg_match_all('/data-media="(\d+)"/', $content, $found);
+            preg_match_all('/<a href="(https:\/\/[^"]+)">([^<]+)<\/a>/', $content, $anchors, PREG_SET_ORDER);
+            $media = \App\Models\MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
+
+            return view('pages.dormitories', [
+                'page' => $page,
+                'trail' => $trail,
+                'path' => $media->get((int) ($found[1][0] ?? 0)),
+                'girls' => $media->get((int) ($found[1][1] ?? 0)),
+                'boys' => $media->get((int) ($found[1][2] ?? 0)),
+                'links' => collect($anchors)->map(fn (array $a) => [$a[1], $a[2]])->all(),
+                'project' => \App\Models\Project::active()->where('slug', 'un-grand-dortoir-pour-les-garcons')->first(),
+            ]);
+        }
+
         return view('pages.show', [
             'page' => $page,
             'trail' => $trail,

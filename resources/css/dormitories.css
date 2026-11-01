@@ -1,0 +1,451 @@
+/*
+ * Page « Dortoirs » (resources/views/pages/dormitories.blade.php, animations : resources/js/animations/dormitories.js).
+ * Principe : une journée qui passe, de l'aube à la nuit. Les fonds glissent de la crème de l'aube au bleu du ciel, au coucher de soleil,
+ * au crépuscule puis à la nuit ; la lumière ambrée des fenêtres est la couleur d'accent (« chez soi »).
+ * Base complète sans JavaScript ni animation ; le script ajoute `is-live` pour les scènes épinglées.
+ */
+:root {
+    --dor-dawn: #f6e7d2;
+    --dor-sky: #dfe9f2;
+    --dor-sunset: #f2b583;
+    --dor-dusk: #2b2f63;
+    --dor-night: #12163a;
+    --dor-lamp: #ffc857;
+    --dor-pine: #2f5d4b;
+    --dor-ink: #1b2347;
+}
+
+.js:not(.dor-ready) [data-dor-hide] {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 3s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .js:not(.dor-ready) [data-dor-hide] {
+        opacity: 1;
+        animation: none;
+    }
+}
+
+/* ───────── 1. La porte ───────── */
+.dor-hero {
+    position: relative;
+    background: linear-gradient(to bottom, var(--dor-dawn), var(--dor-sky));
+    color: var(--dor-ink);
+}
+
+.dor-hero__stage {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-height: min(92svh, 56rem);
+    overflow: hidden;
+}
+
+.dor-hero__text {
+    position: relative;
+    z-index: 3;
+    padding-top: clamp(1.5rem, 4vw, 3rem);
+}
+
+.dor-title {
+    margin-top: 2rem;
+    font-size: clamp(3.2rem, 0.5rem + 11vw, 10rem);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--dor-ink);
+}
+
+.dor-hero__lead {
+    margin-top: 1.25rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.4rem, 1rem + 1.6vw, 2.5rem);
+    font-style: italic;
+    color: #b0541f;
+}
+
+.dor-sun {
+    position: absolute;
+    z-index: 0;
+    top: 12%;
+    left: 52%;
+    width: clamp(4rem, 9vw, 8rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffe7a3, #ffb347 70%);
+    box-shadow: 0 0 6rem 2rem rgb(255 190 90 / 0.45);
+}
+
+/* L'arche : la photo n'est visible qu'à travers une « porte » ; en défilant, elle s'ouvre jusqu'au plein écran. */
+.dor-door {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    --arch: inset(34% 8% 0% 58% round 999px 999px 0 0);
+    clip-path: var(--arch);
+}
+
+@media (max-width: 1023px) {
+    .dor-door {
+        --arch: inset(46% 14% 0% 14% round 999px 999px 0 0);
+    }
+}
+
+.dor-door::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, rgb(12 18 50 / 0.55), rgb(12 18 50 / 0.18) 45%, transparent 70%);
+}
+
+.dor-door__photo,
+.dor-door__photo picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.dor-door__photo img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: 50% 60%;
+}
+
+.dor-hero.is-live .dor-hero__stage {
+    height: calc(100svh - var(--header-h));
+    min-height: 0;
+}
+
+/* ───────── 2. Le cœur de la vie étudiante ───────── */
+.dor-statement {
+    padding: clamp(4.5rem, 10vw, 9rem) 0 clamp(4rem, 8vw, 7rem);
+    background: linear-gradient(to bottom, var(--dor-sky), var(--dor-sky) 55%, #f3d9bd);
+}
+
+.dor-statement__text {
+    font-size: clamp(2rem, 0.9rem + 3.6vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--dor-ink);
+    text-wrap: balance;
+}
+
+/* ───────── 3. Les deux résidences ───────── */
+.dor-houses {
+    padding: clamp(2rem, 4vw, 4rem) 0 clamp(5rem, 10vw, 9rem);
+    background: linear-gradient(to bottom, #f3d9bd, var(--dor-sunset) 45%, #8a5a78);
+}
+
+.dor-house {
+    position: relative;
+}
+
+@media (min-width: 1024px) {
+    .dor-house--girls {
+        margin-top: 7rem;
+    }
+}
+
+.dor-house__photo {
+    position: relative;
+    aspect-ratio: 4 / 4.6;
+    overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+    box-shadow: 0 2rem 4rem -1rem rgb(40 20 50 / 0.5);
+    will-change: transform;
+}
+
+.dor-house--girls .dor-house__photo {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 90%);
+}
+
+.dor-house__photo picture {
+    display: block;
+    height: 100%;
+}
+
+.dor-house__photo img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out-expo, ease-out);
+}
+
+.dor-house:hover .dor-house__photo img {
+    transform: scale(1.06);
+}
+
+.dor-house__body {
+    position: relative;
+    margin-top: -3.5rem;
+    padding: 0 1.5rem;
+}
+
+.dor-house__body .eyebrow {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    background: var(--dor-ink);
+    color: #fff;
+}
+
+.dor-house__count {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-family: var(--font-serif);
+    line-height: 0.9;
+    color: #fff;
+    text-shadow: 0 0.04em 0.5em rgb(30 15 40 / 0.5);
+}
+
+.dor-house__count span {
+    font-size: clamp(5rem, 3rem + 7vw, 10rem);
+    font-variant-numeric: tabular-nums;
+}
+
+.dor-house__count small {
+    font-size: clamp(1.4rem, 1rem + 1.2vw, 2.2rem);
+    font-style: italic;
+}
+
+.dor-house__rooms {
+    margin-top: 0.75rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 1rem + 1vw, 1.9rem);
+    color: #fff;
+}
+
+.dor-house__note {
+    max-width: 34rem;
+    margin-top: 1rem;
+    line-height: 1.65;
+    color: rgb(255 255 255 / 0.92);
+}
+
+.dor-house .link-arrow {
+    color: #fff;
+}
+
+/* ───────── 4. Le projet R+2 ───────── */
+.dor-plan {
+    background: linear-gradient(to bottom, #8a5a78, var(--dor-dusk) 18%, var(--dor-night));
+    color: #fff;
+}
+
+.dor-plan__stage {
+    display: flex;
+    align-items: center;
+    padding: clamp(4rem, 8vw, 7rem) 0;
+}
+
+.dor-plan__title {
+    margin-top: 1rem;
+    font-size: clamp(2.2rem, 1rem + 3.6vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.04;
+    color: #fff;
+    text-wrap: balance;
+}
+
+.dor-plan.is-live .dor-plan__stage {
+    height: calc(100svh - var(--header-h));
+    padding: 0;
+}
+
+.dor-building {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+}
+
+.dor-floor {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dor-floor--future {
+    display: flex;
+    align-items: center;
+    height: clamp(3rem, 7vw, 4.2rem);
+    padding: 0 1.25rem;
+    color: rgb(255 255 255 / 0.55);
+}
+
+.dor-floor--future span {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-style: italic;
+    letter-spacing: 0.05em;
+}
+
+.dor-outline {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.dor-floor--ground {
+    display: grid;
+    gap: 0.4rem;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-areas:
+        'r1 r2 rc dm r5 r6 p1'
+        'r3 r4 rc dm r7 r8 p2';
+    grid-template-rows: repeat(2, minmax(5.2rem, 1fr));
+}
+
+.dor-cell {
+    grid-area: var(--a);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid rgb(255 200 87 / 0.75);
+    background: linear-gradient(to bottom, rgb(255 200 87 / 0.3), rgb(255 200 87 / 0.1));
+    box-shadow: 0 0 1.4rem rgb(255 200 87 / 0.28), inset 0 0 1rem rgb(255 200 87 / 0.12);
+    transition: background-color 0.4s;
+}
+
+.dor-cell strong {
+    font-family: var(--font-serif);
+    font-size: 0.82rem;
+    font-weight: 400;
+    line-height: 1.15;
+    color: #fff;
+}
+
+.dor-cell span {
+    margin-top: 0.2rem;
+    font-size: 0.7rem;
+    color: rgb(255 255 255 / 0.75);
+}
+
+.dor-cell--hall {
+    border-color: rgb(143 211 244 / 0.8);
+    background: linear-gradient(to bottom, rgb(143 211 244 / 0.28), rgb(143 211 244 / 0.08));
+    box-shadow: 0 0 1.4rem rgb(143 211 244 / 0.25);
+}
+
+.dor-cell--tutor {
+    border-color: rgb(255 138 92 / 0.85);
+    background: linear-gradient(to bottom, rgb(255 138 92 / 0.28), rgb(255 138 92 / 0.08));
+    box-shadow: 0 0 1.4rem rgb(255 138 92 / 0.25);
+}
+
+.dor-building__note {
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: rgb(255 255 255 / 0.65);
+}
+
+@media (max-width: 767px) {
+    .dor-floor--ground {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-areas: none;
+        grid-template-rows: none;
+    }
+
+    .dor-cell {
+        grid-area: auto;
+        min-height: 4.6rem;
+    }
+
+    .dor-cell--hall,
+    .dor-cell--tutor {
+        grid-column: span 2;
+    }
+}
+
+/* ───────── 5. La nuit tombe ───────── */
+.dor-night {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 7rem) 0 clamp(13rem, 20vw, 18rem);
+    background: linear-gradient(to bottom, var(--dor-night), #0a0d27);
+    color: #fff;
+}
+
+.dor-night__title {
+    font-size: clamp(2rem, 1rem + 3vw, 3.75rem);
+    font-weight: 400;
+    color: #fff;
+}
+
+.dor-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    height: 100%;
+    padding: 1.5rem 1.75rem;
+    border: 1px solid rgb(255 200 87 / 0.45);
+    background: rgb(255 255 255 / 0.04);
+    transition: background-color 0.3s, transform 0.4s var(--ease-out-expo, ease-out), border-color 0.3s;
+}
+
+.dor-link:hover,
+.dor-link:focus-visible {
+    border-color: var(--dor-lamp);
+    background: rgb(255 200 87 / 0.14);
+    transform: translateY(-4px);
+}
+
+.dor-link__label {
+    font-family: var(--font-serif);
+    font-size: clamp(1.7rem, 1.2rem + 1.6vw, 2.4rem);
+    font-style: italic;
+    color: #fff;
+}
+
+.dor-link__hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--dor-lamp);
+}
+
+/* Silhouette des bâtiments : leurs fenêtres s'allument une à une. */
+.dor-skyline {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: -1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: clamp(9rem, 16vw, 15rem);
+}
+
+.dor-skyline__block {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    align-content: space-evenly;
+    gap: 0.45rem;
+    width: var(--w);
+    height: var(--h);
+    padding: 0.8rem;
+    background: #070920;
+}
+
+.dor-skyline__block i {
+    display: block;
+    aspect-ratio: 1 / 1.2;
+    background: rgb(255 200 87 / 0.18);
+}
+
+.dor-skyline__block i.is-lit {
+    background: var(--dor-lamp);
+    box-shadow: 0 0 0.9rem 0.1rem rgb(255 200 87 / 0.65);
+}

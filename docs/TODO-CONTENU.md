@@ -103,3 +103,11 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Horaires, menu et contact de la cafétéria** : absents du texte importé, donc absents de la page. À fournir si l'UAZ souhaite les afficher.
 - [ ] **Textes alternatifs** des trois photos : rédigés dans la page (service au buffet, cuisine, équipe) ; à vérifier dans la médiathèque (les champs « texte alternatif » des images importées sont vides).
 - [ ] **Nom de l'équipe et photos supplémentaires** (salle, plats) si l'UAZ veut enrichir le triptyque.
+
+## Page Dortoirs
+
+- [ ] **Intitulés « Open House » et « MJA »** : ce sont les seuls libellés du texte importé pour deux publications Facebook ; préciser ce qu'elles montrent (et le sens de « MJA ») si l'UAZ le souhaite.
+- [ ] **Avancement du projet R+2** : la page reprend « le rez-de-chaussée est en cours d'achèvement » ; à mettre à jour quand l'état change (champ du texte de la page).
+- [ ] **Plan réel** du rez-de-chaussée (agencement des chambres, de la réception et de la salle à manger) pour remplacer le schéma illustratif.
+- [ ] **Photos** : intérieurs des chambres (non fournis), vues du chantier R+2 ; les trois photos actuelles montrent les extérieurs.
+- [ ] **Textes alternatifs** des trois photos : rédigés dans la page ; à vérifier dans la médiathèque (champs vides).
