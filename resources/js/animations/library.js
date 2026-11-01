@@ -29,7 +29,7 @@ export function initLibrary() {
             intro();
             quote();
             contact();
-            poster();
+            tilt();
             ScrollTrigger.refresh();
         };
 
@@ -365,23 +365,26 @@ function initHours() {
     window.setInterval(update, 60000);
 }
 
-/* Affiche : elle s'incline en suivant la souris (écrans à souris seulement). */
-function poster() {
-    const link = $('[data-lib-poster]');
-    const sheet = link && $('.lib-poster__sheet', link);
-    if (!sheet || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+/* Affiche des horaires et fenêtre du site : elles s'inclinent en suivant la souris (écrans à souris seulement). */
+function tilt() {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
-    const rotateX = gsap.quickTo(sheet, 'rotationX', { duration: 0.6, ease: 'power3.out' });
-    const rotateY = gsap.quickTo(sheet, 'rotationY', { duration: 0.6, ease: 'power3.out' });
+    $$('[data-lib-tilt]').forEach((link) => {
+        const sheet = $('[data-lib-tilt-sheet]', link);
+        if (!sheet) return;
 
-    link.addEventListener('pointermove', (event) => {
-        const box = sheet.getBoundingClientRect();
-        rotateY(((event.clientX - box.left) / box.width - 0.5) * 12);
-        rotateX(-((event.clientY - box.top) / box.height - 0.5) * 12);
-    });
-    link.addEventListener('pointerleave', () => {
-        rotateX(0);
-        rotateY(0);
+        const rotateX = gsap.quickTo(sheet, 'rotationX', { duration: 0.6, ease: 'power3.out' });
+        const rotateY = gsap.quickTo(sheet, 'rotationY', { duration: 0.6, ease: 'power3.out' });
+
+        link.addEventListener('pointermove', (event) => {
+            const box = sheet.getBoundingClientRect();
+            rotateY(((event.clientX - box.left) / box.width - 0.5) * 12);
+            rotateX(-((event.clientY - box.top) / box.height - 0.5) * 12);
+        });
+        link.addEventListener('pointerleave', () => {
+            rotateX(0);
+            rotateY(0);
+        });
     });
 }
 

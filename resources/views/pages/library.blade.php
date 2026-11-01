@@ -195,13 +195,44 @@
             </div>
 
             @if ($hoursPoster)
-                <a href="{{ $hoursPoster->absoluteUrl() }}" target="_blank" rel="noopener noreferrer" class="lib-poster" data-lib-poster data-reveal data-reveal-delay="0.15">
-                    <span class="lib-poster__sheet">
+                <a href="{{ $hoursPoster->absoluteUrl() }}" target="_blank" rel="noopener noreferrer" class="lib-poster" data-lib-tilt data-reveal data-reveal-delay="0.15">
+                    <span class="lib-poster__sheet" data-lib-tilt-sheet>
                         <x-picture :asset="$hoursPoster" conversion="card" sizes="(min-width: 1024px) 28rem, 90vw" alt="Affiche officielle des horaires d'ouverture et de prêt de la bibliothèque" />
                     </span>
                     <span class="lib-poster__cta">Voir l'affiche en grand <x-ico name="arrow-up-right" class="size-4" /><span class="sr-only"> (nouvel onglet)</span></span>
                 </a>
             @endif
+        </div>
+    </section>
+
+    {{-- 5 bis. LE SITE DE LA BIBLIOTHÈQUE : le site n'autorise pas l'affichage dans une autre page (X-Frame-Options), on le met donc en vitrine avec un lien --}}
+    <section class="lib-online" data-lib-online aria-labelledby="lib-online-title">
+        <div class="container-site grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+            <div>
+                <p class="eyebrow" data-reveal>En ligne</p>
+                <h2 id="lib-online-title" class="mt-4 text-h2 text-navy-900" data-reveal data-reveal-delay="0.1">Le site de la bibliothèque</h2>
+                <p class="mt-5 max-w-xl text-lead text-ink-700" data-reveal data-reveal-delay="0.2">La bibliothèque a aussi son propre site, à découvrir à tout moment&nbsp;: <strong class="font-semibold text-navy-900">bibliotheque.zurcher.edu.mg</strong>.</p>
+                <div class="mt-9" data-reveal data-reveal-delay="0.3">
+                    <x-button href="https://bibliotheque.zurcher.edu.mg" target="_blank" rel="noopener noreferrer" variant="navy" arrow class="btn-square">Visiter le site<span class="sr-only"> bibliotheque.zurcher.edu.mg (nouvel onglet)</span></x-button>
+                </div>
+            </div>
+
+            <a href="https://bibliotheque.zurcher.edu.mg" target="_blank" rel="noopener noreferrer" class="lib-window" data-lib-tilt data-reveal data-reveal-delay="0.15" aria-label="Ouvrir le site de la bibliothèque, bibliotheque.zurcher.edu.mg (nouvel onglet)">
+                <span class="lib-window__sheet" data-lib-tilt-sheet aria-hidden="true">
+                    <span class="lib-window__bar">
+                        <i></i><i></i><i></i>
+                        <span class="lib-window__url">bibliotheque.zurcher.edu.mg</span>
+                    </span>
+                    <span class="lib-window__body">
+                        <span class="lib-window__shelf">
+                            @foreach ([['#7a2e3d', 62], ['#16204f', 48], ['#b0915a', 74], ['#2f5d62', 55], ['#8a5a35', 68], ['#7a2e3d', 44], ['#16204f', 70], ['#b0915a', 52]] as [$color, $height])
+                                <b style="--c: {{ $color }}; --h: {{ $height }}%"></b>
+                            @endforeach
+                        </span>
+                        <span class="lib-window__go">Ouvrir le site <x-ico name="arrow-up-right" class="size-4" /></span>
+                    </span>
+                </span>
+            </a>
         </div>
     </section>
 
@@ -219,6 +250,7 @@
                     <p class="flex gap-3"><x-ico name="map-pin" class="mt-0.5 size-4 shrink-0 text-gold-300" />Université Adventiste Zurcher, Vohitsoa – PK 136 RN7 – BP 325, Antsirabe 110, Madagascar</p>
                     <p class="flex gap-3"><x-ico name="phone" class="mt-0.5 size-4 shrink-0 text-gold-300" /><a href="tel:+261340201906" class="hover:text-white">+261 34 02 019 06</a></p>
                     <p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 shrink-0 text-gold-300" /><a href="mailto:uazlibrarydir@zurcher.edu.mg" class="hover:text-white">uazlibrarydir@zurcher.edu.mg</a></p>
+                    <p class="flex gap-3"><x-ico name="arrow-up-right" class="mt-0.5 size-4 shrink-0 text-gold-300" /><a href="https://bibliotheque.zurcher.edu.mg" target="_blank" rel="noopener noreferrer" class="hover:text-white">bibliotheque.zurcher.edu.mg<span class="sr-only"> (nouvel onglet)</span></a></p>
                 </address>
             </div>
 

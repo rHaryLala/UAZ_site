@@ -58,3 +58,14 @@ it('uses the images of the imported text and the cover of the page', function ()
 it('does not use the library layout for other pages of the student life section', function () {
     $this->get('/vie-etudiante/cafeteria')->assertOk()->assertDontSee('data-lib-intro', false);
 });
+
+it('links the library website as an external link, without trying to embed it', function () {
+    $html = $this->get('/vie-etudiante/bibliotheque')->assertOk()
+        ->assertSee('data-lib-online', false)
+        ->assertSee('bibliotheque.zurcher.edu.mg')
+        ->getContent();
+
+    // Le site interdit d'être affiché dans une autre page : un simple lien (nouvel onglet), pas d'iframe.
+    expect($html)->toContain('href="https://bibliotheque.zurcher.edu.mg"')
+        ->and($html)->not->toContain('<iframe');
+});

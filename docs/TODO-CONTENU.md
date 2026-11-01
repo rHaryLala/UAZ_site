@@ -94,3 +94,4 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Horaires** : recopiés de l'affiche (non datée). Confirmer qu'ils sont à jour et **préciser le samedi** (absent de l'affiche).
 - [ ] **Adresse** : la page importée indique « Vohitsoa – PK 136 RN7 – BP 325 » alors que le pied de page indique « PK 135 » : à harmoniser.
 - [ ] **Photos supplémentaires** (rayonnages, espace enfants, postes de lecture…) : le panorama et le rayonnage gagneraient à des vues variées.
+- [ ] **Site de la bibliothèque (`bibliotheque.zurcher.edu.mg`)** : lié depuis la page Bibliothèque (section « En ligne » et coordonnées). Il interdit son affichage dans une autre page (`X-Frame-Options`), donc simple lien en nouvel onglet. Au 28 octobre 2026 il présente « ABC Madagascar — Adventist Book Center » (librairie chrétienne) et non un catalogue de bibliothèque : confirmer que c'est bien le site voulu, puis adapter le texte de la section si besoin.

@@ -823,3 +823,114 @@
     object-fit: cover;
     object-position: 50% 40%;
 }
+
+/* ───────── 5 bis. Le site de la bibliothèque (fenêtre de navigateur dessinée) ───────── */
+.lib-online {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+    background: var(--color-paper-100);
+}
+
+.lib-window {
+    display: block;
+    perspective: 1200px;
+    justify-self: center;
+    width: min(100%, 38rem);
+}
+
+.lib-window__sheet {
+    display: block;
+    overflow: hidden;
+    border: 1px solid rgb(35 46 102 / 0.18);
+    background: #fff;
+    box-shadow: 0 2.5rem 4rem -1.25rem rgb(10 22 40 / 0.4);
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.lib-window__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.7rem 0.9rem;
+    background: var(--color-navy-900);
+}
+
+.lib-window__bar i {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.3);
+}
+
+.lib-window__url {
+    margin-left: 0.6rem;
+    padding: 0.25rem 0.9rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: #fff;
+}
+
+.lib-window__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    aspect-ratio: 16 / 10;
+    padding: 1.5rem;
+    background: linear-gradient(to bottom, var(--color-navy-900), #0b1233);
+}
+
+.lib-window__shelf {
+    position: absolute;
+    inset: auto 1.5rem 1.5rem 1.5rem;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.35rem;
+    height: 62%;
+    border-bottom: 6px solid #8a5a35;
+}
+
+.lib-window__shelf b {
+    flex: 1;
+    height: var(--h);
+    border-radius: 0.15rem 0.15rem 0 0;
+    background: linear-gradient(90deg, rgb(255 255 255 / 0.2), transparent 30%, rgb(0 0 0 / 0.3)), var(--c);
+    transition: transform 0.45s var(--ease-out-expo, ease-out);
+}
+
+.lib-window:hover .lib-window__shelf b:nth-child(odd),
+.lib-window:focus-visible .lib-window__shelf b:nth-child(odd) {
+    transform: translateY(-0.6rem);
+}
+
+.lib-window:hover .lib-window__shelf b:nth-child(even),
+.lib-window:focus-visible .lib-window__shelf b:nth-child(even) {
+    transform: translateY(-0.25rem);
+}
+
+.lib-window__go {
+    position: relative;
+    z-index: 1;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    background: var(--color-sun-400);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-night-900);
+}
+
+.lib-window:focus-visible {
+    outline: 3px solid var(--color-royal-600, #3f51b5);
+    outline-offset: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lib-window__shelf b {
+        transition: none;
+    }
+}
