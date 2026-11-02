@@ -6,6 +6,7 @@ use App\Filament\Resources\Events\Pages\CreateEvent;
 use App\Filament\Resources\Events\Pages\EditEvent;
 use App\Filament\Resources\Events\Pages\ListEvents;
 use App\Filament\Support\Layout;
+use App\Filament\Support\TranslationSection;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\PublicationSection;
 use App\Filament\Support\PublicationTable;
@@ -69,6 +70,7 @@ class EventResource extends Resource
                         TextInput::make('registration_url')->label('Lien d\'inscription (facultatif)')->url()->maxLength(500)
                             ->columnSpanFull(),
                     ]),
+                    TranslationSection::make(['title' => ['text', 'Titre'], 'summary' => ['textarea', 'Résumé'], 'description' => ['rich', 'Description'], 'location' => ['text', 'Lieu']]),
                 ],
                 side: [
                     PublicationSection::make(),

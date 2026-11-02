@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -19,7 +20,12 @@ use Spatie\Sluggable\SlugOptions;
 ])]
 class Event extends Model
 {
-    use HasFactory, HasSeo, HasSlug, Publishable;
+    use HasFactory, HasSeo, HasSlug, Publishable, HasTranslations;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['title', 'summary', 'description', 'location', 'seo_title', 'seo_description'];
+
+    protected array $translatableRich = ['description'];
 
     protected function casts(): array
     {

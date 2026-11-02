@@ -19,7 +19,7 @@ Aucune donnée factuelle n'est inventée : tout ce qui manque est marqué `TODO-
       Seul « plus de 200 hectares » apparaît dans la page À propos.
 - [ ] **Yearbook 2025** (66,8 Mo) : fournir une version allégée ou un lien externe.
 - [ ] **Images héros / vidéo** : visuels haute définition du campus.
-- [ ] **Version anglaise** : prévue plus tard, non implémentée.
+- [x] **Version anglaise et malagasy** : mise en place (docs/I18N.md). Reste à faire, voir « Traductions » plus bas.
 
 ## Après la maquette (Phase 2)
 
@@ -136,3 +136,16 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Tableaux Licence** : ceux de Sciences infirmières et des autres départements ne diffèrent que par les laboratoires, le dortoir et la cantine ; les écarts de frais généraux entre semestres (213 000 / 228 000 / 168 000 selon le département et le semestre) sont ceux des tableaux.
 - [ ] **Texte alternatif des six tableaux** (médiathèque) : champs vides ; la page les décrit en texte.
 - [ ] **Médias en production** : reprendre les six images dans la médiathèque, dans cet ordre, à la suite du texte de la page.
+
+## Traductions (anglais et malagasy)
+
+- [ ] **Faire relire tout le malagasy par un locuteur natif** avant publication : `lang/mg.json`, `lang/mg/*.php` (accueil, À propos,
+      Soutenir, validation), traductions malagasy de `database/seeders/ContentTranslationsSeeder.php`. Les termes d'institution
+      (Oniversite Advantista Zurcher, Fiangonana Advantista Mitandrina ny Andro Fahafito, Licence/Master, « saram-pianarana »…) sont à confirmer
+      avec l'UAZ ; un doute sur un mot est préférable à un faux ami.
+- [ ] **Faire relire l'anglais** (ton, termes : « Bachelor's (Licence) », « boarding / day student », « field of study »).
+- [ ] **Traduire le contenu importé** dans le back-office (onglet « Traductions » de chaque fiche) : actualités, événements, albums, équipe
+      (fonctions, messages), témoignages, descriptions des formations, textes alternatifs des images. Un contenu non traduit s'affiche en français.
+- [ ] **Page « Confidentialité et cookies »** : texte anglais prêt (seeder), texte malagasy à rédiger et à faire valider avec la version française.
+- [ ] **Pages sur mesure** (À propos, Soutenir, Bibliothèque, Cafétéria, Dortoirs, Admissions, Frais) : textes traduits dans le code ; tout changement
+      de texte français doit être répercuté dans `lang/en.json` et `lang/mg.json` (le test de traductions le rappelle).

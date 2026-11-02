@@ -6,8 +6,8 @@
 @else
     <p class="sr-only" role="status">{{ __(':v résultat(s) pour « :term »', ['v' => $results->flatten(1)->count(), 'term' => $term]) }}</p>
     @foreach ($results as $group => $items)
-        <section class="px-3 pt-4" aria-label="{{ __($group) }}">
-            <h3 class="eyebrow mb-1 px-3 font-sans! text-[0.6875rem]! text-ink-600">{{ __($group) }}</h3>
+        <section class="px-3 pt-4" aria-label="{{ \App\Support\Locales::tr($group) }}">
+            <h3 class="eyebrow mb-1 px-3 font-sans! text-[0.6875rem]! text-ink-600">{{ \App\Support\Locales::tr($group) }}</h3>
             <ul>
                 @foreach ($items as $item)
                     <li>

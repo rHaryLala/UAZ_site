@@ -107,7 +107,7 @@ class PageController extends Controller
                 'common' => Translated::deep(config('admissions')),
                 'poster' => $poster,
                 'forms' => collect(Translated::deep(config('admissions.levels.'.$level.'.downloads')))->zip(array_values(array_unique($docs[1])))->filter(fn ($pair) => $pair->count() === 2 && $pair[1])->values()->all(),
-                'formations' => \App\Models\Formation::visible()->where('level', $level)->get()->keyBy('mention'),
+                'formations' => \App\Models\Formation::visible()->where('level', $level)->get()->keyBy(fn ($formation) => $formation->getRawOriginal('mention')), // clé = mention en français, quelle que soit la langue
             ]);
         }
 

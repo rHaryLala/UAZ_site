@@ -34,19 +34,19 @@ class SiteSearch
 
         return collect([
             'Formations' => Formation::visible()->with('faculty')
-                ->where(fn ($q) => $q->where('title', 'like', $like)->orWhere('summary', 'like', $like)->orWhere('mention', 'like', $like)->orWhere('description', 'like', $like))
+                ->where(fn ($q) => $q->where('title', 'like', $like)->orWhere('translations', 'like', $like)->orWhere('summary', 'like', $like)->orWhere('mention', 'like', $like)->orWhere('description', 'like', $like))
                 ->limit($limit(8))->get()
                 ->map(fn (Formation $f) => ['title' => $f->title, 'url' => $f->url(), 'excerpt' => $excerpt($f->summary), 'meta' => $f->level->getLabel()]),
             'Actualités' => NewsPost::visible()
-                ->where(fn ($q) => $q->where('title', 'like', $like)->orWhere('excerpt', 'like', $like)->orWhere('body', 'like', $like))
+                ->where(fn ($q) => $q->where('title', 'like', $like)->orWhere('translations', 'like', $like)->orWhere('excerpt', 'like', $like)->orWhere('body', 'like', $like))
                 ->orderByDesc('published_at')->limit($limit(8))->get()
                 ->map(fn (NewsPost $p) => ['title' => $p->title, 'url' => $p->url(), 'excerpt' => $excerpt($p->excerpt ?: $p->body), 'meta' => $p->published_at?->translatedFormat('j F Y')]),
             'Événements' => Event::visible()
-                ->where(fn ($q) => $q->where('title', 'like', $like)->orWhere('summary', 'like', $like)->orWhere('description', 'like', $like))
+                ->where(fn ($q) => $q->where('title', 'like', $like)->orWhere('translations', 'like', $like)->orWhere('summary', 'like', $like)->orWhere('description', 'like', $like))
                 ->orderByDesc('starts_at')->limit($limit(5))->get()
                 ->map(fn (Event $e) => ['title' => $e->title, 'url' => $e->url(), 'excerpt' => $excerpt($e->summary), 'meta' => $e->starts_at->translatedFormat('j F Y')]),
             'Pages' => Page::visible()->where('key', '!=', 'home')
-                ->where(fn ($q) => $q->where('title', 'like', $like)->orWhere('summary', 'like', $like)->orWhere('blocks', 'like', $like))
+                ->where(fn ($q) => $q->where('title', 'like', $like)->orWhere('translations', 'like', $like)->orWhere('summary', 'like', $like)->orWhere('blocks', 'like', $like))
                 ->limit($limit(8))->get()
                 ->map(fn (Page $p) => ['title' => $p->title, 'url' => $p->url(), 'excerpt' => $excerpt($p->summary), 'meta' => null]),
         ])->filter(fn ($items) => $items->isNotEmpty());

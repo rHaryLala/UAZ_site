@@ -42,3 +42,15 @@ it('restores French typography (non-breaking spaces) from lang/fr.json', functio
     expect(__('Une question ?'))->toBe('A question?');
     app()->setLocale('fr');
 });
+
+it('translates every label of the navigation menus created by the site structure', function (string $locale) {
+    $this->seed(Database\Seeders\StructureSeeder::class);
+
+    $labels = App\Models\Menu::all()->flatMap(fn ($menu) => collect($menu->items)->flatMap(fn ($item) => [
+        $item['label'], ...collect($item['children'] ?? [])->pluck('label'),
+    ]))->unique()->values()->all();
+
+    $dictionary = App\Support\TranslationKeys::dictionary($locale);
+
+    expect(array_values(array_filter($labels, fn ($label) => ! array_key_exists($label, $dictionary))))->toBe([]);
+})->with(['en', 'mg']);

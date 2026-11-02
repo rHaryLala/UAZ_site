@@ -5,6 +5,7 @@ namespace App\Filament\Resources\TeamMembers;
 use App\Enums\TeamCategory;
 use App\Filament\Resources\TeamMembers\Pages\ManageTeamMembers;
 use App\Filament\Support\MediaPicker;
+use App\Filament\Support\TranslationSection;
 use App\Models\TeamMember;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -61,6 +62,7 @@ class TeamMemberResource extends Resource
             TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0)
                 ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             Toggle::make('is_active')->label('Affiché sur le site')->default(true),
+            TranslationSection::make(['job_title' => ['text', 'Fonction'], 'quote' => ['textarea', 'Citation'], 'bio' => ['textarea', 'Message aux lecteurs']]),
         ])->columns(2);
     }
 

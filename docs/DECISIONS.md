@@ -282,3 +282,18 @@ Six photos de chambres fournies par l'UAZ sont ajoutées au texte de la page (fi
 **Brouillon :** colonne `pages.draft` (titre, résumé, blocs). La page publiée n'est modifiée qu'à « Publier » (droit `content.publish` exigé pour une page publiée). Enregistrement automatique après 1,4 s d'inactivité ; historique de 120 étapes (annuler / rétablir) côté navigateur.
 **Pages sur mesure :** `VisualBlocks::BESPOKE_KEYS` liste les pages dont la mise en page est dessinée à la main (leur contenu ne vient pas des blocs) ; l'éditeur l'explique au lieu de risquer de les abîmer.
 **Suite possible (non faite) :** (1) rendre éditables les textes des pages sur mesure (surcharge des textes par clé, en commençant par À propos) ; (2) nouveaux blocs de mise en page (colonnes, espaceur, bouton, accordéon / FAQ, vidéo, héros avec image) ; (3) glisser les blocs directement sur la page ; (4) styles par bloc (fond, marges, alignement) ; (5) modèles de pages et blocs enregistrés ; (6) historique des versions publiées avec retour en arrière ; (7) édition à plusieurs (verrou par page).
+
+## D-047 · Site en anglais et en malagasy
+
+**Besoin :** versions anglaise et malagasy du site, sans casser les adresses françaises.
+**Décision :** préfixes `/en` et `/mg` (le français reste sans préfixe, adresses inchangées, slugs identiques dans toutes les langues). Les routes publiques
+sont enregistrées une fois par langue ; la langue courante préfixe la racine des URL générées (`URL::forceRootUrl`), si bien qu'aucun des 98 gabarits n'a
+eu à changer ses liens. Pas de redirection automatique selon le navigateur : la langue est celle de l'adresse (partageable, indexable), avec `hreflang`.
+**Interface :** dictionnaires `lang/{langue}.json` dont la clé est la phrase française (`__('Voir la formation')`) plutôt que des clés techniques :
+les vues restent lisibles et une phrase non traduite s'affiche en français. `php artisan i18n:check` et un test (`TranslationsTest`) garantissent
+qu'aucune phrase ni variable ne manque. Les fichiers par groupe (`lang/en/home.php`…) portent les longs textes éditoriaux.
+**Contenu :** colonne JSON `translations` + trait `HasTranslations` plutôt que `spatie/laravel-translatable` : les colonnes d'origine (français) ne changent pas,
+donc ni migration de données, ni requêtes, recherche, tris ou slugs à adapter ; repli automatique sur le français. Onglets « Traductions » dans les formulaires.
+**Pièges évités :** cache des menus par langue et par version du dictionnaire ; mises à jour Livewire sans préfixe mais langue rétablie (middleware persistant) ;
+météo en cache sans libellé ; `Locales::tr()` car `__('About')` ouvrait `lang/en/about.php` sous Windows ; espaces insécables français conservés via `lang/fr.json`.
+**À faire (voir TODO-CONTENU) :** relecture du malagasy par un locuteur natif ; traduction du contenu importé dans le back-office.

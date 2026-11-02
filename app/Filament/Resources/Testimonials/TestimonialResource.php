@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Testimonials;
 
 use App\Filament\Resources\Testimonials\Pages\ManageTestimonials;
 use App\Filament\Support\MediaPicker;
+use App\Filament\Support\TranslationSection;
 use App\Models\Testimonial;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -50,6 +51,7 @@ class TestimonialResource extends Resource
             TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0)
                 ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             Toggle::make('is_active')->label('Affiché sur le site')->default(true),
+            TranslationSection::make(['author_role' => ['text', 'Fonction'], 'quote' => ['textarea', 'Témoignage']]),
         ])->columns(2);
     }
 

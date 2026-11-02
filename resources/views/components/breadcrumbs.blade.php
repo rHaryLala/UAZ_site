@@ -3,7 +3,7 @@
 {{-- Fil d'Ariane : [['label' => 'Formations', 'url' => '/formations'], ['label' => 'Licence en Droit']] ; le dernier est la page courante. --}}
 @php
     // Les libellés écrits en français dans les vues sont traduits ici ; un titre de page déjà traduit reste tel quel.
-    $items = collect($items)->map(fn ($item) => ['label' => __($item['label'])] + $item)->all();
+    $items = collect($items)->map(fn ($item) => ['label' => \App\Support\Locales::tr($item['label'])] + $item)->all();
     $crumbs = collect([['label' => __('Accueil'), 'url' => url('/')], ...$items])->values();
     $jsonLd = [
         '@context' => 'https://schema.org',

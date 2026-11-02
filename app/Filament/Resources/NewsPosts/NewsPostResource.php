@@ -6,6 +6,7 @@ use App\Filament\Resources\NewsPosts\Pages\CreateNewsPost;
 use App\Filament\Resources\NewsPosts\Pages\EditNewsPost;
 use App\Filament\Resources\NewsPosts\Pages\ListNewsPosts;
 use App\Filament\Support\Layout;
+use App\Filament\Support\TranslationSection;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\PublicationSection;
 use App\Filament\Support\PublicationTable;
@@ -79,6 +80,7 @@ class NewsPostResource extends Resource
                         MediaPicker::make('cover_id', 'Image à la une'),
                         Rich::editor('body', 'Texte'),
                     ]),
+                    TranslationSection::make(['title' => ['text', 'Titre'], 'excerpt' => ['textarea', 'Chapô'], 'body' => ['rich', 'Texte de l\'article']]),
                 ],
                 side: [
                     PublicationSection::make(),

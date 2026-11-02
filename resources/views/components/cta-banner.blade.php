@@ -28,10 +28,10 @@
         @endif
         <div class="mt-10 flex flex-wrap justify-center gap-4" data-reveal data-reveal-delay="0.2">
             @if ($primary)
-                <x-button :href="$primary['url']" variant="gold" arrow>{{ __($primary['label']) }}</x-button>
+                <x-button :href="$primary['url']" variant="gold" arrow>{{ \App\Support\Locales::tr($primary['label']) }}</x-button>
             @endif
             @if ($secondary)
-                <x-button :href="$secondary['url']" variant="outline">{{ __($secondary['label']) }}</x-button>
+                <x-button :href="$secondary['url']" variant="outline">{{ \App\Support\Locales::tr($secondary['label']) }}</x-button>
             @endif
             {{ $slot }}
         </div>

@@ -97,8 +97,13 @@ it('translates menu labels with the dictionary of the language and caches menus 
     $fr = $this->get('/formations')->getContent();
     $en = $this->get('/en/formations')->getContent();
 
-    expect($fr)->toContain('Formations')->and($en)->not->toBe($fr);
-    expect(Cache::has('menu.header.fr'))->toBeTrue()->and(Cache::has('menu.header.en'))->toBeTrue();
+    $this->get('/mg/formations')->assertOk()->assertSee('Fianarana');
+
+    // Le menu « header » (Vie étudiante, À propos…) est traduit, et chaque langue a son cache, daté par son dictionnaire.
+    expect($fr)->toContain('Vie étudiante')->and($en)->toContain('Student life')->not->toContain('Vie étudiante</');
+    foreach (['fr', 'en', 'mg'] as $code) {
+        expect(Cache::has("menu.header.$code.".filemtime(lang_path("$code.json"))))->toBeTrue("menu en cache pour $code");
+    }
 });
 
 /** Adresse du site sans préfixe de langue (le préfixe forcé par une requête /en reste actif après elle). */
@@ -108,3 +113,18 @@ function u(string $path): string
 
     return url($path);
 }
+
+it('never returns a language file when a title looks like its name (About, Home, Support)', function () {
+    app()->setLocale('en');
+
+    expect(Locales::tr('About'))->toBeString()->toBe('About')
+        ->and(Locales::tr('Support'))->toBeString()
+        ->and(Locales::tr(null))->toBe('');
+    app()->setLocale('fr');
+});
+
+it('serves the English About page, whose translated title is "About"', function () {
+    $this->seed(Database\Seeders\ContentTranslationsSeeder::class);
+    $this->get('/en/a-propos')->assertOk()->assertSee('<html lang="en"', false);
+    $this->get('/mg/a-propos')->assertOk();
+});

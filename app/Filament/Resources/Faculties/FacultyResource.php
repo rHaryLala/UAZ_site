@@ -7,6 +7,7 @@ use App\Filament\Resources\Faculties\Pages\ManageFaculties;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\PublicationTable;
 use App\Filament\Support\Rich;
+use App\Filament\Support\TranslationSection;
 use App\Filament\Support\SlugField;
 use App\Models\Faculty;
 use BackedEnum;
@@ -56,6 +57,7 @@ class FacultyResource extends Resource
                 ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             SlugField::make(),
             Toggle::make('is_active')->label('Affichée sur le site')->default(true),
+            TranslationSection::make(['name' => ['text', 'Nom'], 'summary' => ['textarea', 'Résumé'], 'description' => ['rich', 'Présentation']]),
         ])->columns(2);
     }
 

@@ -13,6 +13,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Support\TranslationSection;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -70,6 +71,7 @@ class MediaAssetResource extends Resource
                 TextInput::make('caption')->label('Légende')->maxLength(500),
                 TextInput::make('credit')->label('Crédit photo')->maxLength(255),
             ])->columns(2),
+            TranslationSection::make(['alt' => ['text', 'Texte alternatif'], 'title' => ['text', 'Titre'], 'caption' => ['text', 'Légende']]),
         ]);
     }
 

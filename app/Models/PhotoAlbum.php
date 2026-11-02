@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,10 @@ use Spatie\Sluggable\SlugOptions;
 #[Fillable(['title', 'slug', 'description', 'cover_id', 'taken_on', 'status', 'published_at', 'user_id'])]
 class PhotoAlbum extends Model
 {
-    use HasFactory, HasSlug, Publishable;
+    use HasFactory, HasSlug, Publishable, HasTranslations;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['title', 'description'];
 
     protected function casts(): array
     {

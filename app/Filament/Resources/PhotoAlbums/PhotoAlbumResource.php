@@ -6,6 +6,7 @@ use App\Filament\Resources\PhotoAlbums\Pages\CreatePhotoAlbum;
 use App\Filament\Resources\PhotoAlbums\Pages\EditPhotoAlbum;
 use App\Filament\Resources\PhotoAlbums\Pages\ListPhotoAlbums;
 use App\Filament\Support\Layout;
+use App\Filament\Support\TranslationSection;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\PublicationSection;
 use App\Filament\Support\PublicationTable;
@@ -84,6 +85,7 @@ class PhotoAlbumResource extends Resource
                             ->itemLabel(fn (array $state): ?string => filled($state['media_asset_id'] ?? null)
                                 ? MediaAsset::find($state['media_asset_id'])?->label() : null),
                     ]),
+                    TranslationSection::make(['title' => ['text', 'Titre'], 'description' => ['textarea', 'Description']]),
                 ],
                 side: [
                     PublicationSection::make('Date de mise en ligne'),

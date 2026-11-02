@@ -29,7 +29,10 @@ class Menu extends Model
     /** Un cache par langue : les adresses sont préfixées (/en, /mg) et les libellés traduits. */
     private static function cacheKey(string $handle, ?string $locale = null): string
     {
-        return "menu.$handle.".($locale ?? app()->getLocale());
+        $locale ??= app()->getLocale();
+
+        // La date du dictionnaire fait partie de la clé : une traduction mise à jour au déploiement s'applique sans vider le cache.
+        return "menu.$handle.$locale.".@filemtime(lang_path($locale.'.json'));
     }
 
     private static function forget(string $handle): void
@@ -72,7 +75,7 @@ class Menu extends Model
 
                 return [
                     // Les libellés sont du français : le dictionnaire de la langue (lang/{langue}.json) les traduit.
-                    'label' => __($item['label']),
+                    'label' => \App\Support\Locales::tr($item['label']),
                     'url' => str_starts_with($url, '/') ? url($url) : $url,
                     'new_tab' => (bool) ($item['new_tab'] ?? false),
                     'children' => collect($item['children'] ?? [])->map($resolve)->filter()->values()->all(),

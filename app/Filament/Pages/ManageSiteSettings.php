@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Support\MediaPicker;
+use App\Filament\Support\TranslationSection;
 use App\Models\SiteSetting;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -103,6 +104,17 @@ class ManageSiteSettings extends Page
                         Textarea::make('footer_text')->label('Texte de présentation')->rows(3)->maxLength(500)->columnSpanFull(),
                         TextInput::make('footer_legal')->label('Mention légale')->maxLength(255)
                             ->placeholder('© Université Adventiste Zurcher')->columnSpanFull(),
+                    ]),
+                    Tab::make('Traductions')->icon(Heroicon::OutlinedLanguage)->schema([
+                        TranslationSection::make([
+                            'tagline' => ['text', 'Slogan'],
+                            'home_hero_title' => ['text', 'Accueil : titre principal'],
+                            'home_hero_subtitle' => ['textarea', 'Accueil : sous-titre'],
+                            'key_figures' => ['labels', 'Accueil : libellés des chiffres clés'],
+                            'opening_hours' => ['hours', 'Horaires d\'ouverture'],
+                            'footer_text' => ['textarea', 'Pied de page : texte de présentation'],
+                            'footer_legal' => ['text', 'Pied de page : mention légale'],
+                        ], fn () => SiteSetting::current())->collapsed(false),
                     ]),
                 ])->columnSpanFull(),
             ]);

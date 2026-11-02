@@ -44,6 +44,7 @@ final class JsStrings
         'demain',
         'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi',
         'Horaires indisponibles',
+        ':status (heure de Madagascar)',
         'Horaires du :day non communiqués',
         ':status · jusqu\'à :time',
         ':status · reprend à :time',

@@ -7,6 +7,7 @@ use App\Filament\Resources\Formations\Pages\CreateFormation;
 use App\Filament\Resources\Formations\Pages\EditFormation;
 use App\Filament\Resources\Formations\Pages\ListFormations;
 use App\Filament\Support\Layout;
+use App\Filament\Support\TranslationSection;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\PublicationSection;
 use App\Filament\Support\PublicationTable;
@@ -70,6 +71,7 @@ class FormationResource extends Resource
                             Rich::editor('admission_requirements', 'Conditions d\'admission'),
                         ]),
                     ])->columnSpanFull(),
+                    TranslationSection::make(['title' => ['text', 'Intitulé de la formation'], 'mention' => ['text', 'Mention'], 'duration' => ['text', 'Durée'], 'summary' => ['textarea', 'Résumé'], 'description' => ['rich', 'Description'], 'career_prospects' => ['rich', 'Débouchés professionnels'], 'admission_requirements' => ['rich', 'Conditions d\'admission']]),
                 ],
                 side: [
                     PublicationSection::make(),

@@ -273,3 +273,16 @@ Sur la page de modification d'une page, le bouton **Éditeur visuel** ouvre la p
 - **Qui peut publier** : seules les personnes qui ont le droit de publier. Un contributeur garde son brouillon.
 
 **Limite actuelle :** les pages à mise en page dessinée sur mesure (Accueil, À propos, Soutenir, Bibliothèque, Cafétéria, Dortoirs, Admission Licence et Master, Frais académiques) ne sont pas faites de blocs : l'éditeur visuel affiche une explication et renvoie au formulaire classique. Leurs textes se trouvent dans le code du site.
+
+## Traduire un contenu (anglais et malagasy)
+
+Le site est disponible en français, en anglais (`/en`) et en malagasy (`/mg`). Sur chaque fiche (page, formation, actualité, événement, album, équipe,
+témoignage, projet, faculté, image), le bloc **Traductions** (replié, sous le contenu) propose un onglet par langue.
+
+- Écrivez dans l'onglet de la langue : le texte français d'origine est rappelé sous chaque champ.
+- **Un champ laissé vide s'affiche en français** sur le site : vous pouvez traduire progressivement.
+- Les adresses (liens) ne changent pas : seule la langue du texte change.
+- Pour une **page**, l'onglet contient les mêmes blocs que le contenu français : traduisez chaque bloc, dans le même ordre.
+- **Réglages du site** → onglet **Traductions** : slogan, titre et sous-titre de l'accueil, libellés des chiffres clés, horaires, pied de page.
+- **Images** : traduisez le texte alternatif (lu par les lecteurs d'écran) dans la fiche de l'image de la médiathèque.
+- Les libellés des **menus** se traduisent dans le code (`lang/en.json`, `lang/mg.json`) : demandez-le à l'équipe technique avant d'ajouter une rubrique.

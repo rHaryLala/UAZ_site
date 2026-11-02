@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Enums\FacultyType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +16,12 @@ use Spatie\Sluggable\SlugOptions;
 #[Fillable(['name', 'slug', 'type', 'summary', 'description', 'cover_id', 'sort_order', 'is_active'])]
 class Faculty extends Model
 {
-    use HasFactory, HasSlug;
+    use HasFactory, HasSlug, HasTranslations;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['name', 'summary', 'description'];
+
+    protected array $translatableRich = ['description'];
 
     protected function casts(): array
     {

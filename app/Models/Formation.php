@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Enums\FormationLevel;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\Publishable;
@@ -19,7 +20,12 @@ use Spatie\Sluggable\SlugOptions;
 ])]
 class Formation extends Model
 {
-    use HasFactory, HasSeo, HasSlug, Publishable;
+    use HasFactory, HasSeo, HasSlug, Publishable, HasTranslations;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['title', 'mention', 'duration', 'summary', 'description', 'career_prospects', 'admission_requirements', 'seo_title', 'seo_description'];
+
+    protected array $translatableRich = ['description', 'career_prospects', 'admission_requirements'];
 
     protected function casts(): array
     {

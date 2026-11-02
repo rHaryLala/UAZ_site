@@ -52,14 +52,10 @@ sont portés par un scope commun `published()`.
 - Uploads limités par type MIME et taille (`config/uaz.php`), originaux redimensionnés à 2560 px.
 - Contenu riche nettoyé à l'import et échappé à l'affichage ; en-têtes de sécurité et CSP en phase 6.
 
-## Internationalisation (préparation)
+## Internationalisation
 
-- `config/uaz.php` déclare `locales` (aujourd'hui `['fr']`) et `default_locale`.
-- Toutes les chaînes d'interface passent par `__()` / fichiers `lang/fr`; l'ajout de `lang/en` suffira.
-- Pour les contenus, un champ traduisible (JSON par langue) sera introduit en ajoutant `spatie/laravel-translatable`
-  aux modèles concernés : les colonnes texte sont déjà isolées (pas de logique métier dedans).
-- Les routes publiques passeront sous un préfixe `/{locale}` uniquement pour les langues autres que la
-  langue par défaut, afin de ne pas casser les URLs françaises.
+Français (défaut, sans préfixe), anglais (`/en`) et malagasy (`/mg`) : voir **docs/I18N.md** (adresses, dictionnaires
+`lang/{langue}.json`, trait `HasTranslations` et colonne JSON `translations`, commande `php artisan i18n:check`).
 
 ## Site public (phase 4)
 

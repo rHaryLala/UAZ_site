@@ -18,10 +18,10 @@ class PageBlocks
 {
     public const TYPES = ['rich_text', 'image', 'gallery', 'quote', 'cta', 'key_figures', 'card_list', 'download_list'];
 
-    public static function builder(): Builder
+    public static function builder(string $name = 'blocks', string $label = 'Contenu de la page'): Builder
     {
-        return Builder::make('blocks')
-            ->label('Contenu de la page')
+        return Builder::make($name)
+            ->label($label)
             ->addActionLabel('Ajouter un bloc')
             ->collapsible()
             ->cloneable()

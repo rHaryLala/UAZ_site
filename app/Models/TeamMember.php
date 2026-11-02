@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Enums\TeamCategory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,7 +13,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['faculty_id', 'name', 'job_title', 'category', 'bio', 'quote', 'email', 'phone', 'photo_id', 'sort_order', 'is_active'])]
 class TeamMember extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['job_title', 'bio', 'quote'];
 
     protected function casts(): array
     {

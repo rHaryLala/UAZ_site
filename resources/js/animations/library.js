@@ -405,7 +405,7 @@ function initHours() {
 
         const result = describeStatus(schedules[active], now, subjects[active]);
         status.dataset.state = result.state;
-        statusText.textContent = `${result.text} (heure de Madagascar)`;
+        statusText.textContent = t(':status (heure de Madagascar)', { status: result.text });
     };
 
     const show = (key, focus = false) => {

@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             AdminUserSeeder::class,
             StructureSeeder::class,
+            ContentTranslationsSeeder::class,
         ]);
 
         // Contenus factices uniquement en développement local.

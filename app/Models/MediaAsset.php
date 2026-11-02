@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\HasUazMedia;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 #[Fillable(['title', 'alt', 'caption', 'credit'])]
 class MediaAsset extends Model implements HasMedia
 {
-    use HasFactory, HasUazMedia;
+    use HasFactory, HasTranslations, HasUazMedia;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['title', 'alt', 'caption'];
 
     public const COLLECTION = 'file';
 

@@ -39,6 +39,18 @@ final class Locales
         return ($locale ?? self::current()) === self::default();
     }
 
+    /**
+     * Traduit un texte dont on ne connaît pas la valeur à l'avance (libellé de menu, de fil d'Ariane, titre de rubrique).
+     * Contrairement à __(), ne renvoie jamais un fichier de groupe (« About » ouvrirait lang/en/about.php sous Windows).
+     */
+    public static function tr(?string $text): string
+    {
+        $text = (string) $text;
+        $translated = $text === '' ? $text : __($text);
+
+        return is_string($translated) ? $translated : $text;
+    }
+
     /** Heure affichée selon la langue : « 14h30 » en français, « 14:30 » ailleurs. */
     public static function time(\DateTimeInterface $date): string
     {

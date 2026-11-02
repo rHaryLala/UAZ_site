@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['author_name', 'author_role', 'quote', 'video_url', 'photo_id', 'sort_order', 'is_active'])]
 class Testimonial extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['author_role', 'quote'];
 
     protected function casts(): array
     {

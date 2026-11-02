@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,12 @@ use Spatie\Sluggable\SlugOptions;
 #[Fillable(['title', 'slug', 'summary', 'body', 'cover_id', 'location', 'budget', 'status_label', 'url', 'sort_order', 'is_active'])]
 class Project extends Model
 {
-    use HasFactory, HasSlug;
+    use HasFactory, HasSlug, HasTranslations;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['title', 'summary', 'body', 'location', 'budget', 'status_label'];
+
+    protected array $translatableRich = ['body'];
 
     protected function casts(): array
     {

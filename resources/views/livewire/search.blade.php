@@ -21,7 +21,7 @@
 
     @foreach ($results as $group => $items)
         <section class="mb-12" aria-labelledby="group-{{ \Illuminate\Support\Str::slug($group) }}">
-            <h2 id="group-{{ \Illuminate\Support\Str::slug($group) }}" class="eyebrow mb-4">{{ __($group) }}</h2>
+            <h2 id="group-{{ \Illuminate\Support\Str::slug($group) }}" class="eyebrow mb-4">{{ \App\Support\Locales::tr($group) }}</h2>
             <ul class="divide-y divide-paper-300 rounded-card bg-paper-50 shadow-card">
                 @foreach ($items as $item)
                     <li>

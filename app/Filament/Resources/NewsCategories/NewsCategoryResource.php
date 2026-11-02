@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NewsCategories;
 
 use App\Filament\Resources\NewsCategories\Pages\ManageNewsCategories;
 use App\Filament\Support\SlugField;
+use App\Filament\Support\TranslationSection;
 use App\Models\NewsCategory;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -40,6 +41,7 @@ class NewsCategoryResource extends Resource
         return $schema->components([
             TextInput::make('name')->label('Nom')->required()->maxLength(120),
             SlugField::make(),
+            TranslationSection::make(['name' => ['text', 'Nom']]),
         ]);
     }
 

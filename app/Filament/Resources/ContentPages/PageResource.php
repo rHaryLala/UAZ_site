@@ -6,6 +6,7 @@ use App\Filament\Resources\ContentPages\Pages\CreatePage;
 use App\Filament\Resources\ContentPages\Pages\EditPage;
 use App\Filament\Resources\ContentPages\Pages\ListPages;
 use App\Filament\Support\Layout;
+use App\Filament\Support\TranslationSection;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\PageBlocks;
 use App\Filament\Support\PublicationSection;
@@ -59,6 +60,7 @@ class PageResource extends Resource
                         MediaPicker::make('cover_id', 'Image d\'en-tête'),
                     ]),
                     PageBlocks::builder(),
+                    TranslationSection::make(['title' => ['text', 'Titre'], 'summary' => ['textarea', 'Résumé'], 'blocks' => ['blocks', 'Contenu de la page']]),
                 ],
                 side: [
                     PublicationSection::make(),

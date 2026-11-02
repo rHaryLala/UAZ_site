@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +16,14 @@ use Illuminate\Support\Facades\Cache;
 ])]
 class SiteSetting extends Model
 {
+    use HasTranslations;
+
+    /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
+    protected array $translatable = ['tagline', 'footer_text', 'footer_legal', 'home_hero_title', 'home_hero_subtitle', 'key_figures', 'opening_hours'];
+
+    /** Listes dont la traduction ne remplace que les textes (libellés) : valeurs et suffixes viennent de l'original. */
+    protected array $translatableMerge = ['key_figures', 'opening_hours'];
+
     private const CACHE_KEY = 'site-settings';
 
     protected function casts(): array

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Projects;
 use App\Filament\Resources\Projects\Pages\ManageProjects;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\Rich;
+use App\Filament\Support\TranslationSection;
 use App\Models\Project;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -56,6 +57,7 @@ class ProjectResource extends Resource
             TextInput::make('sort_order')->label('Ordre d\'affichage')->numeric()->default(0)->minValue(0)
                 ->helperText('Les nombres les plus petits s\'affichent en premier.'),
             Toggle::make('is_active')->label('Affiché sur le site')->default(true),
+            TranslationSection::make(['title' => ['text', 'Titre'], 'summary' => ['textarea', 'Résumé'], 'body' => ['rich', 'Présentation du projet'], 'location' => ['text', 'Lieu'], 'budget' => ['text', 'Montant'], 'status_label' => ['text', 'Avancement']]),
         ])->columns(2);
     }
 

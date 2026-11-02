@@ -19,7 +19,7 @@ final class Translated
             return collect($data)->map(fn ($value, $k) => self::deep($value, is_string($k) ? $k : $key))->all();
         }
 
-        return is_string($data) && ! in_array($key, self::KEEP, true) && self::isText($data) ? __($data) : $data;
+        return is_string($data) && ! in_array($key, self::KEEP, true) && self::isText($data) ? Locales::tr($data) : $data;
     }
 
     /** @return list<string> Les textes à traduire d'un tableau de données (pour l'inventaire des traductions). */
