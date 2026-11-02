@@ -52,7 +52,7 @@
                 @elseif ($topbarCta)
                     <a href="{{ $topbarCta['url'] }}" class="rounded-full bg-sun-400 px-3 py-1 font-semibold text-night-900 hover:text-night-900! hover:bg-sun-300" @if ($topbarCta['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $topbarCta['label'] }}</a>
                 @endif
-                <x-site.language-switcher class="border-l border-white/20 pl-4" />
+                <x-site.language-switcher dropdown class="border-l border-white/20 pl-4" />
             </nav>
         </div>
     </div>
