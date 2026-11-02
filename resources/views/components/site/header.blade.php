@@ -59,7 +59,7 @@
 
     <header x-bind:data-scrolled="scrolled" x-bind:data-dark="dark" class="site-header sticky top-0 z-50">
         <div class="container-site flex h-[var(--header-h)] items-center justify-between gap-6">
-            <a href="{{ url('/') }}" class="flex items-center gap-3.5" aria-label="{{ __(':name — accueil', ['name' => __('Université Adventiste').' Zurcher']) }}">
+            <a href="{{ url('/') }}" class="flex shrink-0 items-center gap-3.5" aria-label="{{ __(':name — accueil', ['name' => __('Université Adventiste').' Zurcher']) }}">
                 <x-seal :size="56" eager class="size-11 md:size-14" />
                 <span class="leading-none">
                     {{-- « Université Adventiste » est justifié sur la largeur de « ZURCHER » (w-0 min-w-full : il ne l'élargit jamais). --}}
@@ -68,10 +68,10 @@
                 </span>
             </a>
 
-            <div class="flex items-center gap-3 sm:gap-7">
-                {{-- Navigation principale (grands écrans) --}}
-                <nav aria-label="{{ __('Navigation principale') }}" class="hidden xl:block">
-                    <ul class="flex items-center gap-7">
+            <div class="flex items-center gap-3 sm:gap-4">
+                {{-- Navigation principale : six rubriques, affichées dès 1340 px (les libellés malgaches sont les plus longs) ; en dessous, le bouton « Menu » --}}
+                <nav aria-label="{{ __('Navigation principale') }}" class="hidden min-[1340px]:block">
+                    <ul class="flex items-center gap-5">
                         @foreach ($headerMenu as $item)
                             <li class="group relative">
                                 @if (count($item['children']))

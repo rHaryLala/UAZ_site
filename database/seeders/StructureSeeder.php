@@ -259,10 +259,14 @@ class StructureSeeder extends Seeder
                 $url('Formations', '/formations'),
                 array_merge($url('Admissions', '#'), ['children' => [
                     $page('Licence', 'licence'), $page('Master', 'master'),
-                    $page('Frais académiques', 'fees'), $page('Téléchargements', 'downloads'),
+                    $page('Frais académiques', 'fees'),
                 ]]),
                 array_merge($url('Vie étudiante', '#'), ['children' => [
                     $page('Bibliothèque', 'library'), $page('Cafétéria', 'cafeteria'), $page('Dortoirs', 'dorms'),
+                ]]),
+                array_merge($url('Ressources', '#'), ['children' => [
+                    $page('Téléchargements', 'downloads'), $url('Galerie', '/galerie'),
+                    $page('Emplois du temps', 'timetables'), $url('Événements', '/evenements'),
                 ]]),
                 $page('Centre de recherche', 'research'),
                 $page('À propos', 'about'),

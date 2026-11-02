@@ -33,10 +33,15 @@ it('keeps the seeded header menu resolvable with sub-menus', function () {
     $tree = Menu::resolved('header');
     $admissions = collect($tree)->firstWhere('label', 'Admissions');
 
-    expect($tree)->toHaveCount(5)
+    $resources = collect($tree)->firstWhere('label', 'Ressources');
+
+    expect($tree)->toHaveCount(6)
         ->and($admissions['url'])->toBe('#')
         ->and(collect($admissions['children'])->pluck('label')->all())
-        ->toBe(['Licence', 'Master', 'Frais académiques', 'Téléchargements']);
+        ->toBe(['Licence', 'Master', 'Frais académiques'])
+        ->and($resources['url'])->toBe('#')
+        ->and(collect($resources['children'])->pluck('label')->all())
+        ->toBe(['Téléchargements', 'Galerie', 'Emplois du temps', 'Événements']);
 });
 
 it('imports URL-MAP.csv idempotently and skips pattern rows', function () {

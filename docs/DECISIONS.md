@@ -327,3 +327,10 @@ au moins deux projets ont un budget dans la même unité (le premier nombre du c
 héros, la porte et l'invitation). Contacts : `config/uaz.php` (`donation_contacts`).
 **Accessibilité et mouvement :** base complète sans JavaScript ; mouvement réduit = tout visible, mur complet, rien d'épinglé ; mobile sans épinglage.
 Audit axe-core sans violation (fr, en, mg et fiche projet). Tests : `SupportPageTest`, `tests/e2e/support.mjs`.
+
+## D-050 · Rubrique « Ressources » dans le menu principal
+
+**Besoin :** regrouper les pages de service dans le menu du haut : Téléchargements, Galerie, Emplois du temps, Événements.
+**Décision :** nouvelle entrée « Ressources » (liste déroulante, sans page parent), placée après « Vie étudiante ». « Téléchargements » y est rangé et quitte « Admissions » (un seul emplacement). Menu « header » du seeder + migration `add_resources_to_header_menu` pour les sites déjà installés (idempotente, réversible, ne touche pas un menu qui a déjà la rubrique). Les libellés existaient déjà en anglais et en malagasy ; le menu reste modifiable dans le back-office (Menus).
+**Largeur :** avec six rubriques, la navigation horizontale s'affiche dès 1340 px (au lieu de 1280) avec des espaces resserrés ; en dessous, le bouton « Menu » (plein écran) montre aussi la rubrique. Le logo ne rétrécit plus (`shrink-0`). Mesuré en fr, en et mg de 1340 à 1536 px : ni chevauchement ni défilement horizontal.
+Tests : `StructureAndRedirectImportTest` (menu semé), `ResourcesMenuMigrationTest`.
