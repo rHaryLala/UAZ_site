@@ -5,6 +5,7 @@
 @import './dormitories.css';
 @import './admissions.css';
 @import './fees.css';
+@import './research.css';
 
 @plugin '@tailwindcss/typography';
 

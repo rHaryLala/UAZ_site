@@ -1,0 +1,467 @@
+/*
+ * Page « Centre de recherche » (resources/views/pages/research.blade.php, animations : resources/js/animations/research.js).
+ * Identité d'observatoire : nuit bleue, turquoise (les liens du réseau) et or (les points marquants).
+ * Base complète et lisible sans JavaScript ni animation ; le script ajoute `res-ready` pour les états initiaux.
+ */
+:root {
+    --res-night: #060f20;
+    --res-deep: #0b1d3a;
+    --res-teal: #58d6c7;
+    --res-gold: #f0b44c;
+    --res-ice: #d8e8f5;
+    --res-paper: #f3f6f9;
+    --res-ink: #0e1c33;
+}
+
+.js:not(.res-ready) [data-res-hide] {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 3s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .js:not(.res-ready) [data-res-hide] {
+        opacity: 1;
+        animation: none;
+    }
+}
+
+.res-h2 {
+    max-width: 18ch;
+    font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--res-ink);
+    text-wrap: balance;
+}
+
+/* ───────── 1. L'observatoire ───────── */
+.res-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-height: min(90svh, 54rem);
+    overflow: hidden;
+    padding: 2.5rem 0 clamp(3rem, 7vw, 6rem);
+    background:
+        radial-gradient(54rem 34rem at 78% 28%, rgb(88 214 199 / 0.17), transparent 70%),
+        radial-gradient(40rem 26rem at 8% 92%, rgb(240 180 76 / 0.1), transparent 70%),
+        linear-gradient(180deg, var(--res-night), var(--res-deep));
+    color: #fff;
+}
+
+.res-hero__grid {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image: linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+    mask-image: radial-gradient(70% 80% at 60% 40%, #000, transparent 85%);
+}
+
+.res-net {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.res-net line {
+    stroke: rgb(88 214 199 / 0.34);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+}
+
+.res-net circle {
+    fill: var(--res-teal);
+    filter: drop-shadow(0 0 6px rgb(88 214 199 / 0.8));
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.res-net circle.is-gold {
+    fill: var(--res-gold);
+    filter: drop-shadow(0 0 8px rgb(240 180 76 / 0.85));
+}
+
+.res-hero__body {
+    margin-top: auto;
+    padding-top: 6rem;
+}
+
+.res-sigil {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-bottom: 1.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--res-teal);
+}
+
+.res-sigil__ring {
+    position: absolute;
+    inset: 0;
+    border: 1px dashed rgb(88 214 199 / 0.7);
+    border-radius: 50%;
+}
+
+.res-sigil__ring::after {
+    content: '';
+    position: absolute;
+    top: -0.2rem;
+    left: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--res-gold);
+    box-shadow: 0 0 10px var(--res-gold);
+}
+
+.res-title {
+    max-width: 12ch;
+    font-size: clamp(3rem, 1.2rem + 6.4vw, 7.5rem);
+    font-weight: 400;
+    line-height: 0.98;
+    color: #fff !important;
+    text-wrap: balance;
+}
+
+.res-title .word {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.res-title .char {
+    display: inline-block;
+}
+
+.res-lead {
+    margin-top: 1.75rem;
+    max-width: 32rem;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: rgb(216 232 245 / 0.9);
+}
+
+.res-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--res-teal);
+}
+
+.res-cue span {
+    position: relative;
+    display: block;
+    width: 1px;
+    height: 3rem;
+    overflow: hidden;
+    background: rgb(255 255 255 / 0.25);
+}
+
+.res-cue span::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 50%;
+    background: var(--res-gold);
+    animation: scroll-cue 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .res-cue span::after {
+        animation: none;
+    }
+}
+
+/* ───────── 2. La phrase ───────── */
+.res-statement {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: 70svh;
+    padding: clamp(5rem, 11vw, 9rem) 0;
+    background: linear-gradient(180deg, var(--res-deep), var(--res-night));
+    color: #fff;
+}
+
+.res-quote {
+    max-width: 22ch;
+    font-family: var(--font-serif);
+    font-size: clamp(1.9rem, 1rem + 3.9vw, 4.4rem);
+    line-height: 1.16;
+    color: #fff;
+    text-wrap: balance;
+}
+
+.res-quote .word {
+    display: inline-block;
+}
+
+.res-thread {
+    display: block;
+    width: min(100%, 60rem);
+    height: 2.5rem;
+    margin-top: 3rem;
+}
+
+.res-thread path {
+    stroke: var(--res-teal);
+    stroke-width: 2;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 6px rgb(88 214 199 / 0.7));
+}
+
+/* ───────── 3. Les personnes ───────── */
+.res-people {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: var(--res-paper);
+}
+
+.res-people__list {
+    display: grid;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+@media (min-width: 768px) {
+    .res-people__list {
+        grid-template-columns: repeat(auto-fit, minmax(0, 22rem));
+        gap: 2.5rem;
+    }
+}
+
+.res-person {
+    position: relative;
+    background: #fff;
+    box-shadow: 0 1px 0 rgb(14 28 51 / 0.06), 0 18px 40px -24px rgb(14 28 51 / 0.35);
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.4s;
+}
+
+.res-person:hover {
+    box-shadow: 0 1px 0 rgb(14 28 51 / 0.06), 0 28px 50px -22px rgb(14 28 51 / 0.45);
+}
+
+.res-person__photo {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--res-deep), var(--res-night));
+}
+
+.res-person__photo picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.res-person__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.res-person__mono {
+    font-family: var(--font-serif);
+    font-size: 5rem;
+    color: var(--res-gold);
+}
+
+.res-person__text {
+    position: relative;
+    padding: 1.4rem 1.5rem 1.7rem;
+    border-top: 3px solid var(--res-teal);
+}
+
+.res-person__name {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    line-height: 1.2;
+    color: var(--res-ink);
+}
+
+.res-person__role {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: #44546b;
+}
+
+/* ───────── 4. Le domaine ───────── */
+.res-domain {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: #fff;
+}
+
+.res-domain__lead {
+    margin-top: 1.5rem;
+    max-width: 38rem;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #33445c;
+}
+
+.res-domain__hint {
+    margin-top: 3rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #44546b;
+}
+
+.res-chain {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 3rem;
+    margin: 1.5rem 0 0;
+    padding: 2.25rem 0 0;
+    list-style: none;
+}
+
+.res-chain::before {
+    content: '';
+    position: absolute;
+    top: 0.45rem;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--res-teal), rgb(88 214 199 / 0.15));
+    transform: scaleX(var(--res-line, 1));
+    transform-origin: left center;
+}
+
+.res-chain__link {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-serif);
+    font-size: clamp(1.4rem, 1rem + 1.6vw, 2.2rem);
+    line-height: 1.2;
+    color: var(--res-ink);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.res-chain__link:hover,
+.res-chain__link:focus-visible {
+    color: #167a70;
+}
+
+.res-chain__dot {
+    position: absolute;
+    top: -2.2rem;
+    left: 0;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    background: var(--res-gold);
+    box-shadow: 0 0 0 5px rgb(240 180 76 / 0.22);
+}
+
+/* ───────── 5. Le Master ───────── */
+.res-master {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(5rem, 10vw, 9rem) 0;
+    background: linear-gradient(135deg, #0d3b44, var(--res-night));
+    color: #fff;
+}
+
+.res-master__net {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.res-master__net line {
+    stroke: rgb(88 214 199 / 0.28);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.res-master__net circle {
+    fill: var(--res-teal);
+}
+
+.res-master__title {
+    font-size: clamp(3.5rem, 1rem + 8vw, 8.5rem);
+    font-weight: 400;
+    line-height: 0.95;
+    color: #fff !important;
+}
+
+.res-master__text {
+    margin-top: 1.75rem;
+    max-width: 34rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 1rem + 1.2vw, 2rem);
+    line-height: 1.4;
+    color: var(--res-ice);
+}
+
+/* ───────── 6. La suite ───────── */
+.res-more {
+    padding: clamp(3.5rem, 7vw, 6rem) 0;
+    background: var(--res-paper);
+}
+
+.res-soon {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    max-width: 40rem;
+    margin-inline: auto;
+    font-family: var(--font-serif);
+    font-size: clamp(1.15rem, 1rem + 0.7vw, 1.5rem);
+    line-height: 1.5;
+    color: #33445c;
+}
+
+.res-soon__dot {
+    flex: none;
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-top: 0.65rem;
+    border-radius: 50%;
+    background: var(--res-gold);
+    box-shadow: 0 0 0 6px rgb(240 180 76 / 0.25);
+}
+
+/* ───────── 7. L'invitation ───────── */
+.res-invite {
+    padding: clamp(5rem, 11vw, 10rem) 0;
+    background: var(--res-night);
+    color: #fff;
+}
+
+.res-invite__text {
+    max-width: 18ch;
+    font-size: clamp(2.2rem, 1rem + 5vw, 5.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: #fff !important;
+    text-wrap: balance;
+}
+
+.res-invite__text .word {
+    display: inline-block;
+}

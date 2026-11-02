@@ -69,6 +69,30 @@ class PageController extends Controller
             ]);
         }
 
+        // Centre de recherche : mise en page immersive bâtie sur les seuls faits publiés (l'équipe du centre, le domaine de son directeur, la
+        // présentation des parcours). Les blocs de la page ajoutés dans le back-office s'affichent à la fin ; ceux qui portent encore la
+        // mention TODO-CONTENU (texte d'attente à l'usage de l'équipe) ne sont jamais montrés au public.
+        if ($page->key === 'research') {
+            $members = \App\Models\TeamMember::active()->with('photo.media')->where('job_title', 'like', '%Centre de recherche%')->get()
+                ->sortBy(fn ($member) => str_starts_with(mb_strtolower($member->getRawOriginal('job_title')), 'directeur') ? 0 : 1)->values();
+
+            // Le domaine est celui que nomme la fonction du directeur (« … / Responsable domaine Sciences Sociales »).
+            $director = $members->first(fn ($member) => str_starts_with(mb_strtolower($member->getRawOriginal('job_title')), 'directeur'));
+            $domain = $director
+                ? \App\Models\Faculty::query()->where('is_active', true)->get()
+                    ->first(fn ($faculty) => str_contains(mb_strtolower($director->getRawOriginal('job_title')), mb_strtolower($faculty->getRawOriginal('name'))))
+                : null;
+            $domain?->load(['formations' => fn ($query) => $query->visible()->orderBy('sort_order')->orderBy('title')]);
+
+            return view('pages.research', [
+                'page' => $page,
+                'trail' => $trail,
+                'members' => $members,
+                'domain' => $domain,
+                'blocks' => collect($page->blocks)->reject(fn ($block) => str_contains(json_encode($block, JSON_UNESCAPED_UNICODE), 'TODO-CONTENU'))->values(),
+            ]);
+        }
+
         // Dortoirs : mise en page immersive. Photos du texte dans l'ordre (allée, résidence des filles, résidence des garçons, chambre, puis cinq vues de chambres) ;
         // les deux liens Facebook (« Open House », « MJA ») sont repris tels qu'ils figurent dans le texte.
         if ($page->key === 'student-life-dorms') {

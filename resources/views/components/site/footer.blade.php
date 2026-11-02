@@ -7,7 +7,7 @@
 
     <div class="container-site grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1.1fr_1fr] lg:py-20">
         <div class="flex flex-col">
-            <a href="{{ url('/') }}" class="inline-flex items-center gap-3 text-white" aria-label="{{ __(':site_name — accueil', ['site_name' => $site->site_name]) }}">
+            <a href="{{ url('/') }}" class="inline-flex items-center gap-3 text-white" aria-label="{{ __(':name — accueil', ['name' => __('Université Adventiste').' Zurcher']) }}">
                 <x-seal :size="64" class="size-16" />
                 <span class="leading-none">
                     {{-- Justifié sur la largeur de « ZURCHER » (w-0 min-w-full : ne l'élargit jamais). --}}

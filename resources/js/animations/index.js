@@ -11,6 +11,7 @@ const MODULES = [
     ['[data-dormitories]', () => import('./dormitories.js').then((m) => m.initDormitories())],
     ['[data-admissions]', () => import('./admissions.js').then((m) => m.initAdmissions())],
     ['[data-fees]', () => import('./fees.js').then((m) => m.initFees())],
+    ['[data-research]', () => import('./research.js').then((m) => m.initResearch())],
 ];
 
 /** Connexion lente ou « économiseur de données » : aucune animation, aucun téléchargement de GSAP (~50 Ko). */
@@ -22,7 +23,7 @@ function saveDataEnabled() {
 
 /** Lève tous les états initiaux d'animation : le contenu s'affiche tel quel, sans mouvement. */
 function showEverything() {
-    document.documentElement.classList.add('anim-ready', 'save-data', 'lib-ready', 'caf-ready', 'dor-ready', 'adm-ready', 'fee-ready');
+    document.documentElement.classList.add('anim-ready', 'save-data', 'lib-ready', 'caf-ready', 'dor-ready', 'adm-ready', 'fee-ready', 'res-ready');
     document.querySelectorAll('[data-reveal]').forEach((el) => el.setAttribute('data-revealed', ''));
     document.querySelectorAll('[data-hero-title]').forEach((el) => el.setAttribute('data-split', ''));
     document.querySelectorAll('[data-hero]').forEach((el) => el.setAttribute('data-hero-started', ''));
@@ -43,7 +44,7 @@ export function initAnimations() {
     };
 
     // Le héros prime : on ne le fait pas attendre une période d'inactivité du navigateur.
-    if (document.querySelector('[data-hero], [data-library], [data-cafeteria], [data-dormitories], [data-admissions], [data-fees]')) start();
+    if (document.querySelector('[data-hero], [data-library], [data-cafeteria], [data-dormitories], [data-admissions], [data-fees], [data-research]')) start();
     else if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 600 });
     else setTimeout(start, 0);
 }

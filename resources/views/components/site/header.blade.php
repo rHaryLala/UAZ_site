@@ -59,7 +59,7 @@
 
     <header x-bind:data-scrolled="scrolled" x-bind:data-dark="dark" class="site-header sticky top-0 z-50">
         <div class="container-site flex h-[var(--header-h)] items-center justify-between gap-6">
-            <a href="{{ url('/') }}" class="flex items-center gap-3.5" aria-label="{{ __(':site_name — accueil', ['site_name' => $site->site_name]) }}">
+            <a href="{{ url('/') }}" class="flex items-center gap-3.5" aria-label="{{ __(':name — accueil', ['name' => __('Université Adventiste').' Zurcher']) }}">
                 <x-seal :size="56" eager class="size-11 md:size-14" />
                 <span class="leading-none">
                     {{-- « Université Adventiste » est justifié sur la largeur de « ZURCHER » (w-0 min-w-full : il ne l'élargit jamais). --}}

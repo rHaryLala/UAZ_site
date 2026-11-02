@@ -297,3 +297,19 @@ donc ni migration de données, ni requêtes, recherche, tris ou slugs à adapter
 **Pièges évités :** cache des menus par langue et par version du dictionnaire ; mises à jour Livewire sans préfixe mais langue rétablie (middleware persistant) ;
 météo en cache sans libellé ; `Locales::tr()` car `__('About')` ouvrait `lang/en/about.php` sous Windows ; espaces insécables français conservés via `lang/fr.json`.
 **À faire (voir TODO-CONTENU) :** relecture du malagasy par un locuteur natif ; traduction du contenu importé dans le back-office.
+
+## D-048 · Page « Centre de recherche » immersive, bâtie sur les seuls faits publiés
+
+**Besoin :** donner à la page du centre le même traitement immersif que la Bibliothèque ou la Cafétéria.
+**Contrainte :** l'UAZ n'a publié presque rien sur ce centre (ni mission, ni axes, ni publications, ni chiffres). Rien n'est inventé.
+**Décision :** `pages/research.blade.php` (+ `research.css`, `animations/research.js`) ; la mise en scène porte la page, pas un texte inventé :
+héros « observatoire » (réseau de points qui se tisse, parallaxe à la souris), phrase officielle de présentation des formations qui s'allume mot à mot
+pendant que le fil se trace (écran épinglé sur grand écran), fiches de l'équipe, domaine du directeur et ses mentions, Master, invitation à écrire.
+**Données :** équipe = fiches de l'équipe dont la fonction contient « Centre de recherche » (le directeur d'abord) ; domaine = la faculté nommée par la
+fonction du directeur ; sigle = ce qui est entre parenthèses dans le titre de la page ; phrase = texte de présentation du site actuel ; Master = texte de
+`lang/*/about.php`. Une section sans donnée disparaît.
+**Contenu à venir :** les blocs de la page ajoutés dans le back-office s'affichent en fin de page ; ceux qui portent la mention `TODO-CONTENU` ne sont
+jamais montrés au public ; tant qu'il n'y en a pas, une phrase sobre annonce que la présentation détaillée sera publiée. Page ajoutée à
+`VisualBlocks::BESPOKE_KEYS` (l'éditeur visuel renvoie au formulaire classique).
+**Accessibilité et mouvement :** base complète sans JavaScript ; mouvement réduit = tout visible, rien d'épinglé ; sur mobile, la phrase s'allume au
+défilement sans épinglage. Audit axe-core sans violation (français, anglais, malagasy). Test e2e : `tests/e2e/research.mjs`.
