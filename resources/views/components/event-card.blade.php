@@ -9,9 +9,9 @@
         <h3 class="text-h4 font-serif"><a href="{{ $event->url() }}" class="stretched-link hover:text-navy-600">{{ $event->title }}</a></h3>
         <p class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-700">
             @unless ($event->is_all_day)
-                <span class="inline-flex items-center gap-1.5"><x-ico name="clock" class="size-4" />{{ $event->starts_at->format('H\hi') }}@if ($event->ends_at) – {{ $event->ends_at->format('H\hi') }}@endif</span>
+                <span class="inline-flex items-center gap-1.5"><x-ico name="clock" class="size-4" />{{ \App\Support\Locales::time($event->starts_at) }}@if ($event->ends_at) – {{ \App\Support\Locales::time($event->ends_at) }}@endif</span>
             @else
-                <span class="inline-flex items-center gap-1.5"><x-ico name="clock" class="size-4" />Toute la journée</span>
+                <span class="inline-flex items-center gap-1.5"><x-ico name="clock" class="size-4" />{{ __('Toute la journée') }}</span>
             @endunless
             @if ($event->location)
                 <span class="inline-flex items-center gap-1.5"><x-ico name="map-pin" class="size-4" />{{ $event->location }}</span>

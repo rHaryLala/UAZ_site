@@ -27,7 +27,7 @@
         @endif
 
         <span class="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-navy-800" aria-hidden="true">
-            Lire l'article <x-ico name="arrow-right" class="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+            {{ __('Lire l\'article') }} <x-ico name="arrow-right" class="size-4 transition-transform duration-300 group-hover:translate-x-1" />
         </span>
     </div>
 </article>

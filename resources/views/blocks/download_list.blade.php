@@ -44,7 +44,7 @@
                         @if (! empty($data['title']))<h2 class="text-h2">{{ $data['title'] }}</h2>@endif
                         @if (! empty($data['intro']))<p class="mt-3 text-lead text-ink-700">{{ $data['intro'] }}</p>@endif
                     </div>
-                    <p class="font-serif text-lg text-navy-800"><span class="text-3xl">{{ $docs->count() }}</span> <span class="text-ink-600">documents</span></p>
+                    <p class="font-serif text-lg text-navy-800"><span class="text-3xl">{{ $docs->count() }}</span> <span class="text-ink-600">{{ __('documents') }}</span></p>
                 </div>
             @endif
 
@@ -61,14 +61,14 @@
 
                             <div class="min-w-0 flex-1">
                                 <h3 class="font-serif text-lg leading-snug text-navy-900 md:text-xl">
-                                    <a href="{{ $doc['url'] }}" class="stretched-link focus-visible:outline-offset-8" @if ($doc['external']) target="_blank" rel="noopener noreferrer" @else download @endif>{{ $doc['title'] }}<span class="sr-only"> — télécharger ({{ $doc['label'] }}@if ($doc['size']), {{ $doc['size'] }}@endif)@if ($doc['external']), nouvel onglet @endif</span></a>
+                                    <a href="{{ $doc['url'] }}" class="stretched-link focus-visible:outline-offset-8" @if ($doc['external']) target="_blank" rel="noopener noreferrer" @else download @endif>{{ $doc['title'] }}<span class="sr-only"> — {{ __('télécharger') }} ({{ $doc['label'] }}@if ($doc['size']), {{ $doc['size'] }}@endif)@if ($doc['external']), {{ __('nouvel onglet') }} @endif</span></a>
                                 </h3>
                                 @if ($doc['text'])<p class="mt-1 line-clamp-2 text-sm text-ink-700">{{ $doc['text'] }}</p>@endif
                             </div>
 
                             <div class="flex shrink-0 items-center gap-4 sm:ml-auto">
                                 @if ($doc['size'])<span class="hidden text-xs font-medium text-ink-600 md:inline">{{ $doc['size'] }}</span>@endif
-                                <span class="btn btn-royal btn-square btn-sm pointer-events-none" aria-hidden="true">Télécharger <x-ico name="download" /></span>
+                                <span class="btn btn-royal btn-square btn-sm pointer-events-none" aria-hidden="true">{{ __('Télécharger') }} <x-ico name="download" /></span>
                             </div>
                         </article>
                     </li>

@@ -15,7 +15,7 @@ class NewsletterConfirmation extends Mailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Confirmez votre abonnement à la lettre d\'information de l\'UAZ');
+        return new Envelope(subject: __('Confirmez votre abonnement à la lettre d\'information de l\'UAZ'));
     }
 
     public function content(): Content

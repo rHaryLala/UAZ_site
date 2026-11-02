@@ -1,5 +1,5 @@
-<x-layouts.app title="Recherche" description="Rechercher une formation, une actualité ou un événement de l'UAZ." noindex>
-    <x-page-hero eyebrow="Recherche" title="Que cherchez-vous ?" :breadcrumbs="[['label' => 'Recherche']]" />
+<x-layouts.app :title="__('Recherche')" :description="__('Rechercher une formation, une actualité ou un événement de l\'UAZ.')" noindex>
+    <x-page-hero :eyebrow="__('Recherche')" :title="__('Que cherchez-vous ?')" :breadcrumbs="[['label' => 'Recherche']]" />
 
     <x-section tone="paper" tight>
         <livewire:search />

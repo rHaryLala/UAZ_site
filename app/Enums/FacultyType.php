@@ -12,8 +12,8 @@ enum FacultyType: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Faculty => 'Faculté',
-            self::Department => 'Département',
+            self::Faculty => __('Faculté'),
+            self::Department => __('Département'),
         };
     }
 }

@@ -7,12 +7,12 @@
 
     <div class="container-site grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1.1fr_1fr] lg:py-20">
         <div class="flex flex-col">
-            <a href="{{ url('/') }}" class="inline-flex items-center gap-3 text-white" aria-label="{{ $site->site_name }} — accueil">
+            <a href="{{ url('/') }}" class="inline-flex items-center gap-3 text-white" aria-label="{{ __(':site_name — accueil', ['site_name' => $site->site_name]) }}">
                 <x-seal :size="64" class="size-16" />
                 <span class="leading-none">
                     {{-- Justifié sur la largeur de « ZURCHER » (w-0 min-w-full : ne l'élargit jamais). --}}
-                    <span class="block w-0 min-w-full text-justify [text-align-last:justify] text-[0.88rem] font-medium uppercase opacity-90">Université Adventiste</span>
-                    <span class="mt-1 block font-serif text-3xl tracking-[0.03em]">ZURCHER</span>
+                    <span class="block w-0 min-w-full text-justify [text-align-last:justify] text-[0.88rem] font-medium uppercase opacity-90">{{ __('Université Adventiste') }}</span>
+                    <span class="mt-1 block font-serif text-3xl tracking-[0.03em]">{{ __('ZURCHER') }}</span>
                 </span>
             </a>
             {{-- Adresse au-dessus de la devise ; un clic ouvre la carte Google Maps du campus. --}}
@@ -20,34 +20,34 @@
                 <a href="{{ config('uaz.map_url') }}" target="_blank" rel="noopener noreferrer" class="group mt-6 flex max-w-xs gap-3 text-sm text-white/90 hover:text-white">
                     <x-ico name="map-pin" class="mt-0.5 size-4 text-gold-300" />
                     {{-- Le pays est sous-entendu dans le pied de page ; soulignement au survol seulement. --}}
-                    <span class="decoration-gold-300 decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline">{{ preg_replace('/,\s*Madagascar\s*$/iu', '', $site->address) }}<span class="sr-only"> — voir sur Google Maps (nouvel onglet)</span></span>
+                    <span class="decoration-gold-300 decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline">{{ preg_replace('/,\s*Madagascar\s*$/iu', '', $site->address) }}<span class="sr-only"> {{ __('— voir sur Google Maps (nouvel onglet)') }}</span></span>
                 </a>
             @endif
 
             {{-- Météo du campus, mise à jour toutes les 10 minutes (Open-Meteo) --}}
             @if ($weather)
-                <p class="mt-3 flex max-w-xs items-center gap-3 text-sm text-white/90" data-weather data-url="{{ route('weather') }}" title="Météo au campus de l'UAZ, mise à jour toutes les 10 minutes">
+                <p class="mt-3 flex max-w-xs items-center gap-3 text-sm text-white/90" data-weather data-url="{{ route('weather') }}" title="{{ __('Météo au campus de l\'UAZ, mise à jour toutes les 10 minutes') }}">
                     <span class="relative size-4 shrink-0 text-gold-300">
                         @foreach (['sun', 'moon', 'cloud-sun', 'cloud', 'fog', 'rain', 'storm'] as $icon)
                             <x-ico :name="$icon" class="absolute inset-0 size-4" data-weather-icon="{{ $icon }}" :hidden="$icon !== $weather['icon']" />
                         @endforeach
                     </span>
-                    <span><span class="font-semibold text-white" data-weather-temp>{{ $weather['temperature'] }} °C</span> · <span data-weather-label>{{ $weather['label'] }}</span> <span class="text-white/60">à l'UAZ</span></span>
-                    <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" class="ml-auto self-end text-[0.65rem] text-white/70 underline-offset-4 hover:text-white hover:underline" aria-label="Données météo : Open-Meteo (nouvel onglet)">Open-Meteo</a>
+                    <span><span class="font-semibold text-white" data-weather-temp>{{ __(':temperature °C', ['temperature' => $weather['temperature']]) }}</span> · <span data-weather-label>{{ $weather['label'] }}</span> <span class="text-white/60">{{ __('à l\'UAZ') }}</span></span>
+                    <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" class="ml-auto self-end text-[0.65rem] text-white/70 underline-offset-4 hover:text-white hover:underline" aria-label="{{ __('Données météo : Open-Meteo (nouvel onglet)') }}">{{ __('Open-Meteo') }}</a>
                 </p>
             @endif
             {{-- Réseaux sociaux : calés en bas de la colonne, indépendamment de ce qui les précède. --}}
             <ul class="mt-auto flex gap-3 pt-8">
                 @foreach ($socials as $key => $label)
                     @if ($site->social($key))
-                        <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/25 text-white hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
+                        <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/25 text-white hover:bg-white hover:text-navy-900" aria-label="{{ __(':label (nouvel onglet)', ['label' => $label]) }}"><x-ico :name="$key" class="size-5" /></a></li>
                     @endif
                 @endforeach
             </ul>
         </div>
 
         <nav aria-labelledby="footer-resources">
-            <h2 id="footer-resources" class="eyebrow mb-5 font-sans text-xs! text-gold-300!">Ressources</h2>
+            <h2 id="footer-resources" class="eyebrow mb-5 font-sans text-xs! text-gold-300!">{{ __('Ressources') }}</h2>
             <ul class="space-y-3 text-sm">
                 @foreach ($footerMenu as $item)
                     <li><a href="{{ $item['url'] }}" class="text-white/90 underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</a></li>
@@ -56,7 +56,7 @@
         </nav>
 
         <div>
-            <h2 class="eyebrow mb-5 font-sans text-xs! text-gold-300!">Contact</h2>
+            <h2 class="eyebrow mb-5 font-sans text-xs! text-gold-300!">{{ __('Contact') }}</h2>
             <address class="space-y-3 text-sm not-italic">
                 @if ($site->email)<p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 text-gold-300" /><a href="mailto:{{ $site->email }}" class="text-white/90 hover:text-white hover:underline">{{ $site->email }}</a></p>@endif
                 @if ($site->phone)<p class="flex gap-3"><x-ico name="phone" class="mt-0.5 size-4 text-gold-300" /><a href="tel:{{ preg_replace('/[^+\d]/', '', $site->phone) }}" class="text-white/90 hover:text-white hover:underline">{{ $site->phone }}</a></p>@endif
@@ -64,7 +64,7 @@
 
             {{-- Les horaires ont leur propre rubrique : ce n'est pas un moyen de contact. --}}
             @if (! empty($site->opening_hours))
-                <h2 class="eyebrow mt-9 mb-4 font-sans text-xs! text-gold-300!">Horaires</h2>
+                <h2 class="eyebrow mt-9 mb-4 font-sans text-xs! text-gold-300!">{{ __('Horaires') }}</h2>
                 <div class="flex gap-3 text-sm">
                     <x-ico name="clock" class="mt-0.5 size-4 text-gold-300" />
                     <dl>
@@ -78,7 +78,7 @@
         </div>
 
         <nav aria-labelledby="footer-links">
-            <h2 id="footer-links" class="eyebrow mb-5 font-sans text-xs! text-gold-300!">Liens utiles</h2>
+            <h2 id="footer-links" class="eyebrow mb-5 font-sans text-xs! text-gold-300!">{{ __('Liens utiles') }}</h2>
             <ul class="space-y-3 text-sm">
                 @foreach ($headerMenu as $item)
                     <li><a href="{{ $item['url'] }}" class="text-white/90 underline-offset-4 hover:text-white hover:underline">{{ $item['label'] }}</a></li>
@@ -92,10 +92,10 @@
             <p>
                 {{ $site->footer_legal ?: '© '.$site->site_name }} — {{ now()->year }}
                 @if ($privacyPage)
-                    <span aria-hidden="true" class="mx-1.5">·</span><a href="{{ $privacyPage->url() }}" class="underline-offset-4 hover:text-white hover:underline">Confidentialité et cookies</a>
+                    <span aria-hidden="true" class="mx-1.5">·</span><a href="{{ $privacyPage->url() }}" class="underline-offset-4 hover:text-white hover:underline">{{ __('Confidentialité et cookies') }}</a>
                 @endif
             </p>
-            <p class="font-serif tracking-[0.2em] uppercase text-gold-300">Spiritus · Manus · Mens</p>
+            <p class="font-serif tracking-[0.2em] uppercase text-gold-300">{{ __('Spiritus · Manus · Mens') }}</p>
         </div>
     </div>
 </footer>

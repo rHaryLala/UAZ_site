@@ -24,6 +24,7 @@ class Page extends Model
     public const RESERVED_SLUGS = [
         'admin', 'actualites', 'evenements', 'formations', 'galerie', 'equipe', 'contact',
         'recherche', 'newsletter', 'yearbook', 'design-system', 'storage', 'build', 'livewire', 'sitemap.xml', 'robots.txt', 'up',
+        'en', 'mg', // préfixes des langues (config/uaz.php)
     ];
 
     protected function casts(): array

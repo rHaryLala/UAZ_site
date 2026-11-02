@@ -59,11 +59,11 @@ class ContactForm extends Component
     protected function validationAttributes(): array
     {
         return [
-            'name' => 'nom',
-            'email' => 'adresse e-mail',
-            'phone' => 'téléphone',
-            'subject' => 'sujet',
-            'message' => 'message',
+            'name' => __('nom'),
+            'email' => __('adresse e-mail'),
+            'phone' => __('téléphone'),
+            'subject' => __('sujet'),
+            'message' => __('message'),
         ];
     }
 
@@ -73,7 +73,7 @@ class ContactForm extends Component
         $limit = (int) config('uaz.contact.rate_limit_per_minute');
 
         if (RateLimiter::tooManyAttempts($key, $limit)) {
-            $this->addError('message', 'Trop de messages envoyés en peu de temps. Réessayez dans '.RateLimiter::availableIn($key).' secondes.');
+            $this->addError('message', __('Trop de messages envoyés en peu de temps. Réessayez dans :seconds secondes.', ['seconds' => RateLimiter::availableIn($key)]));
 
             return;
         }

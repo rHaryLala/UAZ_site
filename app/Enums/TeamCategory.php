@@ -12,8 +12,8 @@ enum TeamCategory: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Administration => 'Administration',
-            self::Teaching => 'Enseignants',
+            self::Administration => __('Administration'),
+            self::Teaching => __('Enseignants'),
         };
     }
 }

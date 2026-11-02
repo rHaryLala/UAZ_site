@@ -19,7 +19,7 @@
                         @endif
                         <h3 class="text-h4 font-serif"><a href="{{ $item->url() }}" class="stretched-link hover:text-navy-600">{{ $item->title }}</a></h3>
                         <p class="mt-3 text-sm text-ink-700">{{ $item->summary }}</p>
-                        <span class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-navy-800" aria-hidden="true">En savoir plus <x-ico name="arrow-up-right" class="size-4" /></span>
+                        <span class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-navy-800" aria-hidden="true">{{ __('En savoir plus') }} <x-ico name="arrow-up-right" class="size-4" /></span>
                     </article>
                 </li>
             @endforeach

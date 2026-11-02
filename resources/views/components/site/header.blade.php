@@ -15,10 +15,10 @@
 
 <div x-data="siteMenu" @keydown.escape.window="close" class="contents">
     {{-- Barre du haut : devise et liens secondaires (menu « topbar » éditable) --}}
-    <div class="topbar text-[0.6875rem]" role="region" aria-label="Devise et liens secondaires">
+    <div class="topbar text-[0.6875rem]" role="region" aria-label="{{ __('Devise et liens secondaires') }}">
         <div class="container-site flex min-h-9 items-center justify-between gap-6">
-            <p class="tracking-[0.01em] text-sun-400 uppercase">Spiritus · Manus · Mens — Fondée en {{ config("uaz.founded_year") }}.</p>
-            <nav aria-label="Liens secondaires" class="hidden items-center gap-6 md:flex">
+            <p class="tracking-[0.01em] text-sun-400 uppercase">{{ __('Spiritus · Manus · Mens — Fondée en :founded_year.', ['founded_year' => config("uaz.founded_year")]) }}</p>
+            <nav aria-label="{{ __('Liens secondaires') }}" class="hidden items-center gap-6 md:flex">
                 @foreach ($topbarPlain as $item)
                     @if (count($item['children']))
                         {{-- Rubrique à choix (ex. « Étudiant » : Registrar ou Moodle) : le titre ouvre la liste, il n'est pas un lien. --}}
@@ -32,7 +32,7 @@
                                     @php([$name, $hint] = array_pad(explode(' — ', $child['label'], 2), 2, null))
                                     <li>
                                         <a href="{{ $child['url'] }}" class="block px-4 py-3 text-ink-800 hover:bg-mist-100 hover:text-royal-600!" @if ($child['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
-                                            <span class="block text-sm font-semibold">{{ $name }}@if ($child['new_tab'])<span class="sr-only"> (nouvel onglet)</span>@endif</span>
+                                            <span class="block text-sm font-semibold">{{ $name }}@if ($child['new_tab'])<span class="sr-only"> {{ __('(nouvel onglet)') }}</span>@endif</span>
                                             @if ($hint)<span class="mt-0.5 block text-xs text-ink-600">{{ $hint }}</span>@endif
                                         </a>
                                     </li>
@@ -52,24 +52,25 @@
                 @elseif ($topbarCta)
                     <a href="{{ $topbarCta['url'] }}" class="rounded-full bg-sun-400 px-3 py-1 font-semibold text-night-900 hover:text-night-900! hover:bg-sun-300" @if ($topbarCta['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $topbarCta['label'] }}</a>
                 @endif
+                <x-site.language-switcher class="border-l border-white/20 pl-4" />
             </nav>
         </div>
     </div>
 
     <header x-bind:data-scrolled="scrolled" x-bind:data-dark="dark" class="site-header sticky top-0 z-50">
         <div class="container-site flex h-[var(--header-h)] items-center justify-between gap-6">
-            <a href="{{ url('/') }}" class="flex items-center gap-3.5" aria-label="{{ $site->site_name }} — accueil">
+            <a href="{{ url('/') }}" class="flex items-center gap-3.5" aria-label="{{ __(':site_name — accueil', ['site_name' => $site->site_name]) }}">
                 <x-seal :size="56" eager class="size-11 md:size-14" />
                 <span class="leading-none">
                     {{-- « Université Adventiste » est justifié sur la largeur de « ZURCHER » (w-0 min-w-full : il ne l'élargit jamais). --}}
-                    <span class="brand-tag block w-0 min-w-full text-justify [text-align-last:justify] text-[0.6rem] font-medium text-navy-900 uppercase md:text-[0.72rem]">Université Adventiste</span>
-                    <span class="brand-name mt-1 block font-serif text-[1.3rem] font-bold text-royal-600 uppercase md:text-[1.55rem]">Zurcher</span>
+                    <span class="brand-tag block w-0 min-w-full text-justify [text-align-last:justify] text-[0.6rem] font-medium text-navy-900 uppercase md:text-[0.72rem]">{{ __('Université Adventiste') }}</span>
+                    <span class="brand-name mt-1 block font-serif text-[1.3rem] font-bold text-royal-600 uppercase md:text-[1.55rem]">{{ __('Zurcher') }}</span>
                 </span>
             </a>
 
             <div class="flex items-center gap-3 sm:gap-7">
                 {{-- Navigation principale (grands écrans) --}}
-                <nav aria-label="Navigation principale" class="hidden xl:block">
+                <nav aria-label="{{ __('Navigation principale') }}" class="hidden xl:block">
                     <ul class="flex items-center gap-7">
                         @foreach ($headerMenu as $item)
                             <li class="group relative">
@@ -83,7 +84,7 @@
                                     <a href="{{ $item['url'] }}" class="site-header__link inline-flex items-center gap-1.5 py-2 text-[0.8125rem] font-medium whitespace-nowrap"
                                        @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif
                                        @if ($item['url'] === url('/recherche')) @click.prevent="openSearch" aria-haspopup="dialog" @endif
-                                       @if (url()->current() === $item['url']) aria-current="page" @endif>
+                                       @if (request()->url() === $item['url']) aria-current="page" @endif>
                                         {{ $item['label'] }}
                                     </a>
                                 @endif
@@ -98,10 +99,10 @@
                         @endforeach
                     </ul>
                 </nav>
-                <a href="{{ url('/recherche') }}" @click.prevent="openSearch" class="site-header__icon inline-flex size-11 items-center justify-center" aria-label="Rechercher sur le site" aria-haspopup="dialog">
+                <a href="{{ url('/recherche') }}" @click.prevent="openSearch" class="site-header__icon inline-flex size-11 items-center justify-center" aria-label="{{ __('Rechercher sur le site') }}" aria-haspopup="dialog">
                     <x-ico name="search" class="size-5" />
                 </a>
-                <x-button :href="config('uaz.registration_url')" target="_blank" rel="noopener noreferrer" variant="royal" arrow class="btn-square hidden md:inline-flex">S'inscrire</x-button>
+                <x-button :href="config('uaz.registration_url')" target="_blank" rel="noopener noreferrer" variant="royal" arrow class="btn-square hidden md:inline-flex">{{ __('S\'inscrire') }}</x-button>
                 <button
                     type="button"
                     x-ref="trigger"
@@ -111,7 +112,7 @@
                     class="site-header__icon inline-flex h-11 items-center gap-2.5 px-1 text-[0.8125rem] font-semibold"
                 >
                     <span class="menu-burger" aria-hidden="true"><span></span><span></span></span>
-                    <span>Menu</span>
+                    <span>{{ __('Menu') }}</span>
                 </button>
             </div>
         </div>
@@ -121,11 +122,11 @@
     @if ($topbarCta && count($topbarCta['children']))
         <dialog data-student-dialog class="student-dialog" aria-labelledby="student-dialog-title">
             <div class="ornament relative bg-white p-8 text-ink-800 shadow-lift sm:p-10">
-                <button type="button" data-student-close class="absolute top-4 right-4 z-20 inline-flex size-10 items-center justify-center text-navy-900 hover:bg-sun-400" aria-label="Fermer">
+                <button type="button" data-student-close class="absolute top-4 right-4 z-20 inline-flex size-10 items-center justify-center text-navy-900 hover:bg-sun-400" aria-label="{{ __('Fermer') }}">
                     <x-ico name="close" class="size-5" />
                 </button>
-                <p class="eyebrow mb-3">Espace étudiant</p>
-                <h2 id="student-dialog-title" class="font-serif text-2xl text-navy-900 sm:text-3xl">Où souhaitez-vous aller ?</h2>
+                <p class="eyebrow mb-3">{{ __('Espace étudiant') }}</p>
+                <h2 id="student-dialog-title" class="font-serif text-2xl text-navy-900 sm:text-3xl">{{ __('Où souhaitez-vous aller ?') }}</h2>
                 <span class="mt-4 mb-7 block h-0.5 w-12 bg-sun-400" aria-hidden="true"></span>
                 <ul class="grid gap-4 sm:grid-cols-2">
                     @foreach ($topbarCta['children'] as $child)
@@ -134,7 +135,7 @@
                             <a href="{{ $child['url'] }}" class="group flex h-full flex-col border border-navy-800/15 bg-paper-100 p-6 transition hover:-translate-y-0.5 hover:border-sun-400 hover:bg-navy-900 hover:text-white hover:shadow-lift focus-visible:border-sun-400" @if ($child['new_tab']) target="_blank" rel="noopener noreferrer" @endif>
                                 <span class="font-serif text-xl text-navy-900 transition-colors group-hover:text-white">{{ $name }}</span>
                                 @if ($hint)<span class="mt-1 text-sm text-ink-600 transition-colors group-hover:text-navy-100">{{ $hint }}</span>@endif
-                                <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-royal-600 transition-colors group-hover:text-sun-400">Ouvrir <x-ico name="arrow-up-right" class="size-4" /><span class="sr-only"> (nouvel onglet)</span></span>
+                                <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-royal-600 transition-colors group-hover:text-sun-400">{{ __('Ouvrir') }} <x-ico name="arrow-up-right" class="size-4" /><span class="sr-only"> {{ __('(nouvel onglet)') }}</span></span>
                             </a>
                         </li>
                     @endforeach
@@ -162,12 +163,12 @@
             @keydown="onKey"
             role="dialog"
             aria-modal="true"
-            aria-label="Rechercher sur le site"
+            aria-label="{{ __('Rechercher sur le site') }}"
             class="search-modal__panel relative mx-auto mt-[8vh] w-[calc(100%-2rem)] max-w-2xl overflow-hidden rounded-2xl bg-white text-ink-800 shadow-lift sm:mt-[12vh]"
         >
             <form method="get" action="{{ url('/recherche') }}" role="search" class="flex items-center gap-3 border-b border-paper-300 px-5">
                 <x-ico name="search" class="size-5 text-royal-600" />
-                <label for="search-modal-q" class="sr-only">Rechercher sur le site</label>
+                <label for="search-modal-q" class="sr-only">{{ __('Rechercher sur le site') }}</label>
                 <input
                     id="search-modal-q"
                     x-ref="input"
@@ -175,12 +176,12 @@
                     type="search"
                     name="q"
                     autocomplete="off"
-                    placeholder="Formation, actualité, événement…"
+                    placeholder="{{ __('Formation, actualité, événement…') }}"
                     class="h-16 min-w-0 flex-1 bg-transparent [&::-webkit-search-cancel-button]:hidden text-base text-ink-900 placeholder:text-ink-500 focus:outline-none"
                 >
                 <span class="search-modal__spinner size-4 shrink-0 rounded-full border-2 border-royal-600 border-t-transparent" x-bind:data-loading="loading" aria-hidden="true"></span>
                 <button type="button" @click="close" class="rounded-md border border-paper-300 px-2 py-1 text-[0.6875rem] font-semibold text-ink-600 hover:bg-mist-100">
-                    <span aria-hidden="true">Échap</span><span class="sr-only">Fermer la recherche</span>
+                    <span aria-hidden="true">{{ __('Échap') }}</span><span class="sr-only">{{ __('Fermer la recherche') }}</span>
                 </button>
             </form>
 
@@ -190,7 +191,7 @@
 
                 {{-- Accès rapides tant qu'aucune recherche n'est saisie --}}
                 <div x-show="empty" class="px-6 py-6">
-                    <p class="eyebrow mb-3 font-sans! text-[0.6875rem]! text-ink-600">Accès rapide</p>
+                    <p class="eyebrow mb-3 font-sans! text-[0.6875rem]! text-ink-600">{{ __('Accès rapide') }}</p>
                     <ul class="flex flex-wrap gap-2">
                         @foreach (collect($headerMenu)->reject(fn ($i) => $i['url'] === url('/recherche'))->merge($footerMenu)->unique('url')->take(10) as $item)
                             <li><a href="{{ $item['url'] }}" data-search-quick class="inline-flex rounded-none bg-mist-100 px-3.5 py-1.5 text-sm font-medium text-navy-900 hover:bg-royal-600 hover:text-white">{{ $item['label'] }}</a></li>
@@ -200,9 +201,9 @@
             </div>
 
             <p class="hidden items-center gap-4 border-t border-paper-300 bg-mist-100 px-5 py-2.5 text-[0.6875rem] text-ink-600 sm:flex">
-                <span><kbd class="font-sans font-semibold">↑ ↓</kbd> naviguer</span>
-                <span><kbd class="font-sans font-semibold">Entrée</kbd> tous les résultats</span>
-                <span><kbd class="font-sans font-semibold">Échap</kbd> fermer</span>
+                <span><kbd class="font-sans font-semibold">↑ ↓</kbd> {{ __('naviguer') }}</span>
+                <span><kbd class="font-sans font-semibold">{{ __('Entrée') }}</kbd> {{ __('tous les résultats') }}</span>
+                <span><kbd class="font-sans font-semibold">{{ __('Échap') }}</kbd> {{ __('fermer') }}</span>
             </p>
         </div>
     </div>
@@ -216,7 +217,7 @@
         x-trap.noscroll="open"
         role="dialog"
         aria-modal="true"
-        aria-label="Menu du site"
+        aria-label="{{ __('Menu du site') }}"
         data-open="false"
         class="menu-overlay on-dark fixed inset-0 z-[60] overflow-y-auto bg-navy-900 text-white"
     >
@@ -227,16 +228,16 @@
             <div class="flex h-[calc(var(--header-h)-1.25rem)] items-center justify-between">
                 <span class="flex items-center gap-3">
                     <x-seal :size="44" class="size-11" />
-                    <span class="font-serif text-xl tracking-[0.04em] uppercase">Zurcher</span>
+                    <span class="font-serif text-xl tracking-[0.04em] uppercase">{{ __('Zurcher') }}</span>
                 </span>
                 <button type="button" x-ref="closer" @click="close" class="inline-flex h-11 items-center gap-2.5 rounded-none border border-white/40 px-4 text-sm font-semibold hover:bg-white hover:text-navy-900">
-                    <x-ico name="close" class="size-4" /> Fermer <span class="sr-only">le menu</span>
+                    <x-ico name="close" class="size-4" /> {{ __('Fermer') }} <span class="sr-only">{{ __('le menu') }}</span>
                 </button>
             </div>
 
             <div class="mt-8 grid flex-1 gap-12 lg:mt-12 lg:grid-cols-[1.25fr_1fr_0.85fr] lg:gap-14">
-                <nav aria-label="Menu du site">
-                    <p class="eyebrow mb-4 menu-overlay__item" data-menu-item>Découvrir</p>
+                <nav aria-label="{{ __('Menu du site') }}">
+                    <p class="eyebrow mb-4 menu-overlay__item" data-menu-item>{{ __('Découvrir') }}</p>
                     <ul class="space-y-1">
                         @foreach ($headerMenu as $item)
                             <li class="menu-overlay__item" data-menu-item>
@@ -265,9 +266,9 @@
                 </nav>
 
                 @if (count($footerMenu) || $spaces->isNotEmpty())
-                    <nav aria-label="Ressources et autres pages">
+                    <nav aria-label="{{ __('Ressources et autres pages') }}">
                         @if (count($footerMenu))
-                            <p class="eyebrow mb-4 menu-overlay__item" data-menu-item>Ressources et pages utiles</p>
+                            <p class="eyebrow mb-4 menu-overlay__item" data-menu-item>{{ __('Ressources et pages utiles') }}</p>
                             <ul class="space-y-1">
                                 @foreach ($footerMenu as $item)
                                     <li class="menu-overlay__item" data-menu-item>
@@ -281,7 +282,7 @@
                             </ul>
                         @endif
                         @if ($spaces->isNotEmpty())
-                            <p class="eyebrow mt-10 mb-4 menu-overlay__item" data-menu-item>Espaces</p>
+                            <p class="eyebrow mt-10 mb-4 menu-overlay__item" data-menu-item>{{ __('Espaces') }}</p>
                             <ul class="menu-overlay__item flex flex-wrap gap-x-6 gap-y-2 text-sm text-navy-100" data-menu-item>
                                 @foreach ($spaces as $item)
                                     <li>
@@ -298,7 +299,8 @@
                 @endif
 
                 <div class="menu-overlay__item space-y-8 self-end" data-menu-item>
-                    <x-button :href="config('uaz.registration_url')" target="_blank" rel="noopener noreferrer" variant="sun" arrow class="btn-square">S'inscrire</x-button>
+                    <x-site.language-switcher class="text-navy-100" />
+                    <x-button :href="config('uaz.registration_url')" target="_blank" rel="noopener noreferrer" variant="sun" arrow class="btn-square">{{ __('S\'inscrire') }}</x-button>
                     <address class="space-y-3 text-sm not-italic text-navy-100">
                         @if ($site->address)<p class="flex gap-3"><x-ico name="map-pin" class="mt-0.5 size-4 text-gold-300" />{{ $site->address }}</p>@endif
                         @if ($site->email)<p class="flex gap-3"><x-ico name="mail" class="mt-0.5 size-4 text-gold-300" /><a href="mailto:{{ $site->email }}" class="hover:text-white">{{ $site->email }}</a></p>@endif
@@ -307,7 +309,7 @@
                     <ul class="flex gap-3">
                         @foreach ($socials as $key => $label)
                             @if ($site->social($key))
-                                <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/30 hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
+                                <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/30 hover:bg-white hover:text-navy-900" aria-label="{{ __(':label (nouvel onglet)', ['label' => $label]) }}"><x-ico :name="$key" class="size-5" /></a></li>
                             @endif
                         @endforeach
                     </ul>

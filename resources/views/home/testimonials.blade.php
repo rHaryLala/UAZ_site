@@ -10,17 +10,17 @@
             </div>
 
             @if ($testimonials->count() > 1)
-                <div class="flex items-center gap-3" role="group" aria-label="Commandes du carrousel">
-                    <button type="button" @click="prev" x-bind:disabled="atStart" class="inline-flex size-12 items-center justify-center rounded-none border border-white/40 hover:bg-white hover:text-navy-900 disabled:opacity-30" aria-label="Témoignage précédent"><x-ico name="arrow-left" class="size-5" /></button>
+                <div class="flex items-center gap-3" role="group" aria-label="{{ __('Commandes du carrousel') }}">
+                    <button type="button" @click="prev" x-bind:disabled="atStart" class="inline-flex size-12 items-center justify-center rounded-none border border-white/40 hover:bg-white hover:text-navy-900 disabled:opacity-30" aria-label="{{ __('Témoignage précédent') }}"><x-ico name="arrow-left" class="size-5" /></button>
                     <span class="min-w-14 text-center text-sm tabular-nums text-navy-100" x-text="label" aria-live="polite">1 / {{ $testimonials->count() }}</span>
-                    <button type="button" @click="next" x-bind:disabled="atEnd" class="inline-flex size-12 items-center justify-center rounded-none border border-white/40 hover:bg-white hover:text-navy-900 disabled:opacity-30" aria-label="Témoignage suivant"><x-ico name="arrow-right" class="size-5" /></button>
+                    <button type="button" @click="next" x-bind:disabled="atEnd" class="inline-flex size-12 items-center justify-center rounded-none border border-white/40 hover:bg-white hover:text-navy-900 disabled:opacity-30" aria-label="{{ __('Témoignage suivant') }}"><x-ico name="arrow-right" class="size-5" /></button>
                 </div>
             @endif
         </header>
 
-        <ul x-ref="track" class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabindex="0" aria-label="Témoignages">
+        <ul x-ref="track" class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabindex="0" aria-label="{{ __('Témoignages') }}">
             @foreach ($testimonials as $testimonial)
-                <li class="w-full shrink-0 snap-start pr-2 lg:pr-24" role="group" aria-roledescription="diapositive" aria-label="{{ $loop->iteration }} sur {{ $testimonials->count() }}">
+                <li class="w-full shrink-0 snap-start pr-2 lg:pr-24" role="group" aria-roledescription="diapositive" aria-label="{{ __(':iteration sur :v', ['iteration' => $loop->iteration, 'v' => $testimonials->count()]) }}">
                     <x-testimonial-card :testimonial="$testimonial" />
                 </li>
             @endforeach

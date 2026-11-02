@@ -70,6 +70,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Les requêtes Livewire (formulaire de contact, recherche) partent d'une adresse unique : la langue de la page d'origine
+        // (/en, /mg) est rétablie en rejouant le middleware de langue de sa route.
+        \Livewire\Livewire::addPersistentMiddleware([\App\Http\Middleware\SetLocale::class]);
+
         // Chiffres du tableau de bord et compteur de messages : cache vidé dès qu'un contenu concerné change.
         foreach ([NewsPost::class, EventModel::class, ContactMessage::class] as $model) {
             $model::saved(fn () => \App\Support\AdminStats::flush());

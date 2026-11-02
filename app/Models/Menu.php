@@ -20,15 +20,23 @@ class Menu extends Model
 
     protected static function booted(): void
     {
-        static::saved(fn (Menu $menu) => Cache::forget(self::cacheKey($menu->handle)));
-        static::deleted(fn (Menu $menu) => Cache::forget(self::cacheKey($menu->handle)));
+        static::saved(fn (Menu $menu) => self::forget($menu->handle));
+        static::deleted(fn (Menu $menu) => self::forget($menu->handle));
         // Un changement de chemin de page doit se répercuter dans les menus.
-        Page::saved(fn () => Menu::query()->pluck('handle')->each(fn ($h) => Cache::forget(self::cacheKey($h))));
+        Page::saved(fn () => Menu::query()->pluck('handle')->each(fn ($h) => self::forget($h)));
     }
 
-    private static function cacheKey(string $handle): string
+    /** Un cache par langue : les adresses sont préfixées (/en, /mg) et les libellés traduits. */
+    private static function cacheKey(string $handle, ?string $locale = null): string
     {
-        return "menu.$handle";
+        return "menu.$handle.".($locale ?? app()->getLocale());
+    }
+
+    private static function forget(string $handle): void
+    {
+        foreach (array_keys(config('uaz.locales')) as $locale) {
+            Cache::forget(self::cacheKey($handle, $locale));
+        }
     }
 
     /**
@@ -63,7 +71,8 @@ class Menu extends Model
                 }
 
                 return [
-                    'label' => $item['label'],
+                    // Les libellés sont du français : le dictionnaire de la langue (lang/{langue}.json) les traduit.
+                    'label' => __($item['label']),
                     'url' => str_starts_with($url, '/') ? url($url) : $url,
                     'new_tab' => (bool) ($item['new_tab'] ?? false),
                     'children' => collect($item['children'] ?? [])->map($resolve)->filter()->values()->all(),

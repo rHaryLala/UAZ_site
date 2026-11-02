@@ -14,10 +14,10 @@ enum FormationLevel: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Certificate => 'Certificat',
-            self::Licence => 'Licence',
-            self::Master => 'Master',
-            self::Doctorate => 'Doctorat',
+            self::Certificate => __('Certificat'),
+            self::Licence => __('Licence'),
+            self::Master => __('Master'),
+            self::Doctorate => __('Doctorat'),
         };
     }
 }

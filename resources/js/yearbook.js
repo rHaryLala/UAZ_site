@@ -1,3 +1,4 @@
+import { t } from './i18n.js';
 // Yearbook : livre numérique à feuilleter (page-flip). Les pages sont des images WebP générées à partir du PDF ; elles ne se
 // chargent qu'à l'approche de la page courante. Commandes : pages (clic / glisser), flèches du clavier, boutons, curseur,
 // miniatures, plein écran. Sans JavaScript, la page propose le PDF d'origine.
@@ -71,10 +72,10 @@ export async function initYearbook() {
         // Livre ouvert (2 pages visibles) : « Pages 4–5 / 44 » ; couverture et page seule : « Page 1 / 44 ».
         const portrait = flip.getOrientation() === 'portrait';
         const last = total - 1;
-        if (portrait || index === 0 || index === last) return `Page ${index + 1} / ${total}`;
+        if (portrait || index === 0 || index === last) return t('Page :page / :total', { page: index + 1, total });
         const left = index % 2 === 1 ? index : index - 1;
 
-        return `Pages ${left + 1}–${Math.min(left + 2, total)} / ${total}`;
+        return t('Pages :from–:to / :total', { from: left + 1, to: Math.min(left + 2, total), total });
     };
 
     const sync = (index) => {
@@ -106,7 +107,7 @@ export async function initYearbook() {
     slider.max = String(total);
     slider.addEventListener('input', () => {
         const target = Number(slider.value) - 1;
-        label.textContent = `Page ${target + 1} / ${total}`;
+        label.textContent = t('Page :page / :total', { page: target + 1, total });
     });
     slider.addEventListener('change', () => {
         flip.turnToPage(Number(slider.value) - 1);

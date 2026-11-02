@@ -7,6 +7,7 @@ use App\Models\Formation;
 use App\Models\NewsPost;
 use App\Models\Page;
 use App\Models\PhotoAlbum;
+use App\Support\Locales;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 
@@ -15,6 +16,9 @@ class SeoController extends Controller
 {
     public function sitemap(): Response
     {
+        // Le plan du site liste les adresses françaises (sans préfixe) et leurs versions /en et /mg.
+        Locales::apply(Locales::default());
+
         $xml = Cache::remember('sitemap.xml', 3600, function () {
             $entries = collect([
                 ['url' => url('/'), 'priority' => '1.0', 'freq' => 'weekly'],
@@ -45,7 +49,7 @@ class SeoController extends Controller
                 }
             }
 
-            return view('seo.sitemap', ['entries' => $entries])->render();
+            return view('seo.sitemap', ['entries' => $entries, 'locales' => array_keys(Locales::all())])->render();
         });
 
         return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8']);

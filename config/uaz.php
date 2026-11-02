@@ -7,12 +7,15 @@ return [
     | Langues du site
     |--------------------------------------------------------------------------
     |
-    | Le site est en français. L'anglais viendra plus tard : il suffira d'ajouter
-    | 'en' ici, de traduire lang/en et d'activer les préfixes de route (voir
-    | docs/ARCHITECTURE.md, section Internationalisation).
+    | Le français est la langue par défaut (URL sans préfixe) ; l'anglais et le malagasy vivent sous /en et /mg.
+    | « og » : valeur de og:locale. Voir docs/I18N.md.
     |
     */
-    'locales' => ['fr'],
+    'locales' => [
+        'fr' => ['name' => 'Français', 'short' => 'FR', 'og' => 'fr_FR'],
+        'en' => ['name' => 'English', 'short' => 'EN', 'og' => 'en_US'],
+        'mg' => ['name' => 'Malagasy', 'short' => 'MG', 'og' => 'mg_MG'],
+    ],
     'default_locale' => 'fr',
 
     /*

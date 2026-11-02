@@ -12,21 +12,21 @@
     $support = (bool) preg_match('/soutenir|donner|\bdon\b/iu', $subject);
     $copy = $support
         ? [
-            'eyebrow' => 'Donner · Soutenir',
-            'title' => 'Soutenir l\'UAZ',
-            'intro' => 'Vous souhaitez accompagner l\'Université Adventiste Zurcher et ses étudiants ? Écrivez-nous : notre équipe vous répondra pour échanger avec vous.',
-            'side' => 'Parlons de votre soutien',
+            'eyebrow' => __('Donner · Soutenir'),
+            'title' => __('Soutenir l\'UAZ'),
+            'intro' => __('Vous souhaitez accompagner l\'Université Adventiste Zurcher et ses étudiants ? Écrivez-nous : notre équipe vous répondra pour échanger avec vous.'),
+            'side' => __('Parlons de votre soutien'),
         ]
         : [
-            'eyebrow' => 'Contact',
-            'title' => 'Contactez-nous',
-            'intro' => 'Une question sur nos programmes, nos admissions ou la vie étudiante ? Notre équipe est à votre écoute pour vous accompagner.',
-            'side' => 'Nos coordonnées',
+            'eyebrow' => __('Contact'),
+            'title' => __('Contactez-nous'),
+            'intro' => __('Une question sur nos programmes, nos admissions ou la vie étudiante ? Notre équipe est à votre écoute pour vous accompagner.'),
+            'side' => __('Nos coordonnées'),
         ];
     $image = $support ? $site->formationsHeroImage : ($site->homeHeroImage ?? $site->homeCtaImage);
 @endphp
 
-<x-layouts.app :title="$copy['title']" description="Contactez l'Université Adventiste Zurcher : admissions, formations, vie étudiante, soutien.">
+<x-layouts.app :title="$copy['title']" :description="__('Contactez l\'Université Adventiste Zurcher : admissions, formations, vie étudiante, soutien.')">
     {{-- Héros photo, la carte du formulaire le chevauche --}}
     <header class="on-dark relative isolate overflow-hidden bg-navy-900 text-white">
         @if ($image)
@@ -68,11 +68,11 @@
                         @endif
                     </address>
 
-                    @php($socials = ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube', 'tiktok' => 'TikTok'])
+                    @php($socials = ['facebook' => __('Facebook'), 'instagram' => __('Instagram'), 'linkedin' => __('LinkedIn'), 'youtube' => __('YouTube'), 'tiktok' => __('TikTok')])
                     <ul class="mt-10 flex flex-wrap gap-3">
                         @foreach ($socials as $key => $label)
                             @if ($site->social($key))
-                                <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/30 hover:bg-white hover:text-navy-900" aria-label="{{ $label }} (nouvel onglet)"><x-ico :name="$key" class="size-5" /></a></li>
+                                <li><a href="{{ $site->social($key) }}" target="_blank" rel="noopener noreferrer" class="inline-flex size-11 items-center justify-center rounded-full border border-white/30 hover:bg-white hover:text-navy-900" aria-label="{{ __(':label (nouvel onglet)', ['label' => $label]) }}"><x-ico :name="$key" class="size-5" /></a></li>
                             @endif
                         @endforeach
                     </ul>
@@ -80,7 +80,7 @@
 
                 {{-- Formulaire --}}
                 <div class="p-8 md:p-12">
-                    <h2 class="font-serif text-2xl text-navy-900 md:text-3xl">Écrivez-nous</h2>
+                    <h2 class="font-serif text-2xl text-navy-900 md:text-3xl">{{ __('Écrivez-nous') }}</h2>
                     <span class="mt-5 mb-9 block h-0.5 w-12 bg-sun-400" aria-hidden="true"></span>
                     <livewire:contact-form />
                 </div>
@@ -94,16 +94,16 @@
             @if ($osmEmbed)
                 <details class="group">
                     <summary class="flex cursor-pointer items-center justify-between gap-4 font-serif text-xl marker:hidden md:text-2xl [&::-webkit-details-marker]:hidden">
-                        <span class="inline-flex items-center gap-4"><x-ico name="map-pin" class="size-6 text-sun-400" /> Où nous trouver</span>
-                        <span class="inline-flex items-center gap-2 text-sm font-semibold text-sun-400">Afficher la carte <x-ico name="chevron-down" class="size-5 transition-transform group-open:rotate-180" /></span>
+                        <span class="inline-flex items-center gap-4"><x-ico name="map-pin" class="size-6 text-sun-400" /> {{ __('Où nous trouver') }}</span>
+                        <span class="inline-flex items-center gap-2 text-sm font-semibold text-sun-400">{{ __('Afficher la carte') }} <x-ico name="chevron-down" class="size-5 transition-transform group-open:rotate-180" /></span>
                     </summary>
-                    <iframe src="{{ $osmEmbed }}" title="Carte : emplacement du campus de l'UAZ" loading="lazy" referrerpolicy="no-referrer" class="mt-8 aspect-[16/7] w-full border-0 max-md:aspect-[4/3]"></iframe>
+                    <iframe src="{{ $osmEmbed }}" title="{{ __('Carte : emplacement du campus de l\'UAZ') }}" loading="lazy" referrerpolicy="no-referrer" class="mt-8 aspect-[16/7] w-full border-0 max-md:aspect-[4/3]"></iframe>
                 </details>
             @else
                 <p class="flex items-center gap-4 font-serif text-xl md:text-2xl"><x-ico name="map-pin" class="size-6 text-sun-400" /> {{ $site->address ?: 'Antsirabe, Madagascar' }}</p>
             @endif
             <a href="{{ $osmLink }}" target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-sun-400 hover:text-white">
-                Ouvrir dans OpenStreetMap <span class="sr-only">(nouvel onglet)</span><x-ico name="arrow-up-right" class="size-4" />
+                {{ __('Ouvrir dans OpenStreetMap') }} <span class="sr-only">{{ __('(nouvel onglet)') }}</span><x-ico name="arrow-up-right" class="size-4" />
             </a>
         </div>
     </section>

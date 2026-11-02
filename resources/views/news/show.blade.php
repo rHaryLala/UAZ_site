@@ -1,9 +1,9 @@
 <x-layouts.app :title="$post->metaTitle()" :description="$post->metaDescription()" :image="$post->metaImage()" type="article" :noindex="! $post->isLive()">
-    <x-page-hero :eyebrow="$post->category?->name ?? 'Actualités'" :title="$post->title" :intro="$post->excerpt"
+    <x-page-hero :eyebrow="$post->category?->name ?? __('Actualités')" :title="$post->title" :intro="$post->excerpt"
         :breadcrumbs="[['label' => 'Actualités', 'url' => url('/actualites')], ['label' => str($post->title)->limit(48)->toString()]]">
         <p class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-navy-100">
             <span class="inline-flex items-center gap-2"><x-ico name="calendar" class="size-4 text-gold-300" /><time datetime="{{ $post->published_at?->toDateString() }}">{{ $post->published_at?->translatedFormat('j F Y') }}</time></span>
-            @if ($post->author)<span>Par {{ $post->author->name }}</span>@endif
+            @if ($post->author)<span>{{ __('Par :name', ['name' => $post->author->name]) }}</span>@endif
         </p>
     </x-page-hero>
 
@@ -20,12 +20,12 @@
         <div class="container-prose"><x-rich :html="$post->body" /></div>
 
         <div class="container-prose mt-14 border-t border-paper-300 pt-8">
-            <a href="{{ url('/actualites') }}" class="link-arrow"><x-ico name="arrow-left" class="size-4" /> Toutes les actualités</a>
+            <a href="{{ url('/actualites') }}" class="link-arrow"><x-ico name="arrow-left" class="size-4" /> {{ __('Toutes les actualités') }}</a>
         </div>
     </article>
 
     @if ($related->isNotEmpty())
-        <x-section tone="sand" title="À lire aussi">
+        <x-section tone="sand" :title="__('À lire aussi')">
             <ul class="grid gap-6 md:grid-cols-3">
                 @foreach ($related as $item)
                     <li><x-news-card :post="$item" /></li>

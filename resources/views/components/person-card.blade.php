@@ -18,7 +18,7 @@
     @if ($profile)
         {{-- Bouton étiré sur toute la carte : ouvre la fiche agrandie (resources/js/team-profile.js) ; le lien e-mail reste au-dessus. --}}
         <button type="button" data-profile-open aria-haspopup="dialog" class="absolute inset-0 z-[1] cursor-pointer">
-            <span class="sr-only">Voir le profil de {{ $member->name }}</span>
+            <span class="sr-only">{{ __('Voir le profil de :name', ['name' => $member->name]) }}</span>
         </button>
     @endif
 

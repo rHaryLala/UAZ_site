@@ -1,3 +1,4 @@
+import { t } from './i18n.js';
 // Fenêtre « Lettre d'information » : s'ouvre seule à la première visite, puis de nouveau après 20 jours tant que la personne ne s'est pas
 // abonnée (mémoire dans le navigateur : localStorage, aucun cookie). Se déclenche aussi depuis les boutons [data-newsletter-open]
 // (« S'abonner » de la barre du haut et du menu). L'envoi se fait en JSON, sans recharger la page.
@@ -97,15 +98,15 @@ export function initNewsletter() {
                 done.hidden = false;
                 form.reset();
             } else if (response.status === 422) {
-                show(json.errors?.email?.[0] ?? 'Adresse e-mail invalide.');
+                show(json.errors?.email?.[0] ?? t('Adresse e-mail invalide.'));
                 input.focus();
             } else if (response.status === 429) {
-                show('Trop de tentatives. Réessayez dans une minute.');
+                show(t('Trop de tentatives. Réessayez dans une minute.'));
             } else {
-                show(json.message ?? 'Une erreur est survenue. Réessayez dans quelques instants.');
+                show(json.message ?? t('Une erreur est survenue. Réessayez dans quelques instants.'));
             }
         } catch (failure) {
-            show('Connexion impossible. Vérifiez votre réseau et réessayez.');
+            show(t('Connexion impossible. Vérifiez votre réseau et réessayez.'));
         } finally {
             submit.disabled = false;
         }

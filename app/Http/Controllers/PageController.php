@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Support\Translated;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -102,10 +103,10 @@ class PageController extends Controller
                 'page' => $page,
                 'trail' => $trail,
                 'level' => $level,
-                'data' => config('admissions.levels.'.$level),
-                'common' => config('admissions'),
+                'data' => Translated::deep(config('admissions.levels.'.$level)),
+                'common' => Translated::deep(config('admissions')),
                 'poster' => $poster,
-                'forms' => collect(config('admissions.levels.'.$level.'.downloads'))->zip(array_values(array_unique($docs[1])))->filter(fn ($pair) => $pair->count() === 2 && $pair[1])->values()->all(),
+                'forms' => collect(Translated::deep(config('admissions.levels.'.$level.'.downloads')))->zip(array_values(array_unique($docs[1])))->filter(fn ($pair) => $pair->count() === 2 && $pair[1])->values()->all(),
                 'formations' => \App\Models\Formation::visible()->where('level', $level)->get()->keyBy('mention'),
             ]);
         }
@@ -119,8 +120,8 @@ class PageController extends Controller
             return view('pages.fees', [
                 'page' => $page,
                 'trail' => $trail,
-                'fees' => config('fees'),
-                'catalog' => \App\Support\FeeCatalog::catalog(),
+                'fees' => Translated::deep(config('fees')),
+                'catalog' => Translated::deep(\App\Support\FeeCatalog::catalog()),
                 'posters' => collect($found[1])->map(fn ($id) => $media->get((int) $id))->filter()->values(),
             ]);
         }

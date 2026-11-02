@@ -7,7 +7,7 @@
     sizes="{{ $size }}px"
     width="{{ $size }}"
     height="{{ $size }}"
-    alt="Sceau de l'Université Adventiste Zurcher"
+    alt="{{ __('Sceau de l\'Université Adventiste Zurcher') }}"
     @if ($eager) fetchpriority="high" @else loading="lazy" @endif
     decoding="async"
     {{ $attributes->merge(['class' => 'object-contain']) }}

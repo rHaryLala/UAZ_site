@@ -3,6 +3,7 @@
 // Aucun calcul de tarif ici : les lignes viennent du catalogue, le total est leur somme. Fonctionne sans animation ; les effets GSAP
 // (resources/js/animations/fees.js) écoutent l'événement « uaz:fees-render ». Sans JavaScript, la section est masquée et les tableaux restent lisibles.
 import { formatAr } from './format-ar.js';
+import { t } from './i18n.js';
 
 const el = (tag, className, text) => {
     const node = document.createElement(tag);
@@ -24,7 +25,7 @@ export function mergeLines(semesters) {
             const known = merged.get(line.label);
             if (known) {
                 known.amount += line.amount;
-                known.note = 'Cumul des deux semestres';
+                known.note = t('Cumul des deux semestres');
             } else {
                 merged.set(line.label, { ...line });
             }
@@ -71,10 +72,10 @@ export function initFeesSim() {
     }
 
     function summary(level, choice, view) {
-        const period = view === 'all' ? 'Année complète' : `Semestre ${view}`;
-        if (level === 'master') return `Master · ${tracks[choice.track]} · ${period}`;
+        const period = view === 'all' ? t('Année complète') : t('Semestre :number', { number: view });
+        if (level === 'master') return `${t('Master')} · ${tracks[choice.track]} · ${period}`;
 
-        return `Licence · ${departments[choice.dept]} · ${years[choice.year]} · ${choice.status === 'interne' ? 'Interne' : 'Externe'} · ${period}`;
+        return `${t('Licence')} · ${departments[choice.dept]} · ${years[choice.year]} · ${choice.status === 'interne' ? t('Interne') : t('Externe')} · ${period}`;
     }
 
     /** Lignes et total de la période choisie, ou null si elle n'existe pas pour ce parcours. */
@@ -120,7 +121,7 @@ export function initFeesSim() {
             }
         }
         viewHint.hidden = numbers.length > 1;
-        viewHint.textContent = numbers.length > 1 ? '' : `Seul le semestre ${numbers[0]} figure sur le tableau officiel.`;
+        viewHint.textContent = numbers.length > 1 ? '' : t('Seul le semestre :number figure sur le tableau officiel.', { number: numbers[0] });
 
         const current = resolve(semesters, view);
         if (!current) return;
@@ -158,7 +159,7 @@ export function initFeesSim() {
                 return segment;
             }),
         );
-        barNode.setAttribute('aria-label', `Répartition : ${entries.map(([group, amount]) => `${groups[group]} ${Math.round((amount / current.total) * 100)} %`).join(', ')}`);
+        barNode.setAttribute('aria-label', t('Répartition : :parts', { parts: entries.map(([group, amount]) => `${groups[group]} ${Math.round((amount / current.total) * 100)} %`).join(', ') }));
         legendNode.replaceChildren(
             ...entries.map(([group, amount]) => {
                 const item = el('li', 'fee-mix__item');
@@ -180,7 +181,7 @@ export function initFeesSim() {
                     const bar = el('span', 'fee-cmp__bar');
                     bar.dataset.feeCmp = '';
                     bar.style.width = `${(other[status] / max) * 100}%`;
-                    row.append(el('span', 'fee-cmp__label', status === 'interne' ? 'Interne' : 'Externe'), bar, el('strong', 'fee-cmp__value', `${formatAr(other[status])} Ar`));
+                    row.append(el('span', 'fee-cmp__label', status === 'interne' ? t('Interne') : t('Externe')), bar, el('strong', 'fee-cmp__value', `${formatAr(other[status])} Ar`));
 
                     return row;
                 }),
@@ -211,9 +212,9 @@ export function initFeeCopy() {
         button.addEventListener('click', async () => {
             try {
                 await navigator.clipboard.writeText(button.dataset.feeCopy);
-                button.textContent = 'Copié';
+                button.textContent = t('Copié');
             } catch (error) {
-                button.textContent = 'Sélectionnez le numéro';
+                button.textContent = t('Sélectionnez le numéro');
             }
             window.setTimeout(() => (button.textContent = label), 1800);
         });

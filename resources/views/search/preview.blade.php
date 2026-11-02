@@ -1,13 +1,13 @@
 {{-- Fragment de résultats pour la fenêtre de recherche (inséré par components/search-modal.js). Liens : [data-search-result]. --}}
 @if (mb_strlen($term) < \App\Services\SiteSearch::MIN_LENGTH)
-    <p class="px-6 py-10 text-center text-sm text-ink-700">Saisissez au moins 2 caractères pour lancer la recherche.</p>
+    <p class="px-6 py-10 text-center text-sm text-ink-700">{{ __('Saisissez au moins 2 caractères pour lancer la recherche.') }}</p>
 @elseif ($results->isEmpty())
-    <p class="px-6 py-10 text-center text-sm text-ink-700">Aucun résultat pour « <strong class="text-ink-900">{{ $term }}</strong> ». Essayez un autre mot, ou <a href="{{ url('/contact') }}" class="link-arrow" data-search-result>contactez-nous</a>.</p>
+    <p class="px-6 py-10 text-center text-sm text-ink-700">{{ __('Aucun résultat pour «') }} <strong class="text-ink-900">{{ $term }}</strong> {{ __('». Essayez un autre mot, ou') }} <a href="{{ url('/contact') }}" class="link-arrow" data-search-result>{{ __('contactez-nous') }}</a>.</p>
 @else
-    <p class="sr-only" role="status">{{ $results->flatten(1)->count() }} résultat(s) pour « {{ $term }} »</p>
+    <p class="sr-only" role="status">{{ __(':v résultat(s) pour « :term »', ['v' => $results->flatten(1)->count(), 'term' => $term]) }}</p>
     @foreach ($results as $group => $items)
-        <section class="px-3 pt-4" aria-label="{{ $group }}">
-            <h3 class="eyebrow mb-1 px-3 font-sans! text-[0.6875rem]! text-ink-600">{{ $group }}</h3>
+        <section class="px-3 pt-4" aria-label="{{ __($group) }}">
+            <h3 class="eyebrow mb-1 px-3 font-sans! text-[0.6875rem]! text-ink-600">{{ __($group) }}</h3>
             <ul>
                 @foreach ($items as $item)
                     <li>
@@ -26,6 +26,6 @@
         </section>
     @endforeach
     <p class="mt-2 border-t border-paper-300 px-6 py-3 text-sm">
-        <a href="{{ url('/recherche') }}?q={{ urlencode($term) }}" data-search-result class="link-arrow">Voir tous les résultats</a>
+        <a href="{{ url('/recherche') }}?q={{ urlencode($term) }}" data-search-result class="link-arrow">{{ __('Voir tous les résultats') }}</a>
     </p>
 @endif

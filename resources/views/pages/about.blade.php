@@ -111,7 +111,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-night-900/70 via-transparent to-transparent" aria-hidden="true"></div>
                 <div class="on-dark absolute bottom-0 left-0 p-8 text-white md:p-12">
                     <p class="font-serif text-[clamp(4rem,2.5rem+6vw,8rem)] leading-none">200<span class="text-sun-400">+</span></p>
-                    <p class="mt-2 text-sm font-semibold tracking-[0.2em] uppercase">hectares de campus</p>
+                    <p class="mt-2 text-sm font-semibold tracking-[0.2em] uppercase">{{ __('hectares de campus') }}</p>
                 </div>
             </div>
 
@@ -129,7 +129,7 @@
                     @endforeach
                 </ul>
 
-                <a href="https://www.youtube.com/watch?v=fmiHN-BsL-Q" target="_blank" rel="noopener noreferrer" class="link-arrow mt-10 w-fit">{{ __('about.campus.video') }} <x-ico name="arrow-up-right" class="size-4" /><span class="sr-only"> (nouvel onglet)</span></a>
+                <a href="https://www.youtube.com/watch?v=fmiHN-BsL-Q" target="_blank" rel="noopener noreferrer" class="link-arrow mt-10 w-fit">{{ __('about.campus.video') }} <x-ico name="arrow-up-right" class="size-4" /><span class="sr-only"> {{ __('(nouvel onglet)') }}</span></a>
             </div>
         </div>
     </section>

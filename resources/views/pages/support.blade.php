@@ -64,14 +64,14 @@
                     </div>
 
                     <div class="ornament relative flex flex-col justify-center p-8 md:p-12 lg:p-14">
-                        <p class="eyebrow mb-4">Projet {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</p>
+                        <p class="eyebrow mb-4">{{ __('Projet :str_pad_left', ['str_pad_left' => str_pad($loop->iteration, 2, '0', STR_PAD_LEFT)]) }}</p>
                         <h3 class="text-h2"><a href="{{ $project->url() }}" class="stretched-link hover:text-royal-600">{{ $project->title }}</a></h3>
                         @if ($project->summary)<p class="mt-5 text-lead text-ink-700">{{ $project->summary }}</p>@endif
 
                         @if ($project->location || $project->budget)
                             <dl class="mt-8 grid grid-cols-2 gap-6 border-t border-navy-800/10 pt-6">
-                                @if ($project->location)<div><dt class="eyebrow mb-1 font-sans! text-[0.6875rem]!">Lieu</dt><dd class="font-serif text-lg text-navy-900">{{ $project->location }}</dd></div>@endif
-                                @if ($project->budget)<div><dt class="eyebrow mb-1 font-sans! text-[0.6875rem]!">Budget prévu</dt><dd class="font-serif text-lg text-navy-900">{{ $project->budget }}</dd></div>@endif
+                                @if ($project->location)<div><dt class="eyebrow mb-1 font-sans! text-[0.6875rem]!">{{ __('Lieu') }}</dt><dd class="font-serif text-lg text-navy-900">{{ $project->location }}</dd></div>@endif
+                                @if ($project->budget)<div><dt class="eyebrow mb-1 font-sans! text-[0.6875rem]!">{{ __('Budget prévu') }}</dt><dd class="font-serif text-lg text-navy-900">{{ $project->budget }}</dd></div>@endif
                             </dl>
                         @endif
 

@@ -1,9 +1,9 @@
-<x-layouts.app title="Galerie photo" description="Albums photo de la vie à l'Université Adventiste Zurcher.">
-    <x-page-hero eyebrow="Galerie" title="La vie à l'UAZ en images" :breadcrumbs="[['label' => 'Galerie']]" />
+<x-layouts.app :title="__('Galerie photo')" :description="__('Albums photo de la vie à l\'Université Adventiste Zurcher.')">
+    <x-page-hero :eyebrow="__('Galerie')" :title="__('La vie à l\'UAZ en images')" :breadcrumbs="[['label' => 'Galerie']]" />
 
     <x-section tone="paper" tight>
         @if ($albums->isEmpty())
-            <p class="rounded-card bg-paper-50 p-8 text-ink-700 shadow-card">Aucun album pour le moment.</p>
+            <p class="rounded-card bg-paper-50 p-8 text-ink-700 shadow-card">{{ __('Aucun album pour le moment.') }}</p>
         @else
             <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($albums as $album)
@@ -18,7 +18,7 @@
                             </div>
                             <div class="p-6">
                                 <h2 class="text-h4 font-serif"><a href="{{ $album->url() }}" class="stretched-link hover:text-navy-600">{{ $album->title }}</a></h2>
-                                <p class="mt-2 text-sm text-ink-700">{{ $album->photos_count }} photo{{ $album->photos_count > 1 ? 's' : '' }}@if ($album->taken_on) · {{ $album->taken_on->translatedFormat('F Y') }}@endif</p>
+                                <p class="mt-2 text-sm text-ink-700">{{ trans_choice(':count photo|:count photos', $album->photos_count) }}@if ($album->taken_on) · {{ $album->taken_on->translatedFormat('F Y') }}@endif</p>
                             </div>
                         </article>
                     </li>

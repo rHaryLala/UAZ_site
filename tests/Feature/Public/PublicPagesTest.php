@@ -32,7 +32,7 @@ it('serves every public section', function (string $path) {
 it('serves a nested page by its full path and breadcrumbs', function () {
     $this->get('/admissions/licence')
         ->assertOk()
-        ->assertSee('Fil d\'Ariane', false)
+        ->assertSee('Fil d\'Ariane')
         ->assertSee('Admissions');
 });
 
@@ -88,7 +88,7 @@ it('shows a formation page with Course structured data and admission facts', fun
 
     $this->get($formation->url())
         ->assertOk()
-        ->assertSee('Conditions d\'admission', false)
+        ->assertSee('Conditions d\'admission')
         ->assertSee('"@type":"Course"', false)
         ->assertSee('180 ECTS');
 });

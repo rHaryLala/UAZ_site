@@ -16,6 +16,10 @@
 
     {{-- Classe « js » posée avant le premier rendu : les états initiaux d'animation ne s'appliquent qu'avec JavaScript. --}}
     <script @if (Vite::cspNonce()) nonce="{{ Vite::cspNonce() }}" @endif>document.documentElement.classList.add('js')</script>
+    {{-- Textes affichés par les scripts (resources/js/i18n.js) : uniquement hors français, où ils sont déjà dans les scripts. --}}
+    @unless (\App\Support\Locales::isDefault())
+        <script @if (Vite::cspNonce()) nonce="{{ Vite::cspNonce() }}" @endif>window.uazI18n = {!! json_encode(\App\Support\JsStrings::all(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
+    @endunless
 
     <x-seo :title="$title" :description="$description" :image="$image" :canonical="$canonical" :type="$type" :noindex="$noindex" />
 
@@ -32,7 +36,7 @@
     @stack('head')
 </head>
 <body {{ $attributes->class('min-h-screen antialiased') }}>
-    <a href="#contenu" class="skip-link">Aller au contenu principal</a>
+    <a href="#contenu" class="skip-link">{{ __('Aller au contenu principal') }}</a>
 
     <x-site.header />
 
@@ -42,7 +46,8 @@
 
     <x-site.footer />
 
-    @livewireScriptConfig
+    {{-- Les mises à jour Livewire ont une adresse unique, sans préfixe de langue : la langue est rétablie par SetLocale (middleware persistant). --}}
+    {!! \App\Support\Locales::withoutPrefix(fn () => \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scriptConfig()) !!}
     @stack('scripts')
 </body>
 </html>

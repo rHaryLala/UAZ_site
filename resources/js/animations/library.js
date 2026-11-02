@@ -10,6 +10,7 @@
 // Tout est du renforcement progressif : sans JavaScript, avec « réduire les animations » ou en économiseur de données,
 // la page reste complète (les classes `lib-live` / `is-live` n'existent alors pas, voir resources/css/library.css).
 import { gsap, ScrollTrigger, SplitText, MOTION_OK } from './gsap.js';
+import { isFrench, t } from '../i18n.js';
 
 const DESKTOP_MOTION = '(min-width: 1024px) and (prefers-reduced-motion: no-preference)';
 const headerHeight = () => document.querySelector('.site-header')?.offsetHeight ?? 0;
@@ -325,6 +326,8 @@ const formatMinutes = (minutes) => {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
 
+    if (!isFrench()) return `${h}:${String(m).padStart(2, '0')}`;
+
     return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`;
 };
 
@@ -355,25 +358,30 @@ export function describeStatus(schedule, { day, minutes }, subject) {
     const today = schedule[day];
     const slot = today?.find(([start, end]) => minutes >= start && minutes < end);
 
-    if (slot) return { state: 'open', text: `${subject.open} · jusqu'à ${formatMinutes(slot[1])}` };
+    if (slot) return { state: 'open', text: t(':status · jusqu\'à :time', { status: t(subject.open), time: formatMinutes(slot[1]) }) };
 
     const later = today?.find(([start]) => start > minutes);
-    if (later) return { state: 'closed', text: `${subject.closed} · reprend à ${formatMinutes(later[0])}` };
+    if (later) return { state: 'closed', text: t(':status · reprend à :time', { status: t(subject.closed), time: formatMinutes(later[0]) }) };
 
     for (let offset = 1; offset <= 7; offset++) {
         const nextDay = (day + offset) % 7;
         const slots = schedule[nextDay];
         if (slots?.length) {
-            const when = offset === 1 ? 'demain' : DAYS[nextDay];
+            const when = offset === 1 ? t('demain') : t(DAYS[nextDay]);
 
             return {
                 state: today === undefined ? 'unknown' : 'closed',
-                text: `${today === undefined ? `Horaires du ${DAYS[day]} non communiqués` : subject.closed} · ${subject.reopens} ${when} à ${formatMinutes(slots[0][0])}`,
+                text: t(':status · :verb :when à :time', {
+                    status: today === undefined ? t('Horaires du :day non communiqués', { day: t(DAYS[day]) }) : t(subject.closed),
+                    verb: t(subject.reopens),
+                    when,
+                    time: formatMinutes(slots[0][0]),
+                }),
             };
         }
     }
 
-    return { state: 'unknown', text: 'Horaires indisponibles' };
+    return { state: 'unknown', text: t('Horaires indisponibles') };
 }
 
 function initHours() {

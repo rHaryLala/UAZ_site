@@ -5,23 +5,23 @@
     $qs = fn (array $extra) => url('/formations').(count($q = array_filter(array_merge(['niveau' => $level?->value, 'faculte' => $faculty?->slug], $extra))) ? '?'.http_build_query($q) : '');
 @endphp
 
-<x-layouts.app title="Formations" description="Licences, masters et formations de l'Université Adventiste Zurcher : mentions, parcours, durée et conditions d'admission.">
-    <x-page-hero :image="\App\Models\SiteSetting::current()->formationsHeroImage" eyebrow="Formations" title="Une formation. Un avenir. Une vision." intro="Découvrez les mentions de l'UAZ et trouvez le parcours adapté à vos objectifs." :breadcrumbs="[['label' => 'Formations']]" />
+<x-layouts.app :title="__('Formations')" :description="__('Licences, masters et formations de l\'Université Adventiste Zurcher : mentions, parcours, durée et conditions d\'admission.')">
+    <x-page-hero :image="\App\Models\SiteSetting::current()->formationsHeroImage" :eyebrow="__('Formations')" :title="__('Une formation. Un avenir. Une vision.')" :intro="__('Découvrez les mentions de l\'UAZ et trouvez le parcours adapté à vos objectifs.')" :breadcrumbs="[['label' => 'Formations']]" />
 
     <x-section tone="paper" tight>
       <div data-ajax-region>
-        <form method="get" action="{{ url('/formations') }}" aria-label="Filtrer les formations" class="mb-12 space-y-4">
+        <form method="get" action="{{ url('/formations') }}" aria-label="{{ __('Filtrer les formations') }}" class="mb-12 space-y-4">
             <div class="flex flex-wrap items-center gap-3">
-                <span class="mr-2 text-sm font-semibold text-ink-700">Niveau</span>
-                <a href="{{ $qs(['niveau' => null]) }}" class="{{ $pill(! $level) }}" @if (! $level) aria-current="true" @endif>Tous</a>
+                <span class="mr-2 text-sm font-semibold text-ink-700">{{ __('Niveau') }}</span>
+                <a href="{{ $qs(['niveau' => null]) }}" class="{{ $pill(! $level) }}" @if (! $level) aria-current="true" @endif>{{ __('Tous') }}</a>
                 @foreach ($levels as $item)
                     <a href="{{ $qs(['niveau' => $item->value]) }}" class="{{ $pill($level === $item) }}" @if ($level === $item) aria-current="true" @endif>{{ $item->getLabel() }}</a>
                 @endforeach
             </div>
             @if ($faculties->count() > 1)
                 <div class="flex flex-wrap items-center gap-3">
-                    <span class="mr-2 text-sm font-semibold text-ink-700">Domaine</span>
-                    <a href="{{ $qs(['faculte' => null]) }}" class="{{ $pill(! $faculty) }}" @if (! $faculty) aria-current="true" @endif>Tous</a>
+                    <span class="mr-2 text-sm font-semibold text-ink-700">{{ __('Domaine') }}</span>
+                    <a href="{{ $qs(['faculte' => null]) }}" class="{{ $pill(! $faculty) }}" @if (! $faculty) aria-current="true" @endif>{{ __('Tous') }}</a>
                     @foreach ($faculties as $item)
                         <a href="{{ $qs(['faculte' => $item->slug]) }}" class="{{ $pill((bool) $faculty?->is($item)) }}" @if ($faculty?->is($item)) aria-current="true" @endif>{{ $item->name }}</a>
                     @endforeach
@@ -32,7 +32,7 @@
         <p class="mb-6 text-sm text-ink-700" role="status">{{ trans_choice('{0} Aucune formation|{1} :count formation|[2,*] :count formations', $formations->count()) }}</p>
 
         @if ($formations->isEmpty())
-            <p class="rounded-card bg-paper-50 p-8 text-ink-700 shadow-card">Aucune formation ne correspond à ces critères. <a href="{{ url('/formations') }}" class="link-arrow">Voir toutes les formations</a></p>
+            <p class="rounded-card bg-paper-50 p-8 text-ink-700 shadow-card">{{ __('Aucune formation ne correspond à ces critères.') }} <a href="{{ url('/formations') }}" class="link-arrow">{{ __('Voir toutes les formations') }}</a></p>
         @else
             <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($formations as $formation)
@@ -43,5 +43,5 @@
       </div>
     </x-section>
 
-    <x-cta-banner title="Une question sur une formation ?" text="Le bureau académique vous accompagne dans votre choix et votre candidature." :primary="['label' => 'Nous contacter', 'url' => url('/contact')]" :secondary="['label' => 'Conditions d\'admission', 'url' => url('/admissions/licence')]" />
+    <x-cta-banner :title="__('Une question sur une formation ?')" :text="__('Le bureau académique vous accompagne dans votre choix et votre candidature.')" :primary="['label' => 'Nous contacter', 'url' => url('/contact')]" :secondary="['label' => 'Conditions d\'admission', 'url' => url('/admissions/licence')]" />
 </x-layouts.app>

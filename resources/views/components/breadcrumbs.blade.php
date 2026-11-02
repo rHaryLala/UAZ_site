@@ -2,7 +2,9 @@
 
 {{-- Fil d'Ariane : [['label' => 'Formations', 'url' => '/formations'], ['label' => 'Licence en Droit']] ; le dernier est la page courante. --}}
 @php
-    $crumbs = collect([['label' => 'Accueil', 'url' => url('/')], ...$items])->values();
+    // Les libellés écrits en français dans les vues sont traduits ici ; un titre de page déjà traduit reste tel quel.
+    $items = collect($items)->map(fn ($item) => ['label' => __($item['label'])] + $item)->all();
+    $crumbs = collect([['label' => __('Accueil'), 'url' => url('/')], ...$items])->values();
     $jsonLd = [
         '@context' => 'https://schema.org',
         '@type' => 'BreadcrumbList',
@@ -10,14 +12,14 @@
             '@type' => 'ListItem',
             'position' => $i + 1,
             'name' => $c['label'],
-            'item' => $c['url'] ?? ($i === $crumbs->count() - 1 ? url()->current() : null),
+            'item' => $c['url'] ?? ($i === $crumbs->count() - 1 ? request()->url() : null),
         ]))->all(),
     ];
 @endphp
 
-<nav aria-label="Fil d'Ariane" {{ $attributes }}>
+<nav aria-label="{{ __('Fil d\'Ariane') }}" {{ $attributes }}>
     <ol @class(['flex flex-wrap items-center gap-x-2 gap-y-1 text-sm', 'text-navy-100' => $dark, 'text-ink-600' => ! $dark])>
-        <li><a href="{{ url('/') }}" @class(['underline-offset-4 hover:underline', 'hover:text-white' => $dark, 'hover:text-navy-800' => ! $dark])>Accueil</a></li>
+        <li><a href="{{ url('/') }}" @class(['underline-offset-4 hover:underline', 'hover:text-white' => $dark, 'hover:text-navy-800' => ! $dark])>{{ __('Accueil') }}</a></li>
         @foreach ($items as $item)
             <li class="flex items-center gap-2">
                 <x-ico name="chevron-right" class="size-3.5 opacity-60" />

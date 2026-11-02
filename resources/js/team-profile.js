@@ -5,6 +5,7 @@
 // son cadre, et la face arrière a son contenu à taille finale derrière une « fenêtre » qui s'agrandit.
 // Mouvement réduit : ouverture instantanée. Sans JavaScript, les cartes restent de simples vignettes.
 import { gsap } from './animations/gsap.js';
+import { t } from './i18n.js';
 
 const MAX_WIDTH = 960;
 const MARGIN = 16;
@@ -48,7 +49,7 @@ export function initTeamProfile() {
         origin = card;
 
         body.replaceChildren(template.content.cloneNode(true));
-        dialog.setAttribute('aria-label', body.querySelector('[data-profile-name]')?.textContent.trim() ?? 'Profil');
+        dialog.setAttribute('aria-label', body.querySelector('[data-profile-name]')?.textContent.trim() ?? t('Profil'));
 
         // Face avant : copie inerte de la carte (sans son bouton), qui remplit son cadre.
         const copy = card.cloneNode(true);

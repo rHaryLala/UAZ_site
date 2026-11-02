@@ -37,7 +37,7 @@
             <p class="font-medium text-ink-900">{{ __('home.formations.paths') }}</p>
             @foreach ($levels as $item)
                 <a href="{{ url('/formations?niveau='.$item->level->value) }}" class="font-semibold text-navy-800 underline decoration-gold-500 decoration-2 underline-offset-4 hover:decoration-navy-800">
-                    {{ $item->level->getLabel() }}@if ($item->duration) · {{ $item->duration }}@endif @if ($item->credits) · {{ $item->credits }} crédits ECTS @endif
+                    {{ $item->level->getLabel() }}@if ($item->duration) · {{ $item->duration }}@endif @if ($item->credits) · {{ __(':credits crédits ECTS', ['credits' => $item->credits]) }} @endif
                 </a>
             @endforeach
             <span>{{ __('home.formations.continuing') }}</span>

@@ -5,6 +5,9 @@ use App\Enums\FormationLevel;
 use App\Enums\PublicationStatus;
 use App\Enums\TeamCategory;
 
+// Les libellés passent par __() : il faut l'application (et son traducteur).
+uses(Tests\TestCase::class);
+
 it('labels every enum case in French', function (string $enum) {
     foreach ($enum::cases() as $case) {
         expect($case->getLabel())->toBeString()->not->toBeEmpty();

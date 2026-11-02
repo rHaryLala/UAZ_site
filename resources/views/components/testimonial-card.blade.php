@@ -19,7 +19,7 @@
         </div>
         @if ($testimonial->video_url)
             <a href="{{ $testimonial->video_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm ml-auto">
-                <x-ico name="play" class="size-4" /> Voir la vidéo <span class="sr-only">de {{ $testimonial->author_name }} (nouvel onglet)</span>
+                <x-ico name="play" class="size-4" /> {{ __('Voir la vidéo') }} <span class="sr-only">{{ __('de :author_name (nouvel onglet)', ['author_name' => $testimonial->author_name]) }}</span>
             </a>
         @endif
     </figcaption>

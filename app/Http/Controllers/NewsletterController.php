@@ -23,10 +23,10 @@ class NewsletterController extends Controller
         $data = $request->validate(
             ['email' => ['required', 'string', 'email:rfc', 'max:190'], 'website' => ['nullable', 'string', 'max:200']],
             [],
-            ['email' => 'adresse e-mail'],
+            ['email' => __('adresse e-mail')],
         );
 
-        $message = 'Merci ! Un e-mail de confirmation vient de vous être envoyé : cliquez sur le lien qu\'il contient pour finaliser votre abonnement.';
+        $message = __('Merci ! Un e-mail de confirmation vient de vous être envoyé : cliquez sur le lien qu\'il contient pour finaliser votre abonnement.');
 
         // Robot détecté (champ piège rempli) : on simule un succès sans rien enregistrer.
         if (filled($data['website'] ?? null)) {
@@ -52,7 +52,7 @@ class NewsletterController extends Controller
         } catch (\Throwable $e) {
             report($e);
 
-            return response()->json(['message' => 'L\'e-mail de confirmation n\'a pas pu être envoyé. Réessayez dans quelques instants.'], 503);
+            return response()->json(['message' => __('L\'e-mail de confirmation n\'a pas pu être envoyé. Réessayez dans quelques instants.')], 503);
         }
 
         return response()->json(['message' => $message]);
@@ -63,8 +63,8 @@ class NewsletterController extends Controller
         $subscriber->forceFill(['confirmed_at' => $subscriber->confirmed_at ?? now(), 'unsubscribed_at' => null])->save();
 
         return view('newsletter.status', [
-            'title' => 'Abonnement confirmé',
-            'text' => 'Merci ! Votre adresse est bien inscrite à la lettre d\'information de l\'UAZ. Vous pouvez vous désinscrire à tout moment depuis le lien présent dans nos messages.',
+            'title' => __('Abonnement confirmé'),
+            'text' => __('Merci ! Votre adresse est bien inscrite à la lettre d\'information de l\'UAZ. Vous pouvez vous désinscrire à tout moment depuis le lien présent dans nos messages.'),
         ]);
     }
 
@@ -73,8 +73,8 @@ class NewsletterController extends Controller
         $subscriber->forceFill(['unsubscribed_at' => $subscriber->unsubscribed_at ?? now()])->save();
 
         return view('newsletter.status', [
-            'title' => 'Désinscription effectuée',
-            'text' => 'Votre adresse a été retirée de la lettre d\'information de l\'UAZ. Vous ne recevrez plus de message de notre part.',
+            'title' => __('Désinscription effectuée'),
+            'text' => __('Votre adresse a été retirée de la lettre d\'information de l\'UAZ. Vous ne recevrez plus de message de notre part.'),
         ]);
     }
 }

@@ -31,13 +31,13 @@
 
         @if ($member->bio)
             <div class="mt-6">
-                <p class="eyebrow mb-2 font-sans! text-[0.6875rem]!">Message aux lecteurs</p>
+                <p class="eyebrow mb-2 font-sans! text-[0.6875rem]!">{{ __('Message aux lecteurs') }}</p>
                 <p class="text-ink-700">{!! nl2br(e($member->bio)) !!}</p>
             </div>
         @endif
 
         @if (! $member->quote && ! $member->bio)
-            <p class="mt-8 text-sm text-ink-600">Le message de {{ $member->name }} sera bientôt publié.</p>
+            <p class="mt-8 text-sm text-ink-600">{{ __('Le message de :name sera bientôt publié.', ['name' => $member->name]) }}</p>
         @endif
 
         @if ($member->email)

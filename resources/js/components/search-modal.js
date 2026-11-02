@@ -1,3 +1,4 @@
+import { t } from '../i18n.js';
 // Fenêtre de recherche (loupe de l'en-tête, Ctrl/Cmd + K ou « / ») : les résultats viennent d'un fragment HTML
 // rendu par le serveur (/recherche/apercu), donc le même moteur que la page /recherche. Sans JavaScript, la loupe
 // reste un simple lien vers cette page.
@@ -77,7 +78,7 @@ export default () => ({
             this.loading = false;
         } catch (error) {
             if (error.name === 'AbortError') return;
-            this.render('<p class="px-6 py-10 text-center text-sm text-ink-700">La recherche est momentanément indisponible. Réessayez dans un instant.</p>');
+            this.render('<p class="px-6 py-10 text-center text-sm text-ink-700">' + t('La recherche est momentanément indisponible. Réessayez dans un instant.') + '</p>');
             this.loading = false;
         }
     },
