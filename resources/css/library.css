@@ -779,3 +779,81 @@
 .lib-big .char {
     display: inline-block;
 }
+
+/* ───────── 5 bis. Le site de la bibliothèque (fenêtre de navigateur dessinée) ───────── */
+.lib-online {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+    background: var(--color-paper-100);
+}
+
+.lib-window {
+    display: block;
+    perspective: 1200px;
+    justify-self: center;
+    width: min(100%, 44rem);
+}
+
+.lib-window__sheet {
+    display: block;
+    overflow: hidden;
+    border: 1px solid rgb(35 46 102 / 0.18);
+    background: #fff;
+    box-shadow: 0 2.5rem 4rem -1.25rem rgb(10 22 40 / 0.4);
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.lib-window__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.7rem 0.9rem;
+    background: var(--color-navy-900);
+}
+
+.lib-window__bar i {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.3);
+}
+
+.lib-window__url {
+    margin-left: 0.6rem;
+    padding: 0.25rem 0.9rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: #fff;
+}
+
+.lib-window__body {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--color-navy-900);
+}
+
+.lib-window__body img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.9s var(--ease-out-expo, ease-out);
+}
+
+.lib-window:hover .lib-window__body img,
+.lib-window:focus-visible .lib-window__body img {
+    transform: scale(1.03);
+}
+
+.lib-window:focus-visible {
+    outline: 3px solid var(--color-royal-600, #3f51b5);
+    outline-offset: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lib-window__body img {
+        transition: none;
+    }
+}
