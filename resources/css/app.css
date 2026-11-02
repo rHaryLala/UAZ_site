@@ -8,6 +8,7 @@
 @import './research.css';
 @import './support.css';
 @import './timetables.css';
+@import './gallery.css';
 
 @plugin '@tailwindcss/typography';
 
