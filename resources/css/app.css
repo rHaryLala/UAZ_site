@@ -9,6 +9,7 @@
 @import './support.css';
 @import './timetables.css';
 @import './gallery.css';
+@import './events.css';
 
 @plugin '@tailwindcss/typography';
 

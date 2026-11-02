@@ -9,9 +9,13 @@ class EventController extends Controller
 {
     public function index(): View
     {
+        $upcoming = Event::visible()->upcoming()->with('cover.media')->orderBy('starts_at')->get();
+
         return view('events.index', [
-            'upcoming' => Event::visible()->upcoming()->with('cover.media')->orderBy('starts_at')->get(),
-            'past' => Event::visible()->past()->with('cover.media')->orderByDesc('starts_at')->paginate(6),
+            'upcoming' => $upcoming,
+            // « Prochain rendez-vous » : le premier événement à venir, celui du compte à rebours.
+            'next' => $upcoming->first(),
+            'past' => Event::visible()->past()->with('cover.media')->orderByDesc('starts_at')->paginate(9),
         ]);
     }
 
