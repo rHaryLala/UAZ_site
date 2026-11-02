@@ -37,5 +37,24 @@ return [
         'subscribe' => 'S\'abonner à la lettre d\'information',
         'news' => 'Lire les actualités',
     ],
+    'show' => [
+        'past' => 'Événement terminé',
+        'calendar' => [
+            'title' => 'Ajouter à mon agenda',
+            'ics' => 'Fichier agenda (.ics)',
+            'google' => 'Google Agenda',
+        ],
+        'when' => [
+            'eyebrow' => 'Quand',
+            'title' => 'Le déroulé',
+            'days' => ':count jours',
+            'track' => 'Durée de l\'événement dans la journée',
+        ],
+        'about' => 'À propos de l\'événement',
+        'others' => [
+            'eyebrow' => 'Et aussi',
+            'title' => 'Autres rendez-vous',
+        ],
+    ],
     'cursor' => 'Voir',
 ];

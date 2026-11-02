@@ -49,6 +49,13 @@ const scrollTo = async (page, selector, offset = 0) => {
     }
     await page.evaluate((v) => window.scrollTo(0, v), top + offset);
 };
+const scrollAll = async (page) => {
+    const height = await page.evaluate(() => document.documentElement.scrollHeight);
+    for (let y = 0; y < height; y += 350) {
+        await page.evaluate((v) => window.scrollTo(0, v), y);
+        await wait(40);
+    }
+};
 const unit = (page, name) => page.locator(`[data-unit="${name}"]`).first().innerText().then((t) => Number(t.trim()));
 
 try {
@@ -151,6 +158,61 @@ try {
     check((await en.locator('.evt-next__eyebrow').innerText()).trim().toLowerCase() === 'next up', 'anglais : « Next up »');
     check((await en.locator('.evt-card__when').first().innerText()).trim().toLowerCase() === 'in 2 days', 'anglais : « In 2 days »');
     await en.context().close();
+
+    // ── Page d'un événement ──
+    const show = await open({ viewport: { width: 1440, height: 900 } }, '/evenements/e2e-prochain');
+    check(await until(async () => show.evaluate(() => document.documentElement.classList.contains('evt-ready'))), 'événement : le mode immersif s\'active');
+    check(await until(async () => (await show.locator('[data-evs-title] .word').count()) >= 2, 5000), 'événement : le titre se découpe en mots');
+    await wait(2800);
+    check(await show.locator('[data-evs-ticket]').evaluate((el) => Number(getComputedStyle(el).opacity) > 0.95), 'événement : le billet est posé');
+    const sec = await unit(show, 's');
+    await wait(2300);
+    check((await unit(show, 's')) !== sec, 'événement : le compte à rebours avance chaque seconde');
+    const ticketBox = await show.locator('[data-evs-ticket]').boundingBox();
+    const tilt0 = await show.locator('[data-evs-ticket]').evaluate((el) => getComputedStyle(el).transform);
+    await show.mouse.move(ticketBox.x + ticketBox.width * 0.9, ticketBox.y + 10, { steps: 8 });
+    await wait(1000);
+    check(tilt0 !== await show.locator('[data-evs-ticket]').evaluate((el) => getComputedStyle(el).transform), 'événement : le billet s\'incline avec le pointeur');
+    const ics = await show.request.get(new URL(await show.locator('.evs-ticket__cal a[download]').getAttribute('href'), base).href);
+    check(ics.status() === 200 && (ics.headers()['content-type'] ?? '').startsWith('text/calendar') && (await ics.text()).includes('SUMMARY:E2E Prochain'), 'événement : le fichier agenda (.ics) se télécharge');
+    if (out) await show.screenshot({ path: path.join(out, 'evenement-billet.png') });
+    await scrollTo(show, '[data-evs-when]', -150);
+    check(await until(async () => show.locator('[data-evs-seg]').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a > 0.98), 5000), 'événement : la plage horaire se remplit');
+    check((await show.locator('.evs-track__hours li').allInnerTexts()).length === 5, 'événement : les repères de la journée sont affichés');
+    check(await show.locator('.nws-prose .prose > p').first().evaluate((el) => getComputedStyle(el, '::first-letter').float === 'none'), 'événement : pas de lettrine dans le descriptif');
+    await scrollTo(show, '[data-evs-others]', -100);
+    await wait(1800);
+    check(await show.locator('[data-evs-others] [data-evt-stamp]').evaluateAll((els) => els.length === 3 && els.every((el) => Number(getComputedStyle(el).opacity) > 0.95)), 'événement : trois autres rendez-vous apparaissent');
+    check(await show.locator('[data-evs-others] .evt-stamp__img').first().evaluate((el) => getComputedStyle(el).filter === 'none'), 'événement : les autres rendez-vous sont en couleurs');
+    await show.goto(base + '/evenements/e2e-plusieurs-jours', { waitUntil: 'load' });
+    await scrollTo(show, '[data-evs-when]', -150);
+    check(await until(async () => show.locator('[data-evs-day]').evaluateAll((els) => els.length === 4 && els.every((el) => Number(getComputedStyle(el).opacity) > 0.95)), 5000), 'événement de plusieurs jours : quatre jours apparaissent');
+    await show.goto(base + '/evenements/e2e-passe-1', { waitUntil: 'load' });
+    await wait(2500);
+    check((await show.locator('.evs-tag').innerText()).toLowerCase().includes('terminé') && await show.locator('[data-evt-countdown]').count() === 0, 'événement passé : « terminé », sans compte à rebours');
+    await show.context().close();
+
+    const showMobile = await open({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }, '/evenements/e2e-prochain');
+    await scrollAll(showMobile);
+    await wait(1200);
+    check((await showMobile.evaluate(() => document.documentElement.scrollWidth)) <= 390, 'événement, mobile : aucun défilement horizontal');
+    check(await showMobile.locator('[data-evs-ticket]').evaluate((el) => { const r = el.getBoundingClientRect(); return r.left >= 0 && r.right <= 390; }), 'événement, mobile : le billet tient dans l\'écran');
+    await showMobile.context().close();
+
+    const showCalm = await open({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' }, '/evenements/e2e-prochain');
+    await wait(1200);
+    check(await showCalm.locator('[data-evs-title]').evaluate((el) => Number(getComputedStyle(el).opacity) === 1 && el.querySelectorAll('.word').length === 0), 'événement, mouvement réduit : le titre est visible, non découpé');
+    check(await showCalm.locator('[data-evs-ticket]').evaluate((el) => Number(getComputedStyle(el).opacity) === 1 && getComputedStyle(el).transform === 'none'), 'événement, mouvement réduit : le billet est en place');
+    check(await showCalm.locator('[data-evs-seg]').evaluate((el) => getComputedStyle(el).transform === 'none'), 'événement, mouvement réduit : la plage horaire est dessinée');
+    const calmSec = await unit(showCalm, 's');
+    await wait(2300);
+    check((await unit(showCalm, 's')) !== calmSec, 'événement, mouvement réduit : le compte à rebours avance quand même');
+    await showCalm.context().close();
+
+    const showEn = await open({ viewport: { width: 1440, height: 900 } }, '/en/evenements/e2e-prochain');
+    await wait(2500);
+    check((await showEn.locator('.evs-tag').innerText()).toLowerCase().includes('in 2 days'), 'événement, anglais : « In 2 days »');
+    await showEn.context().close();
 
     check(errors.length === 0, `aucune erreur JavaScript${errors.length ? ' : ' + errors.join('; ') : ''}`);
 } catch (error) {

@@ -70,6 +70,7 @@ $publicRoutes = function (): void {
 
     Route::get('/evenements', [EventController::class, 'index'])->name('events.index');
     Route::get('/evenements/{event}', [EventController::class, 'show'])->name('events.show');
+    Route::get('/evenements/{event}/agenda.ics', [EventController::class, 'calendar'])->name('events.ics');
 
     Route::get('/galerie', [AlbumController::class, 'index'])->name('albums.index');
     Route::get('/galerie/{album}', [AlbumController::class, 'show'])->name('albums.show');

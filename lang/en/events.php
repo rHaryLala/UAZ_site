@@ -36,5 +36,24 @@ return [
         'subscribe' => 'Subscribe to the newsletter',
         'news' => 'Read the news',
     ],
+    'show' => [
+        'past' => 'Event over',
+        'calendar' => [
+            'title' => 'Add to my calendar',
+            'ics' => 'Calendar file (.ics)',
+            'google' => 'Google Calendar',
+        ],
+        'when' => [
+            'eyebrow' => 'When',
+            'title' => 'The schedule',
+            'days' => ':count days',
+            'track' => 'Time of the event within the day',
+        ],
+        'about' => 'About the event',
+        'others' => [
+            'eyebrow' => 'Also',
+            'title' => 'Other events',
+        ],
+    ],
     'cursor' => 'View',
 ];

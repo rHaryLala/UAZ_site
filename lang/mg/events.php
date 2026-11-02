@@ -37,5 +37,24 @@ return [
         'subscribe' => 'Misoratra anarana amin\'ny taratasy fampahafantarana',
         'news' => 'Vakio ny vaovao',
     ],
+    'show' => [
+        'past' => 'Vita ny hetsika',
+        'calendar' => [
+            'title' => 'Ampio ao amin\'ny fandaharako',
+            'ics' => 'Rakitra fandaharana (.ics)',
+            'google' => 'Google Agenda',
+        ],
+        'when' => [
+            'eyebrow' => 'Rahoviana',
+            'title' => 'Ny fandehanana',
+            'days' => 'andro :count',
+            'track' => 'Ora handaniana ny hetsika anatin\'ny andro',
+        ],
+        'about' => 'Momba ny hetsika',
+        'others' => [
+            'eyebrow' => 'Ary koa',
+            'title' => 'Hetsika hafa',
+        ],
+    ],
     'cursor' => 'Jereo',
 ];
