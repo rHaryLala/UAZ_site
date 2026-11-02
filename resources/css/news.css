@@ -1,0 +1,850 @@
+/*
+ * Actualités : liste (resources/views/news/index.blade.php) et page d'un article (news/show.blade.php).
+ * Animations : resources/js/animations/news.js. Identité de journal : papier chaud, encre bleue, filets, rouille, et un surligneur jaune.
+ * Base complète et lisible sans JavaScript ni animation ; le script ajoute `nws-ready` (états initiaux) et `is-fine` (curseur, souris uniquement).
+ */
+:root {
+    --nws-paper: #f4efe6;
+    --nws-sand: #ebe3d3;
+    --nws-ink: #131a36;
+    --nws-text: #343b5c;
+    --nws-rust: #a8481b;
+    --nws-gold: #e0a93f;
+    --nws-mark: #ffe08a;
+    --nws-night: #0d1230;
+    --nws-rule: rgb(19 26 54 / 0.22);
+}
+
+.js:not(.nws-ready) [data-nws-hide] {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 3s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .js:not(.nws-ready) [data-nws-hide] {
+        opacity: 1;
+        animation: none;
+    }
+}
+
+.nws-h2 {
+    max-width: 18ch;
+    font-size: clamp(2rem, 1.2rem + 3vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--nws-ink);
+    text-wrap: balance;
+}
+
+/* Le surligneur : un trait jaune qui se déploie sous le titre au survol. */
+.nws-mark {
+    background: linear-gradient(transparent 58%, var(--nws-mark) 58%) no-repeat 0 0 / 0% 100%;
+    transition: background-size 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+.nws-card:hover .nws-mark,
+.nws-lead:hover .nws-mark,
+.nws-card:has(a:focus-visible) .nws-mark,
+.nws-lead:has(a:focus-visible) .nws-mark {
+    background-size: 100% 100%;
+}
+
+/* ───────── 1. La une ───────── */
+.nws-hero {
+    padding: 2.5rem 0 clamp(2rem, 5vw, 3.5rem);
+    background: var(--nws-paper);
+    color: var(--nws-ink);
+}
+
+.nws-hero__body {
+    padding-top: clamp(1.5rem, 4vw, 3rem);
+}
+
+.nws-masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+    padding: 0.7rem 0;
+    border-top: 4px double var(--nws-ink);
+    border-bottom: 1px solid var(--nws-rule);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--nws-rust);
+}
+
+.nws-masthead__rule {
+    flex: 1;
+    min-width: 2rem;
+    height: 1px;
+    background: var(--nws-rule);
+}
+
+.nws-title {
+    max-width: 11ch;
+    margin-top: clamp(1.25rem, 3vw, 2.25rem);
+    font-size: clamp(3.5rem, 1.2rem + 9vw, 10rem);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--nws-ink);
+    text-wrap: balance;
+}
+
+.nws-title .word {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.nws-title .char {
+    display: inline-block;
+}
+
+/* ───────── 2. Le ruban ───────── */
+.nws-ticker {
+    overflow: hidden;
+    padding: 1rem 0;
+    background: var(--nws-ink);
+    color: var(--nws-paper);
+}
+
+.nws-ticker__track {
+    display: flex;
+    width: max-content;
+}
+
+.nws-ticker__run {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 2rem;
+    padding-right: 2rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.1rem, 0.95rem + 0.9vw, 1.6rem);
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.nws-ticker__run i {
+    width: 0.55rem;
+    height: 0.55rem;
+    background: var(--nws-gold);
+    transform: rotate(45deg);
+}
+
+/* ───────── 3. Le fil ───────── */
+.nws-wall {
+    position: relative;
+    overflow-x: clip;
+    padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 7rem);
+    background: var(--nws-paper);
+    color: var(--nws-ink);
+}
+
+.nws-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    border-bottom: 1px solid var(--nws-rule);
+}
+
+.nws-tab {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-bottom: -1px;
+    border-bottom: 3px solid transparent;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--nws-text);
+    transition: color 0.25s, border-color 0.25s;
+}
+
+.nws-tab:hover {
+    color: var(--nws-ink);
+    border-color: var(--nws-gold);
+}
+
+.nws-tab.is-active {
+    color: var(--nws-ink);
+    border-color: var(--nws-rust);
+}
+
+.nws-empty {
+    max-width: 36rem;
+    padding: 2rem;
+    background: #fff;
+    color: var(--nws-text);
+}
+
+/* L'article à la une. */
+.nws-lead {
+    position: relative;
+    display: grid;
+    margin-bottom: clamp(3rem, 7vw, 6rem);
+}
+
+.nws-lead__media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--nws-night);
+}
+
+.nws-lead__media picture,
+.nws-lead__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.nws-lead__img {
+    object-fit: cover;
+}
+
+.nws-lead__body {
+    position: relative;
+    padding: 1.5rem 0 0;
+}
+
+.nws-lead__flag {
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: 0.35rem 0.8rem;
+    background: var(--nws-rust);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.nws-lead__title {
+    margin-top: 0.7rem;
+    font-size: clamp(1.9rem, 1.2rem + 2.6vw, 3.6rem);
+    line-height: 1.05;
+    color: var(--nws-ink);
+    text-wrap: balance;
+}
+
+.nws-lead__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.nws-lead__excerpt {
+    margin-top: 1.1rem;
+    max-width: 38rem;
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--nws-text);
+}
+
+@media (min-width: 1024px) {
+    .nws-lead {
+        grid-template-columns: repeat(12, 1fr);
+        align-items: end;
+    }
+
+    .nws-lead__media {
+        grid-column: 1 / span 8;
+        grid-row: 1;
+    }
+
+    /* Le texte déborde sur la photo, comme à la une d'un magazine. */
+    .nws-lead__body {
+        grid-column: 7 / span 6;
+        grid-row: 1;
+        margin-bottom: -2.5rem;
+        padding: 2.25rem 2.5rem;
+        background: var(--nws-paper);
+        box-shadow: 0 0 0 1px var(--nws-rule);
+    }
+}
+
+/* Les cartes. */
+.nws-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-top: 1rem;
+}
+
+.nws-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: var(--nws-ink);
+    transform: scaleX(var(--line, 1));
+    transform-origin: 0 50%;
+}
+
+.nws-card__media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--nws-night);
+}
+
+.nws-card__media picture,
+.nws-card__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.nws-card__img {
+    object-fit: cover;
+    transition: filter 0.5s;
+}
+
+.nws-card:hover .nws-card__img,
+.nws-lead:hover .nws-lead__img {
+    filter: saturate(1.15) brightness(1.04);
+}
+
+.nws-card__blank {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(150deg, #1a2459, var(--nws-night));
+}
+
+.nws-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding-top: 1.1rem;
+}
+
+.nws-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--nws-text);
+}
+
+.nws-card__cat {
+    color: var(--nws-rust);
+}
+
+.nws-card__title {
+    margin-top: 0.55rem;
+    font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.85rem);
+    line-height: 1.15;
+    color: var(--nws-ink);
+    text-wrap: balance;
+}
+
+.nws-card__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.nws-card__excerpt {
+    display: -webkit-box;
+    margin-top: 0.8rem;
+    overflow: hidden;
+    line-height: 1.6;
+    color: var(--nws-text);
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.nws-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--nws-ink);
+}
+
+.nws-card__more svg {
+    transition: transform 0.3s;
+}
+
+.nws-card:hover .nws-card__more svg,
+.nws-lead:hover .nws-card__more svg {
+    transform: translateX(0.3rem);
+}
+
+.nws-card:has(a:focus-visible),
+.nws-lead:has(a:focus-visible) {
+    outline: 3px solid var(--nws-rust);
+    outline-offset: 6px;
+}
+
+/* Le fil : un accrochage irrégulier (7 + 5, puis 4 + 4 + 4). */
+.nws-grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem) clamp(1.25rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 640px) {
+    .nws-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .nws-grid {
+        grid-template-columns: repeat(12, 1fr);
+        align-items: start;
+    }
+
+    .nws-cell[data-slot='0'] { grid-column: span 7; }
+    .nws-cell[data-slot='1'] { grid-column: span 5; margin-top: 4.5rem; }
+    .nws-cell[data-slot='2'],
+    .nws-cell[data-slot='3'],
+    .nws-cell[data-slot='4'] { grid-column: span 4; }
+    .nws-cell[data-slot='3'] { margin-top: 2.5rem; }
+
+    .nws-cell[data-slot='0'] .nws-card__title { font-size: 2.4rem; }
+    .nws-cell[data-slot='1'] .nws-card__media { aspect-ratio: 4 / 5; }
+    .nws-cell[data-slot='2'] .nws-card__media,
+    .nws-cell[data-slot='3'] .nws-card__media,
+    .nws-cell[data-slot='4'] .nws-card__media { aspect-ratio: 4 / 3; }
+}
+
+.nws-pages {
+    margin-top: clamp(3rem, 6vw, 5rem);
+}
+
+/* Le curseur « Lire » (souris uniquement). */
+.nws-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    display: none;
+    place-items: center;
+    width: 5rem;
+    height: 5rem;
+    margin: -2.5rem 0 0 -2.5rem;
+    border-radius: 50%;
+    background: var(--nws-rust);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.is-fine .nws-cursor {
+    display: grid;
+}
+
+/* ───────── 4. La suite ───────── */
+.nws-more {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(5rem, 11vw, 9rem) 0;
+    background: linear-gradient(160deg, #0a0e28, var(--nws-night));
+    color: #fff;
+}
+
+.nws-more__text {
+    max-width: 20ch;
+    font-size: clamp(2rem, 1.2rem + 3.6vw, 4.25rem);
+    font-weight: 400;
+    line-height: 1.08;
+    color: #fff;
+    text-wrap: balance;
+}
+
+.nws-more__text .word {
+    display: inline-block;
+}
+
+/* ───────── L'article ───────── */
+.nws-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 90;
+    height: 4px;
+    background: rgb(168 72 27 / 0.15);
+}
+
+.nws-progress i {
+    position: absolute;
+    inset: 0;
+    background: var(--nws-rust);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+}
+
+.nws-open {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 2.5rem 0 clamp(2.5rem, 6vw, 4.5rem);
+    background: var(--nws-paper);
+    color: var(--nws-ink);
+}
+
+.nws-open.has-cover {
+    min-height: min(84svh, 48rem);
+    background: var(--nws-night);
+    color: #fff;
+}
+
+.nws-open__cover {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    transform-origin: 50% 40%;
+}
+
+.nws-open__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(0deg, rgb(13 18 48 / 0.96), rgb(13 18 48 / 0.55) 55%, rgb(13 18 48 / 0.25)),
+        linear-gradient(95deg, rgb(13 18 48 / 0.6), transparent 70%);
+}
+
+.nws-open__body {
+    margin-top: auto;
+    padding-top: clamp(4rem, 9vw, 7rem);
+}
+
+.nws-open__tag {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+    padding: 0.35rem 0.85rem;
+    background: var(--nws-rust);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.nws-open__title {
+    max-width: 20ch;
+    font-size: clamp(2.25rem, 1.2rem + 4.8vw, 5.5rem);
+    font-weight: 400;
+    line-height: 1.02;
+    color: inherit !important;
+    text-wrap: balance;
+}
+
+.nws-open__title .word {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.nws-open__title .char {
+    display: inline-block;
+}
+
+.nws-open__lead {
+    max-width: 42rem;
+    margin-top: 1.5rem;
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    line-height: 1.6;
+    opacity: 0.92;
+}
+
+.nws-open__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+
+.nws-open__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.nws-open.has-cover .nws-open__meta svg {
+    color: var(--nws-gold);
+}
+
+.nws-article {
+    padding: clamp(3rem, 7vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem);
+    background: var(--nws-paper);
+}
+
+.nws-article__layout {
+    display: grid;
+    gap: 2.5rem;
+}
+
+.nws-prose {
+    min-width: 0;
+    font-size: 1.15rem;
+    line-height: 1.85;
+    color: var(--nws-text);
+}
+
+.nws-prose .prose {
+    color: var(--nws-text);
+}
+
+/* Lettrine. */
+.nws-prose .prose > p:first-of-type::first-letter {
+    float: left;
+    margin: 0.35rem 0.7rem 0 0;
+    font-family: var(--font-serif);
+    font-size: 4.6rem;
+    line-height: 0.8;
+    color: var(--nws-rust);
+}
+
+/* Intertitres : un filet de rouille qui se trace. */
+.nws-prose .prose h2 {
+    --rule: 1;
+    margin-top: 2.75em;
+    padding-bottom: 0.6em;
+    background: linear-gradient(var(--nws-rust), var(--nws-rust)) no-repeat 0 100% / calc(var(--rule) * 4rem) 3px;
+    color: var(--nws-ink);
+}
+
+.nws-prose .prose h3 {
+    color: var(--nws-ink);
+}
+
+.nws-prose .prose blockquote {
+    margin-block: 2.5em;
+    padding: 0.2em 0 0.2em 1.5rem;
+    border-left: 4px solid var(--nws-rust);
+    font-family: var(--font-serif);
+    font-size: 1.45em;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--nws-ink);
+}
+
+.nws-prose .prose img {
+    width: 100%;
+    height: auto;
+}
+
+.nws-prose .prose figure {
+    margin-block: 2.5em;
+}
+
+.nws-prose .prose figure,
+.nws-prose .prose p:has(> img:only-child),
+.nws-prose .prose p:has(> a:only-child > img:only-child) {
+    overflow: hidden;
+}
+
+.nws-credit {
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--nws-text);
+}
+
+/* Partage : une rangée sous le texte, un rail qui reste à portée sur grand écran. */
+.nws-share {
+    font-size: 0.85rem;
+}
+
+.nws-share__label {
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--nws-rust);
+}
+
+.nws-share ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.nws-share a,
+.nws-share button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    border: 1px solid var(--nws-ink);
+    font-weight: 600;
+    color: var(--nws-ink);
+    cursor: pointer;
+    transition: background-color 0.25s, color 0.25s;
+}
+
+.nws-share button[hidden] {
+    display: none;
+}
+
+.nws-share a:hover,
+.nws-share button:hover {
+    background: var(--nws-ink);
+    color: #fff;
+}
+
+@media (min-width: 1100px) {
+    .nws-article__layout {
+        grid-template-columns: 9rem minmax(0, 46rem);
+        justify-content: center;
+        column-gap: 3rem;
+    }
+
+    .nws-prose {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .nws-share {
+        grid-column: 1;
+        grid-row: 1;
+        position: sticky;
+        top: calc(var(--header-h) + 2rem);
+        align-self: start;
+    }
+
+    .nws-share ul {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.nws-article__end {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--nws-rule);
+}
+
+/* D'un article à l'autre. */
+.nws-pager {
+    display: grid;
+    background: var(--nws-night);
+}
+
+@media (min-width: 768px) {
+    .nws-pager:has(.nws-pager__link + .nws-pager__link) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.nws-pager__link {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(14rem, 28vw, 20rem);
+    overflow: hidden;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    color: #fff;
+}
+
+.nws-pager__link.is-newer {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.nws-pager__img {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+}
+
+.nws-pager__img img {
+    filter: grayscale(1) brightness(0.55);
+    transition: filter 0.6s, transform 0.9s;
+}
+
+.nws-pager__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(0deg, rgb(13 18 48 / 0.85), rgb(13 18 48 / 0.2));
+}
+
+.nws-pager__link:hover .nws-pager__img img,
+.nws-pager__link:focus-visible .nws-pager__img img {
+    filter: grayscale(0) brightness(0.7);
+    transform: scale(1.05);
+}
+
+.nws-pager__link:focus-visible {
+    outline: 3px solid var(--nws-gold);
+    outline-offset: -6px;
+}
+
+.nws-pager__text {
+    display: block;
+    max-width: 30rem;
+}
+
+.nws-pager__dir {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--nws-gold);
+}
+
+.nws-pager__title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem);
+    line-height: 1.15;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.nws-related {
+    position: relative;
+    overflow-x: clip;
+    padding: clamp(4rem, 8vw, 7rem) 0;
+    background: var(--nws-sand);
+    color: var(--nws-ink);
+}
+
+.nws-grid--related {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+}
+
+@media (min-width: 1024px) {
+    .nws-grid--related {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* La barre de lecture n'existe que lorsque le script la fait avancer. */
+.nws-progress {
+    display: none;
+}
+
+.nws-ready .nws-progress {
+    display: block;
+}

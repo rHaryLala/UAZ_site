@@ -27,6 +27,8 @@ async function load(url, { push }) {
 
         const focusedHref = document.activeElement?.closest(`${SELECTOR} a`)?.getAttribute('href');
         current.innerHTML = next.innerHTML;
+        // Les modules d'animation de la page (actualités…) habillent le nouveau contenu.
+        document.dispatchEvent(new CustomEvent('uaz:region', { detail: { region: current } }));
         // Les éléments « data-reveal » du nouveau contenu s'affichent par un court fondu CSS (pas de GSAP à relancer).
         current.querySelectorAll('[data-reveal]').forEach((el, index) => {
             el.setAttribute('data-revealed', '');

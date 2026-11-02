@@ -24,6 +24,9 @@ class NewsController extends Controller
             'posts' => $posts,
             'category' => $category,
             'categories' => NewsCategory::whereHas('posts', fn ($q) => $q->visible())->orderBy('name')->get(),
+            // Le ruban des dernières nouvelles : les titres les plus récents, toutes rubriques confondues.
+            'headlines' => NewsPost::visible()->orderByDesc('published_at')->limit(6)->get(['id', 'title', 'slug', 'translations']),
+            'latestDate' => NewsPost::visible()->max('published_at'),
         ]);
     }
 
@@ -31,10 +34,16 @@ class NewsController extends Controller
     {
         $post->load(['category', 'cover.media', 'ogImage.media', 'author']);
 
+        $visible = fn () => NewsPost::visible()->with(['category', 'cover.media'])->where('id', '!=', $post->id);
+
         return view('news.show', [
             'post' => $post,
-            'related' => NewsPost::visible()->with(['category', 'cover.media'])
-                ->where('id', '!=', $post->id)->orderByDesc('published_at')->limit(3)->get(),
+            'related' => $visible()->orderByDesc('published_at')->limit(3)->get(),
+            // Navigation d'un article à l'autre : le précédent est plus ancien, le suivant plus récent.
+            'older' => $post->published_at ? $visible()->where('published_at', '<', $post->published_at)->orderByDesc('published_at')->first() : null,
+            'newer' => $post->published_at ? $visible()->where('published_at', '>', $post->published_at)->orderBy('published_at')->first() : null,
+            // Temps de lecture estimé (200 mots par minute) : calculé du texte, jamais saisi.
+            'minutes' => max(1, (int) ceil(str_word_count(strip_tags((string) $post->body), 0, 'àâäçéèêëîïôöùûüÿœÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸŒ') / 200)),
         ]);
     }
 }
