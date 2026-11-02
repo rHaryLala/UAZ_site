@@ -93,6 +93,17 @@ class PageController extends Controller
             ]);
         }
 
+        // Emplois du temps : une fiche par PDF saisi dans le texte de la page (nom, faculté et taille tirés des données réelles) ; ce qui reste
+        // du texte (titres, explications) s'affiche à la suite.
+        if ($page->key === 'timetables') {
+            return view('pages.timetables', [
+                'page' => $page,
+                'trail' => $trail,
+                'sheets' => \App\Support\TimetableSheets::from($page),
+                'blocks' => \App\Support\TimetableSheets::remainder($page),
+            ]);
+        }
+
         // Dortoirs : mise en page immersive. Photos du texte dans l'ordre (allée, résidence des filles, résidence des garçons, chambre, puis cinq vues de chambres) ;
         // les deux liens Facebook (« Open House », « MJA ») sont repris tels qu'ils figurent dans le texte.
         if ($page->key === 'student-life-dorms') {

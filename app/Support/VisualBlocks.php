@@ -22,7 +22,7 @@ final class VisualBlocks
      */
     public const BESPOKE_KEYS = [
         'home', 'about', 'support', 'student-life-library', 'student-life-cafeteria', 'student-life-dorms',
-        'admissions-licence', 'admissions-master', 'admissions-fees', 'research',
+        'admissions-licence', 'admissions-master', 'admissions-fees', 'research', 'timetables',
     ];
 
     public static function isBespoke(Page $page): bool
