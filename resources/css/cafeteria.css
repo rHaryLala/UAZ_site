@@ -36,7 +36,7 @@
 .caf-hero {
     position: relative;
     overflow: hidden;
-    padding: clamp(2rem, 5vw, 4rem) 0 clamp(4rem, 9vw, 8rem);
+    padding: 2.5rem 0 clamp(4rem, 9vw, 8rem);
     background:
         radial-gradient(40rem 26rem at 85% 20%, rgb(184 74 38 / 0.14), transparent 70%),
         var(--caf-cream);

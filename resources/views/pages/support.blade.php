@@ -13,7 +13,7 @@
         <div class="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950/92 via-navy-950/65 to-navy-950/10" aria-hidden="true"></div>
         <div class="absolute inset-0 -z-10 bg-gradient-to-t from-navy-950/70 via-transparent to-transparent" aria-hidden="true"></div>
 
-        <div class="container-site flex min-h-[34rem] flex-col justify-end pt-12 pb-16 md:min-h-[40rem] md:pb-24">
+        <div class="container-site flex min-h-[34rem] flex-col justify-end pt-10 pb-16 md:min-h-[40rem] md:pb-24">
             <x-breadcrumbs :items="[['label' => $page->title]]" dark class="mb-auto" />
             <p class="eyebrow mt-16 mb-4 text-sun-400!" data-reveal>{{ __('support.hero.eyebrow') }}</p>
             <h1 class="max-w-3xl text-[clamp(2.75rem,1.4rem+5vw,5.5rem)] leading-[1.03] font-normal text-white!" data-reveal data-reveal-delay="0.1">{{ $page->title }}</h1>

@@ -29,9 +29,11 @@
     {{-- 1. L'OUVERTURE : le titre se découpe en mots, le sceau tourne en défilant, la photo se dévoile (animations : resources/js/animations/admissions.js) --}}
     <header class="adm-hero" data-adm-hero aria-labelledby="adm-title">
         <img class="adm-hero__seal" data-adm-seal src="{{ asset('images/uaz-seal-768.webp') }}" alt="" width="768" height="768" decoding="async">
+        <div class="container-site">
+            <x-breadcrumbs :items="$trail" />
+        </div>
         <div class="container-site adm-hero__grid">
             <div class="adm-hero__text">
-                <x-breadcrumbs :items="$trail" />
                 <p class="adm-badge" data-adm-hide data-adm-fade>Admission {{ $common['year'] }}</p>
                 <h1 id="adm-title" class="adm-title" data-adm-hide data-adm-title>{{ $data['title'] }}</h1>
                 <ul class="adm-chips" data-adm-hide data-adm-fade>

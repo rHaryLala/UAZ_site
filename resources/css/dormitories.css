@@ -46,7 +46,7 @@
 .dor-hero__text {
     position: relative;
     z-index: 3;
-    padding-top: clamp(1.5rem, 4vw, 3rem);
+    padding-top: 2.5rem;
 }
 
 .dor-title {

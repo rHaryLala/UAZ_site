@@ -59,7 +59,7 @@
             <div class="lib-intro__shade" data-lib-shade aria-hidden="true"></div>
 
             <div class="lib-intro__content container-site" data-lib-content>
-                <x-breadcrumbs :items="$trail" dark />
+                <x-breadcrumbs :items="$trail" dark class="mb-auto" />
                 <h1 id="lib-title" class="lib-title mt-10" data-lib-hide data-lib-title>Bibliothèque <em>Paul Pichot</em></h1>
                 <p class="mt-6 max-w-xl text-lead text-white/85" data-lib-hide data-lib-fade>Un lieu où l'esprit se renouvelle.</p>
                 <p class="lib-cue" data-lib-hide data-lib-fade><span aria-hidden="true"></span>Faites défiler pour visiter</p>

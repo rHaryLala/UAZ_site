@@ -66,6 +66,9 @@
 .lib-intro__content {
     position: relative;
     z-index: 3;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
     padding-top: 2.5rem;
     padding-bottom: clamp(2.5rem, 6vw, 5rem);
 }

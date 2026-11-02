@@ -22,9 +22,11 @@
 <x-layouts.app :title="$page->metaTitle()" :description="$page->metaDescription()" :image="$page->metaImage()" :noindex="$page->status !== \App\Enums\PublicationStatus::Published">
     {{-- 1. L'ASSIETTE : le titre se sert lettre à lettre, l'assiette tourne autour de sa couronne de mots (animations : resources/js/animations/cafeteria.js) --}}
     <section class="caf-hero" data-cafeteria data-caf-hero aria-labelledby="caf-title">
+        <div class="container-site">
+            <x-breadcrumbs :items="$trail" />
+        </div>
         <div class="container-site caf-hero__grid">
             <div class="caf-hero__text">
-                <x-breadcrumbs :items="$trail" />
                 <h1 id="caf-title" class="caf-title" data-caf-title>Cafétéria</h1>
                 <svg class="caf-title__stroke" viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true" focusable="false" data-caf-stroke><path d="M4 12 C 60 2, 110 20, 170 9 S 300 16, 396 5" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
                 <p class="caf-hero__lead" data-caf-hide data-caf-fade>Une expérience culinaire simple, équilibrée et inspirante.</p>

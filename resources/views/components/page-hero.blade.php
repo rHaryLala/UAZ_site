@@ -17,9 +17,10 @@
         <x-triangle class="pointer-events-none absolute -bottom-1/3 left-[-8%] -z-10 w-[48rem] text-gold-300/10" />
     @endif
 
-    <div @class(["container-site pt-14 pb-14 md:pt-16 md:pb-20", "md:min-h-[42rem] md:pt-28 md:pb-40" => $image])>
+    {{-- Le fil d'Ariane est toujours à 2,5 rem du haut de l'en-tête (comme sur « À propos ») ; la marge compense pour que le titre reste en place. --}}
+    <div @class(["container-site pt-10 pb-14 md:pb-20", "md:min-h-[42rem] md:pb-40" => $image])>
         @if (count($breadcrumbs))
-            <x-breadcrumbs :items="$breadcrumbs" dark class="mb-8" />
+            <x-breadcrumbs :items="$breadcrumbs" dark :class="$image ? 'mb-12 md:mb-[6.5rem]' : 'mb-12 md:mb-14'" />
         @endif
         @if ($eyebrow)
             <p class="eyebrow mb-4">{{ $eyebrow }}</p>

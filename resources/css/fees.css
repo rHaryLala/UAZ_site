@@ -87,7 +87,7 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(4.5rem, 9vw, 8rem);
+    padding: 2.5rem 0 clamp(4.5rem, 9vw, 8rem);
     background: var(--fee-paper);
 }
 

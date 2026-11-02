@@ -35,8 +35,8 @@
         <div class="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950/90 via-navy-950/60 to-navy-950/15" aria-hidden="true"></div>
         <div class="absolute inset-0 -z-10 bg-gradient-to-t from-navy-950/70 to-transparent" aria-hidden="true"></div>
 
-        <div class="container-site pt-12 pb-56 md:pt-16 md:pb-64">
-            <x-breadcrumbs :items="[['label' => 'Contact']]" dark class="mb-10" />
+        <div class="container-site pt-10 pb-56 md:pb-64">
+            <x-breadcrumbs :items="[['label' => 'Contact']]" dark class="mb-12 md:mb-16" />
             <p class="eyebrow mb-4 text-sun-400!" data-reveal>{{ $copy['eyebrow'] }}</p>
             <h1 class="max-w-3xl text-[clamp(2.5rem,1.3rem+4.4vw,5rem)] leading-[1.04] font-normal text-white!" data-reveal data-reveal-delay="0.1">{{ $copy['title'] }}</h1>
             <p class="mt-6 max-w-2xl text-lead text-white/85" data-reveal data-reveal-delay="0.2">{{ $copy['intro'] }}</p>
