@@ -149,3 +149,5 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] **Page « Confidentialité et cookies »** : texte anglais prêt (seeder), texte malagasy à rédiger et à faire valider avec la version française.
 - [ ] **Pages sur mesure** (À propos, Soutenir, Bibliothèque, Cafétéria, Dortoirs, Admissions, Frais) : textes traduits dans le code ; tout changement
       de texte français doit être répercuté dans `lang/en.json` et `lang/mg.json` (le test de traductions le rappelle).
+
+- [ ] **Page « Système LMD »** : les chiffres et mentions de la page sur mesure viennent de `config/lmd.php` (copie du texte du site actuel : 3 ans / 6 semestres / 180 crédits ECTS, 2 ans / 120 crédits / 300 depuis le Bac, sept mentions de Licence, trois de Master). À mettre à jour si l'UAZ modifie ce texte. Le **Doctorat** n'a ni durée ni crédits publiés : à fournir si l'UAZ veut les afficher. Malagasy de la page à faire relire.

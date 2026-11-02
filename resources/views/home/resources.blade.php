@@ -1,7 +1,7 @@
 @php
-    // Pages « ressources » (maquette : Bibliothèque, Emplois du temps, Téléchargements) : celles qui existent et sont publiées.
-    $resources = \App\Models\Page::visible()->with('cover.media')->whereIn('key', ['student-life-library', 'timetables', 'admissions-downloads'])->get()
-        ->sortBy(fn ($p) => array_search($p->key, ['student-life-library', 'timetables', 'admissions-downloads']))->values();
+    // Pages « ressources » (maquette : Bibliothèque, Emplois du temps, Téléchargements, puis Système LMD) : celles qui existent et sont publiées.
+    $resources = \App\Models\Page::visible()->with('cover.media')->whereIn('key', ['student-life-library', 'timetables', 'admissions-downloads', 'lmd'])->get()
+        ->sortBy(fn ($p) => array_search($p->key, ['student-life-library', 'timetables', 'admissions-downloads', 'lmd']))->values();
 @endphp
 
 @if ($resources->isNotEmpty())

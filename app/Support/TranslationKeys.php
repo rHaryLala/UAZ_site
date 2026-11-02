@@ -52,8 +52,8 @@ final class TranslationKeys
             $keys[$text] = true;
         }
 
-        // Données des pages Admissions et Frais (tableaux de config, traduits à l'affichage par Translated).
-        foreach (['admissions', 'fees'] as $config) {
+        // Données des pages Admissions, Frais et Système LMD (tableaux de config, traduits à l'affichage par Translated).
+        foreach (['admissions', 'fees', 'lmd'] as $config) {
             foreach (Translated::strings(config($config)) as $text) {
                 $keys[$text] = true;
             }

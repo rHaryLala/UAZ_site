@@ -93,6 +93,21 @@ class PageController extends Controller
             ]);
         }
 
+        // Système LMD : mise en page immersive (données : config/lmd.php, reprises du texte de la page). Chaque mention de Licence renvoie à sa fiche
+        // de formation quand elle est publiée.
+        if ($page->key === 'lmd') {
+            $plain = fn (string $text) => trim(preg_replace('/[^a-z0-9]+/', ' ', strtolower(\Illuminate\Support\Str::ascii($text))));
+            $formations = \App\Models\Formation::visible()->get()->keyBy(fn ($formation) => $plain((string) $formation->getRawOriginal('mention')));
+
+            return view('pages.lmd', [
+                'page' => $page,
+                'trail' => $trail,
+                'data' => Translated::deep(config('lmd')),
+                'raw' => config('lmd'),
+                'links' => collect(config('lmd.licence_mentions'))->map(fn (array $mention) => $formations->get($plain((string) $mention['formation']))?->url())->all(),
+            ]);
+        }
+
         // Emplois du temps : une fiche par PDF saisi dans le texte de la page (nom, faculté et taille tirés des données réelles) ; ce qui reste
         // du texte (titres, explications) s'affiche à la suite.
         if ($page->key === 'timetables') {

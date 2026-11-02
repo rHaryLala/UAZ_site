@@ -1,0 +1,673 @@
+/*
+ * Page « Système LMD » (resources/views/pages/lmd.blade.php, animations : resources/js/animations/lmd.js).
+ * Identité : marine profond, or du sceau, papier. Trois lettres géantes (L, M, D), un escalier, une jauge de crédits.
+ * Base complète sans JavaScript ni animation ; le script ajoute `lmd-ready` (états initiaux) et `is-pinned` (la montée sur un écran arrêté).
+ */
+:root {
+    --lmd-night: #0c1233;
+    --lmd-deep: #1b2556;
+    --lmd-gold: #e0b957;
+    --lmd-gold-text: #6f5a35; /* or lisible (≥ 4,5:1) sur le papier */
+    --lmd-paper: #fbf9f4;
+    --lmd-ink: #131a3f;
+}
+
+.js:not(.lmd-ready) [data-lmd-hide] {
+    opacity: 0;
+    animation: uaz-failsafe 0.01s 3s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .js:not(.lmd-ready) [data-lmd-hide] {
+        opacity: 1;
+        animation: none;
+    }
+}
+
+.lmd-h2 {
+    max-width: 18ch;
+    font-size: clamp(2rem, 1.2rem + 3.4vw, 4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    text-wrap: balance;
+}
+
+/* ───────── 1. Les trois lettres ───────── */
+.lmd-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 2.5rem 0 clamp(3rem, 7vw, 6rem);
+    background:
+        radial-gradient(50rem 32rem at 80% 70%, rgb(224 185 87 / 0.18), transparent 62%),
+        linear-gradient(160deg, var(--lmd-deep), var(--lmd-night));
+    color: #fff;
+}
+
+.lmd-hero__grid {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+        linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+    mask-image: linear-gradient(180deg, #000 20%, transparent);
+}
+
+.lmd-hero__body {
+    padding-top: clamp(2rem, 5vw, 4rem);
+}
+
+.lmd-title {
+    font-size: clamp(2.6rem, 1.2rem + 5.4vw, 6.5rem);
+    font-weight: 400;
+    line-height: 1;
+    color: #fff !important;
+}
+
+.lmd-title .word,
+.lmd-title .char {
+    display: inline-block;
+}
+
+.lmd-title .word {
+    white-space: nowrap;
+}
+
+.lmd-lead {
+    max-width: 34rem;
+    margin-top: 1.5rem;
+    font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.6;
+    color: rgb(226 230 250 / 0.92);
+}
+
+.lmd-letters {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+@media (min-width: 768px) {
+    .lmd-letters {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+.lmd-letter {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 1.25rem;
+    align-items: end;
+    padding: 1.25rem 1.5rem 1.5rem;
+    border: 1px solid rgb(255 255 255 / 0.22);
+    overflow: hidden;
+    transition: border-color 0.4s, background-color 0.4s;
+}
+
+.lmd-letter::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--lmd-gold);
+    transform: translateY(101%);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lmd-letter:hover::before,
+.lmd-letter:focus-visible::before {
+    transform: none;
+}
+
+.lmd-letter__big {
+    grid-row: 1 / span 2;
+    font-family: var(--font-serif);
+    font-size: clamp(6rem, 4rem + 7vw, 11rem);
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.75);
+    transition: color 0.4s, -webkit-text-stroke-color 0.4s;
+}
+
+.lmd-letter__name {
+    align-self: end;
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.2rem);
+    line-height: 1.1;
+}
+
+.lmd-letter__grade {
+    align-self: start;
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lmd-gold);
+    transition: color 0.4s;
+}
+
+.lmd-letter:hover,
+.lmd-letter:focus-visible {
+    border-color: var(--lmd-gold);
+    color: var(--lmd-night);
+}
+
+.lmd-letter:hover .lmd-letter__big,
+.lmd-letter:focus-visible .lmd-letter__big {
+    color: var(--lmd-night);
+    -webkit-text-stroke-color: var(--lmd-night);
+}
+
+.lmd-letter:hover .lmd-letter__grade,
+.lmd-letter:focus-visible .lmd-letter__grade {
+    color: var(--lmd-night);
+}
+
+.lmd-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lmd-gold);
+}
+
+.lmd-cue span {
+    position: relative;
+    display: block;
+    width: 1px;
+    height: 3rem;
+    overflow: hidden;
+    background: rgb(255 255 255 / 0.25);
+}
+
+.lmd-cue span::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 50%;
+    background: var(--lmd-gold);
+    animation: scroll-cue 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lmd-cue span::after {
+        animation: none;
+    }
+}
+
+/* ───────── 2. La montée ───────── */
+.lmd-climb {
+    position: relative;
+    background: linear-gradient(180deg, var(--lmd-night), #0a0f2b);
+    color: #fff;
+}
+
+.lmd-climb__stage {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+}
+
+.lmd-climb__inner {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+}
+
+@media (min-width: 1024px) {
+    .lmd-climb__inner {
+        grid-template-columns: 1fr 1.1fr;
+        gap: 4rem;
+    }
+
+    .lmd-climb__stage {
+        display: flex;
+        align-items: center;
+        min-height: calc(100svh - var(--header-h));
+        padding: 2rem 0;
+    }
+
+    .lmd-climb__stage > * {
+        width: 100%;
+    }
+}
+
+.lmd-climb .lmd-h2 {
+    color: #fff;
+}
+
+.lmd-steps {
+    display: grid;
+    gap: 2.25rem;
+    margin-top: 2.25rem;
+}
+
+.lmd-step {
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--lmd-gold);
+}
+
+.lmd-step__kicker {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--lmd-gold);
+}
+
+.lmd-step__title {
+    margin-top: 0.3rem;
+    font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.8rem);
+    line-height: 1.05;
+    color: #fff !important;
+}
+
+.lmd-step__title span {
+    margin-left: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--lmd-gold);
+}
+
+.lmd-step__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.6rem;
+    margin-top: 0.9rem;
+}
+
+.lmd-step__facts span {
+    padding: 0.25rem 0.7rem;
+    border: 1px solid rgb(255 255 255 / 0.3);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.lmd-step__text {
+    max-width: 34rem;
+    margin-top: 0.9rem;
+    line-height: 1.6;
+    color: rgb(226 230 250 / 0.9);
+}
+
+/* Écran arrêté : une seule marche est lisible à la fois, les autres se superposent et se fondent. */
+.lmd-climb.is-pinned .lmd-steps {
+    display: block;
+    position: relative;
+    min-height: 22rem;
+}
+
+.lmd-climb.is-pinned .lmd-step {
+    position: absolute;
+    inset: 0 0 auto;
+}
+
+.lmd-art {
+    position: relative;
+    width: min(100%, 38rem);
+    margin-inline: auto;
+}
+
+.lmd-stair {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.lmd-stair path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.lmd-stair__base {
+    stroke: rgb(255 255 255 / 0.15);
+    stroke-width: 6;
+}
+
+.lmd-stair__line {
+    stroke: var(--lmd-gold);
+    stroke-width: 6;
+}
+
+.lmd-stair__next {
+    stroke: rgb(224 185 87 / 0.6);
+    stroke-width: 4;
+    stroke-dasharray: 3 12;
+}
+
+.lmd-stair__label {
+    fill: rgb(226 230 250 / 0.85);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.lmd-stair__label.is-gold {
+    fill: var(--lmd-gold);
+}
+
+.lmd-stair__marker {
+    fill: #fff;
+    filter: drop-shadow(0 0 10px rgb(224 185 87 / 0.9));
+}
+
+.lmd-gauge {
+    position: absolute;
+    top: -1.5rem;
+    left: 0;
+    width: clamp(8rem, 26%, 11rem);
+}
+
+.lmd-gauge svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    transform: rotate(-90deg);
+}
+
+.lmd-gauge circle {
+    fill: none;
+    stroke-width: 9;
+}
+
+.lmd-gauge__track {
+    stroke: rgb(255 255 255 / 0.14);
+}
+
+.lmd-gauge__arc {
+    stroke-linecap: butt;
+}
+
+.lmd-gauge__arc.is-licence {
+    stroke: var(--lmd-gold);
+    stroke-dasharray: 60 100;
+}
+
+.lmd-gauge__arc.is-master {
+    stroke: #fff;
+    stroke-dasharray: 40 100;
+    stroke-dashoffset: -60;
+}
+
+.lmd-gauge__value {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    text-align: center;
+}
+
+.lmd-gauge__value b {
+    font-family: var(--font-serif);
+    font-size: clamp(1.9rem, 1.4rem + 1.4vw, 2.8rem);
+    font-weight: 400;
+    line-height: 1;
+}
+
+.lmd-gauge__value span {
+    margin-top: 0.3rem;
+    max-width: 6rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--lmd-gold);
+}
+
+/* ───────── 3. La Licence ───────── */
+.lmd-licence {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: var(--lmd-paper);
+    color: var(--lmd-ink);
+}
+
+.lmd-licence .lmd-h2,
+.lmd-master .lmd-h2 {
+    color: inherit;
+}
+
+.lmd-intro {
+    display: grid;
+    gap: 1rem;
+    max-width: 44rem;
+    margin-top: 1.75rem;
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: #3d434e;
+}
+
+.lmd-mentions {
+    display: grid;
+    gap: 1px;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    border: 1px solid rgb(19 26 63 / 0.18);
+    background: rgb(19 26 63 / 0.18);
+}
+
+@media (min-width: 640px) {
+    .lmd-mentions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .lmd-mentions {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.lmd-mention {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 1.75rem 2rem;
+    background: var(--lmd-paper);
+    transition: background-color 0.4s, color 0.4s;
+}
+
+.lmd-mention:hover,
+.lmd-mention:has(a:focus-visible) {
+    background: var(--lmd-ink);
+    color: #fff;
+}
+
+.lmd-mention__no {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--lmd-gold-text);
+}
+
+.lmd-mention:hover .lmd-mention__no {
+    -webkit-text-stroke-color: var(--lmd-gold);
+}
+
+.lmd-mention__name {
+    margin-top: 1.5rem;
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2.1rem);
+    line-height: 1.1;
+    color: inherit;
+}
+
+.lmd-mention__name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.lmd-mention__label {
+    margin-top: 1.1rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lmd-gold-text);
+}
+
+.lmd-mention:hover .lmd-mention__label {
+    color: var(--lmd-gold);
+}
+
+.lmd-mention__tracks {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.lmd-mention__tracks li::before {
+    content: '— ';
+    color: var(--lmd-gold-text);
+}
+
+.lmd-mention:hover .lmd-mention__tracks li::before {
+    color: var(--lmd-gold);
+}
+
+.lmd-mention__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: opacity 0.4s, transform 0.4s;
+}
+
+.lmd-mention:hover .lmd-mention__more,
+.lmd-mention:has(a:focus-visible) .lmd-mention__more {
+    opacity: 1;
+    transform: none;
+}
+
+.lmd-mention:has(a:focus-visible) {
+    outline: 3px solid var(--lmd-gold);
+    outline-offset: -6px;
+}
+
+/* ───────── 4. Le Master ───────── */
+.lmd-master {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background:
+        radial-gradient(48rem 30rem at 15% 0%, rgb(224 185 87 / 0.14), transparent 60%),
+        linear-gradient(180deg, #0a0f2b, var(--lmd-deep));
+    color: #fff;
+}
+
+.lmd-intro-dark {
+    max-width: 46rem;
+    margin-top: 1.75rem;
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: rgb(226 230 250 / 0.92);
+}
+
+.lmd-stages {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: clamp(2rem, 5vw, 3rem);
+}
+
+.lmd-stage {
+    display: grid;
+    place-items: center;
+    width: clamp(5.5rem, 12vw, 8rem);
+    aspect-ratio: 1;
+    border: 2px solid var(--lmd-gold);
+    border-radius: 50%;
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 1.2rem + 2vw, 3rem);
+}
+
+.lmd-stage + .lmd-stage {
+    position: relative;
+    margin-left: clamp(2.5rem, 7vw, 5rem);
+}
+
+.lmd-stage + .lmd-stage::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    width: clamp(2.5rem, 7vw, 5rem);
+    height: 0;
+    border-top: 2px dashed var(--lmd-gold);
+    transform: scaleX(var(--line, 1));
+    transform-origin: 0 50%;
+}
+
+.lmd-masters {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+
+@media (min-width: 900px) {
+    .lmd-masters {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.lmd-master-card {
+    padding: 2rem 1.75rem;
+    border: 1px solid rgb(255 255 255 / 0.22);
+    background: rgb(255 255 255 / 0.04);
+    transition: background-color 0.4s, border-color 0.4s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lmd-master-card:hover {
+    border-color: var(--lmd-gold);
+    background: rgb(224 185 87 / 0.1);
+    transform: translateY(-6px);
+}
+
+.lmd-master-card__name {
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem);
+    line-height: 1.1;
+    color: #fff !important;
+}
+
+.lmd-master .lmd-mention__label {
+    color: var(--lmd-gold);
+}
+
+.lmd-master .lmd-mention__tracks li::before {
+    color: var(--lmd-gold);
+}
+
+/* ───────── 5. Le Doctorat ───────── */
+.lmd-doc {
+    padding: clamp(5rem, 11vw, 9rem) 0;
+    background: var(--lmd-paper);
+    color: var(--lmd-ink);
+}
+
+.lmd-doc__text {
+    max-width: 24ch;
+    font-size: clamp(2rem, 1.2rem + 3.6vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--lmd-ink);
+    text-wrap: balance;
+}
+
+.lmd-doc__text .word {
+    display: inline-block;
+}

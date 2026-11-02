@@ -51,3 +51,25 @@ it('leaves a menu that already has Ressources untouched, and can be rolled back'
     resourcesMigration()->down();
     expect(collect(Menu::where('handle', 'header')->first()->items)->pluck('label')->all())->not->toContain('Ressources');
 });
+
+function lmdMigration(): object
+{
+    return require database_path('migrations/2026_11_06_100000_add_lmd_to_resources_menu.php');
+}
+
+it('adds Système LMD at the end of Ressources on an existing site, once, and can be rolled back', function () {
+    legacyHeaderMenu();
+    resourcesMigration()->up(); // la rubrique d'origine : quatre pages, sans « Système LMD »
+
+    $labels = fn () => collect(collect(Menu::resolved('header'))->firstWhere('label', 'Ressources')['children'])->pluck('label')->all();
+    expect($labels())->toBe(['Téléchargements', 'Galerie', 'Emplois du temps', 'Événements']);
+
+    lmdMigration()->up();
+    expect($labels())->toBe(['Téléchargements', 'Galerie', 'Emplois du temps', 'Événements', 'Système LMD']);
+
+    lmdMigration()->up(); // idempotente
+    expect($labels())->toHaveCount(5);
+
+    lmdMigration()->down();
+    expect($labels())->not->toContain('Système LMD');
+});

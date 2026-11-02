@@ -41,7 +41,7 @@ it('keeps the seeded header menu resolvable with sub-menus', function () {
         ->toBe(['Licence', 'Master', 'Frais académiques'])
         ->and($resources['url'])->toBe('#')
         ->and(collect($resources['children'])->pluck('label')->all())
-        ->toBe(['Téléchargements', 'Galerie', 'Emplois du temps', 'Événements']);
+        ->toBe(['Téléchargements', 'Galerie', 'Emplois du temps', 'Événements', 'Système LMD']);
 });
 
 it('imports URL-MAP.csv idempotently and skips pattern rows', function () {

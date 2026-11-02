@@ -12,6 +12,7 @@
 @import './events.css';
 @import './news.css';
 @import './home.css';
+@import './lmd.css';
 
 @plugin '@tailwindcss/typography';
 

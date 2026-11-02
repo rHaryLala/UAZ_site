@@ -267,6 +267,7 @@ class StructureSeeder extends Seeder
                 array_merge($url('Ressources', '#'), ['children' => [
                     $page('Téléchargements', 'downloads'), $url('Galerie', '/galerie'),
                     $page('Emplois du temps', 'timetables'), $url('Événements', '/evenements'),
+                    $page('Système LMD', 'lmd'),
                 ]]),
                 $page('Centre de recherche', 'research'),
                 $page('À propos', 'about'),

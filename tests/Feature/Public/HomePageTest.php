@@ -119,7 +119,7 @@ it('lists the resource pages as a table of contents and previews the ones that h
 
     $html = $this->get('/')->assertOk()->assertSee('data-home-res', false)->getContent();
 
-    expect(substr_count($html, 'data-home-res-item'))->toBe(3)->and(substr_count($html, 'data-home-peek'))->toBe(1);
+    expect(substr_count($html, 'data-home-res-item'))->toBe(4)->and(substr_count($html, 'data-home-peek'))->toBe(1);
 });
 
 it('closes on the campus photo, with the same calls to action as before', function () {
