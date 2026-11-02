@@ -1,0 +1,1054 @@
+/*
+ * Accueil (resources/views/home/*.blade.php, animations : resources/js/animations/home.js). Le héros et la section « Votre futur commence ici » (vidéo)
+ * ne sont pas touchés : ils gardent leurs styles (app.css) et leurs animations (hero.js, future-title.js).
+ * Identité : papier, marine, or du sceau. Base complète sans JavaScript ni animation ; le script ajoute `home-ready` (états initiaux).
+ */
+:root {
+    --home-navy: #131a3f;
+    --home-deep: #232e66;
+    --home-gold: #c9a84c;
+    --home-gold-text: #8a724b; /* or lisible (≥ 4,5:1) sur le papier */
+    --home-paper: #fbf9f4;
+    --home-sand: #f5f1e8;
+}
+
+.home-h2 {
+    font-size: clamp(2rem, 1.2rem + 3.4vw, 4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    text-wrap: balance;
+}
+
+/* ───────── 1. La différence ───────── */
+.home-diff {
+    background: var(--home-paper);
+    color: var(--home-navy);
+}
+
+.home-diff__stage {
+    display: flex;
+    align-items: center;
+    min-height: calc(100svh - var(--header-h));
+    padding: clamp(4rem, 9vw, 8rem) 0;
+}
+
+.home-diff__title {
+    max-width: 20ch;
+    font-size: clamp(2.4rem, 1.2rem + 4.6vw, 5.6rem);
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    color: var(--home-navy);
+}
+
+.home-diff__title .word {
+    display: inline-block;
+}
+
+.home-diff__more {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 38rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.home-diff__figures {
+    padding-bottom: clamp(4.5rem, 9vw, 8rem);
+}
+
+.home-figs {
+    display: grid;
+    gap: 3rem 2rem;
+    padding-top: clamp(2rem, 5vw, 4rem);
+    border-top: 1px solid rgb(19 26 63 / 0.18);
+}
+
+@media (min-width: 640px) {
+    .home-figs {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .home-figs {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.home-fig {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+}
+
+.home-fig__rule {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: var(--home-gold);
+    transform-origin: 0 50%;
+}
+
+.home-fig__value {
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 2rem + 5vw, 7rem);
+    line-height: 0.95;
+    color: var(--home-navy);
+}
+
+.home-fig__suffix {
+    color: var(--home-gold-text);
+}
+
+.home-fig__label {
+    max-width: 14rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #3d434e;
+}
+
+/* ───────── 2. Les domaines de formation ───────── */
+.home-dom {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background:
+        radial-gradient(60rem 36rem at 85% 0%, rgb(201 168 76 / 0.14), transparent 60%),
+        linear-gradient(180deg, var(--home-navy), #0d1230);
+    color: #fff;
+}
+
+.home-dom__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.home-dom__title {
+    max-width: 18ch;
+    font-size: clamp(2rem, 1.2rem + 3.4vw, 4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: #fff;
+    text-wrap: balance;
+}
+
+.home-dom__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 1024px) {
+    .home-dom__row {
+        flex-direction: row;
+        height: clamp(30rem, 70svh, 40rem);
+    }
+}
+
+.home-panel {
+    position: relative;
+    isolation: isolate;
+    flex: 1;
+    min-height: 16rem;
+    overflow: hidden;
+    background: var(--panel-bg);
+    transition: flex-grow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-panel[style*='--tone: 0'] { --panel-bg: linear-gradient(160deg, #2a3880, #131a3f); }
+.home-panel[style*='--tone: 1'] { --panel-bg: linear-gradient(160deg, #1f4a63, #0d1b2e); }
+.home-panel[style*='--tone: 2'] { --panel-bg: linear-gradient(160deg, #5a3f79, #1a1236); }
+.home-panel[style*='--tone: 3'] { --panel-bg: linear-gradient(160deg, #7a5a2c, #241a0b); }
+
+.home-panel__img,
+.home-panel picture {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+}
+
+.home-panel__map {
+    position: absolute;
+    right: -2rem;
+    bottom: -2rem;
+    z-index: -2;
+    height: 120%;
+    color: rgb(255 255 255 / 0.07);
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-panel:hover .home-panel__map,
+.home-panel.is-open .home-panel__map {
+    transform: scale(1.08) rotate(-3deg);
+}
+
+.home-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(0deg, rgb(5 8 28 / 0.85), transparent 60%);
+}
+
+.home-panel__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    padding: 1.5rem;
+}
+
+.home-panel__no {
+    margin-bottom: auto;
+    font-family: var(--font-serif);
+    font-size: 3.5rem;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgb(255 255 255 / 0.55);
+}
+
+.home-panel__name {
+    font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.2rem);
+    line-height: 1.1;
+    color: #fff !important;
+    overflow-wrap: break-word;
+}
+
+.home-panel__more {
+    margin-top: 1.25rem;
+}
+
+.home-panel__more ul {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.home-panel__more a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: #e7ebf5;
+    text-underline-offset: 0.3em;
+}
+
+.home-panel__more a:hover,
+.home-panel__more a:focus-visible {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.home-panel__more svg {
+    color: var(--home-gold);
+}
+
+/* Grand écran : les panneaux se resserrent en bandes verticales ; celui qu'on survole (ou qui a le focus) s'ouvre. */
+@media (min-width: 1024px) {
+    .home-panel {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .home-panel.is-open {
+        flex-grow: 3.4;
+    }
+
+    .home-panel__body {
+        padding: 2rem;
+    }
+
+    /* Refermé, le panneau a un nom plus petit ; ouvert, il grandit. */
+    .home-panel__name {
+        font-size: 1.2rem;
+        transition: font-size 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .home-panel.is-open .home-panel__name,
+    .home-panel:hover .home-panel__name,
+    .home-panel:focus-within .home-panel__name,
+    .home-dom__row:not(:has(.is-open)) .home-panel:first-child .home-panel__name {
+        font-size: clamp(1.8rem, 1.2rem + 1.2vw, 2.4rem);
+    }
+
+    .home-panel__more {
+        min-width: 14rem;
+        opacity: 0;
+        transform: translateY(1rem);
+        transition: opacity 0.5s 0.15s, transform 0.6s 0.15s;
+    }
+
+    .home-panel.is-open .home-panel__more,
+    .home-panel:focus-within .home-panel__more {
+        opacity: 1;
+        transform: none;
+    }
+
+    /* Sans JavaScript : le premier panneau est ouvert, les autres s'ouvrent au survol ou au clavier. */
+    .home-dom__row:not(:has(.is-open)) .home-panel:first-child,
+    .home-panel:hover,
+    .home-panel:focus-within {
+        flex-grow: 3.4;
+    }
+
+    .home-dom__row:not(:has(.is-open)) .home-panel:first-child .home-panel__more,
+    .home-panel:hover .home-panel__more {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.home-dom__levels {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 2rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(255 255 255 / 0.18);
+    font-size: 0.9rem;
+    color: #c6d2f7;
+}
+
+.home-dom__levels p {
+    font-weight: 600;
+    color: #fff;
+}
+
+.home-dom__levels a {
+    font-weight: 600;
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: var(--home-gold);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.35em;
+}
+
+/* ───────── 3. Admissions ───────── */
+.home-adm {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1b2556, #0d1230);
+    color: #fff;
+}
+
+.home-adm__inner {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+    padding-block: clamp(4.5rem, 9vw, 8rem);
+}
+
+@media (min-width: 1024px) {
+    .home-adm__inner {
+        grid-template-columns: 1.2fr 0.9fr;
+        gap: 5rem;
+    }
+}
+
+.home-adm__title {
+    max-width: 22ch;
+    font-size: clamp(1.9rem, 1.2rem + 2.8vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    color: #fff;
+    text-wrap: balance;
+}
+
+.home-seal {
+    position: relative;
+    display: none;
+    width: min(100%, 26rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    perspective: 900px;
+}
+
+@media (min-width: 1024px) {
+    .home-seal {
+        display: block;
+    }
+}
+
+.home-seal svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.home-seal__ring {
+    fill: none;
+    stroke: rgb(201 168 76 / 0.55);
+    stroke-width: 1.2;
+}
+
+.home-seal__ring.is-dashed {
+    stroke-dasharray: 2 7;
+    stroke: rgb(201 168 76 / 0.4);
+}
+
+.home-seal__text {
+    transform-origin: 200px 200px;
+}
+
+.home-seal__text text {
+    fill: #d9c09a;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    letter-spacing: 0.34em;
+}
+
+.home-seal__img {
+    position: absolute;
+    inset: 22%;
+    width: 56%;
+    height: 56%;
+    transform-style: preserve-3d;
+}
+
+/* ───────── 4. La vie à l'UAZ ───────── */
+.home-life {
+    background: var(--home-paper);
+    color: var(--home-navy);
+}
+
+.home-life__head {
+    padding-block: clamp(4.5rem, 9vw, 8rem) clamp(2.5rem, 5vw, 4rem);
+}
+
+.home-life__title {
+    max-width: 22ch;
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.08;
+    text-wrap: balance;
+}
+
+.home-stack {
+    display: grid;
+}
+
+.home-card {
+    position: relative;
+    height: min(86svh, 46rem);
+}
+
+.home-card__inner {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    overflow: hidden;
+    background: var(--home-deep);
+    transform-origin: 50% 0;
+}
+
+.home-card__img,
+.home-card__inner picture {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.home-card__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(0deg, rgb(5 8 28 / 0.9), rgb(5 8 28 / 0.15) 60%),
+        linear-gradient(95deg, rgb(5 8 28 / 0.6), transparent 60%);
+}
+
+.home-card__body {
+    position: relative;
+    padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+.home-card__no {
+    position: absolute;
+    top: -9rem;
+    right: var(--gutter);
+    font-family: var(--font-serif);
+    font-size: clamp(6rem, 4rem + 8vw, 13rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgb(255 255 255 / 0.5);
+}
+
+.home-card__title {
+    max-width: 14ch;
+    font-size: clamp(2.6rem, 1.4rem + 5vw, 6rem);
+    font-weight: 400;
+    line-height: 1;
+    color: #fff !important;
+}
+
+.home-card__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.home-card__text {
+    max-width: 34rem;
+    margin-top: 1.25rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgb(231 235 245 / 0.92);
+}
+
+.home-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--home-gold);
+}
+
+.home-card:has(a:focus-visible) .home-card__inner {
+    outline: 3px solid var(--home-gold);
+    outline-offset: -8px;
+}
+
+/* ───────── 5. Apprentissage pratique ───────── */
+.home-practice {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 7rem) 0 clamp(5rem, 10vw, 9rem);
+    background: var(--home-sand);
+}
+
+.home-practice__map {
+    position: absolute;
+    top: 50%;
+    right: -6rem;
+    z-index: -1;
+    height: 150%;
+    color: #ece6d8;
+    transform: translateY(-50%);
+}
+
+.home-practice__belt {
+    overflow: hidden;
+    margin-bottom: clamp(2.5rem, 6vw, 5rem);
+    white-space: nowrap;
+}
+
+.home-practice__track {
+    display: flex;
+    width: max-content;
+}
+
+.home-practice__track p {
+    display: flex;
+    flex-shrink: 0;
+    gap: 3rem;
+    padding-right: 3rem;
+    font-family: var(--font-serif);
+    font-size: clamp(5rem, 3rem + 11vw, 14rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgb(19 26 63 / 0.28);
+}
+
+.home-practice__track span:nth-child(even) {
+    color: rgb(19 26 63 / 0.08);
+}
+
+.home-practice__title {
+    max-width: 20ch;
+    font-size: clamp(2rem, 1.2rem + 3.6vw, 4.25rem);
+    font-weight: 400;
+    line-height: 1.06;
+    color: var(--home-navy);
+    text-wrap: balance;
+}
+
+/* ───────── 6. Témoignages ───────── */
+.home-voices {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: linear-gradient(160deg, #1b2556, #0d1230);
+    color: #fff;
+}
+
+.home-voices__mark {
+    position: absolute;
+    top: -2rem;
+    left: 4%;
+    z-index: -1;
+    font-family: var(--font-serif);
+    font-size: clamp(16rem, 10rem + 30vw, 40rem);
+    line-height: 1;
+    color: rgb(201 168 76 / 0.1);
+    pointer-events: none;
+}
+
+.home-voices__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.home-voices__title {
+    font-size: clamp(2rem, 1.2rem + 3vw, 3.5rem);
+    font-weight: 400;
+    color: #fff;
+}
+
+.home-voices__track blockquote {
+    max-width: 52rem;
+    font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.6rem);
+    line-height: 1.3;
+}
+
+.home-voices__track blockquote .word {
+    display: inline-block;
+}
+
+/* ───────── 7. Actualités ───────── */
+.home-news {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: var(--home-paper);
+    color: var(--home-navy);
+}
+
+.home-news__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.home-news__title {
+    max-width: 16ch;
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.05;
+}
+
+.home-news__grid {
+    display: grid;
+    gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+    .home-news__grid {
+        grid-template-columns: 1.5fr 1fr;
+        gap: 3rem 3.5rem;
+        align-items: start;
+    }
+
+    /* Ici, le texte de l'article à la une ne déborde pas : la colonne est étroite. */
+    .home-news__lead {
+        display: block;
+    }
+
+    .home-news__lead .nws-lead__body {
+        margin: 0;
+        padding: 1.75rem 0 0;
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
+.home-news__side {
+    display: grid;
+    gap: 2.5rem;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+    .home-news__side {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ───────── 8. Événements ───────── */
+.home-evt {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: linear-gradient(180deg, #0d1230, #131a3f);
+    color: #fff;
+}
+
+.home-evt__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.home-evt__title {
+    max-width: 18ch;
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: #fff;
+}
+
+.home-evt__row {
+    display: grid;
+    gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+    .home-evt__row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Un billet : le talon corail porte la date, le corps de papier l'essentiel. */
+.home-ticket {
+    position: relative;
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    filter: drop-shadow(0 1.25rem 1.75rem rgb(0 0 0 / 0.4));
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-ticket:hover {
+    transform: translateY(-6px) rotate(-0.6deg);
+}
+
+.home-ticket:has(a:focus-visible) {
+    outline: 3px solid var(--home-gold);
+    outline-offset: 4px;
+}
+
+@media (min-width: 900px) {
+    .home-ticket {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+}
+
+.home-ticket__stub,
+.home-ticket__main {
+    color: var(--home-navy);
+}
+
+.home-ticket__stub {
+    display: grid;
+    place-items: center;
+    padding: 1.25rem 0.5rem;
+    background: #e7bf58;
+    text-align: center;
+    -webkit-mask: radial-gradient(circle 0.8rem at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat, radial-gradient(circle 0.8rem at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat;
+    mask: radial-gradient(circle 0.8rem at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat, radial-gradient(circle 0.8rem at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat;
+}
+
+@media (min-width: 900px) {
+    .home-ticket__stub {
+        padding: 1.5rem 1rem 1.75rem;
+        text-align: left;
+        place-items: start;
+        -webkit-mask: radial-gradient(circle 0.8rem at 0 100%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.8rem at 100% 100%, #0000 98%, #000) right / 51% 100% no-repeat;
+        mask: radial-gradient(circle 0.8rem at 0 100%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.8rem at 100% 100%, #0000 98%, #000) right / 51% 100% no-repeat;
+    }
+}
+
+.home-ticket__stub time {
+    display: block;
+}
+
+.home-ticket__week {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.home-ticket__day {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: clamp(3.6rem, 3rem + 3vw, 5.5rem);
+    line-height: 0.95;
+}
+
+.home-ticket__month {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.home-ticket__main {
+    padding: 1.4rem 1.5rem 1.6rem;
+    background: var(--home-paper);
+}
+
+@media (min-width: 900px) {
+    .home-ticket__main {
+        -webkit-mask: radial-gradient(circle 0.8rem at 0 0, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.8rem at 100% 0, #0000 98%, #000) right / 51% 100% no-repeat;
+        mask: radial-gradient(circle 0.8rem at 0 0, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.8rem at 100% 0, #0000 98%, #000) right / 51% 100% no-repeat;
+    }
+}
+
+.home-ticket__when {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #9c3a22;
+}
+
+.home-ticket__name {
+    margin-top: 0.4rem;
+    font-size: clamp(1.3rem, 1.1rem + 0.7vw, 1.7rem);
+    line-height: 1.15;
+    color: var(--home-navy);
+}
+
+.home-ticket__name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.home-ticket__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    margin-top: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #3d434e;
+}
+
+.home-ticket__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.home-ticket__count .evt-count__cell b {
+    font-size: 2rem;
+    color: var(--home-navy);
+}
+
+.home-ticket__count .evt-count__cell i {
+    color: #9c3a22;
+}
+
+.home-ticket__count {
+    margin-top: 1.25rem;
+    gap: 1rem;
+}
+
+/* ───────── 9. Ressources ───────── */
+.home-res {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: var(--home-sand);
+    color: var(--home-navy);
+}
+
+.home-res__title {
+    max-width: 16ch;
+    font-size: clamp(2rem, 1.2rem + 3.2vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.05;
+}
+
+.home-res__list {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    border-top: 1px solid rgb(19 26 63 / 0.25);
+}
+
+.home-res__item {
+    position: relative;
+    border-bottom: 1px solid rgb(19 26 63 / 0.25);
+}
+
+.home-res__link {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding: clamp(1.5rem, 3.5vw, 2.5rem) 0;
+    transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-res__item:hover .home-res__link,
+.home-res__link:focus-visible {
+    padding-left: 1.5rem;
+}
+
+.home-res__no {
+    min-width: 3.5rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 3.5rem);
+    color: var(--home-gold-text);
+}
+
+.home-res__text {
+    flex: 1;
+}
+
+.home-res__name {
+    display: block;
+    margin-top: 0.25rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 1.2rem + 2.8vw, 4rem);
+    line-height: 1.05;
+    color: var(--home-navy);
+}
+
+.home-res__arrow {
+    flex: none;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-res__item:hover .home-res__arrow {
+    transform: translate(0.35rem, -0.35rem);
+}
+
+/* L'image du lieu : elle apparaît à droite et suit le pointeur dans la ligne (souris uniquement). */
+.home-res__peek {
+    position: absolute;
+    top: 0;
+    right: 12%;
+    z-index: 2;
+    display: none;
+    width: 16rem;
+    pointer-events: none;
+    opacity: 0;
+    box-shadow: 0 1.5rem 2.5rem -1rem rgb(5 8 28 / 0.5);
+}
+
+.home-res__peek picture,
+.home-res__peek img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.is-fine .home-res__peek {
+    display: block;
+}
+
+/* ───────── 10. Partenaires ───────── */
+.home-partners {
+    padding: clamp(3rem, 6vw, 5rem) 0;
+    background: var(--home-paper);
+}
+
+.home-partners__belt {
+    overflow: hidden;
+}
+
+.home-partners__track {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem 4rem;
+    padding-inline: 2rem;
+}
+
+/* Le script transforme la rangée en ruban qui défile. */
+.is-marquee .home-partners__track {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    width: max-content;
+}
+
+.home-partners__logo {
+    height: 3.5rem;
+    width: auto;
+    max-width: 10rem;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.7;
+    transition: filter 0.3s, opacity 0.3s;
+}
+
+a:hover > .home-partners__logo,
+.home-partners__logo:hover {
+    filter: none;
+    opacity: 1;
+}
+
+.home-partners__name {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--home-deep);
+    white-space: nowrap;
+}
+
+/* ───────── 11. Fermeture ───────── */
+.home-close {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(6rem, 13vw, 11rem) 0;
+    background: var(--home-navy);
+    color: #fff;
+    text-align: center;
+}
+
+.home-close__bg {
+    position: absolute;
+    inset: -8% 0;
+    z-index: -2;
+}
+
+.home-close__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(5 8 28 / 0.72), rgb(5 8 28 / 0.5) 45%, rgb(5 8 28 / 0.8));
+}
+
+.home-close__title {
+    max-width: 18ch;
+    margin-inline: auto;
+    font-size: clamp(2.4rem, 1.2rem + 5.4vw, 6rem);
+    font-weight: 400;
+    line-height: 1.02;
+    color: #fff !important;
+    text-wrap: balance;
+}
+
+.home-close__title .word {
+    display: inline-block;
+}
+
+/* Les boutons attirés par le pointeur : ils gardent leur place dans la page. */
+[data-home-magnet] {
+    will-change: transform;
+}
+
+/* Les éléments qui arrivent par le côté ou pivotent ne doivent jamais élargir la page (le défilement vertical n'est pas touché). */
+[data-home] {
+    overflow-x: clip;
+}

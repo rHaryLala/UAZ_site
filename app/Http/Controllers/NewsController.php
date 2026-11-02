@@ -24,8 +24,9 @@ class NewsController extends Controller
             'posts' => $posts,
             'category' => $category,
             'categories' => NewsCategory::whereHas('posts', fn ($q) => $q->visible())->orderBy('name')->get(),
-            // Le ruban des dernières nouvelles : les titres les plus récents, toutes rubriques confondues.
-            'headlines' => NewsPost::visible()->orderByDesc('published_at')->limit(6)->get(['id', 'title', 'slug', 'translations']),
+            // Le ruban des dernières nouvelles : les titres les plus récents (de la rubrique choisie, le cas échéant).
+            'headlines' => NewsPost::visible()->when($category, fn ($q) => $q->where('news_category_id', $category->id))
+                ->orderByDesc('published_at')->limit(6)->get(['id', 'title', 'slug', 'translations']),
             'latestDate' => NewsPost::visible()->max('published_at'),
         ]);
     }

@@ -1,25 +1,34 @@
 @php
     // Pages « ressources » (maquette : Bibliothèque, Emplois du temps, Téléchargements) : celles qui existent et sont publiées.
-    $resources = \App\Models\Page::visible()->whereIn('key', ['student-life-library', 'timetables', 'admissions-downloads'])->get()
+    $resources = \App\Models\Page::visible()->with('cover.media')->whereIn('key', ['student-life-library', 'timetables', 'admissions-downloads'])->get()
         ->sortBy(fn ($p) => array_search($p->key, ['student-life-library', 'timetables', 'admissions-downloads']))->values();
 @endphp
 
 @if ($resources->isNotEmpty())
-    <x-section tone="sand" :eyebrow="__('home.resources.eyebrow')" :title="__('home.resources.title')">
-        <ol class="divide-y divide-ink-200/60 border-y border-ink-200/60">
-            @foreach ($resources as $resource)
-                <li data-reveal>
-                    <a href="{{ $resource->url() }}" class="group flex items-center gap-6 py-6 md:py-8">
-                        <span class="font-serif text-3xl text-gold-600 md:text-5xl" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                        <span class="flex-1">
-                            <span class="eyebrow block">{{ __('Ressource') }}</span>
-                            <span class="mt-1 block font-serif text-h3 text-navy-800 transition-transform duration-300 group-hover:translate-x-2">{{ $resource->title }}</span>
-                            @if ($resource->summary)<span class="mt-1 block text-sm text-ink-700">{{ $resource->summary }}</span>@endif
-                        </span>
-                        <x-ico name="arrow-up-right" class="size-6 text-navy-800 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
-                    </a>
-                </li>
-            @endforeach
-        </ol>
-    </x-section>
+    {{-- Ressources : un sommaire. Chaque ligne se soulève au survol ; si la page a une image, elle apparaît et suit le pointeur (animations : home.js). --}}
+    <section class="home-res" data-home="res" aria-labelledby="resources-title">
+        <div class="container-site">
+            <p class="eyebrow mb-4" data-reveal>{{ __('home.resources.eyebrow') }}</p>
+            <h2 id="resources-title" class="home-res__title" data-reveal>{{ __('home.resources.title') }}</h2>
+
+            <ol class="home-res__list" data-home-res>
+                @foreach ($resources as $resource)
+                    <li class="home-res__item" data-home-res-item>
+                        <a href="{{ $resource->url() }}" class="home-res__link">
+                            <span class="home-res__no" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                            <span class="home-res__text">
+                                <span class="eyebrow block">{{ __('Ressource') }}</span>
+                                <span class="home-res__name">{{ $resource->title }}</span>
+                                @if ($resource->summary)<span class="mt-1 block text-sm text-ink-700">{{ $resource->summary }}</span>@endif
+                            </span>
+                            <x-ico name="arrow-up-right" class="home-res__arrow size-7" />
+                        </a>
+                        @if ($resource->cover)
+                            <span class="home-res__peek" aria-hidden="true" data-home-peek><x-picture :asset="$resource->cover" conversion="card" sizes="22rem" decorative /></span>
+                        @endif
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+    </section>
 @endif

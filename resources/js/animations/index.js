@@ -17,6 +17,7 @@ const MODULES = [
     ['[data-gallery]', () => import('./gallery.js').then((m) => m.initGallery())],
     ['[data-events]', () => import('./events.js').then((m) => m.initEvents())],
     ['[data-news]', () => import('./news.js').then((m) => m.initNews())],
+    ['[data-home]', () => import('./home.js').then((m) => m.initHome())],
 ];
 
 /** Connexion lente ou « économiseur de données » : aucune animation, aucun téléchargement de GSAP (~50 Ko). */
@@ -49,7 +50,7 @@ export function initAnimations() {
     };
 
     // Le héros prime : on ne le fait pas attendre une période d'inactivité du navigateur.
-    if (document.querySelector('[data-hero], [data-library], [data-cafeteria], [data-dormitories], [data-admissions], [data-fees], [data-research], [data-support], [data-timetables], [data-gallery], [data-events], [data-news]')) start();
+    if (document.querySelector('[data-hero], [data-library], [data-cafeteria], [data-dormitories], [data-admissions], [data-fees], [data-research], [data-support], [data-timetables], [data-gallery], [data-events], [data-news], [data-home]')) start();
     else if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 600 });
     else setTimeout(start, 0);
 }

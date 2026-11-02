@@ -34,12 +34,5 @@
         @include('partials.jsonld-organization', ['site' => $site])
     @endpush
 
-    <x-cta-banner
-        :image="$site->homeCtaImage"
-        :eyebrow="__('home.cta.eyebrow')"
-        :title="__('home.cta.title')"
-        :text="__('home.cta.text')"
-        :primary="['label' => __('home.admissions.primary'), 'url' => config('uaz.registration_url')]"
-        :secondary="['label' => __('home.admissions.secondary'), 'url' => url('/admissions/licence')]"
-    />
+    @include('home.closing')
 </x-layouts.app>

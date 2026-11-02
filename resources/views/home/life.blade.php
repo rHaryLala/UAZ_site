@@ -1,28 +1,33 @@
-@php
-    $items = $studentLife->filter(fn ($p) => filled($p->summary))->values();
-@endphp
+@php($items = $studentLife)
 
-<x-section :eyebrow="__('home.life.eyebrow')" :title="__('home.life.title')" :intro="__('home.life.text')">
-    <div class="-mt-4 mb-12" data-reveal>
-        <a href="{{ url('/vie-etudiante/bibliotheque') }}" class="link-arrow">{{ __('home.life.link') }} <x-ico name="arrow-right" class="size-4" /></a>
-    </div>
+@if ($items->isNotEmpty())
+    {{-- La vie à l'UAZ : les lieux s'empilent, chacun recouvre le précédent en le reculant (animations : home.js). --}}
+    <section class="home-life" data-home="life" aria-labelledby="life-title">
+        <div class="container-site home-life__head">
+            <p class="eyebrow mb-4" data-reveal>{{ __('home.life.eyebrow') }}</p>
+            <h2 id="life-title" class="home-life__title" data-reveal>{{ __('home.life.title') }}</h2>
+            <p class="mt-5 max-w-2xl text-lead text-ink-700" data-reveal data-reveal-delay="0.1">{{ __('home.life.text') }}</p>
+            <a href="{{ url('/vie-etudiante/bibliotheque') }}" class="link-arrow mt-6" data-reveal>{{ __('home.life.link') }} <x-ico name="arrow-right" class="size-4" /></a>
+        </div>
 
-    @if ($items->isNotEmpty())
-        <ul class="grid gap-6 md:grid-cols-3">
+        <ol class="home-stack" data-home-stack>
             @foreach ($items as $item)
-                <li data-reveal data-reveal-delay="{{ $loop->index * 0.1 }}">
-                    <article class="card group h-full p-7">
-                        @if ($item->cover)
-                            <div class="-mx-7 -mt-7 mb-6 aspect-[3/2] overflow-hidden">
-                                <x-picture :asset="$item->cover" conversion="card" sizes="(min-width: 768px) 30vw, 92vw" class="size-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                            </div>
+                @php($page = $item['page'])
+                <li class="home-card on-dark" data-home-card>
+                    <div class="home-card__inner" data-home-card-inner>
+                        @if ($item['photo'])
+                            <x-picture :asset="$item['photo']" conversion="hero" sizes="100vw" decorative class="home-card__img" data-home-card-img />
                         @endif
-                        <h3 class="text-h4 font-serif"><a href="{{ $item->url() }}" class="stretched-link hover:text-navy-600">{{ $item->title }}</a></h3>
-                        <p class="mt-3 text-sm text-ink-700">{{ $item->summary }}</p>
-                        <span class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-navy-800" aria-hidden="true">{{ __('En savoir plus') }} <x-ico name="arrow-up-right" class="size-4" /></span>
-                    </article>
+                        <div class="home-card__shade" aria-hidden="true"></div>
+                        <div class="container-site home-card__body">
+                            <span class="home-card__no" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                            <h3 class="home-card__title"><a href="{{ $page->url() }}" class="stretched-link">{{ $page->title }}</a></h3>
+                            @if ($page->summary)<p class="home-card__text">{{ $page->summary }}</p>@endif
+                            <span class="home-card__more" aria-hidden="true">{{ __('En savoir plus') }} <x-ico name="arrow-up-right" class="size-5" /></span>
+                        </div>
+                    </div>
                 </li>
             @endforeach
-        </ul>
-    @endif
-</x-section>
+        </ol>
+    </section>
+@endif
