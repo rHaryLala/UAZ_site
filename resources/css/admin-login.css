@@ -1,0 +1,306 @@
+/*
+ * Pages de connexion du back-office (resources/views/filament/auth/scene.blade.php, animations : resources/js/admin-login.js).
+ * Une vitrine de vraies photos de l'université, sombres, qu'un « regard » (objectif) éclaire en couleurs : il suit le pointeur, cligne quand on
+ * entre dans un champ, se ferme quand le mot de passe est visible. À droite, le formulaire de Filament sur fond de papier (ou sombre).
+ * Tout est limité aux pages qui portent la scène (body:has(.uaz-scene)) : le reste du panneau n'est pas touché, même en navigation SPA.
+ * Base complète sans JavaScript : le regard est fixe, au centre de la vitrine.
+ */
+@import './fonts.css';
+
+:root {
+    --uaz-night: #0b1030;
+    --uaz-paper: #f6f3ec;
+    --uaz-gold: #e9c46a;
+    --uaz-ink: #14204f;
+    --uaz-serif: 'Libre Baskerville Variable', Georgia, serif;
+    /* Le regard : centre (px dans la vitrine), rayon, ouverture verticale (1 = grand ouvert, 0 = fermé), fermeture (mot de passe visible). */
+    --lx: 320;
+    --ly: 380;
+    --lr: 280;
+    --lry: 1;
+    --shut: 0;
+    --px: 0;
+    --py: 0;
+}
+
+body:has(.uaz-scene) {
+    background: var(--uaz-paper);
+}
+
+html.dark body:has(.uaz-scene) {
+    background: #0e1330;
+}
+
+/* ───────── La vitrine ───────── */
+.uaz-scene {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 0;
+    width: 100%;
+    height: 30dvh;
+    overflow: hidden;
+    background: var(--uaz-night);
+    pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+    .uaz-scene {
+        width: 58vw;
+        height: 100dvh;
+    }
+}
+
+.uaz-gallery {
+    position: absolute;
+    inset: -4%;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.uaz-col {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.5rem;
+    transform: translate(calc(var(--px) * var(--k, 1) * 1px), calc(var(--py) * var(--k, 1) * 1px));
+}
+
+.uaz-col:nth-child(1) { --k: 0.7; }
+.uaz-col:nth-child(2) { --k: 1.4; margin-top: -3rem; }
+.uaz-col:nth-child(3) { --k: 1; }
+
+.uaz-tile {
+    display: block;
+    flex: var(--g, 1) 1 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.uaz-tile picture,
+.uaz-tile img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Dessous : les photos éteintes. Dessus : les mêmes, en couleurs, vues à travers le regard. */
+.uaz-gallery--base {
+    filter: grayscale(1) brightness(calc(0.42 - var(--shut) * 0.22)) contrast(1.05) blur(calc(var(--shut) * 7px));
+}
+
+.uaz-gallery--lit {
+    filter: blur(calc(var(--shut) * 7px));
+    -webkit-mask-image: radial-gradient(ellipse calc(var(--lr) * 1px) calc(var(--lr) * var(--lry) * 1px) at calc(var(--lx) * 1px) calc(var(--ly) * 1px), #000 52%, transparent 100%);
+    mask-image: radial-gradient(ellipse calc(var(--lr) * 1px) calc(var(--lr) * var(--lry) * 1px) at calc(var(--lx) * 1px) calc(var(--ly) * 1px), #000 52%, transparent 100%);
+}
+
+/* L'anneau du regard : un trait fin, quatre repères. */
+.uaz-lens {
+    position: absolute;
+    left: calc(var(--lx) * 1px);
+    top: calc(var(--ly) * 1px);
+    width: calc(var(--lr) * 1.18px);
+    height: calc(var(--lr) * var(--lry) * 1.18px);
+    border: 1px solid rgb(255 255 255 / 0.28);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.uaz-lens i {
+    position: absolute;
+    width: 0.9rem;
+    height: 1px;
+    background: var(--uaz-gold);
+}
+
+.uaz-lens i:nth-child(1) { left: -0.45rem; top: 50%; }
+.uaz-lens i:nth-child(2) { right: -0.45rem; top: 50%; }
+.uaz-lens i:nth-child(3),
+.uaz-lens i:nth-child(4) { width: 1px; height: 0.9rem; left: 50%; }
+.uaz-lens i:nth-child(3) { top: -0.45rem; }
+.uaz-lens i:nth-child(4) { bottom: -0.45rem; }
+
+.uaz-plain {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+}
+
+.uaz-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgb(11 16 48 / 0.75), transparent 28%),
+        linear-gradient(0deg, rgb(11 16 48 / 0.8), transparent 30%);
+}
+
+/* Les coins : le sceau, la devise. */
+.uaz-corner {
+    position: absolute;
+    color: rgb(226 230 250 / 0.92);
+}
+
+.uaz-corner--top {
+    top: 1.5rem;
+    left: clamp(1.25rem, 3vw, 2.5rem);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.uaz-corner__seal {
+    width: 3.25rem;
+    height: 3.25rem;
+}
+
+.uaz-corner--top p {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.uaz-corner--top strong {
+    font-family: var(--uaz-serif);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: #fff;
+}
+
+.uaz-corner--top span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--uaz-gold);
+}
+
+.uaz-corner--motto {
+    left: clamp(1.25rem, 3vw, 2.5rem);
+    bottom: 1.5rem;
+    font-family: var(--uaz-serif);
+    font-size: 0.95rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--uaz-gold);
+}
+
+@media (max-width: 1023px) {
+    .uaz-corner--motto {
+        display: none;
+    }
+}
+
+/* ───────── Le formulaire ───────── */
+body:has(.uaz-scene) .fi-simple-layout {
+    position: relative;
+    z-index: 1;
+    min-height: 100dvh;
+    margin-top: 30dvh;
+    background: transparent;
+}
+
+@media (min-width: 1024px) {
+    body:has(.uaz-scene) .fi-simple-layout {
+        margin-top: 0;
+        margin-left: 58vw;
+    }
+}
+
+body:has(.uaz-scene) .fi-simple-main-ctn {
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.25rem 5rem;
+}
+
+/* Plus de carte : le formulaire est posé sur le papier. */
+body:has(.uaz-scene) .fi-simple-main {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    padding-inline: 0;
+}
+
+body:has(.uaz-scene) .fi-simple-header-heading {
+    font-family: var(--uaz-serif);
+    font-size: 1.9rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+body:has(.uaz-scene) .fi-simple-header-heading .word {
+    display: inline-block;
+}
+
+body:has(.uaz-scene) .fi-logo {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #37447a;
+}
+
+html.dark body:has(.uaz-scene) .fi-logo {
+    color: var(--uaz-gold);
+}
+
+/* Le champ actif est souligné d'or : c'est là que « regarde » l'objectif. */
+body:has(.uaz-scene) .fi-input-wrp:focus-within {
+    box-shadow: 0 0 0 3px rgb(233 196 106 / 0.55);
+}
+
+.uaz-back {
+    position: fixed;
+    right: clamp(1.25rem, 3vw, 2.5rem);
+    bottom: 1.5rem;
+    z-index: 2;
+}
+
+.uaz-back a {
+    display: block;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid rgb(20 32 79 / 0.3);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--uaz-ink);
+    transition: background-color 0.25s, color 0.25s;
+}
+
+.uaz-back a:hover,
+.uaz-back a:focus-visible {
+    background: var(--uaz-ink);
+    color: #fff;
+}
+
+html.dark .uaz-back a {
+    border-color: rgb(255 255 255 / 0.3);
+    color: #fff;
+}
+
+html.dark .uaz-back a:hover,
+html.dark .uaz-back a:focus-visible {
+    background: var(--uaz-gold);
+    color: var(--uaz-ink);
+}
+
+@media (max-width: 1023px) {
+    .uaz-back {
+        position: static;
+        padding: 0 1.25rem 2rem;
+        text-align: center;
+    }
+
+    .uaz-back a {
+        display: inline-block;
+    }
+}
+
+@media (max-width: 1023px) {
+    body:has(.uaz-scene) .fi-simple-main-ctn {
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+}

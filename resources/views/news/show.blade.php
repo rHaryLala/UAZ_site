@@ -10,8 +10,9 @@
     {{-- 1. L'OUVERTURE : la photo respire, le titre se lève (animations : resources/js/animations/news.js) --}}
     <header @class(['nws-open', 'has-cover on-dark' => $cover]) data-news="article" data-nws-hero aria-labelledby="nws-title">
         @if ($cover)
-            <div class="nws-open__cover" data-nws-cover aria-hidden="true">
-                <x-picture :asset="$cover" conversion="hero" sizes="100vw" decorative eager class="size-full object-cover" />
+            <div class="nws-open__cover" data-nws-cover>
+                {{-- La photo principale de l'article garde le texte alternatif saisi par la rédaction. --}}
+                <x-picture :asset="$cover" conversion="hero" sizes="100vw" eager class="size-full object-cover" />
             </div>
             <div class="nws-open__shade" aria-hidden="true"></div>
         @endif

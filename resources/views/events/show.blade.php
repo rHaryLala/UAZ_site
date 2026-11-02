@@ -45,8 +45,9 @@
     {{-- 1. L'AFFICHE : la photo respire, le titre se lève, le billet se pose (animations : resources/js/animations/events.js) --}}
     <header class="evs-hero on-dark" data-events="show" data-evs-hero aria-labelledby="evs-title">
         @if ($cover)
-            <div class="evs-hero__cover" data-evs-cover aria-hidden="true">
-                <x-picture :asset="$cover" conversion="hero" sizes="100vw" decorative eager class="size-full object-cover" />
+            <div class="evs-hero__cover" data-evs-cover>
+                {{-- L'image de l'événement garde le texte alternatif saisi par la rédaction. --}}
+                <x-picture :asset="$cover" conversion="hero" sizes="100vw" eager class="size-full object-cover" />
             </div>
         @endif
         <div class="evs-hero__shade" aria-hidden="true"></div>

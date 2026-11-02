@@ -25,6 +25,9 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        // Pages de connexion et de mot de passe oublié : celles qui portent la scène de l'aube.
+        $authPages = [\Filament\Auth\Pages\Login::class, \Filament\Auth\Pages\PasswordReset\RequestPasswordReset::class, \Filament\Auth\Pages\PasswordReset\ResetPassword::class];
+
         return $panel
             ->default()
             ->id('admin')
@@ -57,6 +60,10 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Personnes & messages'),
                 NavigationGroup::make('Site & médias'),
             ])
+            // Pages de connexion : l'aube (scène, feuille de style et script ne sont chargés que sur ces pages).
+            ->renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_START, fn (): \Illuminate\Contracts\View\View => view('filament.auth.scene'), scopes: $authPages)
+            ->renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_END, fn (): \Illuminate\Contracts\View\View => view('filament.auth.back'), scopes: $authPages)
+            ->renderHook(\Filament\View\PanelsRenderHook::HEAD_END, fn (): \Illuminate\Contracts\View\View => view('filament.auth.assets'), scopes: $authPages)
             // Sélecteur de médias façon WordPress (composant Alpine chargé une fois pour tout le panneau).
             ->renderHook(
                 \Filament\View\PanelsRenderHook::HEAD_END,
