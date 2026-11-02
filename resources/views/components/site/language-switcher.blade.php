@@ -11,7 +11,7 @@
             <span lang="{{ Locales::current() }}"><span aria-hidden="true">{{ Locales::all()[Locales::current()]['short'] }}</span><span class="sr-only">{{ Locales::all()[Locales::current()]['name'] }}</span></span>
             <x-ico name="chevron-down" class="size-3 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
         </button>
-        <ul class="invisible absolute top-full right-0 z-[70] w-40 translate-y-1 bg-white p-2 text-ink-800 opacity-0 shadow-lift transition duration-200 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+        <ul class="invisible absolute top-full right-0 z-[70] w-32 translate-y-1 bg-white p-1 text-ink-800 opacity-0 shadow-lift transition duration-200 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
             @foreach (Locales::all() as $code => $locale)
                 <li>
                     <a
@@ -20,13 +20,13 @@
                         hreflang="{{ $code }}"
                         @if ($code === Locales::current()) aria-current="true" @endif
                         @class([
-                            'flex items-center justify-between px-4 py-2.5 text-sm hover:bg-mist-100 hover:text-royal-600!',
+                            'flex items-center justify-between px-3 py-1.5 text-xs hover:bg-mist-100 hover:text-royal-600!',
                             'font-semibold text-royal-600' => $code === Locales::current(),
                             'font-medium text-ink-800' => $code !== Locales::current(),
                         ])
                     >
                         {{ $locale['name'] }}
-                        <span class="text-[0.6875rem] tracking-wider text-ink-600" aria-hidden="true">{{ $locale['short'] }}</span>
+                        <span class="text-[0.625rem] tracking-wider text-ink-600" aria-hidden="true">{{ $locale['short'] }}</span>
                     </a>
                 </li>
             @endforeach
