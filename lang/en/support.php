@@ -24,6 +24,9 @@ return [
         'more' => 'Discover the project',
         'empty' => 'The projects to support will soon be presented here.',
     ],
+    'invite' => [
+        'text' => 'Every contribution helps move UAZ\'s projects forward.',
+    ],
     'how' => [
         'eyebrow' => 'How to give',
         'title' => 'Taking part, simply',

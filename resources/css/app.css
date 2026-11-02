@@ -6,6 +6,7 @@
 @import './admissions.css';
 @import './fees.css';
 @import './research.css';
+@import './support.css';
 
 @plugin '@tailwindcss/typography';
 

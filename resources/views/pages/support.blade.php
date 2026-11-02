@@ -2,23 +2,50 @@
     $site = \App\Models\SiteSetting::current();
     $donation = config('uaz.donation_url');
     $contact = url('/contact?sujet='.rawurlencode('Soutenir l\'UAZ'));
+    $contacts = config('uaz.donation_contacts');
+
+    // Le mur de briques de la scène 2 : une colonne par entrée, sa hauteur en briques. Il monte avec la phrase (décor, aucun texte).
+    $wall = [2, 3, 3, 4, 5, 5, 6, 7, 7, 8, 9, 10];
+
+    // Montants des projets : on lit le premier nombre du « budget » (texte libre, ex. « 275 000 € ») ; les barres ne se dessinent que si
+    // au moins deux projets ont un montant dans la même unité. Aucun total, aucune somme « déjà réunie » : seuls les montants publiés.
+    $amounts = $projects->map(function ($project) {
+        $text = (string) $project->budget;
+        $number = preg_match('/\d(?:[\d\s\x{a0}\x{202f}.,]*\d)?/u', $text, $found) ? (int) preg_replace('/\D/', '', $found[0]) : 0;
+        $unit = trim(preg_replace('/\d(?:[\d\s\x{a0}\x{202f}.,]*\d)?/u', '', $text));
+
+        return ['project' => $project, 'amount' => $number, 'unit' => $unit];
+    });
+    $measured = $amounts->filter(fn ($a) => $a['amount'] > 0);
+    $showBars = $measured->count() >= 2 && $measured->pluck('unit')->unique()->count() === 1;
+    $maxAmount = max(1, (int) $measured->max('amount'));
+
+    // Deux « plans » dessinés pour les projets sans photo : un long bâtiment (dortoir) et un groupe de maisons.
+    $blueprints = [
+        '<path d="M20 150 H380 M30 150 V80 H370 V150 M20 80 L200 40 L380 80" /><path d="M50 100 h28 v24 h-28z M95 100 h28 v24 h-28z M140 100 h28 v24 h-28z M262 100 h28 v24 h-28z M307 100 h28 v24 h-28z" /><path d="M180 150 v-34 h40 v34" /><path d="M200 40 V22 M190 22 h20" />',
+        '<path d="M10 150 H390" /><path d="M30 150 V105 H110 V150 M22 105 L70 70 L118 105" /><path d="M150 150 V95 H235 V150 M142 95 L192 58 L243 95" /><path d="M275 150 V110 H360 V150 M267 110 L317 75 L368 110" /><path d="M48 118 h22 v18 h-22z M170 108 h24 v20 h-24z M295 122 h24 v14 h-24z" />',
+    ];
 @endphp
 
 <x-layouts.app :title="$page->metaTitle()" :description="$page->metaDescription()" :image="$page->metaImage()" :noindex="$page->status !== \App\Enums\PublicationStatus::Published">
-    {{-- Héros photo --}}
-    <header class="on-dark relative isolate overflow-hidden bg-navy-900 text-white">
+    {{-- 1. LE CHANTIER : la photo respire, le titre se lève mot à mot (animations : resources/js/animations/support.js) --}}
+    <header class="sup-hero on-dark" data-support data-sup-hero aria-labelledby="sup-title">
         @if ($page->cover)
-            <x-picture :asset="$page->cover" conversion="hero" sizes="100vw" decorative eager class="absolute inset-0 -z-20 size-full object-cover object-[50%_35%]" />
+            <div class="sup-hero__photo" data-sup-photo aria-hidden="true">
+                <x-picture :asset="$page->cover" conversion="hero" sizes="100vw" decorative eager class="size-full object-cover object-[50%_35%]" />
+            </div>
         @endif
-        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950/92 via-navy-950/65 to-navy-950/10" aria-hidden="true"></div>
-        <div class="absolute inset-0 -z-10 bg-gradient-to-t from-navy-950/70 via-transparent to-transparent" aria-hidden="true"></div>
+        <div class="sup-hero__shade" aria-hidden="true"></div>
 
-        <div class="container-site flex min-h-[34rem] flex-col justify-end pt-10 pb-16 md:min-h-[40rem] md:pb-24">
-            <x-breadcrumbs :items="[['label' => $page->title]]" dark class="mb-auto" />
-            <p class="eyebrow mt-16 mb-4 text-sun-400!" data-reveal>{{ __('support.hero.eyebrow') }}</p>
-            <h1 class="max-w-3xl text-[clamp(2.75rem,1.4rem+5vw,5.5rem)] leading-[1.03] font-normal text-white!" data-reveal data-reveal-delay="0.1">{{ $page->title }}</h1>
-            <p class="mt-6 max-w-2xl text-lead text-white/85" data-reveal data-reveal-delay="0.2">{{ $page->summary ?: __('support.hero.lead') }}</p>
-            <div class="mt-9 flex flex-wrap gap-4" data-reveal data-reveal-delay="0.3">
+        <div class="container-site">
+            <x-breadcrumbs :items="[['label' => $page->title]]" dark />
+        </div>
+
+        <div class="container-site sup-hero__body">
+            <p class="eyebrow mb-5 text-sun-400!" data-sup-hide data-sup-fade>{{ __('support.hero.eyebrow') }}</p>
+            <h1 id="sup-title" class="sup-title" data-sup-title>{{ $page->title }}</h1>
+            <p class="sup-lead" data-sup-hide data-sup-fade>{{ $page->summary ?: __('support.hero.lead') }}</p>
+            <div class="mt-9 flex flex-wrap gap-4" data-sup-hide data-sup-fade>
                 @if ($donation)
                     <x-button :href="$donation" target="_blank" rel="noopener noreferrer" variant="sun" arrow class="btn-square">{{ __('support.cta.donate') }}</x-button>
                 @else
@@ -29,100 +56,130 @@
         </div>
     </header>
 
-    {{-- Introduction --}}
-    <section class="relative isolate overflow-hidden bg-paper-100 py-20 md:py-28">
-        <x-madagascar class="pointer-events-none absolute top-6 -right-40 -z-10 h-[40rem] text-navy-800/[0.035]" />
-        <div class="container-site grid gap-10 lg:grid-cols-[14rem_1fr] lg:gap-16">
-            <p class="eyebrow lg:pt-3" data-reveal>{{ __('support.intro.eyebrow') }}</p>
-            <p class="max-w-4xl font-serif text-[clamp(1.35rem,1rem+1.5vw,2.2rem)] leading-snug text-navy-900" data-reveal data-reveal-delay="0.1">{{ __('support.intro.text') }}</p>
+    {{-- 2. LA PREMIÈRE PIERRE : écran épinglé, la phrase s'allume mot à mot pendant que le mur monte brique après brique --}}
+    <section class="sup-statement on-dark" data-sup-statement aria-labelledby="sup-statement-title">
+        <div class="container-site sup-statement__inner">
+            <div>
+                <p class="eyebrow mb-8 text-sun-400!" id="sup-statement-title">{{ __('support.intro.eyebrow') }}</p>
+                <p class="sup-quote" data-sup-quote>{{ __('support.intro.text') }}</p>
+            </div>
+            <div class="sup-wall" data-sup-wall aria-hidden="true">
+                @foreach ($wall as $col => $height)
+                    <div class="sup-wall__col">
+                        @foreach (range(0, $height - 1) as $row)
+                            <i @class(['sup-brick', 'is-gold' => ($col + $row) % 5 === 0]) data-sup-brick data-row="{{ $row }}" data-col="{{ $col }}"></i>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
         </div>
     </section>
 
-    {{-- Projets --}}
-    <section id="projets" class="bg-white py-20 md:py-28">
+    {{-- 3. LES PLANS : un projet, une planche — budget compté à l'arrivée, plan dessiné quand il n'y a pas de photo --}}
+    <section id="projets" class="sup-projects" data-sup-projects aria-labelledby="sup-projects-title">
         <div class="container-site">
-            <div class="mb-14 flex flex-wrap items-end justify-between gap-6 md:mb-20">
-                <div>
-                    <p class="eyebrow mb-4" data-reveal>{{ __('support.projects.eyebrow') }}</p>
-                    <h2 class="text-h1" data-reveal data-reveal-delay="0.1">{{ __('support.projects.title') }}</h2>
-                </div>
-                <span class="hidden h-1 w-24 bg-sun-400 md:block" aria-hidden="true"></span>
-            </div>
-            <p class="-mt-6 mb-12 max-w-3xl text-lead text-ink-700 md:-mt-12 md:mb-16" data-reveal>{{ __('support.projects.lead') }}</p>
+            <p class="eyebrow mb-4" data-reveal>{{ __('support.projects.eyebrow') }}</p>
+            <h2 id="sup-projects-title" class="sup-h2" data-reveal>{{ __('support.projects.title') }}</h2>
+            <p class="sup-projects__lead" data-reveal>{{ __('support.projects.lead') }}</p>
 
             @forelse ($projects as $project)
-                <article class="group grid items-stretch gap-0 border border-navy-800/10 bg-paper-100 shadow-card lg:grid-cols-2 {{ $loop->last ? '' : 'mb-10 md:mb-14' }}" data-reveal>
-                    <div @class(['relative min-h-72 overflow-hidden bg-navy-900 lg:min-h-[28rem]', 'lg:order-2' => $loop->even])>
+                <article class="sup-sheet {{ $loop->even ? 'is-flip' : '' }}" data-sup-sheet>
+                    <div class="sup-sheet__media">
                         @if ($project->cover)
-                            <x-picture :asset="$project->cover" conversion="hero" sizes="(min-width: 1024px) 50vw, 100vw" decorative class="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                            <x-picture :asset="$project->cover" conversion="hero" sizes="(min-width: 1024px) 50vw, 100vw" decorative class="size-full object-cover" />
                         @else
-                            <x-madagascar class="absolute inset-y-6 right-6 h-[88%] text-navy-800" />
+                            <svg class="sup-plan" viewBox="0 0 400 180" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false" data-sup-plan>{!! $blueprints[$loop->index % 2] !!}</svg>
                         @endif
                         @if ($project->status_label)
-                            <span class="absolute top-0 left-0 bg-sun-400 px-4 py-2 text-xs font-bold tracking-wider text-night-900 uppercase">{{ $project->status_label }}</span>
+                            <span class="sup-sheet__ribbon">{{ $project->status_label }}</span>
                         @endif
                     </div>
 
-                    <div class="ornament relative flex flex-col justify-center p-8 md:p-12 lg:p-14">
-                        <p class="eyebrow mb-4">{{ __('Projet :str_pad_left', ['str_pad_left' => str_pad($loop->iteration, 2, '0', STR_PAD_LEFT)]) }}</p>
-                        <h3 class="text-h2"><a href="{{ $project->url() }}" class="stretched-link hover:text-royal-600">{{ $project->title }}</a></h3>
-                        @if ($project->summary)<p class="mt-5 text-lead text-ink-700">{{ $project->summary }}</p>@endif
+                    <div class="sup-sheet__body">
+                        <p class="sup-sheet__num" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</p>
+                        <p class="eyebrow mb-3">{{ __('Projet :str_pad_left', ['str_pad_left' => str_pad($loop->iteration, 2, '0', STR_PAD_LEFT)]) }}</p>
+                        <h3 class="sup-sheet__title"><a href="{{ $project->url() }}" class="stretched-link">{{ $project->title }}</a></h3>
+                        @if ($project->summary)<p class="sup-sheet__text">{{ $project->summary }}</p>@endif
 
-                        @if ($project->location || $project->budget)
-                            <dl class="mt-8 grid grid-cols-2 gap-6 border-t border-navy-800/10 pt-6">
-                                @if ($project->location)<div><dt class="eyebrow mb-1 font-sans! text-[0.6875rem]!">{{ __('Lieu') }}</dt><dd class="font-serif text-lg text-navy-900">{{ $project->location }}</dd></div>@endif
-                                @if ($project->budget)<div><dt class="eyebrow mb-1 font-sans! text-[0.6875rem]!">{{ __('Budget prévu') }}</dt><dd class="font-serif text-lg text-navy-900">{{ $project->budget }}</dd></div>@endif
+                        @if ($project->budget || $project->location)
+                            <dl class="sup-sheet__facts">
+                                @if ($project->budget)<div><dt>{{ __('Budget prévu') }}</dt><dd class="sup-sheet__amount" data-sup-amount>{{ $project->budget }}</dd></div>@endif
+                                @if ($project->location)<div><dt>{{ __('Lieu') }}</dt><dd>{{ $project->location }}</dd></div>@endif
                             </dl>
                         @endif
 
-                        <span class="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-royal-600" aria-hidden="true">{{ __('support.projects.more') }} <x-ico name="arrow-right" class="size-4 transition-transform group-hover:translate-x-1" /></span>
+                        <span class="sup-sheet__more" aria-hidden="true">{{ __('support.projects.more') }} <x-ico name="arrow-right" class="size-4" /></span>
                     </div>
                 </article>
             @empty
-                <div class="ornament relative border border-navy-800/10 bg-paper-100 p-12 text-center">
-                    <p class="font-serif text-2xl text-navy-900">{{ __('support.projects.empty') }}</p>
+                <div class="sup-empty" data-reveal>
+                    <p>{{ __('support.projects.empty') }}</p>
                 </div>
             @endforelse
+
+            @if ($showBars)
+                <div class="sup-bars" data-sup-bars>
+                    <h3 class="eyebrow mb-6" data-reveal>{{ __('Budget prévu') }}</h3>
+                    <ul>
+                        @foreach ($measured as $row)
+                            <li class="sup-bar">
+                                <span class="sup-bar__label">{{ $row['project']->title }}</span>
+                                <span class="sup-bar__track" aria-hidden="true"><span class="sup-bar__fill" data-sup-fill style="--w: {{ round(100 * $row['amount'] / $maxAmount, 1) }}%"></span></span>
+                                <span class="sup-bar__value">{{ $row['project']->budget }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </div>
     </section>
 
-    {{-- Comment donner --}}
-    <section class="on-dark relative isolate overflow-hidden bg-navy-900 py-20 text-white md:py-28">
+    {{-- 4. COMMENT DONNER : deux portes, en ligne et par contact --}}
+    <section class="sup-how on-dark" aria-labelledby="sup-how-title">
         <x-triangle class="pointer-events-none absolute top-1/2 left-1/2 -z-10 w-[min(80rem,150vw)] -translate-x-1/2 -translate-y-1/2 text-gold-300/10" />
         <div class="container-site">
             <div class="mx-auto max-w-3xl text-center">
-                <p class="eyebrow mb-4" data-reveal>{{ __('support.how.eyebrow') }}</p>
-                <h2 class="text-h1 text-white!" data-reveal data-reveal-delay="0.1">{{ __('support.how.title') }}</h2>
+                <p class="eyebrow mb-4 text-sun-400!" data-reveal>{{ __('support.how.eyebrow') }}</p>
+                <h2 id="sup-how-title" class="sup-h2 text-white!" data-reveal data-reveal-delay="0.1">{{ __('support.how.title') }}</h2>
             </div>
 
-            <ul class="mx-auto mt-14 grid max-w-5xl gap-6 md:grid-cols-2">
-                <li class="ornament relative flex flex-col border border-white/15 bg-white/5 p-9 md:p-11" data-reveal>
+            <ul class="sup-doors">
+                <li class="sup-door" data-reveal>
                     <x-ico name="heart" class="size-8 text-sun-400" />
-                    <h3 class="mt-6 font-serif text-2xl text-white">{{ __('support.how.online.title') }}</h3>
+                    <h3>{{ __('support.how.online.title') }}</h3>
                     @if ($donation)
-                        <p class="mt-4 text-navy-100">{{ __('support.how.online.text') }}</p>
+                        <p>{{ __('support.how.online.text') }}</p>
                         <x-button :href="$donation" target="_blank" rel="noopener noreferrer" variant="sun" arrow class="btn-square mt-8 w-fit">{{ __('support.cta.donate') }}</x-button>
                     @else
-                        <p class="mt-4 text-navy-100">{{ __('support.how.online.soon') }}</p>
-                        <span class="mt-8 inline-flex w-fit items-center gap-2 border border-sun-400/50 px-4 py-2 text-xs font-bold tracking-wider text-sun-400 uppercase">{{ __('support.how.online.badge') }}</span>
+                        <p>{{ __('support.how.online.soon') }}</p>
+                        <span class="sup-door__badge">{{ __('support.how.online.badge') }}</span>
                     @endif
                 </li>
-                <li class="ornament relative flex flex-col border border-white/15 bg-white/5 p-9 md:p-11" data-reveal data-reveal-delay="0.1">
+                <li class="sup-door" data-reveal data-reveal-delay="0.1">
                     <x-ico name="mail" class="size-8 text-sun-400" />
-                    <h3 class="mt-6 font-serif text-2xl text-white">{{ __('support.how.contact.title') }}</h3>
-                    <p class="mt-4 text-navy-100">{{ __('support.how.contact.text') }}</p>
-                    @php($contacts = config('uaz.donation_contacts'))
-                    <ul class="mt-6 space-y-2 text-sm">
+                    <h3>{{ __('support.how.contact.title') }}</h3>
+                    <p>{{ __('support.how.contact.text') }}</p>
+                    <ul class="sup-door__list">
                         @foreach ($contacts['phones'] ?? [] as $phone)
-                            <li class="flex items-center gap-3"><x-ico name="phone" class="size-4 text-sun-400" /><a href="tel:{{ preg_replace('/[^+\d]/', '', $phone) }}" class="hover:text-sun-400">{{ $phone }}</a></li>
+                            <li><x-ico name="phone" class="size-4 text-sun-400" /><a href="tel:{{ preg_replace('/[^+\d]/', '', $phone) }}">{{ $phone }}</a></li>
                         @endforeach
                         @foreach ($contacts['emails'] ?? [] as $mail)
-                            <li class="flex items-center gap-3"><x-ico name="mail" class="size-4 text-sun-400" /><a href="mailto:{{ $mail }}" class="break-all hover:text-sun-400">{{ $mail }}</a></li>
+                            <li><x-ico name="mail" class="size-4 text-sun-400" /><a href="mailto:{{ $mail }}" class="break-all">{{ $mail }}</a></li>
                         @endforeach
                     </ul>
                     <x-button :href="$contact" variant="outline" arrow class="btn-square mt-8 w-fit">{{ __('support.cta.contact') }}</x-button>
                 </li>
             </ul>
+        </div>
+    </section>
+
+    {{-- 5. L'INVITATION --}}
+    <section class="sup-invite on-dark" data-sup-invite aria-labelledby="sup-invite-title">
+        <div class="container-site">
+            <h2 id="sup-invite-title" class="sup-invite__text" data-sup-invite-text>{{ __('support.invite.text') }}</h2>
+            <p class="mt-10" data-reveal>
+                <x-button :href="$donation ?: $contact" :target="$donation ? '_blank' : null" :rel="$donation ? 'noopener noreferrer' : null" variant="sun" arrow class="btn-square">{{ $donation ? __('support.cta.donate') : __('support.cta.contact') }}</x-button>
+            </p>
         </div>
     </section>
 </x-layouts.app>

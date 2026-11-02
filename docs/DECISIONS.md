@@ -313,3 +313,17 @@ jamais montrés au public ; tant qu'il n'y en a pas, une phrase sobre annonce qu
 `VisualBlocks::BESPOKE_KEYS` (l'éditeur visuel renvoie au formulaire classique).
 **Accessibilité et mouvement :** base complète sans JavaScript ; mouvement réduit = tout visible, rien d'épinglé ; sur mobile, la phrase s'allume au
 défilement sans épinglage. Audit axe-core sans violation (français, anglais, malagasy). Test e2e : `tests/e2e/research.mjs`.
+
+## D-049 · Page « Soutenir l'UAZ » immersive : un chantier qui se construit
+
+**Besoin :** même traitement immersif que les autres pages de vie du campus, sans promettre ni inventer.
+**Décision :** `pages/support.blade.php` (+ `support.css`, `animations/support.js`). Les deux projets sont des constructions : la page est un chantier.
+Héros photo (champ « Image » de la page) ; **scène épinglée** où la phrase d'introduction s'allume mot à mot pendant qu'un mur de briques monte rangée par
+rangée (décor, aucun chiffre) ; une **planche par projet** (budget compté à l'arrivée puis restitué tel que saisi, plan dessiné quand il n'y a pas de photo) ;
+**barres de montants** proportionnelles aux budgets publiés ; les deux « portes » (don en ligne, contact) ; invitation finale.
+**Ce que la page ne fait pas :** aucune somme « déjà réunie », aucune jauge de progression, aucun total (rien n'est publié). Les barres n'apparaissent que si
+au moins deux projets ont un budget dans la même unité (le premier nombre du champ « Budget » est lu).
+**État du don en ligne :** inchangé et honnête (`UAZ_DONATION_URL` vide : « Bientôt disponible » et contact ; renseigné : bouton « Faire un don » dans le
+héros, la porte et l'invitation). Contacts : `config/uaz.php` (`donation_contacts`).
+**Accessibilité et mouvement :** base complète sans JavaScript ; mouvement réduit = tout visible, mur complet, rien d'épinglé ; mobile sans épinglage.
+Audit axe-core sans violation (fr, en, mg et fiche projet). Tests : `SupportPageTest`, `tests/e2e/support.mjs`.

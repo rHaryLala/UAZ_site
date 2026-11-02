@@ -25,6 +25,9 @@ return [
         'more' => 'Découvrir le projet',
         'empty' => 'Les projets à soutenir seront bientôt présentés ici.',
     ],
+    'invite' => [
+        'text' => 'Chaque soutien aide à faire avancer les projets de l\'UAZ.',
+    ],
     'how' => [
         'eyebrow' => 'Comment donner',
         'title' => 'Participer, simplement',

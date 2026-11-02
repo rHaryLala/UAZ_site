@@ -25,6 +25,9 @@ return [
         'more' => 'Hamantatra ny tetikasa',
         'empty' => 'Ho aseho eto tsy ho ela ny tetikasa hohanina.',
     ],
+    'invite' => [
+        'text' => 'Ny fanohanana tsirairay dia manampy ny tetikasan\'ny UAZ handroso.',
+    ],
     'how' => [
         'eyebrow' => 'Ahoana ny fomba hanomezana',
         'title' => 'Handray anjara, tsotra foana',
