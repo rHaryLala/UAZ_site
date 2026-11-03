@@ -1,7 +1,6 @@
 @php
-    // Le mur du héros : les couvertures des albums, réparties en trois colonnes qui dérivent en sens contraires (décor, aucune légende).
-    $covers = $albums->getCollection()->pluck('cover')->filter(fn ($cover) => $cover && $cover->file())->values();
-    $columns = $covers->count() >= 3 ? $covers->groupBy(fn ($cover, $i) => $i % 3)->map(fn ($group) => $group->values()) : collect();
+    // Le mur du héros : les couvertures des albums (et leurs photos s'il y en a peu), réparties en trois colonnes qui dérivent en sens contraires (décor, aucune légende).
+    $columns = $wall->count() >= 3 ? $wall->groupBy(fn ($cover, $i) => $i % 3)->map(fn ($group) => $group->values()) : collect();
 
     // Rapport largeur / hauteur de chaque photo (borné pour garder un mur harmonieux).
     $ratio = function ($asset) {

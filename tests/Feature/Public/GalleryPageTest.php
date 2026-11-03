@@ -32,15 +32,30 @@ it('serves the gallery with its scenes and one frame per album', function () {
         ->and($html)->toContain('data-gal-count="2"')->toContain('data-gal-count="3"'); // 2 albums, 3 photos : comptés, jamais inventés
 });
 
-it('builds the hero wall only from the covers of the albums, and only with three or more', function () {
+it('builds the hero wall from the covers and the photos of the published albums, and only with three images or more', function () {
     galleryAlbum('Un', '2026-01-01', 1);
     galleryAlbum('Deux', '2026-02-01', 1);
-    $this->get('/galerie')->assertOk()->assertDontSee('data-gal-col', false);
+    $this->get('/galerie')->assertOk()->assertDontSee('data-gal-col', false); // deux images seulement : pas de mur
 
-    galleryAlbum('Trois', '2026-03-01', 1);
+    // Deux albums de deux photos suffisent : les couvertures sont complétées par les photos des albums.
+    PhotoAlbum::query()->forceDelete();
+    galleryAlbum('Trois', '2026-03-01', 2);
+    galleryAlbum('Quatre', '2026-04-01', 2);
     $html = $this->get('/galerie')->assertOk()->getContent();
 
-    expect(substr_count($html, 'data-gal-col'))->toBe(3);
+    expect(substr_count($html, 'data-gal-col'))->toBe(3)
+        ->and(substr_count($html, 'gal-hero__photo'))->toBe(8); // 4 images, chaque colonne répétée deux fois
+});
+
+it('never puts the photos of an unpublished album on the hero wall', function () {
+    galleryAlbum('Public', '2026-01-01', 2);
+    $hidden = galleryAlbum('Brouillon', '2026-02-01', 3, ['status' => PublicationStatus::Draft]);
+    $secret = $hidden->photos()->first();
+
+    $html = $this->get('/galerie')->assertOk()->getContent();
+
+    expect(substr_count($html, 'gal-hero__photo'))->toBe(0) // deux images seulement : pas de mur
+        ->and($html)->not->toContain((string) $secret->file()->file_name);
 });
 
 it('draws each frame at the real ratio of its cover and rotates the hanging rhythm', function () {
