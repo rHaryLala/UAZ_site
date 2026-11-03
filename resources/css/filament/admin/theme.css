@@ -1,0 +1,213 @@
+/*
+ * Thème du back-office : le langage visuel de shadcn/ui (palette neutre, rayons de 8 px, bordures fines d'un pixel,
+ * ombres à peine perceptibles, anneau de focus en 3 px, boutons de 36 px) posé sur Filament, sans changer de pile.
+ * Les variables reprennent le thème « neutral » de shadcn (docs : ui.shadcn.com/docs/theming) ; les règles ci-dessous
+ * ne sont pas dans une couche CSS, donc elles l'emportent sur les composants de Filament sans !important.
+ */
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+:root {
+    --radius: 0.5rem;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --sidebar: oklch(0.985 0 0);
+    --uaz-accent: oklch(0.205 0 0);
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --font-family: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+:root.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --uaz-accent: oklch(0.922 0 0);
+}
+
+/* ── Page ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
+.fi-body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    --topbar-height: 3.5rem;
+}
+
+.fi-header-heading { font-size: 1.5rem; line-height: 2rem; font-weight: 600; letter-spacing: -0.025em; color: var(--foreground); }
+.fi-header-subheading { font-size: 0.875rem; margin-top: 0.25rem; color: var(--muted-foreground); }
+
+/* ── Barre du haut et menu latéral : fond « sidebar » de shadcn, séparés du contenu par un trait ─────────────── */
+.fi-topbar {
+    background-color: var(--background);
+    box-shadow: none;
+    --tw-ring-shadow: 0 0 #0000;
+    border-bottom: 1px solid var(--border);
+    min-height: 3.5rem;
+}
+
+.fi-sidebar,
+.fi-sidebar.fi-sidebar-open { background-color: var(--sidebar); }
+.fi-sidebar.fi-sidebar-open { box-shadow: none; }
+@media (min-width: 64rem) {
+    .fi-sidebar { border-inline-end: 1px solid var(--border); }
+    .fi-sidebar.fi-sidebar-open { --tw-ring-shadow: 0 0 #0000; }
+}
+
+.fi-sidebar-group-label { font-size: 0.75rem; line-height: 1rem; font-weight: 500; color: var(--muted-foreground); }
+.fi-sidebar-item-btn,
+.fi-sidebar-group-dropdown-trigger-btn { border-radius: calc(var(--radius) - 2px); padding: 0.4rem 0.5rem; gap: 0.5rem; }
+.fi-sidebar-item-label { font-size: 0.875rem; font-weight: 500; color: var(--foreground); }
+.fi-sidebar-item-btn > .fi-icon { color: var(--muted-foreground); }
+.fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover,
+.fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:focus-visible,
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn { background-color: var(--accent); }
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon,
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label { color: var(--accent-foreground); }
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label { font-weight: 600; }
+
+/* ── Cartes : sections, tableaux, widgets ─────────────────────────────────────────────────────────────────────── */
+.fi-section:not(.fi-aside):not(.fi-section-not-contained),
+.fi-section.fi-aside > .fi-section-content-ctn,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-wi-chart {
+    border-radius: calc(var(--radius) + 4px);
+    background-color: var(--card);
+    box-shadow: var(--shadow-xs);
+    --tw-ring-shadow: 0 0 #0000;
+    border: 1px solid var(--border);
+    color: var(--foreground);
+}
+.fi-section.fi-secondary:not(.fi-aside) { background-color: var(--muted); }
+.fi-section-header-heading { font-size: 1rem; font-weight: 600; letter-spacing: -0.011em; color: var(--foreground); }
+.fi-section-header-description { font-size: 0.875rem; color: var(--muted-foreground); }
+.fi-section.fi-section-has-header:not(.fi-collapsed):not(.fi-aside) > .fi-section-content-ctn,
+.fi-section-content-ctn > .fi-section-footer { border-color: var(--border); }
+
+.fi-wi-stats-overview-stat-value { font-weight: 600; letter-spacing: -0.025em; }
+.fi-wi-stats-overview-stat-label,
+.fi-wi-stats-overview-stat-description { color: var(--muted-foreground); }
+
+/* ── Boutons : hauteur 36 px, rayon md, pas d'anneau gris ; plein = noir (blanc en sombre) ────────────────── */
+.fi-btn {
+    border-radius: calc(var(--radius) - 2px);
+    padding: 0.4375rem 1rem;
+    font-weight: 500;
+    min-height: 2.25rem;
+    transition: color 0.15s, background-color 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.fi-btn.fi-size-xs { min-height: 1.75rem; padding: 0.25rem 0.625rem; }
+.fi-btn.fi-size-sm { min-height: 2rem; padding: 0.3rem 0.75rem; }
+.fi-btn.fi-size-lg { min-height: 2.5rem; padding: 0.5rem 1.5rem; }
+.fi-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); }
+
+.fi-btn.fi-color:not(.fi-outlined):not(label):not([aria-pressed]) { box-shadow: var(--shadow-xs); --tw-ring-shadow: 0 0 #0000; }
+.fi-btn.fi-color-primary:not(.fi-outlined):not(label):not([aria-pressed]) {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+}
+.fi-btn.fi-color-primary:not(.fi-outlined):not(label):not([aria-pressed]):not(.fi-disabled):not([disabled]):hover {
+    background-color: color-mix(in oklab, var(--primary) 90%, transparent);
+    color: var(--primary-foreground);
+}
+.fi-btn.fi-color-primary:not(.fi-outlined) > .fi-icon { color: var(--primary-foreground); }
+
+/* Boutons neutres et « outline » : bordure + fond de la page. */
+.fi-btn:not(.fi-color):not(.fi-outlined),
+.fi-btn.fi-outlined {
+    background-color: var(--background);
+    color: var(--foreground);
+    border: 1px solid var(--input);
+    box-shadow: var(--shadow-xs);
+    --tw-ring-shadow: 0 0 #0000;
+}
+.fi-btn:not(.fi-color):not(.fi-outlined):not(.fi-disabled):not([disabled]):hover,
+.fi-btn.fi-outlined:not(.fi-disabled):not([disabled]):hover { background-color: var(--accent); color: var(--accent-foreground); }
+.fi-btn.fi-outlined.fi-color { color: var(--foreground); border-color: var(--input); }
+.fi-btn.fi-outlined.fi-color-danger { color: var(--color-danger-600); border-color: color-mix(in oklab, var(--color-danger-600) 40%, transparent); }
+.fi-btn.fi-outlined > .fi-icon,
+.fi-btn:not(.fi-color) > .fi-icon { color: var(--muted-foreground); }
+
+.fi-icon-btn { border-radius: calc(var(--radius) - 2px); }
+.fi-icon-btn:hover { background-color: var(--accent); }
+
+/* ── Champs : bordure --input, anneau de focus de 3 px ───────────────────────────────────────────────────── */
+.fi-input-wrp {
+    border-radius: calc(var(--radius) - 2px);
+    background-color: transparent;
+    border: 1px solid var(--input);
+    box-shadow: var(--shadow-xs);
+    --tw-ring-shadow: 0 0 #0000;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.fi-input-wrp:not(.fi-disabled):not(:has(.fi-ac-action:focus)):focus-within {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent);
+    --tw-ring-shadow: 0 0 #0000;
+}
+.fi-input-wrp.fi-invalid { border-color: var(--color-danger-600); }
+.fi-input-wrp.fi-invalid:focus-within { box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-danger-600) 25%, transparent); }
+.fi-input-wrp.fi-disabled { background-color: var(--muted); opacity: 0.8; }
+.fi-input { font-size: 0.875rem; color: var(--foreground); }
+.fi-input::placeholder { color: var(--muted-foreground); }
+
+.fi-fo-field-label-content { font-size: 0.875rem; font-weight: 500; color: var(--foreground); }
+
+.fi-checkbox-input,
+.fi-radio-input { border: 1px solid var(--input); --tw-ring-shadow: 0 0 #0000; box-shadow: var(--shadow-xs); }
+.fi-checkbox-input { border-radius: 4px; }
+.fi-checkbox-input:checked,
+.fi-checkbox-input:indeterminate,
+.fi-radio-input:checked { background-color: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+.fi-checkbox-input:focus-visible,
+.fi-radio-input:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); }
+
+/* ── Tableaux : en-tête discret, lignes séparées d'un trait, survol « muted » ────────────────────────────── */
+.fi-ta-header-cell { font-size: 0.8125rem; font-weight: 500; color: var(--muted-foreground); padding-block: 0.625rem; }
+.fi-ta-row:hover { background-color: color-mix(in oklab, var(--muted) 60%, transparent); }
+.fi-ta-footer, .fi-ta-header, .fi-pagination { border-color: var(--border); }
+
+/* ── Pastilles, onglets, menus, fenêtres ─────────────────────────────────────────────────────────────────── */
+.fi-badge { border-radius: calc(var(--radius) - 2px); padding: 0.125rem 0.5rem; font-weight: 500; font-size: 0.75rem; --tw-ring-shadow: 0 0 #0000; }
+.fi-badge:not(.fi-color) { background-color: var(--muted); color: var(--foreground); border: 1px solid var(--border); }
+
+.fi-tabs { border-radius: calc(var(--radius) + 2px); background-color: var(--muted); padding: 0.25rem; gap: 0.25rem; box-shadow: none; --tw-ring-shadow: 0 0 #0000; }
+.fi-tabs-item { border-radius: calc(var(--radius) - 2px); }
+.fi-tabs-item.fi-active { background-color: var(--background); box-shadow: var(--shadow-xs); }
+
+.fi-dropdown-panel,
+.fi-modal-window {
+    border-radius: calc(var(--radius) + 2px);
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    --tw-ring-shadow: 0 0 #0000;
+    color: var(--foreground);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.fi-dropdown-list-item { border-radius: calc(var(--radius) - 4px); }
+.fi-dropdown-list-item:hover,
+.fi-dropdown-list-item:focus-visible { background-color: var(--accent); }
+.fi-modal-heading { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.011em; }
+.fi-modal-description { font-size: 0.875rem; color: var(--muted-foreground); }

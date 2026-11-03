@@ -17,7 +17,7 @@
 >
     <label
         class="fi-media-dropzone"
-        x-bind:style="{ borderColor: over ? 'var(--primary-500)' : '', background: over ? 'color-mix(in srgb, var(--primary-500) 10%, transparent)' : '' }"
+        x-bind:style="{ borderColor: over ? 'var(--uaz-accent, var(--primary-500))' : '', background: over ? 'color-mix(in srgb, var(--primary-500) 10%, transparent)' : '' }"
         style="display:flex; align-items:center; justify-content:center; gap:.75rem; padding:1.25rem 1rem; margin-bottom:1rem; border:2px dashed #94a3b8; border-radius:.75rem; cursor:pointer; text-align:center; transition:border-color .15s, background .15s"
     >
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>

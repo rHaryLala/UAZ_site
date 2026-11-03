@@ -417,3 +417,13 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 **Données :** `config/lmd.php` reprend mot pour mot le texte de la page « Système LMD » du site actuel : trois ans, six semestres, 180 crédits ECTS ; deux ans (M1, M2), 120 crédits, 300 depuis le Bac ; mentions et parcours. « Bac+3 » et « Bac+5 » sont calculés de ces durées. **Rien n'est inventé :** le Doctorat n'est présenté que comme « poursuite » après le Master, sans durée ni crédit. Les textes passent par les dictionnaires (`Translated::deep`, inventaire `i18n:check`). Si le texte de la page change, `config/lmd.php` est à mettre à jour (voir docs/TODO-CONTENU.md).
 **Menu :** « Système LMD » est ajouté à la fin de « Ressources » (seeder + migration `add_lmd_to_resources_menu`, idempotente et réversible pour les sites installés) ; il apparaît aussi dans la section « Ressources » de l'accueil.
 **Accessibilité et mouvement :** base complète sans JavaScript ; grand texte et libellés à contraste conforme ; audit axe-core sans violation (fr, en, mg, mobile). Tests : `LmdPageTest`, `ResourcesMenuMigrationTest`, `tests/e2e/lmd.mjs`. Malagasy à faire relire.
+
+## D-059 · Back-office habillé comme shadcn/ui (même pile : Laravel, Filament, Livewire, Tailwind)
+
+**Besoin :** donner au back-office le langage visuel de shadcn/ui, sans changer de pile.
+**Décision :** thème Filament dédié, `resources/css/filament/admin/theme.css` (entrée Vite, branché par `->viteTheme()` dans `AdminPanelProvider`). Il importe le thème de Filament puis le surcharge, hors couche CSS, donc sans `!important`.
+1. **Palette :** variables du thème « neutral » de shadcn (`--background`, `--card`, `--muted`, `--accent`, `--primary`, `--border`, `--input`, `--ring`, `--sidebar`), en clair et en sombre. `gray` = `Color::Neutral` ; `primary` devient un noir (blanc en sombre) au lieu du bleu marine.
+2. **Formes :** rayon de 8 px (`--radius`), bordures d'un pixel à la place des anneaux, ombres quasi nulles, anneau de focus de 3 px.
+3. **Composants :** boutons de 36 px (plein noir, « outline » avec bordure), champs, cases et bascules, sections et tableaux en cartes, en-têtes de tableau discrets, pastilles, onglets en segment, menus et fenêtres, barre du haut et menu latéral séparés par un trait, entrée active du menu en fond « accent ».
+4. **Sélecteur de médias, glisser-déposer, raccourcis :** leurs styles en ligne utilisent désormais `--uaz-accent` / `--primary-foreground` (sinon le bouton noir devenait invisible en mode sombre).
+**Limite :** les couleurs sémantiques (succès, danger, avertissement) restent celles de Filament ; la page de connexion garde sa mise en scène propre.

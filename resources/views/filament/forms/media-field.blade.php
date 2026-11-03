@@ -159,8 +159,8 @@
             .uaz-mp__btn { padding: .45rem .9rem; border-radius: .5rem; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); font-size: .875rem; font-weight: 500; cursor: pointer; background: transparent; color: inherit; }
             .uaz-mp__btn:hover:not(:disabled) { background: color-mix(in srgb, currentColor 8%, transparent); }
             .uaz-mp__btn:disabled { opacity: .45; cursor: not-allowed; }
-            .uaz-mp__btn--primary { background: var(--primary-600); border-color: var(--primary-600); color: #fff; }
-            .uaz-mp__btn--primary:hover:not(:disabled) { background: var(--primary-500); }
+            .uaz-mp__btn--primary { background: var(--uaz-accent, var(--primary-600)); border-color: var(--uaz-accent, var(--primary-600)); color: var(--primary-foreground, #fff); }
+            .uaz-mp__btn--primary:hover:not(:disabled) { background: var(--uaz-accent, var(--primary-500)); }
 
             .uaz-mp-overlay { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 1rem; background: rgb(10 22 40 / .65); }
             .uaz-mp-modal { display: flex; flex-direction: column; width: min(78rem, 100%); height: min(46rem, 100%); border-radius: .75rem; overflow: hidden; background: #fff; color: #1e293b; box-shadow: 0 25px 60px rgb(0 0 0 / .45); }
@@ -171,20 +171,20 @@
             .uaz-mp-modal__close:hover { background: color-mix(in srgb, currentColor 10%, transparent); }
             .uaz-mp-tabs { display: flex; gap: .25rem; }
             .uaz-mp-tabs button { padding: .4rem .8rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: inherit; font-size: .9rem; cursor: pointer; opacity: .75; }
-            .uaz-mp-tabs button.is-active { border-bottom-color: var(--primary-600); opacity: 1; font-weight: 600; }
+            .uaz-mp-tabs button.is-active { border-bottom-color: var(--uaz-accent, var(--primary-600)); opacity: 1; font-weight: 600; }
             .uaz-mp-body { display: flex; flex: 1; min-height: 0; }
             .uaz-mp-main { display: flex; flex-direction: column; flex: 1; min-width: 0; }
             .uaz-mp-toolbar { display: flex; gap: .5rem; padding: .75rem 1rem; }
-            .uaz-mp-input:focus { outline: 2px solid var(--primary-500); outline-offset: 0; }
+            .uaz-mp-input:focus { outline: 2px solid var(--uaz-accent, var(--primary-500)); outline-offset: 0; }
             .uaz-mp-input { width: 100%; padding: .5rem .75rem; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); border-radius: .5rem; background: transparent; color: inherit; font-size: .9rem; }
             .uaz-mp-input--select { width: 12rem; flex: none; }
             .uaz-mp-grid { display: grid; grid-template-columns: repeat(auto-fill, 8.5rem); grid-auto-rows: 8.5rem; justify-content: space-between; gap: .625rem; padding: .25rem 1rem 1rem; overflow-y: auto; flex: 1; align-content: start; }
             .uaz-mp-tile { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 2px solid transparent; border-radius: .5rem; overflow: hidden; cursor: pointer; background: color-mix(in srgb, currentColor 8%, transparent); }
             .uaz-mp-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-            .uaz-mp-tile:hover { border-color: color-mix(in srgb, var(--primary-600) 55%, transparent); }
-            .uaz-mp-tile.is-selected { border-color: var(--primary-600); box-shadow: 0 0 0 2px var(--primary-600); }
+            .uaz-mp-tile:hover { border-color: color-mix(in srgb, var(--uaz-accent, var(--primary-600)) 55%, transparent); }
+            .uaz-mp-tile.is-selected { border-color: var(--uaz-accent, var(--primary-600)); box-shadow: 0 0 0 2px var(--uaz-accent, var(--primary-600)); }
             .uaz-mp-tile__label { position: absolute; inset: auto 0 0 0; padding: .25rem .4rem; font-size: .7rem; color: #fff; background: linear-gradient(transparent, rgb(0 0 0 / .72)); text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-            .uaz-mp-tile__check { position: absolute; top: .35rem; right: .35rem; width: 1.4rem; height: 1.4rem; display: none; align-items: center; justify-content: center; border-radius: 999px; background: var(--primary-600); color: #fff; font-size: .8rem; }
+            .uaz-mp-tile__check { position: absolute; top: .35rem; right: .35rem; width: 1.4rem; height: 1.4rem; display: none; align-items: center; justify-content: center; border-radius: 999px; background: var(--uaz-accent, var(--primary-600)); color: var(--primary-foreground, #fff); font-size: .8rem; }
             .uaz-mp-tile.is-selected .uaz-mp-tile__check { display: flex; }
             .uaz-mp-note { grid-column: 1 / -1; padding: 1rem 0; opacity: .7; font-size: .9rem; }
             .uaz-mp-more { grid-column: 1 / -1; justify-self: center; }
@@ -193,11 +193,11 @@
             .uaz-mp-side__preview { width: 100%; max-height: 11rem; object-fit: contain; border-radius: .5rem; background: color-mix(in srgb, currentColor 8%, transparent); margin-bottom: .75rem; }
             .uaz-mp-side dt { opacity: .6; font-size: .75rem; margin-top: .5rem; }
             .uaz-mp-side dd { margin: 0; overflow-wrap: anywhere; }
-            .uaz-mp-link { display: inline-block; margin-top: .75rem; color: var(--primary-600); text-decoration: underline; }
-            .dark .uaz-mp-link { color: var(--primary-400); }
+            .uaz-mp-link { display: inline-block; margin-top: .75rem; color: var(--uaz-accent, var(--primary-600)); text-decoration: underline; }
+            .dark .uaz-mp-link { color: var(--uaz-accent, var(--primary-400)); }
             .uaz-mp-body--upload { flex-direction: column; padding: 1rem 1.25rem; gap: 1rem; overflow-y: auto; }
             .uaz-mp-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .25rem; padding: 2rem 1rem; border: 2px dashed color-mix(in srgb, currentColor 30%, transparent); border-radius: .75rem; cursor: pointer; text-align: center; }
-            .uaz-mp-drop.is-over { border-color: var(--primary-600); background: color-mix(in srgb, var(--primary-600) 10%, transparent); }
+            .uaz-mp-drop.is-over { border-color: var(--uaz-accent, var(--primary-600)); background: color-mix(in srgb, var(--uaz-accent, var(--primary-600)) 10%, transparent); }
             .uaz-mp-pending { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; }
             .uaz-mp-pending li { display: flex; align-items: center; gap: .875rem; padding: .625rem; border: 1px solid color-mix(in srgb, currentColor 16%, transparent); border-radius: .5rem; }
             .uaz-mp-pending li > div { flex: 1; min-width: 0; display: grid; gap: .35rem; }

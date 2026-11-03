@@ -41,13 +41,14 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('UAZ · Administration')
             // Logo de l'UAZ dans l'onglet du navigateur (mêmes fichiers que le site public).
             ->favicon(asset('favicon-32.png'))
+            // Habillage « shadcn/ui » : thème Vite (resources/css/filament/admin/theme.css) et palette neutre.
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                // Bleu marine du sceau (docs/DESIGN-SYSTEM.md).
                 'primary' => [
-                    50 => '#E1EBFF', 100 => '#C6D2F7', 200 => '#ACB9E1', 300 => '#93A0CC', 400 => '#7A88B7',
-                    500 => '#4C5A8E', 600 => '#37447A', 700 => '#232E66', 800 => '#1B2455', 900 => '#131A3F', 950 => '#05081C',
+                    50 => '#fafafa', 100 => '#f5f5f5', 200 => '#e5e5e5', 300 => '#d4d4d4', 400 => '#a3a3a3',
+                    500 => '#525252', 600 => '#171717', 700 => '#0a0a0a', 800 => '#0a0a0a', 900 => '#0a0a0a', 950 => '#000000',
                 ],
-                'gray' => Color::Slate,
+                'gray' => Color::Neutral,
             ])
             // 2FA par application (TOTP), optionnel ; chaque utilisateur l'active depuis son profil.
             ->profile()
