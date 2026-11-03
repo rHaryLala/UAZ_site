@@ -131,6 +131,9 @@
                             <button type="button" class="uaz-mp__btn uaz-mp__btn--primary" x-bind:disabled="!canUpload" x-on:click="upload()">
                                 <span x-text="uploading ? 'Envoi en cours…' : 'Envoyer dans la médiathèque'"></span>
                             </button>
+                            <p class="uaz-mp__muted" style="margin:.5rem 0 0; font-size:.8125rem" role="status" x-show="!canUpload && !uploading" x-cloak>
+                                Pour envoyer, renseignez le texte alternatif de chaque fichier (3 caractères au moins).
+                            </p>
                         </div>
                     </div>
 
