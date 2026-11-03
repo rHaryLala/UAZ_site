@@ -4,12 +4,11 @@ namespace App\Filament\Resources\Partners;
 
 use App\Filament\Resources\Partners\Pages\ManagePartners;
 use App\Filament\Support\MediaPicker;
+use App\Filament\Support\RowActions;
 use App\Models\Partner;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -62,7 +61,7 @@ class PartnerResource extends Resource
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions(RowActions::editDelete())
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 

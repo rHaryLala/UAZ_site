@@ -5,13 +5,12 @@ namespace App\Filament\Resources\Projects;
 use App\Filament\Resources\Projects\Pages\ManageProjects;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\Rich;
+use App\Filament\Support\RowActions;
 use App\Filament\Support\TranslationSection;
 use App\Models\Project;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -76,7 +75,7 @@ class ProjectResource extends Resource
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions(RowActions::editDelete())
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 

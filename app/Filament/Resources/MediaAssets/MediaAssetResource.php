@@ -5,6 +5,8 @@ namespace App\Filament\Resources\MediaAssets;
 use App\Filament\Resources\MediaAssets\Pages\CreateMediaAsset;
 use App\Filament\Resources\MediaAssets\Pages\EditMediaAsset;
 use App\Filament\Resources\MediaAssets\Pages\ListMediaAssets;
+use App\Filament\Support\RowActions;
+use App\Filament\Support\TranslationSection;
 use App\Models\MediaAsset;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -13,13 +15,12 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Support\TranslationSection;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -149,7 +150,7 @@ class MediaAssetResource extends Resource
             // Grille : boutons-icônes (le libellé s'affiche au survol) et pas de cases à cocher, qui décalaient l'image dans la carte.
             ->recordActions($grid
                 ? [EditAction::make()->iconButton()->tooltip('Modifier'), DeleteAction::make()->iconButton()->tooltip('Supprimer')]
-                : [EditAction::make(), DeleteAction::make()])
+                : RowActions::editDelete())
             ->toolbarActions($grid ? [] : [
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ])

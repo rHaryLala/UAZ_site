@@ -5,13 +5,12 @@ namespace App\Filament\Resources\TeamMembers;
 use App\Enums\TeamCategory;
 use App\Filament\Resources\TeamMembers\Pages\ManageTeamMembers;
 use App\Filament\Support\MediaPicker;
+use App\Filament\Support\RowActions;
 use App\Filament\Support\TranslationSection;
 use App\Models\TeamMember;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -86,7 +85,7 @@ class TeamMemberResource extends Resource
                 SelectFilter::make('category')->label('Catégorie')->options(TeamCategory::class),
                 SelectFilter::make('faculty_id')->label('Département')->relationship('faculty', 'name'),
             ])
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions(RowActions::editDelete())
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 

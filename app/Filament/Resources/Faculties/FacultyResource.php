@@ -7,14 +7,13 @@ use App\Filament\Resources\Faculties\Pages\ManageFaculties;
 use App\Filament\Support\MediaPicker;
 use App\Filament\Support\PublicationTable;
 use App\Filament\Support\Rich;
-use App\Filament\Support\TranslationSection;
+use App\Filament\Support\RowActions;
 use App\Filament\Support\SlugField;
+use App\Filament\Support\TranslationSection;
 use App\Models\Faculty;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -75,7 +74,7 @@ class FacultyResource extends Resource
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions(RowActions::editDelete())
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 

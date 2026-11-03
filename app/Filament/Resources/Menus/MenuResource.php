@@ -5,11 +5,10 @@ namespace App\Filament\Resources\Menus;
 use App\Filament\Resources\Menus\Pages\CreateMenu;
 use App\Filament\Resources\Menus\Pages\EditMenu;
 use App\Filament\Resources\Menus\Pages\ListMenus;
+use App\Filament\Support\RowActions;
 use App\Models\Menu;
 use App\Models\Page;
 use BackedEnum;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -104,7 +103,7 @@ class MenuResource extends Resource
                 TextColumn::make('items_count')->label('Liens')
                     ->state(fn (Menu $record) => count($record->items ?? [])),
             ])
-            ->recordActions([EditAction::make(), DeleteAction::make()]);
+            ->recordActions(RowActions::editDelete());
     }
 
     public static function getPages(): array

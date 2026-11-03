@@ -3,12 +3,11 @@
 namespace App\Filament\Resources\Users;
 
 use App\Filament\Resources\Users\Pages\ManageUsers;
+use App\Filament\Support\RowActions;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -71,7 +70,7 @@ class UserResource extends Resource
                 TextColumn::make('created_at')->label('Créé le')->date('d/m/Y')->sortable()->toggleable(),
             ])
             ->defaultSort('name')
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions(RowActions::editDelete())
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 

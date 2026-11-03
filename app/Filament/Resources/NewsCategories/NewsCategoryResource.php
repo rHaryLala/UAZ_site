@@ -3,14 +3,13 @@
 namespace App\Filament\Resources\NewsCategories;
 
 use App\Filament\Resources\NewsCategories\Pages\ManageNewsCategories;
+use App\Filament\Support\RowActions;
 use App\Filament\Support\SlugField;
 use App\Filament\Support\TranslationSection;
 use App\Models\NewsCategory;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -53,7 +52,7 @@ class NewsCategoryResource extends Resource
                 TextColumn::make('posts_count')->label('Actualités')->counts('posts'),
             ])
             ->defaultSort('name')
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions(RowActions::editDelete())
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 

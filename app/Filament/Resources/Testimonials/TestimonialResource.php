@@ -4,13 +4,12 @@ namespace App\Filament\Resources\Testimonials;
 
 use App\Filament\Resources\Testimonials\Pages\ManageTestimonials;
 use App\Filament\Support\MediaPicker;
+use App\Filament\Support\RowActions;
 use App\Filament\Support\TranslationSection;
 use App\Models\Testimonial;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -70,7 +69,7 @@ class TestimonialResource extends Resource
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions(RowActions::editDelete())
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 

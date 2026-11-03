@@ -3,12 +3,11 @@
 namespace App\Filament\Resources\Redirects;
 
 use App\Filament\Resources\Redirects\Pages\ManageRedirects;
+use App\Filament\Support\RowActions;
 use App\Models\Redirect;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -68,7 +67,7 @@ class RedirectResource extends Resource
             ])
             ->defaultSort('from_path')
             ->filters([TernaryFilter::make('is_active')->label('Active')])
-            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->recordActions(RowActions::editDelete())
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 
