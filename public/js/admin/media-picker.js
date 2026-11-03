@@ -20,13 +20,33 @@ document.addEventListener('alpine:init', () => {
         uploadError: '',
         dragging: false,
         timer: null,
+        trapOwner: null,
         token: 0,
 
         get focus() {
             return this.selected[this.selected.length - 1] ?? null;
         },
 
+        // Dans une fenêtre modale de Filament (témoignages, équipe…), son piège à focus ramènerait le curseur hors du champ de texte
+        // alternatif : il est suspendu tant que le sélecteur est ouvert, puis rétabli.
+        suspendTrap() {
+            for (let el = this.$root.parentElement; el; el = el.parentElement) {
+                const owner = (el._x_dataStack ?? []).find((scope) => 'isTrapActive' in scope);
+                if (owner) {
+                    this.trapOwner = owner.isTrapActive ? owner : null;
+                    if (this.trapOwner) this.trapOwner.isTrapActive = false;
+                    return;
+                }
+            }
+        },
+
+        resumeTrap() {
+            if (this.trapOwner && this.$root.isConnected) this.trapOwner.isTrapActive = true;
+            this.trapOwner = null;
+        },
+
         async show() {
+            this.suspendTrap();
             this.open = true;
             this.tab = 'library';
             this.selected = !this.multiple && this.current ? [this.current] : [];
@@ -38,6 +58,7 @@ document.addEventListener('alpine:init', () => {
         close() {
             this.open = false;
             document.documentElement.style.overflow = '';
+            this.resumeTrap();
         },
 
         onSearch() {
