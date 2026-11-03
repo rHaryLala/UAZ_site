@@ -848,3 +848,10 @@
 .nws-ready .nws-progress {
     display: block;
 }
+
+/* L'image d'une vignette est un lien vers l'article (le titre porte le lien accessible ; celui-ci est un doublon pour la souris et le doigt). */
+.nws-media-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+}

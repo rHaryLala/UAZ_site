@@ -10,11 +10,14 @@
 
 <article {{ $attributes->class('nws-card') }} data-nws-card>
     <div class="nws-card__media" data-nws-media>
-        @if ($asset && $asset->file())
-            <x-picture :asset="$asset" conversion="card" sizes="(min-width: 1024px) 40rem, (min-width: 640px) 50vw, 92vw" decorative :eager="$eager" class="nws-card__img" data-nws-img />
-        @else
-            <span class="nws-card__blank" aria-hidden="true"><x-madagascar class="h-3/4 text-white/15" /></span>
-        @endif
+        {{-- L'image mène à l'article comme le titre (lien doublon : hors ordre de tabulation et caché aux lecteurs d'écran). --}}
+        <a href="{{ $post->url() }}" class="nws-media-link" tabindex="-1" aria-hidden="true">
+            @if ($asset && $asset->file())
+                <x-picture :asset="$asset" conversion="card" sizes="(min-width: 1024px) 40rem, (min-width: 640px) 50vw, 92vw" decorative :eager="$eager" class="nws-card__img" data-nws-img />
+            @else
+                <span class="nws-card__blank" aria-hidden="true"><x-madagascar class="h-3/4 text-white/15" /></span>
+            @endif
+        </a>
     </div>
 
     <div class="nws-card__body">

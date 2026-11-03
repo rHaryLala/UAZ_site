@@ -57,11 +57,13 @@
                     @if ($lead)
                         <article class="nws-lead" data-nws-lead data-nws-card>
                             <div class="nws-lead__media" data-nws-media>
-                                @if ($lead->cover && $lead->cover->file())
-                                    <x-picture :asset="$lead->cover" conversion="hero" sizes="(min-width: 1024px) 56rem, 100vw" decorative eager class="nws-lead__img" data-nws-img />
-                                @else
-                                    <span class="nws-card__blank" aria-hidden="true"><x-madagascar class="h-3/4 text-white/15" /></span>
-                                @endif
+                                <a href="{{ $lead->url() }}" class="nws-media-link" tabindex="-1" aria-hidden="true">
+                                    @if ($lead->cover && $lead->cover->file())
+                                        <x-picture :asset="$lead->cover" conversion="hero" sizes="(min-width: 1024px) 56rem, 100vw" decorative eager class="nws-lead__img" data-nws-img />
+                                    @else
+                                        <span class="nws-card__blank" aria-hidden="true"><x-madagascar class="h-3/4 text-white/15" /></span>
+                                    @endif
+                                </a>
                             </div>
                             <div class="nws-lead__body">
                                 <p class="nws-lead__flag">{{ __('news.lead.flag') }}</p>

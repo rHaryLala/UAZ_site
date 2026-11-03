@@ -85,11 +85,14 @@
                         <li class="gal-frame" data-gal-frame data-slot="{{ $loop->index % 4 }}" data-year="{{ $album->taken_on?->year }}">
                             <article class="gal-frame__art" style="--ratio: {{ $album->cover ? $ratio($album->cover) : 1.333 }}">
                                 <div class="gal-frame__mat" data-gal-mat>
-                                    @if ($album->cover)
-                                        <x-picture :asset="$album->cover" conversion="card" sizes="(min-width: 1024px) 40rem, (min-width: 640px) 55vw, 92vw" decorative class="gal-frame__img" data-gal-img />
-                                    @else
-                                        <span class="gal-frame__blank" aria-hidden="true"><x-madagascar class="h-[70%] text-white/20" /></span>
-                                    @endif
+                                    {{-- La photo mène à l'album comme le titre (lien doublon : hors ordre de tabulation et caché aux lecteurs d'écran). --}}
+                                    <a href="{{ $album->url() }}" class="gal-media-link" tabindex="-1" aria-hidden="true">
+                                        @if ($album->cover)
+                                            <x-picture :asset="$album->cover" conversion="card" sizes="(min-width: 1024px) 40rem, (min-width: 640px) 55vw, 92vw" decorative class="gal-frame__img" data-gal-img />
+                                        @else
+                                            <span class="gal-frame__blank" aria-hidden="true"><x-madagascar class="h-[70%] text-white/20" /></span>
+                                        @endif
+                                    </a>
                                 </div>
                                 <div class="gal-frame__label">
                                     <span class="gal-frame__no" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>

@@ -454,3 +454,10 @@ a.gal-frame__mat:focus-visible {
     position: relative;
     z-index: 4;
 }
+
+/* La photo d'un cadre est un lien vers l'album (le titre porte le lien accessible ; celui-ci est un doublon pour la souris et le doigt). */
+.gal-media-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
