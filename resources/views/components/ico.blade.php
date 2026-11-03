@@ -8,6 +8,8 @@
         'arrow-left' => '<path d="M19 12H5M11 6l-6 6 6 6"/>',
         'menu' => '<path d="M4 8h16M4 16h16"/>',
         'close' => '<path d="M6 6l12 12M18 6 6 18"/>',
+        'zoom-in' => '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2M11 8.2v5.6M8.2 11h5.6"/>',
+        'zoom-out' => '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2M8.2 11h5.6"/>',
         'search' => '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',
         'mail' => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
         'phone' => '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
