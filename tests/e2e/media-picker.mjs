@@ -105,6 +105,20 @@ try {
     await page.waitForTimeout(2500);
     const added = await page.locator('.fi-fo-repeater-item').count();
     check(added >= 2, `album : les photos choisies s'ajoutent à l'album (${added})`);
+    // Envoi de plusieurs fichiers : une requête par fichier (une seule requête dépasserait la limite du serveur : 413).
+    await page.goto(`${base}/admin/photo-albums/create`, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(1200);
+    await page.locator('.uaz-mp').filter({ hasText: 'Choisir des images' }).first().getByRole('button', { name: /Choisir des images/ }).click();
+    const many = page.locator('.uaz-mp-modal:visible');
+    await many.locator('.uaz-mp-tabs button', { hasText: 'Envoyer' }).click();
+    await many.locator('.uaz-mp-drop input[type=file]').setInputFiles([file, file]);
+    const fields = many.locator('.uaz-mp-pending input[type=text]');
+    for (let i = 0; i < 2; i++) await fields.nth(i).fill(alt);
+    let uploads = 0;
+    page.on('request', (r) => r.url().includes('media-browser/upload') && uploads++);
+    await many.getByRole('button', { name: 'Envoyer dans la médiathèque' }).click();
+    await page.waitForFunction(() => !document.querySelector('.uaz-mp-pending li'), null, { timeout: 60000 });
+    check(uploads === 2, `envoi multiple : une requête par fichier (${uploads})`);
     check(errors.length === 0, `aucune erreur JavaScript${errors.length ? ' : ' + errors.join('; ') : ''}`);
 } catch (error) {
     console.log(`✗ parcours interrompu : ${error.message.split('\n')[0]}`);

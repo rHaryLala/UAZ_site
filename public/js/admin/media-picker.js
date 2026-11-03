@@ -18,6 +18,7 @@ document.addEventListener('alpine:init', () => {
         pending: [], // fichiers en attente d'envoi : { file, preview, alt, error }
         uploading: false,
         uploadError: '',
+        progress: { done: 0, total: 0 },
         dragging: false,
         timer: null,
         trapOwner: null,
@@ -143,37 +144,49 @@ document.addEventListener('alpine:init', () => {
             return this.pending.length > 0 && this.pending.every((p) => p.alt.trim().length >= 3) && !this.uploading;
         },
 
+        // Un fichier par requête : plusieurs photos de drone ou d'appareil photo dépassent vite la limite de taille d'une
+        // requête du serveur (413). Les fichiers refusés restent dans la liste, avec leur erreur, pour être retirés ou renvoyés.
         async upload() {
             if (!this.canUpload) return;
             this.uploading = true;
             this.uploadError = '';
-            const body = new FormData();
-            this.pending.forEach((p, i) => {
+            this.progress = { done: 0, total: this.pending.length };
+            const sent = [];
+            for (const p of [...this.pending]) {
+                p.error = '';
+                const body = new FormData();
                 body.append('files[]', p.file);
-                body.append(`alts[${i}]`, p.alt.trim());
-            });
-            try {
-                const response = await fetch(config.uploadUrl, {
-                    method: 'POST',
-                    body,
-                    credentials: 'same-origin',
-                    headers: { Accept: 'application/json', 'X-CSRF-TOKEN': config.csrf },
-                });
-                const json = await response.json();
-                if (!response.ok) {
-                    this.uploadError = json.message ?? 'Envoi impossible.';
-                    return;
+                body.append('alts[0]', p.alt.trim());
+                try {
+                    const response = await fetch(config.uploadUrl, {
+                        method: 'POST',
+                        body,
+                        credentials: 'same-origin',
+                        headers: { Accept: 'application/json', 'X-CSRF-TOKEN': config.csrf },
+                    });
+                    const json = await response.json().catch(() => null);
+                    if (response.ok && json?.data) {
+                        sent.push(...json.data);
+                        p.preview && URL.revokeObjectURL(p.preview);
+                        this.pending = this.pending.filter((other) => other !== p);
+                    } else {
+                        p.error = response.status === 413 ? 'Fichier trop lourd pour le serveur.' : (json?.message ?? 'Envoi impossible.');
+                    }
+                } catch (error) {
+                    p.error = 'Envoi impossible : vérifiez votre connexion et réessayez.';
                 }
-                this.pending.forEach((p) => p.preview && URL.revokeObjectURL(p.preview));
-                this.pending = [];
-                this.items = [...json.data, ...this.items];
-                this.selected = this.multiple ? [...this.selected, ...json.data] : [json.data[0]];
-                this.tab = 'library';
-            } catch (error) {
-                this.uploadError = 'Envoi impossible : vérifiez votre connexion et réessayez.';
-            } finally {
-                this.uploading = false;
+                this.progress.done++;
             }
+            if (sent.length) {
+                this.items = [...sent, ...this.items];
+                this.selected = this.multiple ? [...this.selected, ...sent] : [sent[0]];
+            }
+            if (this.pending.length) {
+                this.uploadError = `${this.pending.length} fichier(s) n'ont pas été envoyés : voir le détail ci-dessous.`;
+            } else {
+                this.tab = 'library';
+            }
+            this.uploading = false;
         },
     }));
 });

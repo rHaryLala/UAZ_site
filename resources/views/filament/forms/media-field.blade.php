@@ -121,6 +121,7 @@
                                             <span class="uaz-mp__muted">Texte alternatif (obligatoire) : décrivez ce que montre le fichier</span>
                                             <input type="text" x-model="p.alt" class="uaz-mp-input" maxlength="300" placeholder="Ex. : Étudiants devant la bibliothèque">
                                         </label>
+                                        <small class="uaz-mp-error" x-show="p.error" x-text="p.error" x-cloak></small>
                                     </div>
                                     <button type="button" class="uaz-mp__btn" x-on:click="removePending(index)">Retirer</button>
                                 </li>
@@ -129,7 +130,7 @@
 
                         <div class="uaz-mp-upload-actions" x-show="pending.length" x-cloak>
                             <button type="button" class="uaz-mp__btn uaz-mp__btn--primary" x-bind:disabled="!canUpload" x-on:click="upload()">
-                                <span x-text="uploading ? 'Envoi en cours…' : 'Envoyer dans la médiathèque'"></span>
+                                <span x-text="uploading ? 'Envoi en cours… (' + progress.done + '/' + progress.total + ')' : 'Envoyer dans la médiathèque'"></span>
                             </button>
                             <p class="uaz-mp__muted" style="margin:.5rem 0 0; font-size:.8125rem" role="status" x-show="!canUpload && !uploading" x-cloak>
                                 Pour envoyer, renseignez le texte alternatif de chaque fichier (3 caractères au moins).
