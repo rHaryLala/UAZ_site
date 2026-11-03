@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\SetLocale;
 use App\Listeners\OptimizeUploadedImage;
 use App\Models\ContactMessage;
 use App\Models\Event as EventModel;
@@ -13,8 +14,8 @@ use App\Models\NewsCategory;
 use App\Models\NewsPost;
 use App\Models\Page;
 use App\Models\Partner;
-use App\Models\Project;
 use App\Models\PhotoAlbum;
+use App\Models\Project;
 use App\Models\Redirect;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
@@ -26,13 +27,17 @@ use App\Policies\MediaAssetPolicy;
 use App\Policies\PagePolicy;
 use App\Policies\SettingsPolicy;
 use App\Policies\UserPolicy;
+use App\Support\AdminStats;
 use App\View\Composers\SiteComposer;
 use Database\Seeders\RolesAndPermissionsSeeder;
+use Filament\Tables\Table;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 use Spatie\MediaLibrary\MediaCollections\Events\MediaHasBeenAddedEvent;
 
 class AppServiceProvider extends ServiceProvider
@@ -72,17 +77,25 @@ class AppServiceProvider extends ServiceProvider
     {
         // Les requêtes Livewire (formulaire de contact, recherche) partent d'une adresse unique : la langue de la page d'origine
         // (/en, /mg) est rétablie en rejouant le middleware de langue de sa route.
-        \Livewire\Livewire::addPersistentMiddleware([\App\Http\Middleware\SetLocale::class]);
+        Livewire::addPersistentMiddleware([SetLocale::class]);
+
+        // Liaison de route publique : seuls les contenus visibles (publiés, ou tous en mode aperçu) répondent ;
+        // un brouillon ou un contenu programmé donne une 404. Ici et non dans routes/web.php : avec `route:cache`
+        // (production), ce fichier n'est plus exécuté et les adresses par « slug » ne se résoudraient plus (404).
+        Route::bind('formation', fn (string $slug) => Formation::visible()->where('slug', $slug)->firstOrFail());
+        Route::bind('post', fn (string $slug) => NewsPost::visible()->where('slug', $slug)->firstOrFail());
+        Route::bind('event', fn (string $slug) => EventModel::visible()->where('slug', $slug)->firstOrFail());
+        Route::bind('album', fn (string $slug) => PhotoAlbum::visible()->where('slug', $slug)->firstOrFail());
 
         // Chiffres du tableau de bord et compteur de messages : cache vidé dès qu'un contenu concerné change.
         foreach ([NewsPost::class, EventModel::class, ContactMessage::class] as $model) {
-            $model::saved(fn () => \App\Support\AdminStats::flush());
-            $model::deleted(fn () => \App\Support\AdminStats::flush());
+            $model::saved(fn () => AdminStats::flush());
+            $model::deleted(fn () => AdminStats::flush());
         }
 
         // Tableaux du back-office : chargement différé (le squelette s'affiche tout de suite, les lignes arrivent ensuite),
         // pagination 10 / 25 / 50 (25 par défaut). Chaque écran peut surcharger ces réglages.
-        \Filament\Tables\Table::configureUsing(fn (\Filament\Tables\Table $table) => $table
+        Table::configureUsing(fn (Table $table) => $table
             ->deferLoading()
             ->paginationPageOptions([10, 25, 50])
             ->defaultPaginationPageOption(25)
