@@ -70,6 +70,7 @@ class ContentTranslationsSeeder extends Seeder
         'student-life-library' => ['Library', 'Tranomboky'],
         'student-life-cafeteria' => ['Cafeteria', 'Kafeteria'],
         'student-life-dorms' => ['Dormitories', 'Trano fatoriana'],
+        'student-life-association' => ['Student association', 'Fikambanan\'ny mpianatra', 'The Student Association (SA) coordinates all the activities planned for the year, under the supervision of the Vice-Rector for Student Affairs.', 'Ny Fikambanan\'ny mpianatra (SA) no mandrindra ny hetsika rehetra voalahatra amin\'ny taona, eo ambany fanaraha-mason\'ny Lefitra Filohan\'ny Oniversite miandraikitra ny raharaha momba ny mpianatra.'],
         'lmd' => ['LMD system', 'Rafitra LMD', 'Bachelor\'s, Master\'s, Doctorate: the UAZ study system.', 'Licence, Master, Doctorat: ny rafitry ny fianarana ao amin\'ny UAZ.'],
         'research' => ['Research centre (ZRC)', 'Foibe fikarohana (ZRC)', 'The research centre of Zurcher Adventist University.', 'Ny foibe fikarohan\'ny Oniversite Advantista Zurcher.'],
         'timetables' => ['Timetables', 'Fandaharam-potoana'],

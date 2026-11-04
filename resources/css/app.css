@@ -13,6 +13,7 @@
 @import './news.css';
 @import './home.css';
 @import './lmd.css';
+@import './association.css';
 
 @plugin '@tailwindcss/typography';
 

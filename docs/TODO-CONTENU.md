@@ -151,3 +151,5 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
       de texte français doit être répercuté dans `lang/en.json` et `lang/mg.json` (le test de traductions le rappelle).
 
 - [ ] **Page « Système LMD »** : les chiffres et mentions de la page sur mesure viennent de `config/lmd.php` (copie du texte du site actuel : 3 ans / 6 semestres / 180 crédits ECTS, 2 ans / 120 crédits / 300 depuis le Bac, sept mentions de Licence, trois de Master). À mettre à jour si l'UAZ modifie ce texte. Le **Doctorat** n'a ni durée ni crédits publiés : à fournir si l'UAZ veut les afficher. Malagasy de la page à faire relire.
+
+- [ ] **Page « Association des étudiants »** : seule la section 3.3 du Manuel de l'étudiant est reprise (rôle, officiants élus, équipe d'au plus 15 noms, entretien avec le VRAE, engagement envers les projets du VRAE). À fournir si l'UAZ le souhaite : la section 3.4 (activités de l'année), les noms des officiants de l'année, les dates de l'appel à candidature et du scrutin, les photos de l'Association. Traductions anglaise et malagasy dans `lang/{en,mg}/association.php` : le malagasy est à faire relire par un locuteur natif.

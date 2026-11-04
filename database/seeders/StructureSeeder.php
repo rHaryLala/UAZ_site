@@ -121,6 +121,12 @@ class StructureSeeder extends Seeder
         }
     }
 
+    /** Texte du Manuel de l'étudiant, section 3.3, mot pour mot (la page « Association des étudiants » en tire sa mise en page ; ce texte sert à la recherche et à l'édition). */
+    public const ASSOCIATION_TEXT = '<h2>3.3 L’Association des étudiants</h2>'
+        .'<p>L’Association des étudiants (SA) est l’entité qui coordonne toutes les activités (cf sous-titre 3.4) prévues de l’année sous la supervision du Vice-Recteur chargé des affaires estudiantines (VRAE). Les officiants de la SA sont des étudiants élus par tous les étudiants inscrits pendant l’année académique.</p>'
+        .'<p>Quand un(e) étudiant(e) désire se présenter au poste du Président de SA, il/elle doit former une équipe composée d’au plus 15 noms. Après l’appel à candidature lancé officiellement, les candidatures retenues feront l’objet d’un entretien avec le VRAE.</p>'
+        .'<p>L’Association des étudiants est tenue s’engager effectivement à promouvoir tous les projets et programmes émanant directement du VRAE d’après le fonctionnement établi par ce dernier. En discussion d’affaire, les deux parties trouveront les meilleurs moyens de les réaliser. Quoi que soit, l’Association se doit de faire desdits projets et programmes une priorité, et ainsi les figurera en emphase dans sa planification.</p>';
+
     /** @return array<string, Page> */
     private function pages(): array
     {
@@ -152,6 +158,11 @@ class StructureSeeder extends Seeder
         $pages['library'] = $make('student-life-library', 'Bibliothèque', 'bibliotheque', $pages['student-life'], null, 1);
         $pages['cafeteria'] = $make('student-life-cafeteria', 'Cafétéria', 'cafeteria', $pages['student-life'], null, 2);
         $pages['dorms'] = $make('student-life-dorms', 'Dortoirs', 'dortoirs', $pages['student-life'], null, 3);
+        // Texte du Manuel de l'étudiant (section 3.3), repris tel quel ; la mise en page est dans resources/views/pages/association.blade.php.
+        $pages['association'] = $make('student-life-association', 'Association des étudiants', 'association-des-etudiants', $pages['student-life'], 'L\'Association des étudiants (SA) coordonne toutes les activités prévues de l\'année, sous la supervision du Vice-Recteur chargé des affaires estudiantines.', 4);
+        if (str_contains(json_encode($pages['association']->blocks), self::TODO)) {
+            $pages['association']->update(['blocks' => [['type' => 'rich_text', 'data' => ['heading' => null, 'content' => self::ASSOCIATION_TEXT, 'width' => 'normal']]]]);
+        }
         $pages['lmd'] = $make('lmd', 'Système LMD', 'systeme-lmd', null, 'Licence, Master, Doctorat : le système d\'études de l’UAZ.', 4);
         // Seuls faits connus (page « Personnel » du site actuel, repris dans l'équipe) ; mission, axes et publications à fournir.
         $pages['research'] = $make('research', 'Centre de recherche (ZRC)', 'centre-de-recherche', null, 'Le centre de recherche de l\'Université Adventiste Zurcher.', 6);
@@ -263,6 +274,7 @@ class StructureSeeder extends Seeder
                 ]]),
                 array_merge($url('Vie étudiante', '#'), ['children' => [
                     $page('Bibliothèque', 'library'), $page('Cafétéria', 'cafeteria'), $page('Dortoirs', 'dorms'),
+                    $page('Association des étudiants', 'association'),
                 ]]),
                 array_merge($url('Ressources', '#'), ['children' => [
                     $page('Téléchargements', 'downloads'), $url('Galerie', '/galerie'),

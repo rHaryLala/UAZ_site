@@ -427,3 +427,16 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 3. **Composants :** boutons de 36 px (plein noir, « outline » avec bordure), champs, cases et bascules, sections et tableaux en cartes, en-têtes de tableau discrets, pastilles, onglets en segment, menus et fenêtres, barre du haut et menu latéral séparés par un trait, entrée active du menu en fond « accent ».
 4. **Sélecteur de médias, glisser-déposer, raccourcis :** leurs styles en ligne utilisent désormais `--uaz-accent` / `--primary-foreground` (sinon le bouton noir devenait invisible en mode sombre).
 **Limite :** les couleurs sémantiques (succès, danger, avertissement) restent celles de Filament ; la page de connexion garde sa mise en scène propre.
+
+## D-060 · Page « Association des étudiants » immersive, ajoutée au menu « Vie étudiante »
+
+**Besoin :** une page pour l'Association des étudiants (SA), dans le sous-menu « Vie étudiante », à partir de la section 3.3 du Manuel de l'étudiant, moderne et dans la direction artistique du site, immersive avec GSAP.
+**Décision :** page sur mesure `student-life-association` (`vie-etudiante/association-des-etudiants`), hors éditeur visuel (`VisualBlocks::BESPOKE_KEYS`) : `pages/association.blade.php`, `association.css`, `animations/association.js`, textes dans `lang/{fr,en,mg}/association.php`. Le texte du manuel est aussi enregistré tel quel dans la page (`StructureSeeder::ASSOCIATION_TEXT`), pour la recherche et l'édition.
+1. **« SA » :** deux lettres géantes remplies d'une vraie photo du campus (couverture de la première page de la vie étudiante qui en a une), qui suivent le pointeur ; la photo glisse au défilement.
+2. **Son rôle :** la phrase s'allume mot à mot, puis la chaîne VRAE → SA → activités se trace.
+3. **Ses officiants :** une foule de points s'allume (tous les étudiants inscrits votent), quelques-uns grandissent (les élus). Décor : aucun chiffre n'est annoncé.
+4. **Se présenter :** écran arrêté sur grand écran ; quinze sièges en demi-cercle (« au plus 15 noms »), une onde pour l'appel à candidature, puis le VRAE se relie à l'équipe (entretien). Mobile et mouvement réduit : étapes l'une sous l'autre, sièges remplis, VRAE et lien visibles.
+5. **Son engagement :** les projets du VRAE passent en tête de la planification ; trois principes (promouvoir, dialoguer, prioriser) ; fermeture vers le manuel (page Téléchargements) et les autres pages de la vie étudiante.
+**Données :** rien n'est inventé. Les seuls chiffres sont ceux du manuel : 15 (noms au plus) et les sections 3.3 et 3.4 ; les barres de la planification et les points de la foule sont décoratifs et sans légende chiffrée. Le terme « affaires estudiantines » du manuel est conservé.
+**Menu :** entrée ajoutée à la fin de « Vie étudiante » (seeder + migration `add_student_association_page`, idempotente et réversible : elle crée aussi la page sur un site déjà installé, avec ses titres anglais et malagasy). En production, `php artisan migrate` suffit.
+**Accessibilité et mouvement :** base complète sans JavaScript ; contraste conforme (phrases à l'opacité de départ ≥ 4,5:1) ; audit axe-core sans violation (fr, en, mg, mobile, avec et sans animations). Tests : `AssociationPageTest`, `StudentAssociationMigrationTest`, `tests/e2e/association.mjs`.

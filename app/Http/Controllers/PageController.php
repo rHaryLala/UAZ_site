@@ -2,10 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\Faculty;
+use App\Models\Formation;
+use App\Models\MediaAsset;
 use App\Models\Page;
+use App\Models\Project;
+use App\Models\TeamMember;
+use App\Support\FeeCatalog;
+use App\Support\TimetableSheets;
 use App\Support\Translated;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 
 /** Pages libres du back-office, servies par leur chemin complet (ex. admissions/licence). */
 class PageController extends Controller
@@ -29,7 +38,7 @@ class PageController extends Controller
         if ($page->key === 'about') {
             return view('pages.about', [
                 'page' => $page,
-                'events' => \App\Models\Event::visible()->upcoming()->with('cover.media')->orderBy('starts_at')->limit(3)->get(),
+                'events' => Event::visible()->upcoming()->with('cover.media')->orderBy('starts_at')->limit(3)->get(),
             ]);
         }
 
@@ -37,7 +46,7 @@ class PageController extends Controller
         if ($page->key === 'support') {
             return view('pages.support', [
                 'page' => $page,
-                'projects' => \App\Models\Project::active()->with('cover.media')->get(),
+                'projects' => Project::active()->with('cover.media')->get(),
             ]);
         }
 
@@ -45,7 +54,7 @@ class PageController extends Controller
         // sont reprises dans l'ordre ; la salle de lecture est l'image de couverture de la page (champ « Image » du back-office).
         if ($page->key === 'student-life-library') {
             preg_match_all('/data-media="(\d+)"/', collect($page->blocks)->pluck('data.content')->implode(' '), $found);
-            $media = \App\Models\MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
+            $media = MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
 
             return view('pages.library', [
                 'page' => $page,
@@ -58,7 +67,7 @@ class PageController extends Controller
         // Cafétéria : mise en page immersive. Les trois photos du texte importé sont reprises dans l'ordre (service au buffet, cuisine, équipe).
         if ($page->key === 'student-life-cafeteria') {
             preg_match_all('/data-media="(\d+)"/', collect($page->blocks)->pluck('data.content')->implode(' '), $found);
-            $media = \App\Models\MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
+            $media = MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
 
             return view('pages.cafeteria', [
                 'page' => $page,
@@ -73,13 +82,13 @@ class PageController extends Controller
         // présentation des parcours). Les blocs de la page ajoutés dans le back-office s'affichent à la fin ; ceux qui portent encore la
         // mention TODO-CONTENU (texte d'attente à l'usage de l'équipe) ne sont jamais montrés au public.
         if ($page->key === 'research') {
-            $members = \App\Models\TeamMember::active()->with('photo.media')->where('job_title', 'like', '%Centre de recherche%')->get()
+            $members = TeamMember::active()->with('photo.media')->where('job_title', 'like', '%Centre de recherche%')->get()
                 ->sortBy(fn ($member) => str_starts_with(mb_strtolower($member->getRawOriginal('job_title')), 'directeur') ? 0 : 1)->values();
 
             // Le domaine est celui que nomme la fonction du directeur (« … / Responsable domaine Sciences Sociales »).
             $director = $members->first(fn ($member) => str_starts_with(mb_strtolower($member->getRawOriginal('job_title')), 'directeur'));
             $domain = $director
-                ? \App\Models\Faculty::query()->where('is_active', true)->get()
+                ? Faculty::query()->where('is_active', true)->get()
                     ->first(fn ($faculty) => str_contains(mb_strtolower($director->getRawOriginal('job_title')), mb_strtolower($faculty->getRawOriginal('name'))))
                 : null;
             $domain?->load(['formations' => fn ($query) => $query->visible()->orderBy('sort_order')->orderBy('title')]);
@@ -96,8 +105,8 @@ class PageController extends Controller
         // Système LMD : mise en page immersive (données : config/lmd.php, reprises du texte de la page). Chaque mention de Licence renvoie à sa fiche
         // de formation quand elle est publiée.
         if ($page->key === 'lmd') {
-            $plain = fn (string $text) => trim(preg_replace('/[^a-z0-9]+/', ' ', strtolower(\Illuminate\Support\Str::ascii($text))));
-            $formations = \App\Models\Formation::visible()->get()->keyBy(fn ($formation) => $plain((string) $formation->getRawOriginal('mention')));
+            $plain = fn (string $text) => trim(preg_replace('/[^a-z0-9]+/', ' ', strtolower(Str::ascii($text))));
+            $formations = Formation::visible()->get()->keyBy(fn ($formation) => $plain((string) $formation->getRawOriginal('mention')));
 
             return view('pages.lmd', [
                 'page' => $page,
@@ -108,14 +117,41 @@ class PageController extends Controller
             ]);
         }
 
+        // Association des étudiants : mise en page immersive (textes : lang/*/association.php, tirés du Manuel de l'étudiant, section 3.3).
+        // Les lettres « SA » du héros sont remplies d'une vraie photo du campus : la couverture (ou la première photo du texte) de la première
+        // page de la vie étudiante qui en a une.
+        if ($page->key === 'student-life-association') {
+            $siblings = Page::visible()->whereIn('key', ['student-life-library', 'student-life-cafeteria', 'student-life-dorms'])->with('cover.media')->get()
+                ->sortBy(fn ($sibling) => array_search($sibling->key, ['student-life-library', 'student-life-cafeteria', 'student-life-dorms']))->values();
+            $photo = null;
+            foreach ($siblings as $sibling) {
+                $photo = $sibling->cover;
+                if (! $photo && preg_match('/data-media="(\d+)"/', collect($sibling->blocks)->pluck('data.content')->implode(' '), $found)) {
+                    $photo = MediaAsset::with('media')->find((int) $found[1]);
+                }
+                if ($photo?->file()) {
+                    break;
+                }
+                $photo = null;
+            }
+
+            return view('pages.association', [
+                'page' => $page,
+                'trail' => $trail,
+                'photo' => $photo,
+                'downloads' => Page::visible()->where('key', 'admissions-downloads')->first(),
+                'siblings' => $siblings,
+            ]);
+        }
+
         // Emplois du temps : une fiche par PDF saisi dans le texte de la page (nom, faculté et taille tirés des données réelles) ; ce qui reste
         // du texte (titres, explications) s'affiche à la suite.
         if ($page->key === 'timetables') {
             return view('pages.timetables', [
                 'page' => $page,
                 'trail' => $trail,
-                'sheets' => \App\Support\TimetableSheets::from($page),
-                'blocks' => \App\Support\TimetableSheets::remainder($page),
+                'sheets' => TimetableSheets::from($page),
+                'blocks' => TimetableSheets::remainder($page),
             ]);
         }
 
@@ -125,7 +161,7 @@ class PageController extends Controller
             $content = collect($page->blocks)->pluck('data.content')->implode(' ');
             preg_match_all('/data-media="(\d+)"/', $content, $found);
             preg_match_all('/<a href="(https:\/\/[^"]+)">([^<]+)<\/a>/', $content, $anchors, PREG_SET_ORDER);
-            $media = \App\Models\MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
+            $media = MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
 
             return view('pages.dormitories', [
                 'page' => $page,
@@ -137,7 +173,7 @@ class PageController extends Controller
                 'room' => $media->get((int) ($found[1][3] ?? 0)),
                 'wall' => collect(array_slice($found[1], 4, 5))->map(fn ($id) => $media->get((int) $id))->filter()->values(),
                 'links' => collect($anchors)->map(fn (array $a) => [$a[1], $a[2]])->all(),
-                'project' => \App\Models\Project::active()->where('slug', 'un-grand-dortoir-pour-les-garcons')->first(),
+                'project' => Project::active()->where('slug', 'un-grand-dortoir-pour-les-garcons')->first(),
             ]);
         }
 
@@ -147,7 +183,7 @@ class PageController extends Controller
             $content = collect($page->blocks)->pluck('data.content')->implode(' ');
             preg_match_all('/data-media="(\\d+)"/', $content, $found);
             preg_match_all('/<a href="(https:\\/\\/[^"]+\\.docx?)"/i', $content, $docs);
-            $poster = \App\Models\MediaAsset::query()->with('media')->find((int) ($found[1][0] ?? 0));
+            $poster = MediaAsset::query()->with('media')->find((int) ($found[1][0] ?? 0));
 
             return view('pages.admissions', [
                 'page' => $page,
@@ -157,7 +193,7 @@ class PageController extends Controller
                 'common' => Translated::deep(config('admissions')),
                 'poster' => $poster,
                 'forms' => collect(Translated::deep(config('admissions.levels.'.$level.'.downloads')))->zip(array_values(array_unique($docs[1])))->filter(fn ($pair) => $pair->count() === 2 && $pair[1])->values()->all(),
-                'formations' => \App\Models\Formation::visible()->where('level', $level)->get()->keyBy(fn ($formation) => $formation->getRawOriginal('mention')), // clé = mention en français, quelle que soit la langue
+                'formations' => Formation::visible()->where('level', $level)->get()->keyBy(fn ($formation) => $formation->getRawOriginal('mention')), // clé = mention en français, quelle que soit la langue
             ]);
         }
 
@@ -165,13 +201,13 @@ class PageController extends Controller
         if ($page->key === 'admissions-fees') {
             $content = collect($page->blocks)->pluck('data.content')->implode(' ');
             preg_match_all('/data-media="(\d+)"/', $content, $found);
-            $media = \App\Models\MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
+            $media = MediaAsset::query()->with('media')->whereIn('id', $found[1])->get()->keyBy('id');
 
             return view('pages.fees', [
                 'page' => $page,
                 'trail' => $trail,
                 'fees' => Translated::deep(config('fees')),
-                'catalog' => Translated::deep(\App\Support\FeeCatalog::catalog()),
+                'catalog' => Translated::deep(FeeCatalog::catalog()),
                 'posters' => collect($found[1])->map(fn ($id) => $media->get((int) $id))->filter()->values(),
             ]);
         }
