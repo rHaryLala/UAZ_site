@@ -24,7 +24,7 @@
 
         <div class="mt-9 flex flex-wrap items-center gap-x-7 gap-y-5" data-reveal data-reveal-delay="0.65">
             <x-button :href="url('/a-propos')" variant="sun" arrow class="btn-square">{{ __('home.hero.cta_primary') }}</x-button>
-            <a href="{{ url('/contact') }}" class="group inline-flex items-center gap-5 py-2 text-[0.8125rem] font-semibold text-white hover:text-sun-400">
+            <a href="{{ \App\Models\Page::visible()->where('key', 'support')->first()?->url() ?? url('/soutenir') }}" class="group inline-flex items-center gap-5 py-2 text-[0.8125rem] font-semibold text-white hover:text-sun-400">
                 {{ __('home.hero.cta_secondary') }}
                 <x-ico name="arrow-right" class="size-4 text-sun-400 transition-transform group-hover:translate-x-1" />
             </a>

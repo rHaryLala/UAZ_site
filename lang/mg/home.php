@@ -12,7 +12,7 @@ return [
         'title' => 'Manomana ankehitriny ny mpitarika ho avy',
         'subtitle' => 'Fahaiza-manao ambony ara-pianarana, fiainana mavitrika eo amin\'ny mpianatra ary fampandrosoana manokana: ny UAZ dia miaraka aminao ao anatin\'ny tontolo maoderina sy maitso mandray anjara amin\'ny fahasalamana.',
         'cta_primary' => 'Hamantatra ny UAZ',
-        'cta_secondary' => 'Hanomana ny fitsidihanao',
+        'cta_secondary' => 'Manohana ny UAZ',
         // Phrase du bas du héros : elle défile dans les trois langues, quelle que soit la langue de la page.
         'note' => 'Votre futur commence ici !',
         'note_en' => 'Your future starts here!',

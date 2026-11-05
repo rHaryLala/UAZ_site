@@ -134,3 +134,23 @@ it('is served in English and Malagasy', function () {
     $this->get('/en')->assertOk()->assertSee('<html lang="en"', false)->assertSee('data-home="diff"', false)->assertSee('The UAZ difference');
     $this->get('/mg')->assertOk()->assertSee('<html lang="mg"', false)->assertSee('data-home="dom"', false);
 });
+
+it('offers "Soutenir l\'UAZ" next to "Découvrir l\'UAZ" in the hero, so donors find it at once', function () {
+    $html = $this->get('/')->assertOk()->getContent();
+    $hero = substr($html, strpos($html, 'data-hero-title'), 2600);
+
+    expect($hero)->toContain('Découvrir l&#039;UAZ')->toContain('Soutenir l&#039;UAZ')->toContain('href="'.url('/soutenir').'"')
+        ->and($hero)->not->toContain('Planifier votre visite');
+
+    $this->seed(ContentTranslationsSeeder::class);
+    $this->get('/en')->assertOk()->assertSee('Support UAZ')->assertDontSee('Plan your visit');
+});
+
+it('puts the library catalogue in the top bar of every page, in a new tab', function () {
+    foreach (['/' => 'Catalogue de la bibliothèque', '/formations' => 'Catalogue de la bibliothèque', '/en' => 'Library catalogue'] as $path => $label) {
+        $html = $this->get($path)->assertOk()->getContent();
+        $bar = substr($html, 0, strpos($html, '</header>'));
+
+        expect($bar)->toContain('href="https://library.zurcher.edu.mg"')->toContain($label);
+    }
+});

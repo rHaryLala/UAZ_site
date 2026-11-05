@@ -12,7 +12,7 @@ return [
         'title' => 'Preparing today the leaders of tomorrow',
         'subtitle' => 'Academic excellence, a lively student life and personal development: UAZ supports you in a modern, green setting that supports well-being.',
         'cta_primary' => 'Discover UAZ',
-        'cta_secondary' => 'Plan your visit',
+        'cta_secondary' => 'Support UAZ',
         // Phrase du bas du héros : elle défile dans les trois langues, quelle que soit la langue de la page.
         'note' => 'Votre futur commence ici !',
         'note_en' => 'Your future starts here!',

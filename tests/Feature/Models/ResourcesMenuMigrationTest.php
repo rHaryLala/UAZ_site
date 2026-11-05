@@ -73,3 +73,29 @@ it('adds Système LMD at the end of Ressources on an existing site, once, and ca
     lmdMigration()->down();
     expect($labels())->not->toContain('Système LMD');
 });
+
+function catalogueMigration(): object
+{
+    return require database_path('migrations/2026_11_08_100000_add_library_catalogue_to_topbar_menu.php');
+}
+
+it('adds the library catalogue to the top bar after « Actualités », once, and can be rolled back', function () {
+    $this->seed(StructureSeeder::class);
+    $topbar = Menu::where('handle', 'topbar');
+    // site installé avant l'entrée : on la retire
+    $menu = $topbar->first();
+    $menu->update(['items' => collect($menu->items)->reject(fn ($item) => ($item['url'] ?? null) === 'https://library.zurcher.edu.mg')->values()->all()]);
+    $labels = fn () => collect(Menu::where('handle', 'topbar')->first()->items)->pluck('label')->all();
+    expect($labels())->not->toContain('Catalogue de la bibliothèque');
+
+    catalogueMigration()->up();
+    expect($labels())->toContain('Catalogue de la bibliothèque')
+        ->and(array_search('Catalogue de la bibliothèque', $labels()))->toBe(array_search('Actualités', $labels()) + 1)
+        ->and(collect(Menu::where('handle', 'topbar')->first()->items)->firstWhere('label', 'Catalogue de la bibliothèque')['new_tab'])->toBeTrue();
+
+    catalogueMigration()->up(); // idempotente
+    expect(collect($labels())->filter(fn ($label) => $label === 'Catalogue de la bibliothèque'))->toHaveCount(1);
+
+    catalogueMigration()->down();
+    expect($labels())->not->toContain('Catalogue de la bibliothèque');
+});

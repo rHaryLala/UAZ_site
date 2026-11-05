@@ -66,6 +66,10 @@
                 <x-breadcrumbs :items="$trail" dark class="mb-auto" />
                 <h1 id="lib-title" class="lib-title mt-10" data-lib-hide data-lib-title>{{ __('Bibliothèque') }} <em>{{ __('Paul Pichot') }}</em></h1>
                 <p class="mt-6 max-w-xl text-lead text-white/85" data-lib-hide data-lib-fade>{{ __('Un lieu où l\'esprit se renouvelle.') }}</p>
+                {{-- Accès direct au catalogue, dès le haut de la page (le lien reste aussi dans « La bibliothèque en ligne », plus bas). --}}
+                <p class="mt-8" data-lib-hide data-lib-fade>
+                    <x-button href="https://library.zurcher.edu.mg" target="_blank" rel="noopener noreferrer" variant="sun" arrow class="btn-square">{{ __('Accéder au catalogue') }}<span class="sr-only"> {{ __('(nouvel onglet)') }}</span></x-button>
+                </p>
                 <p class="lib-cue" data-lib-hide data-lib-fade><span aria-hidden="true"></span>{{ __('Faites défiler pour visiter') }}</p>
             </div>
 

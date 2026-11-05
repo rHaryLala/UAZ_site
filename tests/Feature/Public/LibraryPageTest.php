@@ -81,3 +81,13 @@ it('uses the scroll-driven tour video as the hero when its files are present, an
         expect($html)->not->toContain('data-lib-video');
     }
 });
+
+it('gives access to the catalogue at the very top of the page, and keeps the link further down', function () {
+    $html = $this->get('/vie-etudiante/bibliotheque')->assertOk()->getContent();
+    $first = strpos($html, 'href="https://library.zurcher.edu.mg"', strpos($html, 'lib-intro'));
+
+    expect($first)->not->toBeFalse()
+        ->and($first)->toBeLessThan(strpos($html, 'id="lib-quote"'))     // dans le premier écran, avant la citation
+        ->and(substr_count($html, 'href="https://library.zurcher.edu.mg"'))->toBeGreaterThanOrEqual(3) // barre du haut, haut de page, « bibliothèque en ligne »
+        ->and($html)->toContain('Accéder au catalogue');
+});

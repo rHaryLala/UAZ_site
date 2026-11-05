@@ -14,7 +14,7 @@ return [
         'title' => 'Préparer aujourd’hui les leaders de demain',
         'subtitle' => 'Excellence académique, vie étudiante dynamique et développement personnel : l’UAZ vous accompagne dans un cadre moderne, verdoyant et propice au bien-être.',
         'cta_primary' => 'Découvrir l\'UAZ',
-        'cta_secondary' => 'Planifier votre visite',
+        'cta_secondary' => 'Soutenir l\'UAZ',
         // Phrase du bas du héros, en trois langues (défilement : français, anglais, malgache). TODO-CONTENU : traduction malgache à faire relire.
         'note' => 'Votre futur commence ici !',
         'note_en' => 'Your future starts here!',

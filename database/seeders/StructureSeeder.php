@@ -297,6 +297,8 @@ class StructureSeeder extends Seeder
                 // « S'abonner » ouvre la fenêtre de la lettre d'information (pas une page).
                 $url('S\'abonner', '#newsletter'),
                 $url('Actualités', '/actualites'),
+                // Catalogue de la bibliothèque : accessible dès le haut de chaque page (site de la bibliothèque, nouvel onglet).
+                array_merge($url('Catalogue de la bibliothèque', 'https://library.zurcher.edu.mg'), ['new_tab' => true]),
                 $page('Donner', 'support'),
                 array_merge($url('Se connecter', '#'), ['children' => [
                     array_merge($url('Registrar — bureau académique', 'https://registrar.zurcher.edu.mg'), ['new_tab' => true]),

@@ -11,7 +11,7 @@ viennent de l'équipe UAZ : elles sont reprises ici pour pré-remplir les régla
 1. **En-tête** : barre secondaire (Étudiants · Notre équipe · Alumni · Donner · Se connecter), logo, menu
    (À propos, Formations, Admissions, Vie estudiantine, Recherche), bouton « S'inscrire ».
 2. **Héros** plein écran, photo du campus : surtitre « Spiritus · Manus · Mens — Fondée en 1995 », titre
-   « Préparer aujourd'hui les leaders de demain », paragraphe, 2 boutons (« Découvrir l'UAZ », « Planifier votre visite »),
+   « Préparer aujourd'hui les leaders de demain », paragraphe, 2 boutons (« Découvrir l'UAZ », « Soutenir l'UAZ » depuis le 5 novembre 2026, ex-« Planifier votre visite » : voir D-061),
    mention « Admission après baccalauréat selon mention et critères de chaque filière ».
 3. **La différence UAZ** : titre serif, paragraphe, lien « Mieux nous connaître », 4 chiffres clés.
 4. **Formations** : titre « Une formation. Un avenir. Une vision. », grille 2×2 de 4 cartes photo par domaine
