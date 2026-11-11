@@ -18,7 +18,7 @@
         'logo' => $logo,
         'name' => 170,
         'tag' => max(40, mb_strlen($theme['header_tag_text']) * 12 + 8),
-        'social' => $count * 28 + ($count - 1) * 12,
+        'social' => $count * 22 + ($count - 1) * 10,
     ];
 
     // Qui va où : un élément sans contenu (hashtag vide, aucun réseau renseigné) n'occupe pas de place dans le courrier envoyé.
@@ -42,7 +42,7 @@
         $widths = array_fill_keys($cells, $cells === [] ? 0 : (int) floor($inner / count($cells)));
     }
     $marks = $editing ? 'data-nl-hdr' : '';
-    $gap = $count > 4 ? 8 : 12;
+    $gap = $count > 4 ? 7 : 10;
 @endphp
 @if ($theme['header'])
 <tr {!! $marks !!}>
@@ -54,9 +54,9 @@
                     @php
                         // Trop d'éléments pour la zone : on les empile (un par ligne) plutôt que de les laisser déborder.
                         $stacked = $need($slot) > $widths[$slot];
-                        $icon = (int) max(20, min(28, floor(($widths[$slot] - $gap * ($count - 1)) / $count)));
+                        $icon = (int) max(16, min(22, floor(($widths[$slot] - $gap * ($count - 1)) / $count)));
                     @endphp
-                    <td width="{{ $widths[$slot] }}" align="{{ $slot }}" valign="middle" style="width:{{ $widths[$slot] }}px;vertical-align:middle;text-align:{{ $slot }};">
+                    <td class="nl-hd-cell" width="{{ $widths[$slot] }}" align="{{ $slot }}" valign="middle" style="width:{{ $widths[$slot] }}px;vertical-align:middle;text-align:{{ $slot }};">
                         @if ($slots[$slot] !== [])
                             <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="{{ ['left' => '', 'center' => 'margin:0 auto;', 'right' => 'margin:0 0 0 auto;'][$slot] }}">
                                 @unless ($stacked) <tr> @endunless
