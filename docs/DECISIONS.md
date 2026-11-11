@@ -463,3 +463,18 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 5. **Nom du site traduisible :** « Zurcher Adventist University » / « Oniversite Advantista Zurcher » dans les titres d'onglet et le référencement des pages /en et /mg.
 6. **Base de données :** migration `improve_english_translations` : remplace, dans les traductions déjà enregistrées (pages, formations, réglages), uniquement les valeurs qui sont **exactement** les anciennes du seeder ; une traduction saisie à la main n'est jamais écrasée. Réversible.
 **Limites :** le contenu éditorial importé (actualités, équipe, descriptions d'images) reste à traduire dans le back-office. Le malagasy reste à faire relire (docs/TODO-CONTENU.md).
+
+## D-063 · Lettres d'information : éditeur visuel sur plan de travail et envoi à chaque abonné (11 novembre 2026)
+
+**Besoin :** composer les lettres dans le back-office et les envoyer par e-mail à chaque abonné actif, avec un outil « à la Canva » : on modifie la lettre directement sur un plan de travail.
+**Décisions :**
+1. **Éditeur visuel** (`/admin/newsletter-editor/{lettre}`, sur le modèle de l'éditeur de pages) : la lettre s'affiche telle qu'elle partira dans un cadre isolé (`iframe srcdoc`) ; textes modifiables sur place (gras, italique, lien, liste), barre flottante par bloc (monter, descendre, dupliquer, supprimer, glisser), panneau à quatre onglets (Ajouter, Structure, Bloc, Lettre : couleurs, police, bandeau), aperçu ordinateur/mobile, annuler/rétablir, enregistrement automatique.
+2. **Neuf types de blocs** : titre, texte, image, bouton, citation, mise en avant, actualités du site, séparateur, espace. Le même dessinateur (`NewsletterRenderer`, tableaux HTML et styles en ligne pour les messageries) produit l'aperçu et le courrier.
+3. **Le serveur ne croit jamais le navigateur** : `NewsletterBlocks::normalize` ne garde que les types connus, retire le balisage des champs simples, nettoie le texte enrichi, n'accepte que des couleurs `#rrggbb` et des liens `http(s)`, `mailto`, `tel` (60 blocs au plus).
+4. **Destinataires :** abonnés *actifs* (confirmés, non désinscrits) au moment de l'envoi. Un travail de file par abonné (`SendNewsletterMessage`), espacés de `NEWSLETTER_SECONDS_BETWEEN` secondes (2 par défaut) pour respecter les limites de l'hébergeur ; un seul envoi par couple (lettre, abonné) (clé unique), 3 essais (1 puis 5 minutes), échec noté sans bloquer les autres ; un abonné désinscrit entre-temps est ignoré.
+5. **Désinscription :** chaque courrier porte un lien personnel signé et l'en-tête `List-Unsubscribe` (bouton natif des messageries).
+6. **Lettre figée après l'envoi :** brouillon → en cours → envoyée. Elle n'est plus modifiable ni supprimable, **même par le super-administrateur** (qui contourne les politiques d'accès) : la règle est posée dans le modèle et dans le contrôleur.
+7. **Droit :** « content.publish » (éditeurs, super-administrateurs). Envoi d'essai à une adresse (objet préfixé `[TEST]`) sans toucher aux abonnés.
+8. **Limites de fréquence propres à chaque action** (rendu 240/min, enregistrement 120, essai 10, envoi 5) : avec `throttle:N,1`, Laravel compte toutes les routes limitées d'un utilisateur ensemble, et les mises à jour du plan de travail épuisaient l'essai.
+**À prévoir en production :** SMTP réel, SPF/DKIM du domaine, `queue:work` actif (docs/DEPLOIEMENT.md). **Limites :** pas de statistiques d'ouverture ni de clic ; pas de programmation d'envoi ni de segments.
+**Tests :** `NewsletterEditorTest` (nettoyage, rendu, envoi, idempotence, désinscription, lettre figée, droits, écrans), `tests/e2e/newsletter-editor.mjs` (parcours complet dans un vrai navigateur).

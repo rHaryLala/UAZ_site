@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\MediaBrowserController;
+use App\Http\Controllers\Admin\NewsletterEditorController;
 use App\Http\Controllers\Admin\VisualEditorController;
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\ContactController;
@@ -50,6 +51,16 @@ Route::prefix('admin/visual-editor/{page}')->name('admin.visual-editor.')->group
     Route::put('/draft', [$controller, 'saveDraft'])->middleware('throttle:120,1')->name('draft');
     Route::delete('/draft', [$controller, 'discardDraft'])->name('draft.discard');
     Route::post('/publish', [$controller, 'publish'])->middleware('throttle:30,1')->name('publish');
+});
+
+// Éditeur visuel des lettres d'information (droits vérifiés dans le contrôleur : politique NewsletterPolicy).
+Route::prefix('admin/newsletter-editor/{newsletter}')->name('admin.newsletter-editor.')->group(function () {
+    $controller = NewsletterEditorController::class;
+    Route::get('/', [$controller, 'show'])->name('show');
+    Route::post('/render', [$controller, 'render'])->middleware('throttle:newsletter-render')->name('render');
+    Route::put('/save', [$controller, 'save'])->middleware('throttle:newsletter-save')->name('save');
+    Route::post('/test', [$controller, 'test'])->middleware('throttle:newsletter-test')->name('test');
+    Route::post('/send', [$controller, 'send'])->middleware('throttle:newsletter-send')->name('send');
 });
 
 /*

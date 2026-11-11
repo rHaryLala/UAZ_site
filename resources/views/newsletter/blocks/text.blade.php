@@ -1,0 +1,1 @@
+<div class="nl-text" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:{{ $d['size'] }}px;line-height:1.65;color:{{ $d['color'] ?: $theme['text'] }};text-align:{{ $d['align'] }};" {!! $ed('html') !!}>{!! $d['html'] !!}</div>

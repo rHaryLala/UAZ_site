@@ -11,6 +11,7 @@ use App\Models\Formation;
 use App\Models\MediaAsset;
 use App\Models\Menu;
 use App\Models\NewsCategory;
+use App\Models\Newsletter;
 use App\Models\NewsPost;
 use App\Models\Page;
 use App\Models\Partner;
@@ -24,6 +25,7 @@ use App\Policies\ContactMessagePolicy;
 use App\Policies\ContentPolicy;
 use App\Policies\ManagedContentPolicy;
 use App\Policies\MediaAssetPolicy;
+use App\Policies\NewsletterPolicy;
 use App\Policies\PagePolicy;
 use App\Policies\SettingsPolicy;
 use App\Policies\UserPolicy;
@@ -31,9 +33,12 @@ use App\Support\AdminStats;
 use App\View\Composers\SiteComposer;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Tables\Table;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -55,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
         Partner::class => ManagedContentPolicy::class,
         Project::class => ManagedContentPolicy::class,
         NewsCategory::class => ManagedContentPolicy::class,
+        Newsletter::class => NewsletterPolicy::class,
         MediaAsset::class => MediaAssetPolicy::class,
         Menu::class => SettingsPolicy::class,
         Redirect::class => SettingsPolicy::class,
@@ -75,6 +81,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Limites de l'éditeur de lettres : une limite PROPRE à chaque action. Avec « throttle:10,1 », Laravel compte toutes les routes limitées d'un
+        // même utilisateur ensemble : les mises à jour du plan de travail auraient épuisé l'envoi d'essai (« Too Many Attempts »).
+        foreach (['newsletter-render' => 240, 'newsletter-save' => 120, 'newsletter-test' => 10, 'newsletter-send' => 5] as $name => $perMinute) {
+            RateLimiter::for($name, fn (Request $request) => Limit::perMinute($perMinute)->by($name.'|'.($request->user()?->getAuthIdentifier() ?? $request->ip())));
+        }
+
         // Les requêtes Livewire (formulaire de contact, recherche) partent d'une adresse unique : la langue de la page d'origine
         // (/en, /mg) est rétablie en rejouant le middleware de langue de sa route.
         Livewire::addPersistentMiddleware([SetLocale::class]);

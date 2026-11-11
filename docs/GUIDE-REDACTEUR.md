@@ -258,7 +258,19 @@ En vue grille, la médiathèque n'a plus de numéros de page : 36 fichiers s'aff
 - Les **nouveaux visiteurs** voient une fenêtre d'abonnement quelques secondes après leur arrivée. Si elle est fermée sans abonnement, elle **revient 20 jours plus tard** sur le même navigateur ; une fois abonné, elle ne revient plus. Le bouton **S'abonner** de la barre du haut l'ouvre à tout moment.
 - Chaque demande déclenche un **e-mail de confirmation** : l'abonné n'est actif qu'après clic sur le lien. Personne ne peut inscrire l'adresse d'un tiers.
 - **Personnes & messages → Abonnés à la lettre** : liste des abonnés (Abonné / En attente / Désinscrit), export CSV des abonnés actifs, suppression sur demande.
-- Le site **n'envoie pas encore la lettre elle-même** : exportez le CSV vers votre outil d'envoi (Brevo, Mailchimp…) ou voyez avec l'équipe technique pour automatiser l'envoi.
+- La lettre se **compose et s'envoie depuis le site** (section suivante).
+
+## Écrire et envoyer une lettre d'information
+
+1. **Personnes & messages → Lettres d'information → Nouvelle lettre.** Donnez un objet (la ligne que l'abonné voit dans sa boîte), puis l'éditeur s'ouvre.
+2. **Le plan de travail est la lettre elle-même.** Cliquez sur un texte pour le modifier sur place ; sélectionnez des mots pour les mettre en gras, en italique ou en faire un lien. Cliquer sur un bloc affiche sa barre d'outils (monter, descendre, dupliquer, supprimer) ; on peut aussi le glisser.
+3. **Panneau de droite :** *Ajouter* (titre, texte, image, bouton, citation, mise en avant, actualités du site, séparateur, espace), *Structure* (la liste des blocs), *Bloc* (réglages du bloc choisi : taille, alignement, couleur, image), *Lettre* (objet, texte d'aperçu, couleurs, police, bandeau).
+4. **Le travail est enregistré automatiquement** (indication en haut). Les boutons ordinateur/mobile montrent le rendu ; les flèches annulent et rétablissent.
+5. **Envoyer un test** à votre propre adresse avant tout : l'objet commence par [TEST].
+6. **Envoyer…** : la fenêtre rappelle le nombre d'abonnés actifs ; la lettre part à chacun avec son lien de désinscription personnel. Les abonnés *en attente de confirmation* et *désinscrits* ne reçoivent rien.
+7. Une lettre **envoyée est figée** : elle reste consultable (le tableau indique envois réussis et échecs) mais ne peut plus être modifiée ni supprimée. Pour la suivante, utilisez **Dupliquer** sur une lettre précédente ou créez-en une nouvelle.
+
+> L'envoi se fait en arrière-plan, à raison d'un courrier toutes les quelques secondes : 500 abonnés demandent une vingtaine de minutes. Le statut passe à *Envoyée* quand tout est parti.
 
 ## Éditeur visuel : modifier la page elle-même
 

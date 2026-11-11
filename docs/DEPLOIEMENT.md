@@ -283,6 +283,19 @@ sudo systemctl reload php8.3-fpm        # vide l'OPcache (validate_timestamps = 
 - [ ] Sauvegarde automatique active **et restauration testée**
 - [ ] HTTPS valide, note A sur SSL Labs, en-têtes vérifiés (securityheaders.com)
 - [ ] `queue:work` actif (`systemctl status uaz-queue`), cron du planificateur présent
+- [ ] Lettre d'information : SMTP réel, SPF/DKIM, envoi d'essai reçu et lien de désinscription vérifié
+
+## Envoi des lettres d'information
+
+L'envoi passe par la file d'attente (un travail par abonné) : il faut donc **`queue:work` actif** (section 5) et un **courrier sortant réel**.
+
+- `.env` : `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_SCHEME` (`smtps` pour le port 465, vide pour 587 avec STARTTLS), `MAIL_FROM_ADDRESS` (une adresse du domaine, ex. `no-reply@zurcher.edu.mg`). Puis `php artisan config:cache`.
+- `QUEUE_CONNECTION=database` (déjà le réglage de production) ; `APP_URL` en `https://` : les liens de désinscription sont signés à partir de cette adresse.
+- **Cadence :** `NEWSLETTER_SECONDS_BETWEEN` (2 secondes par défaut) sépare deux courriers. Vérifier la limite de l'hébergeur de courrier (souvent 100 à 500 messages/heure pour un SMTP mutualisé) et l'augmenter si besoin ; au-delà de quelques milliers d'abonnés, préférer un service d'envoi dédié (Brevo, Amazon SES, Mailgun) en SMTP.
+- **Délivrabilité :** enregistrements **SPF** et **DKIM** du domaine d'expédition publiés, **DMARC** conseillé ; sans cela les lettres finissent en indésirables.
+- **Essai avant la première vraie lettre :** envoyer un test à une adresse Gmail et une adresse Outlook, vérifier le bouton « Se désinscrire » de la messagerie et le lien du pied de page.
+- Suivi : le tableau *Lettres d'information* indique envois réussis et échecs (message d'erreur au survol). Les échecs définitifs sont aussi dans `storage/logs/laravel-*.log` et la table `failed_jobs`.
+- Nouvelle migration : `2026_11_13_100000_create_newsletters_tables` (`php artisan migrate --force`).
 
 ## Vidéo d'en-tête de « À propos »
 
