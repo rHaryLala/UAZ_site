@@ -58,7 +58,7 @@ class NewsletterEditorController extends Controller
                     'items' => NewsletterBlocks::HEADER_ITEMS,
                     'slots' => NewsletterBlocks::SLOTS,
                     'socials' => NewsletterBlocks::SOCIALS,
-                    'site' => array_filter((SiteSetting::current()->social_links ?? []) + ['website' => url('/')]),
+                    'site' => array_filter(SiteSetting::current()->social_links ?? []),
                     'uaz' => NewsletterBlocks::modernHeader(SiteSetting::current()->social_links ?? []),
                 ],
                 'email' => $request->user()->email,

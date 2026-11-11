@@ -13,6 +13,9 @@ use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\AlternativePart;
+use Symfony\Component\Mime\Part\Multipart\RelatedPart;
+use Symfony\Component\Mime\Part\TextPart;
 
 /**
  * Une lettre d'information, pour UN abonné (lien de désinscription personnel et signé) ou pour un envoi d'essai ($subscriber = null).
@@ -28,10 +31,22 @@ class NewsletterMessage extends Mailable
     {
         // Les images repérées au dessin du courrier sont jointes au message au moment de l'envoi.
         $this->withSymfonyMessage(function (Email $message): void {
-            // Des images « de page », sans nom de fichier : avec un nom, Gmail les affiche aussi comme pièces jointes sous l'objet du message.
-            foreach ($this->embeds as $cid => $path) {
-                $message->addPart((new DataPart((string) file_get_contents($path), null, (string) mime_content_type($path)))->setContentId($cid.'@uaz.site')->asInline());
+            if ($this->embeds === []) {
+                return;
             }
+
+            // Structure attendue par les messageries : « texte brut OU (HTML + ses images) ». Symfony, lui, range les images à côté du bloc
+            // texte/HTML : Gmail les prend alors pour des pièces jointes et les affiche en pastilles sous l'objet. Les images n'ont pas non plus de
+            // nom de fichier (un nom suffit à les faire lister).
+            $images = [];
+
+            foreach ($this->embeds as $cid => $path) {
+                $images[] = (new DataPart((string) file_get_contents($path), null, (string) mime_content_type($path)))->setContentId($cid.'@uaz.site')->asInline();
+            }
+
+            $related = new RelatedPart(new TextPart((string) $message->getHtmlBody(), 'utf-8', 'html'), ...$images);
+            $text = $message->getTextBody();
+            $message->setBody($text !== null && $text !== '' ? new AlternativePart(new TextPart((string) $text, 'utf-8', 'plain'), $related) : $related);
         });
     }
 

@@ -37,8 +37,8 @@ final class NewsletterBlocks
     /** Éléments de l'en-tête : leur clé dans le thème (header_xxx) et leur nom. */
     public const HEADER_ITEMS = ['logo' => 'Logo', 'name' => 'Nom de l\'université', 'tag' => 'Hashtag', 'social' => 'Réseaux sociaux'];
 
-    /** Réseaux sociaux de l'en-tête (les mêmes que dans les réglages du site, plus le site web). */
-    public const SOCIALS = ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'tiktok' => 'TikTok', 'website' => 'Site web'];
+    /** Réseaux sociaux de l'en-tête (les mêmes que dans les réglages du site). */
+    public const SOCIALS = ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'tiktok' => 'TikTok'];
 
     /**
      * Réglages de l'en-tête (en plus du thème) : emplacements, tailles, hashtag, adresses des réseaux sociaux. Les valeurs d'origine reproduisent
@@ -66,7 +66,7 @@ final class NewsletterBlocks
         $theme = ['header' => '1', 'header_color' => '#232e66', 'header_logo' => 'center', 'header_name' => '', 'header_tag' => 'left', 'header_social' => 'right', 'header_height' => 150, 'header_logo_size' => 110, 'header_rule' => ''];
 
         foreach (array_keys(self::SOCIALS) as $network) {
-            $theme['social_'.$network] = self::socialUrl((string) ($socials[$network] ?? ($network === 'website' ? url('/') : '')));
+            $theme['social_'.$network] = self::socialUrl((string) ($socials[$network] ?? ''));
         }
 
         return $theme;

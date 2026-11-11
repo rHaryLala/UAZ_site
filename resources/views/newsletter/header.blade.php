@@ -12,13 +12,15 @@
     $logo = (int) $theme['header_logo_size'];
     $networks = collect(\App\Support\NewsletterBlocks::SOCIALS)->filter(fn (string $label, string $network) => $theme['social_'.$network] !== '');
     $count = max(1, $networks->count());
+    $icon = 22; // toutes les icônes ont la même taille et le même écart (les PNG sont normalisés sur la taille visible d'Instagram)
+    $gap = 10;
 
     // Place estimée de chaque élément (px), pour répartir les trois zones.
     $room = [
         'logo' => $logo,
         'name' => 170,
         'tag' => max(40, mb_strlen($theme['header_tag_text']) * 12 + 8),
-        'social' => $count * 22 + ($count - 1) * 10,
+        'social' => $count * $icon + ($count - 1) * $gap,
     ];
 
     // Qui va où : un élément sans contenu (hashtag vide, aucun réseau renseigné) n'occupe pas de place dans le courrier envoyé.
@@ -42,7 +44,6 @@
         $widths = array_fill_keys($cells, $cells === [] ? 0 : (int) floor($inner / count($cells)));
     }
     $marks = $editing ? 'data-nl-hdr' : '';
-    $gap = $count > 4 ? 7 : 10;
 @endphp
 @if ($theme['header'])
 <tr {!! $marks !!}>
@@ -54,7 +55,6 @@
                     @php
                         // Trop d'éléments pour la zone : on les empile (un par ligne) plutôt que de les laisser déborder.
                         $stacked = $need($slot) > $widths[$slot];
-                        $icon = (int) max(16, min(22, floor(($widths[$slot] - $gap * ($count - 1)) / $count)));
                     @endphp
                     <td class="nl-hd-cell" width="{{ $widths[$slot] }}" align="{{ $slot }}" valign="middle" style="width:{{ $widths[$slot] }}px;vertical-align:middle;text-align:{{ $slot }};">
                         @if ($slots[$slot] !== [])

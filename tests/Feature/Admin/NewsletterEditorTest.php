@@ -538,7 +538,7 @@ it('attaches the images of the site to the message when the site is local, so th
     $html = $email->getHtmlBody();
 
     expect($html)->toContain('src="cid:')->not->toMatch('~src="https?://(localhost|127\.0\.0\.1)~')
-        ->and(count($email->getAttachments()))->toBeGreaterThanOrEqual(2); // le sceau et l'icône Facebook
+        ->and(preg_match_all('/^Content-ID:/mi', $email->toString()))->toBeGreaterThanOrEqual(2); // le sceau et l'icône Facebook
     expect($html)->toContain('href="https://facebook.com/uaz"'); // les liens ne sont pas touchés
 });
 
@@ -568,4 +568,13 @@ it('makes a JPEG for the letters when a photo is added to the library, and falls
 
     $file->forceFill(['generated_conversions' => ['card' => true]])->save();
     expect(NewsletterRenderer::imageUrl($asset->fresh()))->toEndWith('-card.webp');
+});
+
+it('lays the embedded images out the way mail clients expect, with no file name, so Gmail does not list them as attachments', function () {
+    $raw = sentEmail(new NewsletterMessage(draftLetter(), null, test: true))->toString();
+
+    // « texte brut OU (HTML + images) » : les images sont rangées avec le HTML, pas à côté.
+    expect($raw)->toMatch('~Content-Type: multipart/alternative.*?Content-Type: text/plain.*?Content-Type: multipart/related.*?Content-Type: text/html.*?Content-Type: image/~s')
+        ->and($raw)->not->toMatch('~^Content-Disposition: [^\n]*filename~mi')->not->toMatch('~^Content-Disposition: attachment~mi')
+        ->and(preg_match_all('~^Content-Disposition: inline~mi', $raw))->toBe(preg_match_all('~^Content-ID:~mi', $raw));
 });
