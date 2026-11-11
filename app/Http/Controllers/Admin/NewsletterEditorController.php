@@ -9,6 +9,7 @@ use App\Models\MediaAsset;
 use App\Models\Newsletter;
 use App\Support\NewsletterBlocks;
 use App\Support\NewsletterRenderer;
+use App\Support\NewsletterTemplates;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -44,12 +45,19 @@ class NewsletterEditorController extends Controller
                 'audience' => Newsletter::audienceCount(),
                 'state' => $state,
                 'types' => NewsletterBlocks::types(),
+                'library' => $this->library(),
+                'ratios' => NewsletterBlocks::RATIOS,
+                'max' => NewsletterBlocks::MAX_BLOCKS,
+                'maxDepth' => NewsletterBlocks::MAX_DEPTH,
+                'from' => config('newsletter.from.address'),
                 'palette' => NewsletterBlocks::PALETTE,
                 'media' => $this->mediaMap($state['blocks']),
                 'defaults' => NewsletterBlocks::defaultTheme(),
                 'email' => $request->user()->email,
                 'urls' => [
                     'render' => route('admin.newsletter-editor.render', $newsletter),
+                    'rows' => route('admin.newsletter-editor.rows', $newsletter),
+                    'templates' => route('admin.newsletter-editor.templates', $newsletter),
                     'save' => route('admin.newsletter-editor.save', $newsletter),
                     'test' => route('admin.newsletter-editor.test', $newsletter),
                     'send' => route('admin.newsletter-editor.send', $newsletter),
@@ -67,15 +75,54 @@ class NewsletterEditorController extends Controller
         abort_unless($request->user(), 401);
         abort_unless($request->user()->can('view', $newsletter), 403);
         $state = $this->state($request);
-        $selected = $request->integer('selected', -1);
         // Repères de modification seulement pour un brouillon qu'on a le droit de modifier ; une lettre envoyée s'affiche telle quelle.
         $editing = $this->canEdit($request, $newsletter);
 
         return response()->json([
-            'html' => NewsletterRenderer::html($state, null, null, $editing, $editing && $selected >= 0 ? $selected : null),
+            'html' => NewsletterRenderer::html($state, null, null, $editing),
             'blocks' => $state['blocks'],
             'media' => $this->mediaMap($state['blocks']),
         ]);
+    }
+
+    /**
+     * Dessine quelques blocs de premier niveau (une ligne de la lettre chacun) : le plan de travail ne redessine que ce qui a changé,
+     * au lieu de recharger toute la lettre. Sert aussi à préparer d'avance les blocs du panneau « Ajouter ».
+     */
+    public function rows(Request $request, Newsletter $newsletter): JsonResponse
+    {
+        abort_unless($request->user(), 401);
+        abort_unless($request->user()->can('view', $newsletter), 403);
+        $data = $request->validate(['blocks' => ['required', 'array', 'max:40'], 'theme' => ['nullable', 'array']]);
+        $blocks = NewsletterBlocks::normalize($data['blocks']);
+
+        return response()->json(['rows' => NewsletterRenderer::rows($blocks, NewsletterBlocks::theme($data['theme'] ?? null)), 'media' => $this->mediaMap($blocks)]);
+    }
+
+    /** Les modèles de lettre, chacun avec son aperçu (la lettre entière, telle qu'elle partirait), pour choisir sans deviner. */
+    public function templates(Request $request, Newsletter $newsletter): JsonResponse
+    {
+        abort_unless($request->user(), 401);
+        abort_unless($request->user()->can('view', $newsletter), 403);
+
+        $items = [];
+        $names = NewsletterTemplates::list();
+
+        foreach (NewsletterTemplates::keys() as $key) {
+            $built = NewsletterTemplates::build($key);
+            $items[] = [
+                'key' => $key,
+                'name' => $names[$key]['name'],
+                'description' => $names[$key]['description'],
+                'subject' => $built['subject'],
+                'theme' => $built['theme'],
+                'blocks' => $built['blocks'],
+                'preview' => NewsletterRenderer::html($built),
+                'media' => $this->mediaMap($built['blocks']),
+            ];
+        }
+
+        return response()->json(['templates' => $items]);
     }
 
     /** Enregistrement automatique du brouillon. */
@@ -172,6 +219,27 @@ class NewsletterEditorController extends Controller
     }
 
     /**
+     * Les blocs du panneau « Ajouter » : les types (avec leurs blocs de départ) puis les compositions toutes faites, chacun avec un bloc modèle
+     * que l'éditeur copie (identifiants renouvelés) et dessine d'avance.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function library(): array
+    {
+        $items = [];
+
+        foreach (NewsletterBlocks::types() as $type => $meta) {
+            $items[] = ['kind' => 'type', 'key' => $type, 'label' => $meta['label'], 'hint' => $meta['hint'], 'group' => $meta['group'], 'block' => NewsletterBlocks::make($type)];
+        }
+
+        foreach (NewsletterBlocks::presets() as $key => $preset) {
+            $items[] = ['kind' => 'preset', 'key' => $key, 'label' => $preset['label'], 'hint' => $preset['hint'], 'group' => 'preset', 'block' => NewsletterBlocks::withIds([$preset['block']])[0]];
+        }
+
+        return $items;
+    }
+
+    /**
      * Images citées par les blocs (miniatures du panneau de réglages).
      *
      * @param  list<array<string, mixed>>  $blocks
@@ -179,8 +247,6 @@ class NewsletterEditorController extends Controller
      */
     private function mediaMap(array $blocks): array
     {
-        $ids = collect($blocks)->pluck('data.media')->filter()->unique();
-
-        return MediaAsset::with('media')->whereIn('id', $ids)->get()->mapWithKeys(fn (MediaAsset $asset) => [$asset->id => MediaField::describe($asset)])->all();
+        return MediaAsset::with('media')->whereIn('id', NewsletterBlocks::mediaIds($blocks))->get()->mapWithKeys(fn (MediaAsset $asset) => [$asset->id => MediaField::describe($asset)])->all();
     }
 }

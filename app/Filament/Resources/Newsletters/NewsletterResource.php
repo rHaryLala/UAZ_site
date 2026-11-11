@@ -5,14 +5,18 @@ namespace App\Filament\Resources\Newsletters;
 use App\Filament\Resources\Newsletters\Pages\CreateNewsletter;
 use App\Filament\Resources\Newsletters\Pages\ListNewsletters;
 use App\Models\Newsletter;
+use App\Support\NewsletterTemplates;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ViewField;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -52,6 +56,20 @@ class NewsletterResource extends Resource
                         ->helperText('C\'est ce que les abonnés lisent en premier dans leur boîte de réception.'),
                     TextInput::make('preheader')->label('Texte d\'aperçu (facultatif)')->maxLength(190)
                         ->helperText('Une ligne affichée à côté de l\'objet dans la liste des messages.'),
+                ]),
+            Section::make('Modèle')->columnSpanFull()
+                ->description('Une mise en page moderne déjà composée : vous changerez tout (textes, photos, couleurs, colonnes) sur le plan de travail.')
+                ->schema([
+                    ViewField::make('template')->hiddenLabel()->view('filament.forms.newsletter-template-picker')->default('news')->live()
+                        ->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
+                            // L'objet est proposé d'après le modèle tant qu'on n'a rien écrit soi-même.
+                            $built = $state ? NewsletterTemplates::build($state) : null;
+                            $typed = trim((string) $get('subject'));
+
+                            if ($built && ($typed === '' || in_array($typed, NewsletterTemplates::subjects(), true))) {
+                                $set('subject', $built['subject']);
+                            }
+                        }),
                 ]),
         ]);
     }

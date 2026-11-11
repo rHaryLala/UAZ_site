@@ -290,6 +290,7 @@ sudo systemctl reload php8.3-fpm        # vide l'OPcache (validate_timestamps = 
 L'envoi passe par la file d'attente (un travail par abonné) : il faut donc **`queue:work` actif** (section 5) et un **courrier sortant réel**.
 
 - `.env` : `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_SCHEME` (`smtps` pour le port 465, vide pour 587 avec STARTTLS), `MAIL_FROM_ADDRESS` (une adresse du domaine, ex. `no-reply@zurcher.edu.mg`). Puis `php artisan config:cache`.
+- **Adresse d'expédition des lettres :** `NEWSLETTER_FROM_ADDRESS=newsletter@zurcher.edu.mg` et `NEWSLETTER_FROM_NAME` (défaut : « Université Adventiste Zurcher »), distincts de `MAIL_FROM_ADDRESS`. La boîte `newsletter@zurcher.edu.mg` doit exister (les réponses vont à l'adresse du site) et le compte SMTP être autorisé à envoyer en son nom ; SPF et DKIM du domaine couvrent cette adresse.
 - `QUEUE_CONNECTION=database` (déjà le réglage de production) ; `APP_URL` en `https://` : les liens de désinscription sont signés à partir de cette adresse.
 - **Cadence :** `NEWSLETTER_SECONDS_BETWEEN` (2 secondes par défaut) sépare deux courriers. Vérifier la limite de l'hébergeur de courrier (souvent 100 à 500 messages/heure pour un SMTP mutualisé) et l'augmenter si besoin ; au-delà de quelques milliers d'abonnés, préférer un service d'envoi dédié (Brevo, Amazon SES, Mailgun) en SMTP.
 - **Délivrabilité :** enregistrements **SPF** et **DKIM** du domaine d'expédition publiés, **DMARC** conseillé ; sans cela les lettres finissent en indésirables.

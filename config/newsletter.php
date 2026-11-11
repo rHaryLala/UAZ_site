@@ -8,6 +8,12 @@ return [
      */
     'seconds_between_messages' => (int) env('NEWSLETTER_SECONDS_BETWEEN', 2),
 
+    /** Expéditeur des lettres : une adresse dédiée, distincte de celle des messages du site (réponses aux formulaires, confirmations). */
+    'from' => [
+        'address' => env('NEWSLETTER_FROM_ADDRESS', 'newsletter@zurcher.edu.mg'),
+        'name' => env('NEWSLETTER_FROM_NAME', 'Université Adventiste Zurcher'),
+    ],
+
     /** Nombre de tentatives par abonné avant de noter l'échec (la file attend 1 puis 5 minutes entre deux essais). */
     'tries' => 3,
 ];

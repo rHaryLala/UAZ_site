@@ -99,6 +99,7 @@
         <form method="dialog" class="nl-dialog__form" data-nl-send-form>
             <h2 id="nl-send-title">Envoyer à tous les abonnés ?</h2>
             <p data-nl-send-text></p>
+            <ul class="nl-dialog__checks" data-nl-send-warn hidden></ul>
             <p class="nl-dialog__warn">L'envoi ne peut pas être annulé, et la lettre ne sera plus modifiable.</p>
             <label class="nl-check"><input type="checkbox" required data-nl-send-confirm> J'ai relu la lettre et fait un envoi d'essai si nécessaire.</label>
             <p class="nl-dialog__error" data-nl-send-error role="alert" hidden></p>
@@ -107,6 +108,18 @@
                 <button type="submit" class="ve-btn ve-btn--primary" data-nl-send-submit>Envoyer maintenant</button>
             </div>
         </form>
+    </dialog>
+
+    {{-- Modèles de lettre --}}
+    <dialog class="nl-dialog nl-dialog--wide" data-nl-dialog="templates" aria-labelledby="nl-tpl-title">
+        <div class="nl-dialog__form">
+            <div class="nl-dialog__head">
+                <h2 id="nl-tpl-title">Choisir un modèle</h2>
+                <button type="button" class="ve-icon" data-nl-close aria-label="Fermer">✕</button>
+            </div>
+            <p>Le modèle remplace la mise en page de la lettre ; vous pourrez tout modifier ensuite (et revenir en arrière avec Ctrl+Z).</p>
+            <div class="nl-tpl-grid" data-nl-templates-grid></div>
+        </div>
     </dialog>
 
     {{-- Médiathèque (choix d'une image) --}}

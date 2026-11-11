@@ -4,19 +4,22 @@ namespace App\Filament\Resources\Newsletters\Pages;
 
 use App\Filament\Resources\Newsletters\NewsletterResource;
 use App\Models\Newsletter;
-use App\Support\NewsletterBlocks;
+use App\Support\NewsletterTemplates;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateNewsletter extends CreateRecord
 {
     protected static string $resource = NewsletterResource::class;
 
-    /** Une lettre neuve démarre avec un titre, un texte et un bouton d'exemple, et le thème aux couleurs de l'UAZ. */
+    /** Une lettre neuve reprend le modèle choisi (blocs, couleurs, police ; photos de la médiathèque posées d'office). */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $built = NewsletterTemplates::build((string) ($data['template'] ?? '')) ?? NewsletterTemplates::build('simple');
+        unset($data['template']);
+
         return $data + [
-            'blocks' => Newsletter::startingBlocks(),
-            'theme' => NewsletterBlocks::defaultTheme(),
+            'blocks' => $built['blocks'],
+            'theme' => $built['theme'],
             'status' => Newsletter::DRAFT,
             'created_by' => auth()->id(),
         ];

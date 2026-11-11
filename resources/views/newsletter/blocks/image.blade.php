@@ -8,5 +8,5 @@
         {!! $img !!}
     @endif
 @elseif ($editing)
-    <div data-nl-placeholder style="padding:46px 16px;border:2px dashed #c4c9d8;border-radius:8px;text-align:center;color:#6b7184;font-size:14px;">Image : choisissez-la dans le panneau de droite</div>
+    <div data-nl-placeholder style="padding:46px 16px;border:2px dashed #c4c9d8;border-radius:8px;text-align:center;color:#6b7184;font-size:14px;">Cliquez ici pour choisir une photo</div>
 @endif

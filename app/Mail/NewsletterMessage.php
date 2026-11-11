@@ -31,6 +31,7 @@ class NewsletterMessage extends Mailable
         $reply = SiteSetting::current()->email;
 
         return new Envelope(
+            from: new Address((string) config('newsletter.from.address'), (string) config('newsletter.from.name')),
             subject: ($this->test ? '[TEST] ' : '').$this->newsletter->subject,
             replyTo: $reply ? [new Address($reply, 'Université Adventiste Zurcher')] : [],
         );

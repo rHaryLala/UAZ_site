@@ -1,6 +1,7 @@
-// Éditeur de lettres d'information dans un vrai navigateur : plan de travail (la lettre comme elle partira), sélection d'un bloc, texte modifié sur
-// place, barre flottante, ajout / déplacement / duplication / suppression, annulation, réglages (alignement, couleurs, thème), image de la médiathèque,
-// enregistrement automatique, écran mobile, envoi d'essai, envoi à tous les abonnés actifs (et à eux seuls), lettre figée après envoi.
+// Éditeur de lettres d'information dans un vrai navigateur : plan de travail (la lettre comme elle partira), sélection d'un bloc (même imbriqué), texte
+// modifié sur place, barre flottante, ajout instantané, blocs glissés dans une colonne, emplacements « Ajouter ici », colonnes (2 puis 3), bandeau,
+// bande d'espace colorée, déplacement, duplication, suppression, annulation, structure en arbre, thème, modèles, image de la médiathèque,
+// enregistrement automatique, écran mobile, envoi d'essai, envoi à tous les abonnés actifs (et à eux seuls) depuis l'adresse dédiée, lettre figée.
 // Prérequis : serveur lancé, compte admin@uaz.test, courrier en mode « log ». Usage : node tests/e2e/newsletter-editor.mjs [dossier-captures]
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -23,7 +24,7 @@ const until = async (fn, ms = 10000) => {
     const end = Date.now() + ms;
     while (Date.now() < end) {
         try { if (await fn()) return true; } catch { /* en cours de chargement */ }
-        await new Promise((r) => setTimeout(r, 150));
+        await new Promise((r) => setTimeout(r, 120));
     }
     return false;
 };
@@ -48,82 +49,187 @@ try {
     check((await page.locator('body').innerText()).includes('2 abonnés actifs'), 'la liste annonce le nombre d\'abonnés actifs');
     await page.goto(`${base}/admin/newsletter-editor/${id}`, { waitUntil: 'load' });
     const canvas = page.frameLocator('[data-nl-frame]');
-    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === 3), 'le plan de travail affiche la lettre (titre, texte, bouton)');
+    const top = canvas.locator('td[data-nl-depth="0"][data-nl-block]'); // blocs de premier niveau
+    const types = async () => canvas.locator('td[data-nl-depth="0"][data-nl-block]').evaluateAll((els) => els.map((el) => el.dataset.nlType));
+    const dbBlocks = () => JSON.parse(tinker('echo json_encode(App\\Models\\Newsletter::find(' + id + ')->blocks);'));
+    const saved = () => until(async () => /Enregistré à/.test(await page.locator('[data-nl-status]').innerText()), 8000);
+    const addTab = () => page.locator('[data-nl-tab="add"]').click();
+    const card = (name) => page.locator('.nl-card', { hasText: name }).first();
+
+    check(await until(async () => (await top.count()) === 3), 'le plan de travail affiche la lettre (titre, texte, bouton)');
     check((await canvas.locator('body').innerText()).includes('Université Adventiste') && (await canvas.locator('body').innerText()).includes('Se désinscrire'), 'le bandeau et le pied de page (désinscription) sont là');
-    await wait(900);
+    await wait(2500); // les blocs du panneau « Ajouter » se préparent d'avance
     if (out) await page.screenshot({ path: path.join(out, 'nl-plan-de-travail.png') });
 
     // Sélection d'un bloc : contour, barre flottante, onglet « Bloc ».
-    await canvas.locator('[data-nl-block="0"]').click({ position: { x: 4, y: 4 } });
+    await top.nth(0).click({ position: { x: 4, y: 4 } });
     check(await until(async () => (await canvas.locator('.nl-selected').count()) === 1 && (await canvas.locator('.nl-bar').count()) === 1), 'un clic sélectionne le bloc et affiche sa barre d\'outils');
-    check(await page.locator('[data-nl-tab="block"]').getAttribute('aria-selected') === 'true', 'le panneau passe sur les réglages du bloc');
+    check((await page.locator('[data-nl-tab="block"]').getAttribute('aria-selected')) === 'true', 'le panneau passe sur les réglages du bloc');
 
     // Texte modifié sur place, enregistrement automatique.
-    const title = canvas.locator('[data-nl-block="0"] [data-nl-field="text"]');
+    const title = top.nth(0).locator('[data-nl-field="text"]');
     await title.click();
     await page.keyboard.press('Control+A');
     await page.keyboard.type('Bonjour à toute la communauté');
     await page.keyboard.press('Enter');
-    check(await until(async () => /Enregistré à/.test(await page.locator('[data-nl-status]').innerText()), 6000), 'le texte modifié est enregistré automatiquement');
-    check(tinker('echo App\\Models\\Newsletter::find(' + id + ')->blocks[0]["data"]["text"];').includes('Bonjour à toute la communauté'), 'le nouveau titre est bien dans la base');
+    check(await saved(), 'le texte modifié est enregistré automatiquement');
+    check(dbBlocks()[0].data.text.includes('Bonjour à toute la communauté'), 'le nouveau titre est bien dans la base');
 
     // Réglages : alignement.
-    await canvas.locator('[data-nl-block="0"]').click({ position: { x: 4, y: 4 } });
+    await top.nth(0).click({ position: { x: 4, y: 4 } });
     await page.locator('[data-nl-pane="block"] .nl-seg button', { hasText: 'Centré' }).first().click();
-    check(await until(async () => (await canvas.locator('[data-nl-block="0"] [data-nl-field="text"]').evaluate((el) => getComputedStyle(el).textAlign)) === 'center'), 'réglage : le titre se centre');
+    check(await until(async () => (await top.nth(0).locator('[data-nl-field="text"]').evaluate((el) => getComputedStyle(el).textAlign)) === 'center'), 'réglage : le titre se centre');
 
-    // Ajout d'un bloc, déplacement, annulation, duplication, suppression.
-    await page.locator('[data-nl-tab="add"]').click();
-    await page.locator('.ve-card', { hasText: 'Séparateur' }).click();
-    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === 4), 'ajout : le séparateur apparaît sur le plan de travail');
+    // Ajout : instantané (le bloc est préparé d'avance, il n'attend pas le serveur).
+    await addTab();
+    const t0 = Date.now();
+    await card('Séparateur').click();
+    await canvas.locator('[data-nl-type="divider"]').first().waitFor({ timeout: 5000 });
+    const delay = Date.now() - t0;
+    check(delay < 400, `ajout : le séparateur apparaît tout de suite (${delay} ms)`);
+    check((await types()).join() === 'heading,divider,text,button', 'ajout : le bloc se place sous le bloc sélectionné');
     await canvas.locator('.nl-bar [data-op="up"]').click();
-    check(await until(async () => (await canvas.locator('[data-nl-block]').nth(0).getAttribute('data-nl-type')) === 'divider'), 'déplacement : le séparateur monte d\'un cran (il se place sous le bloc sélectionné, puis monte en tête)');
+    check(await until(async () => (await types())[0] === 'divider'), 'déplacement : le séparateur monte d\'un cran');
     await page.locator('[data-nl-undo]').click();
-    check(await until(async () => (await canvas.locator('[data-nl-block]').nth(1).getAttribute('data-nl-type')) === 'divider'), 'annulation : le séparateur est revenu à sa place');
+    check(await until(async () => (await types())[1] === 'divider'), 'annulation : le séparateur est revenu à sa place');
     await page.locator('[data-nl-redo]').click();
-    await wait(600);
-    await canvas.locator('[data-nl-block="2"]').click({ position: { x: 4, y: 4 } });
-    await canvas.locator('.nl-bar [data-op="dup"]').click();
-    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === 5), 'duplication : un bloc de plus');
+    await canvas.locator('[data-nl-type="divider"]').first().click({ position: { x: 4, y: 4 } });
     await canvas.locator('.nl-bar [data-op="del"]').click();
-    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === 4), 'suppression : un bloc de moins');
+    check(await until(async () => (await top.count()) === 3), 'suppression : le séparateur disparaît');
 
-    // Structure : l'ordre se voit et se change dans le panneau.
+    // Espace : on peut en changer la couleur (bande de couleur).
+    await addTab();
+    await card('Espace').click();
+    await canvas.locator('[data-nl-type="spacer"]').first().waitFor();
+    await page.locator('[data-nl-pane="block"] .ve-field', { hasText: 'Couleur' }).locator('.nl-swatch').nth(9).click(); // #e1ebff (le rang 0 est « transparent »)
+    check(await until(async () => (await canvas.locator('[data-nl-type="spacer"] > div').first().evaluate((el) => getComputedStyle(el).backgroundColor)) === 'rgb(225, 235, 255)'), 'espace : la couleur choisie colore la bande');
+    check((await canvas.locator('[data-nl-type="spacer"]').first().evaluate((el) => el.getBoundingClientRect().width)) > 630, 'espace : la bande va d\'un bord à l\'autre de la lettre');
+    await canvas.locator('.nl-bar [data-op="del"]').click();
+
+    // Colonnes : « Photo + texte » (image dans la première colonne, titre + texte + bouton dans la seconde).
+    await addTab();
+    await card('Photo + texte').click();
+    await canvas.locator('[data-nl-type="columns"]').first().waitFor();
+    const cols = canvas.locator('[data-nl-type="columns"] td[data-nl-list]');
+    check((await cols.count()) === 2 && (await cols.nth(0).locator('[data-nl-type="image"], [data-nl-placeholder]').count()) >= 1, 'colonnes : « Photo + texte » pose une image à gauche et le texte à droite');
+    const sideBySide = await cols.evaluateAll((els) => Math.abs(els[0].getBoundingClientRect().top - els[1].getBoundingClientRect().top) < 40 && els[1].getBoundingClientRect().left > els[0].getBoundingClientRect().left + 100);
+    check(sideBySide, 'colonnes : les deux colonnes sont côte à côte');
+    if (out) await page.screenshot({ path: path.join(out, 'nl-colonnes.png') });
+
+    // Un bloc du panneau glissé dans la première colonne.
+    await addTab();
+    await card('Citation').dragTo(cols.nth(0), { targetPosition: { x: 40, y: 14 } });
+    check(await until(async () => (await cols.nth(0).locator('[data-nl-type="quote"]').count()) === 1), 'glisser-déposer : la citation tombe dans la première colonne');
+
+    // Un blocs de texte dans une colonne se modifie sur place.
+    const colText = cols.nth(1).locator('[data-nl-field="html"]').first();
+    await colText.click();
+    await page.keyboard.press('Control+A');
+    await page.keyboard.type('Texte dans la colonne');
+    await page.keyboard.press('Escape');
+    check(await saved(), 'colonne : le texte tapé dans une colonne est enregistré');
+    const savedColumns = dbBlocks().find((b) => b.type === 'columns');
+    check(savedColumns?.children?.length === 2 && JSON.stringify(savedColumns.children[1]).includes('Texte dans la colonne'), 'colonne : la base conserve l\'arbre (colonnes et blocs imbriqués)');
+
+    // Sélection du conteneur : emplacement « Ajouter ici », réglage du nombre de colonnes.
+    await canvas.locator('[data-nl-type="columns"]').first().click({ position: { x: 3, y: 3 } });
+    check(await until(async () => (await canvas.locator('.nl-selected').first().getAttribute('data-nl-type')) === 'columns'), 'colonnes : un clic sur le fond sélectionne le conteneur');
+    await canvas.locator('[data-nl-slot]').first().click();
+    check(await until(async () => /colonne 1/.test(await page.locator('[data-nl-pane="add"] .ve-pane__intro').innerText())), 'emplacement : « Ajouter ici » désigne la colonne visée');
+    await card('Titre').click();
+    check(await until(async () => (await cols.nth(0).locator('[data-nl-type="heading"]').count()) === 1), 'emplacement : le titre est ajouté dans cette colonne');
+    const before = await cols.evaluateAll((els) => els.reduce((n, el) => n + el.querySelectorAll('[data-nl-block]').length, 0));
+    await canvas.locator('[data-nl-type="columns"]').first().click({ position: { x: 3, y: 3 } });
+    await page.locator('[data-nl-pane="block"] .ve-field', { hasText: 'Nombre de colonnes' }).getByRole('button', { name: '3' }).click();
+    check(await until(async () => (await canvas.locator('[data-nl-type="columns"] td[data-nl-list]').count()) === 3), 'colonnes : on passe à trois colonnes');
+    await page.locator('[data-nl-pane="block"] .ve-field', { hasText: 'Nombre de colonnes' }).getByRole('button', { name: '2' }).click();
+    check(await until(async () => (await canvas.locator('[data-nl-type="columns"] td[data-nl-list]').count()) === 2), 'colonnes : retour à deux colonnes');
+    const after = await canvas.locator('[data-nl-type="columns"] td[data-nl-list]').evaluateAll((els) => els.reduce((n, el) => n + el.querySelectorAll('[data-nl-block]').length, 0));
+    check(after === before, `colonnes : aucun bloc perdu en changeant le nombre de colonnes (${before} → ${after})`);
+
+    // Monter un bloc dans sa colonne (barre flottante) ; la structure montre l'arbre.
+    await cols.nth(0).locator('[data-nl-type="heading"]').first().click({ position: { x: 4, y: 4 } });
+    check((await canvas.locator('.nl-bar [data-op="parent"]').count()) === 1, 'barre : un bouton « conteneur » apparaît pour un bloc imbriqué');
     await page.locator('[data-nl-tab="structure"]').click();
-    check((await page.locator('[data-nl-pane="structure"] .ve-item').count()) === 4, 'structure : quatre blocs listés');
+    const tree = await page.locator('[data-nl-pane="structure"]').innerText();
+    check(/colonne 1/i.test(tree) && /colonne 2/i.test(tree) && /colonnes/i.test(tree), 'structure : l\'arbre montre le conteneur et ses colonnes');
 
-    // Texte enrichi : gras sur le paragraphe.
-    const paragraph = canvas.locator('[data-nl-field="html"]').first();
+    // Déplacement d'un bloc de premier niveau dans une colonne, par la poignée de la barre.
+    await top.nth(0).click({ position: { x: 4, y: 4 } });
+    const grip = await canvas.locator('.nl-bar [data-op="grip"]').boundingBox();
+    const aim = await cols.nth(1).boundingBox();
+    const nestedBefore = await cols.nth(1).locator('[data-nl-block]').count();
+    await page.mouse.move(grip.x + grip.width / 2, grip.y + grip.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(aim.x + 60, aim.y + 20, { steps: 8 });
+    await page.mouse.up();
+    check(await until(async () => (await canvas.locator('[data-nl-type="columns"] td[data-nl-list]').nth(1).locator('[data-nl-block]').count()) === nestedBefore + 1), 'poignée : un bloc glissé par sa poignée entre dans la colonne visée');
+    await page.locator('[data-nl-undo]').click();
+    check(await until(async () => (await canvas.locator('[data-nl-type="columns"] td[data-nl-list]').nth(1).locator('[data-nl-block]').count()) === nestedBefore), 'annulation : le déplacement se défait');
+
+    // Duplication d'un conteneur : les blocs copiés ont leurs propres identifiants.
+    await canvas.locator('[data-nl-type="columns"]').first().click({ position: { x: 3, y: 3 } });
+    await canvas.locator('.nl-bar [data-op="dup"]').click();
+    check(await until(async () => (await canvas.locator('[data-nl-type="columns"]').count()) === 2), 'duplication : les colonnes sont copiées avec leur contenu');
+    const ids = await canvas.locator('[data-nl-block]').evaluateAll((els) => els.map((el) => el.dataset.nlId));
+    check(new Set(ids).size === ids.length, 'duplication : chaque bloc a son identifiant (pas de doublon)');
+    await canvas.locator('.nl-bar [data-op="del"]').click();
+    check(await until(async () => (await canvas.locator('[data-nl-type="columns"]').count()) === 1), 'suppression : la copie disparaît');
+
+    // Bandeau foncé : le texte passe en clair tout seul.
+    await addTab();
+    await card('Bandeau foncé').click();
+    await canvas.locator('[data-nl-type="section"]').first().waitFor();
+    const lightText = await canvas.locator('[data-nl-type="section"] [data-nl-type="text"] [data-nl-field]').first().evaluate((el) => getComputedStyle(el).color);
+    check(lightText === 'rgb(241, 237, 228)', 'bandeau : sur fond sombre le texte est clair');
+    if (out) await page.screenshot({ path: path.join(out, 'nl-bandeau.png') });
+
+    // Texte enrichi : gras sur le premier paragraphe.
+    const paragraph = top.locator('[data-nl-field="html"]').first();
     await paragraph.click();
     await page.keyboard.press('Control+A');
     await page.keyboard.press('Control+B');
     await page.keyboard.press('Escape');
     check(await until(async () => /<(b|strong)>/i.test(await paragraph.innerHTML()), 4000), 'texte : le gras s\'applique sur le plan de travail');
 
-    // Thème : couleur de fond de la lettre.
+    // Thème : couleur de fond de la lettre (rechargement complet : le contenu et la structure sont conservés).
+    const nbBefore = await canvas.locator('[data-nl-block]').count();
     await page.locator('[data-nl-tab="letter"]').click();
     await page.locator('[data-nl-pane="letter"] .ve-field', { hasText: 'Fond autour de la lettre' }).locator('.nl-swatch').nth(1).click();
     check(await until(async () => (await canvas.locator('body').evaluate((el) => getComputedStyle(el).backgroundColor)) === 'rgb(251, 249, 244)'), 'thème : le fond autour de la lettre change');
+    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === nbBefore), 'thème : le contenu reste identique après le rechargement du plan de travail');
 
-    // Image de la médiathèque.
-    await page.locator('[data-nl-tab="add"]').click();
-    await page.locator('.ve-card', { hasText: 'Image' }).first().click();
-    check(await until(async () => page.locator('[data-nl-media]').evaluate((d) => d.open)), 'image : la médiathèque s\'ouvre');
+    // Modèles : appliquer, puis annuler.
+    const sizeBefore = (await top.count());
+    await page.getByRole('button', { name: 'Choisir un modèle…' }).click();
+    await page.locator('.nl-tpl', { hasText: 'Lettre simple' }).getByRole('button', { name: /Utiliser/ }).click();
+    check(await until(async () => (await top.count()) === 5 && (await types()).join() === 'heading,text,divider,text,button'), 'modèle : « Lettre simple » remplace la mise en page');
+    await page.locator('[data-nl-undo]').click();
+    check(await until(async () => (await top.count()) === sizeBefore), 'modèle : Ctrl+Z revient à la lettre d\'avant');
+    await page.locator('[data-nl-redo]').click();
+    await page.locator('[data-nl-undo]').click();
+
+    // Image de la médiathèque : un clic sur l'emplacement vide ouvre la médiathèque.
+    await canvas.locator('[data-nl-placeholder]').first().click();
+    check(await until(async () => page.locator('[data-nl-media]').evaluate((d) => d.open)), 'image : un clic sur l\'emplacement vide ouvre la médiathèque');
     await page.locator('[data-nl-media-grid] .ve-thumb').first().click();
-    check(await until(async () => (await canvas.locator('[data-nl-type="image"] img').count()) === 1), 'image : la photo choisie apparaît dans la lettre');
+    check(await until(async () => (await canvas.locator('[data-nl-type="image"] img').count()) >= 1), 'image : la photo choisie apparaît dans la lettre');
     if (out) await page.screenshot({ path: path.join(out, 'nl-plan-image.png') });
 
-    // Écran mobile.
+    // Écran mobile : les colonnes s'empilent.
     await page.locator('[data-nl-device="mobile"]').click();
-    await wait(500);
+    await wait(600);
     check(Math.round((await page.locator('[data-nl-frame-wrap]').boundingBox()).width) === 390, 'mobile : le plan de travail passe à 390 px');
+    const stacked = await canvas.locator('[data-nl-type="columns"] td[data-nl-list]').evaluateAll((els) => els[1].getBoundingClientRect().top > els[0].getBoundingClientRect().bottom - 2);
+    check(stacked, 'mobile : les colonnes s\'empilent');
     if (out) await page.screenshot({ path: path.join(out, 'nl-plan-mobile.png') });
     await page.locator('[data-nl-device="desktop"]').click();
 
-    // Tout est enregistré, rechargement : la lettre revient identique.
-    await until(async () => /Enregistré à/.test(await page.locator('[data-nl-status]').innerText()), 6000);
+    // Tout est enregistré, rechargement : la lettre revient identique (arbre compris).
+    await saved();
+    const countBefore = await canvas.locator('[data-nl-block]').count();
     await page.reload({ waitUntil: 'load' });
-    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === 5), 'rechargement : la lettre est retrouvée telle qu\'elle a été laissée (5 blocs)');
+    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === countBefore), `rechargement : la lettre est retrouvée telle qu'elle a été laissée (${countBefore} blocs, colonnes comprises)`);
 
     // Envoi d'essai (courrier en mode « log »).
     await page.locator('[data-nl-open-test]').click();
@@ -133,17 +239,20 @@ try {
     if (!sent) console.log('   (erreur affichée : « ' + (await page.locator('[data-nl-test-error]').innerText()) + ' » | toast : « ' + (await page.locator('[data-nl-toast]').innerText()) + ' »)');
     check(sent, 'essai : le courrier d\'essai est envoyé');
 
-    // Envoi à tous : refus tant que la case n'est pas cochée, puis envoi.
+    // Envoi à tous : la fenêtre nomme l'expéditeur et signale les oublis.
     await page.locator('[data-nl-open-send]').click();
-    check((await page.locator('[data-nl-send-text]').innerText()).includes('2 abonnés actifs'), 'envoi : la fenêtre annonce 2 abonnés actifs');
+    const sendText = await page.locator('[data-nl-send-text]').innerText();
+    check(sendText.includes('2 abonnés actifs') && sendText.includes('newsletter@zurcher.edu.mg'), 'envoi : la fenêtre annonce 2 abonnés actifs et l\'adresse d\'expédition');
+    check((await page.locator('[data-nl-send-warn]').innerText()).includes('sans adresse de lien'), 'envoi : la fenêtre signale les boutons sans adresse de lien');
     await page.locator('[data-nl-send-confirm]').check();
     await page.locator('[data-nl-send-submit]').click();
     check(await until(async () => page.url().endsWith('/admin/newsletters'), 12000), 'envoi : retour à la liste après l\'envoi');
     await wait(1500);
     check(tinker('$n=App\\Models\\Newsletter::find(' + id + '); echo $n->status, "|", $n->recipients_count, "|", $n->deliveries()->where("status","sent")->count();') === 'sent|2|2', 'envoi : la lettre est « envoyée », 2 destinataires, 2 envois réussis');
     check(tinker('echo App\\Models\\NewsletterDelivery::where("newsletter_id",' + id + ')->join("newsletter_subscribers","newsletter_subscribers.id","=","newsletter_deliveries.newsletter_subscriber_id")->whereIn("email",["e2e-nl-attente@example.test","e2e-nl-parti@example.test"])->count();') === '0', 'envoi : ni l\'abonné en attente, ni le désinscrit ne reçoivent la lettre');
-    const log = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'storage', 'logs', 'laravel.log'), 'utf8');
-    check(/List-Unsubscribe: <[^>]*desinscription/.test(log.slice(-400000)), 'envoi : chaque courrier porte son lien de désinscription personnel (en-tête List-Unsubscribe)');
+    const log = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'storage', 'logs', 'laravel.log'), 'utf8').slice(-600000);
+    check(/List-Unsubscribe: <[^>]*desinscription/.test(log), 'envoi : chaque courrier porte son lien de désinscription personnel (en-tête List-Unsubscribe)');
+    check(/From:[^<]*\n? ?<newsletter@zurcher\.edu\.mg>/.test(log), 'envoi : les lettres partent de newsletter@zurcher.edu.mg');
 
     // Lettre figée.
     await page.goto(`${base}/admin/newsletter-editor/${id}`, { waitUntil: 'load' });

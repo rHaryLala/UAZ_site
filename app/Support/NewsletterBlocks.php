@@ -7,13 +7,27 @@ namespace App\Support;
  *  - l'éditeur visuel en tire la liste des blocs à ajouter et le panneau de réglages de chaque bloc (champs décrits ici) ;
  *  - le serveur s'en sert pour valider tout ce que le navigateur envoie (normalize) : types connus, champs connus, couleurs au format
  *    #rrggbb, liens http(s)/mailto/tel, longueurs bornées, texte enrichi assaini. Le navigateur n'est jamais cru sur parole.
+ *
+ * Deux blocs sont des CONTENEURS et portent d'autres blocs (clé « children », une liste par colonne) : « columns » (2 ou 3 colonnes) et
+ * « section » (un bandeau qui empile ses blocs, avec fond et marges). Un conteneur peut en contenir un autre, une seule fois (MAX_DEPTH) :
+ * un bandeau qui porte des colonnes, par exemple. Un bloc = ['id' => ..., 'type' => ..., 'data' => [...], 'children' => [[...], ...]].
  */
 final class NewsletterBlocks
 {
-    public const MAX_BLOCKS = 60;
+    /** Nombre maximal de blocs dans la lettre, conteneurs et blocs imbriqués compris. */
+    public const MAX_BLOCKS = 100;
+
+    /** Un conteneur n'est accepté qu'aux niveaux 0 et 1 : au niveau 2, il n'y a plus que des blocs simples. */
+    public const MAX_DEPTH = 2;
 
     /** Couleurs proposées d'office : celles du sceau de l'UAZ (docs/DESIGN-SYSTEM.md) et des neutres. */
-    public const PALETTE = ['#232e66', '#131a3f', '#8a724b', '#e0b957', '#1d2233', '#ffffff', '#fbf9f4', '#e1ebff', '#eef0f6', '#9aa1b5'];
+    public const PALETTE = ['#232e66', '#131a3f', '#8a724b', '#e0b957', '#1d2233', '#ffffff', '#fbf9f4', '#f4f1ea', '#e1ebff', '#eef0f6', '#9aa1b5'];
+
+    /** Proportions des colonnes, selon leur nombre. */
+    public const RATIOS = [
+        2 => ['1:1' => 'Égales', '1:2' => 'Étroite + large', '2:1' => 'Large + étroite', '2:3' => '40 / 60', '3:2' => '60 / 40'],
+        3 => ['1:1:1' => 'Égales', '1:2:1' => 'Centre large', '2:1:1' => 'Première large', '1:1:2' => 'Dernière large'],
+    ];
 
     private const ALIGN = ['left' => 'Gauche', 'center' => 'Centré', 'right' => 'Droite'];
 
@@ -51,7 +65,8 @@ final class NewsletterBlocks
 
     /**
      * Description des blocs. 'fields' : réglages du panneau (kind : text, select, color, media, range, toggle, url) ;
-     * 'inline' : champs modifiés directement sur le plan de travail (rich = texte enrichi, sinon texte brut d'une ligne).
+     * 'inline' : champs modifiés directement sur le plan de travail (rich = texte enrichi, sinon texte brut d'une ligne) ;
+     * 'group' : rubrique du panneau « Ajouter » ; 'container' : le bloc porte d'autres blocs ; 'bleed' : à pleine largeur de la lettre.
      *
      * @return array<string, array<string, mixed>>
      */
@@ -59,18 +74,19 @@ final class NewsletterBlocks
     {
         return [
             'heading' => [
-                'label' => 'Titre', 'hint' => 'Un titre de section.',
-                'defaults' => ['text' => 'Un nouveau titre', 'level' => 'h2', 'align' => 'left', 'color' => '', 'size' => 28],
+                'label' => 'Titre', 'hint' => 'Un titre de section.', 'group' => 'content',
+                'defaults' => ['text' => 'Un nouveau titre', 'level' => 'h2', 'align' => 'left', 'color' => '', 'size' => 28, 'upper' => ''],
                 'inline' => ['text' => false],
                 'fields' => [
                     ['key' => 'level', 'label' => 'Importance', 'kind' => 'select', 'options' => ['h1' => 'Grand titre', 'h2' => 'Titre', 'h3' => 'Sous-titre']],
-                    ['key' => 'size', 'label' => 'Taille du texte', 'kind' => 'range', 'min' => 16, 'max' => 56, 'unit' => 'px'],
+                    ['key' => 'size', 'label' => 'Taille du texte', 'kind' => 'range', 'min' => 12, 'max' => 64, 'unit' => 'px'],
+                    ['key' => 'upper', 'label' => 'Petites capitales espacées (surtitre)', 'kind' => 'toggle'],
                     ['key' => 'align', 'label' => 'Alignement', 'kind' => 'select', 'options' => self::ALIGN, 'segmented' => true],
                     ['key' => 'color', 'label' => 'Couleur', 'kind' => 'color', 'empty' => 'Couleur du thème'],
                 ],
             ],
             'text' => [
-                'label' => 'Texte', 'hint' => 'Un paragraphe, des listes, des liens.',
+                'label' => 'Texte', 'hint' => 'Un paragraphe, des listes, des liens.', 'group' => 'content',
                 'defaults' => ['html' => '<p>Écrivez votre texte ici. Sélectionnez des mots pour les mettre en gras, en italique ou en faire un lien.</p>', 'align' => 'left', 'color' => '', 'size' => 16],
                 'inline' => ['html' => true],
                 'fields' => [
@@ -80,20 +96,20 @@ final class NewsletterBlocks
                 ],
             ],
             'image' => [
-                'label' => 'Image', 'hint' => 'Une photo de la médiathèque.',
+                'label' => 'Image', 'hint' => 'Une photo de la médiathèque, n’importe où.', 'group' => 'content',
                 'defaults' => ['media' => 0, 'link' => '', 'width' => 100, 'align' => 'center', 'radius' => 0],
                 'inline' => [],
                 'fields' => [
                     ['key' => 'media', 'label' => 'Image', 'kind' => 'media'],
-                    ['key' => 'width', 'label' => 'Largeur', 'kind' => 'select', 'options' => [100 => 'Pleine', 75 => '3/4', 50 => 'Moitié'], 'segmented' => true],
+                    ['key' => 'width', 'label' => 'Largeur', 'kind' => 'select', 'options' => [100 => 'Pleine', 75 => '3/4', 50 => 'Moitié', 33 => 'Tiers'], 'segmented' => true],
                     ['key' => 'align', 'label' => 'Alignement', 'kind' => 'select', 'options' => self::ALIGN, 'segmented' => true],
                     ['key' => 'radius', 'label' => 'Coins', 'kind' => 'select', 'options' => [0 => 'Droits', 8 => 'Arrondis', 24 => 'Très arrondis'], 'segmented' => true],
                     ['key' => 'link', 'label' => 'Lien au clic (facultatif)', 'kind' => 'url'],
                 ],
             ],
             'button' => [
-                'label' => 'Bouton', 'hint' => 'Un appel à l’action.',
-                'defaults' => ['label' => 'En savoir plus', 'url' => '', 'bg' => '#232e66', 'color' => '#ffffff', 'align' => 'center', 'radius' => 4, 'size' => 'md'],
+                'label' => 'Bouton', 'hint' => 'Un appel à l’action.', 'group' => 'content',
+                'defaults' => ['label' => 'En savoir plus', 'url' => '', 'bg' => '#232e66', 'color' => '#ffffff', 'align' => 'center', 'radius' => 4, 'size' => 'md', 'full' => ''],
                 'inline' => ['label' => false],
                 'fields' => [
                     ['key' => 'url', 'label' => 'Adresse du lien', 'kind' => 'url'],
@@ -101,17 +117,18 @@ final class NewsletterBlocks
                     ['key' => 'color', 'label' => 'Couleur du texte', 'kind' => 'color'],
                     ['key' => 'size', 'label' => 'Taille', 'kind' => 'select', 'options' => ['md' => 'Normal', 'lg' => 'Grand'], 'segmented' => true],
                     ['key' => 'radius', 'label' => 'Coins', 'kind' => 'select', 'options' => [0 => 'Droits', 4 => 'Légers', 999 => 'Pilule'], 'segmented' => true],
+                    ['key' => 'full', 'label' => 'Sur toute la largeur', 'kind' => 'toggle'],
                     ['key' => 'align', 'label' => 'Alignement', 'kind' => 'select', 'options' => self::ALIGN, 'segmented' => true],
                 ],
             ],
             'quote' => [
-                'label' => 'Citation', 'hint' => 'Une phrase mise en valeur.',
+                'label' => 'Citation', 'hint' => 'Une phrase mise en valeur.', 'group' => 'content',
                 'defaults' => ['text' => 'Une phrase qui donne envie de lire la suite.', 'author' => '', 'accent' => '#8a724b'],
                 'inline' => ['text' => false, 'author' => false],
                 'fields' => [['key' => 'accent', 'label' => 'Couleur du filet', 'kind' => 'color']],
             ],
             'feature' => [
-                'label' => 'Image et texte', 'hint' => 'Une image à côté d’un titre et d’un texte.',
+                'label' => 'Image et texte', 'hint' => 'Une image à côté d’un titre et d’un texte (bloc simple).', 'group' => 'content',
                 'defaults' => ['media' => 0, 'side' => 'left', 'title' => 'Un titre', 'html' => '<p>Quelques lignes pour présenter le sujet.</p>', 'link' => ''],
                 'inline' => ['title' => false, 'html' => true],
                 'fields' => [
@@ -121,7 +138,7 @@ final class NewsletterBlocks
                 ],
             ],
             'news' => [
-                'label' => 'Actualités du site', 'hint' => 'Les derniers articles publiés, ajoutés tout seuls.',
+                'label' => 'Actualités du site', 'hint' => 'Les derniers articles publiés, ajoutés tout seuls.', 'group' => 'content',
                 'defaults' => ['title' => 'Les actualités de l’UAZ', 'count' => 3, 'excerpt' => '1'],
                 'inline' => ['title' => false],
                 'fields' => [
@@ -129,8 +146,30 @@ final class NewsletterBlocks
                     ['key' => 'excerpt', 'label' => 'Afficher le résumé', 'kind' => 'toggle'],
                 ],
             ],
+            'columns' => [
+                'label' => 'Colonnes', 'hint' => 'Deux ou trois colonnes qui reçoivent chacune leurs blocs (photo et texte côte à côte…).', 'group' => 'layout', 'container' => true,
+                'defaults' => ['count' => 2, 'ratio' => '1:1', 'gap' => 24, 'valign' => 'top'],
+                'inline' => [],
+                'fields' => [
+                    ['key' => 'count', 'label' => 'Nombre de colonnes', 'kind' => 'select', 'options' => [2 => '2', 3 => '3'], 'segmented' => true],
+                    ['key' => 'ratio', 'label' => 'Proportions', 'kind' => 'select', 'options' => self::RATIOS[2] + self::RATIOS[3], 'optionsByCount' => self::RATIOS],
+                    ['key' => 'gap', 'label' => 'Écart entre colonnes', 'kind' => 'select', 'options' => [0 => 'Aucun', 16 => 'Petit', 24 => 'Moyen', 40 => 'Grand'], 'segmented' => true],
+                    ['key' => 'valign', 'label' => 'Alignement vertical', 'kind' => 'select', 'options' => ['top' => 'Haut', 'middle' => 'Centre'], 'segmented' => true],
+                ],
+            ],
+            'section' => [
+                'label' => 'Bandeau', 'hint' => 'Un fond de couleur qui empile ses blocs (titre, photo, texte, bouton…).', 'group' => 'layout', 'container' => true,
+                'defaults' => ['bg' => '#f4f1ea', 'padding' => 'md', 'radius' => 0, 'inset' => ''],
+                'inline' => [],
+                'fields' => [
+                    ['key' => 'bg', 'label' => 'Couleur de fond', 'kind' => 'color', 'empty' => 'Sans fond'],
+                    ['key' => 'padding', 'label' => 'Marges intérieures', 'kind' => 'select', 'options' => ['none' => 'Aucune', 'sm' => 'Petites', 'md' => 'Moyennes', 'lg' => 'Grandes'], 'segmented' => true],
+                    ['key' => 'radius', 'label' => 'Coins', 'kind' => 'select', 'options' => [0 => 'Droits', 8 => 'Arrondis', 20 => 'Très arrondis'], 'segmented' => true],
+                    ['key' => 'inset', 'label' => 'Dans les marges de la lettre (sinon bord à bord)', 'kind' => 'toggle'],
+                ],
+            ],
             'divider' => [
-                'label' => 'Séparateur', 'hint' => 'Un filet horizontal.',
+                'label' => 'Séparateur', 'hint' => 'Un filet horizontal.', 'group' => 'layout',
                 'defaults' => ['color' => '#8a724b', 'width' => 'full'],
                 'inline' => [],
                 'fields' => [
@@ -139,10 +178,92 @@ final class NewsletterBlocks
                 ],
             ],
             'spacer' => [
-                'label' => 'Espace', 'hint' => 'Un blanc entre deux blocs.',
-                'defaults' => ['height' => 32],
+                'label' => 'Espace', 'hint' => 'Un blanc, ou une bande de couleur, entre deux blocs.', 'group' => 'layout', 'bleed' => true,
+                'defaults' => ['height' => 32, 'color' => ''],
                 'inline' => [],
-                'fields' => [['key' => 'height', 'label' => 'Hauteur', 'kind' => 'range', 'min' => 8, 'max' => 120, 'unit' => 'px']],
+                'fields' => [
+                    ['key' => 'height', 'label' => 'Hauteur', 'kind' => 'range', 'min' => 4, 'max' => 160, 'unit' => 'px'],
+                    ['key' => 'color', 'label' => 'Couleur', 'kind' => 'color', 'empty' => 'Transparent'],
+                ],
+            ],
+        ];
+    }
+
+    /** Un bloc simple prêt à poser, avec ses valeurs par défaut (sans identifiant). */
+    public static function node(string $type, array $data = [], ?array $children = null): array
+    {
+        $types = self::types();
+        $node = ['type' => $type, 'data' => array_replace($types[$type]['defaults'], $data)];
+
+        if ($children !== null) {
+            $node['children'] = $children;
+        }
+
+        return $node;
+    }
+
+    /**
+     * Blocs proposés tout composés dans le panneau « Ajouter » : une mise en page courante en un clic.
+     *
+     * @return array<string, array{label: string, hint: string, block: array}>
+     */
+    public static function presets(): array
+    {
+        $light = ['bg' => '#f4f1ea'];
+        $dark = ['bg' => '#131a3f'];
+
+        return [
+            'photo-text' => [
+                'label' => 'Photo + texte', 'hint' => 'Une photo à gauche, un titre, un texte et un bouton à droite.',
+                'block' => self::node('columns', ['ratio' => '1:1', 'valign' => 'middle'], [
+                    [self::node('image', ['radius' => 8])],
+                    [self::node('heading', ['text' => 'Un titre', 'size' => 24]), self::node('text'), self::node('button', ['align' => 'left'])],
+                ]),
+            ],
+            'text-photo' => [
+                'label' => 'Texte + photo', 'hint' => 'Le texte à gauche, la photo à droite.',
+                'block' => self::node('columns', ['ratio' => '1:1', 'valign' => 'middle'], [
+                    [self::node('heading', ['text' => 'Un titre', 'size' => 24]), self::node('text'), self::node('button', ['align' => 'left'])],
+                    [self::node('image', ['radius' => 8])],
+                ]),
+            ],
+            'two-photos' => [
+                'label' => 'Deux photos', 'hint' => 'Deux photos côte à côte, chacune avec sa légende.',
+                'block' => self::node('columns', ['ratio' => '1:1', 'gap' => 16], [
+                    [self::node('image', ['radius' => 8]), self::node('text', ['html' => '<p>Légende de la première photo.</p>', 'size' => 14, 'align' => 'center'])],
+                    [self::node('image', ['radius' => 8]), self::node('text', ['html' => '<p>Légende de la seconde photo.</p>', 'size' => 14, 'align' => 'center'])],
+                ]),
+            ],
+            'three-photos' => [
+                'label' => 'Trois photos', 'hint' => 'Une rangée de trois photos.',
+                'block' => self::node('columns', ['count' => 3, 'ratio' => '1:1:1', 'gap' => 16], [
+                    [self::node('image', ['radius' => 8])], [self::node('image', ['radius' => 8])], [self::node('image', ['radius' => 8])],
+                ]),
+            ],
+            'figures' => [
+                'label' => 'Chiffres clés', 'hint' => 'Trois grands chiffres, chacun avec sa phrase.',
+                'block' => self::node('columns', ['count' => 3, 'ratio' => '1:1:1', 'gap' => 16], array_map(
+                    fn (string $number, string $caption) => [self::node('heading', ['text' => $number, 'size' => 40, 'align' => 'center']), self::node('text', ['html' => '<p>'.$caption.'</p>', 'size' => 14, 'align' => 'center'])],
+                    ['12', '3 500', '98 %'],
+                    ['facultés et écoles', 'étudiants accueillis', 'de satisfaction'],
+                )),
+            ],
+            'banner-light' => [
+                'label' => 'Bandeau clair', 'hint' => 'Un fond crème avec titre, texte et bouton.',
+                'block' => self::node('section', $light, [[
+                    self::node('heading', ['text' => 'Un message important', 'align' => 'center']),
+                    self::node('text', ['align' => 'center']),
+                    self::node('button'),
+                ]]),
+            ],
+            'banner-dark' => [
+                'label' => 'Bandeau foncé', 'hint' => 'Un fond bleu nuit : le texte passe en clair tout seul.',
+                'block' => self::node('section', $dark + ['padding' => 'lg'], [[
+                    self::node('heading', ['text' => 'LETTRE D’INFORMATION', 'size' => 12, 'upper' => '1', 'color' => '#e0b957', 'align' => 'center']),
+                    self::node('heading', ['text' => 'Un grand titre qui accroche', 'size' => 36, 'level' => 'h1', 'align' => 'center']),
+                    self::node('text', ['align' => 'center']),
+                    self::node('button', ['bg' => '#e0b957', 'color' => '#131a3f', 'radius' => 999]),
+                ]]),
             ],
         ];
     }
@@ -150,24 +271,61 @@ final class NewsletterBlocks
     /** Lettre de départ : un titre, un texte et un bouton. */
     public static function starter(): array
     {
-        return array_map(fn (string $type) => self::make($type), ['heading', 'text', 'button']);
+        return self::withIds(array_map(fn (string $type) => self::node($type), ['heading', 'text', 'button']));
     }
 
-    /** Un bloc neuf, avec ses valeurs par défaut. */
+    /** Un bloc neuf, avec ses valeurs par défaut et, pour un conteneur, ses blocs de départ. */
     public static function make(string $type): array
     {
         $types = self::types();
         abort_unless(isset($types[$type]), 422);
 
-        return ['id' => self::newId(), 'type' => $type, 'data' => $types[$type]['defaults']];
+        $children = match ($type) {
+            'columns' => [[self::node('image', ['radius' => 8])], [self::node('heading', ['text' => 'Un titre', 'size' => 24]), self::node('text')]],
+            'section' => [[self::node('heading', ['text' => 'Un titre', 'align' => 'center']), self::node('text', ['align' => 'center'])]],
+            default => null,
+        };
+
+        return self::withIds([self::node($type, [], $children)])[0];
     }
 
     /**
-     * Valide et nettoie une liste de blocs reçue du navigateur.
+     * Pose des identifiants à une liste de blocs (et à leurs enfants).
      *
-     * @return list<array{id: string, type: string, data: array<string, mixed>}>
+     * @param  list<array<string, mixed>>  $blocks
+     * @return list<array<string, mixed>>
+     */
+    public static function withIds(array $blocks): array
+    {
+        return array_map(function (array $block): array {
+            $block = ['id' => self::newId()] + $block; // l'identifiant en premier, comme dans un bloc validé par normalize()
+
+            if (isset($block['children'])) {
+                $block['children'] = array_map(fn (array $column) => self::withIds($column), $block['children']);
+            }
+
+            return $block;
+        }, $blocks);
+    }
+
+    /**
+     * Valide et nettoie une liste de blocs reçue du navigateur (récursif).
+     *
+     * @return list<array<string, mixed>>
      */
     public static function normalize(mixed $blocks): array
+    {
+        $budget = self::MAX_BLOCKS;
+        $seen = [];
+
+        return self::normalizeList($blocks, 0, $budget, $seen);
+    }
+
+    /**
+     * @param  array<string, true>  $seen
+     * @return list<array<string, mixed>>
+     */
+    private static function normalizeList(mixed $blocks, int $depth, int &$budget, array &$seen): array
     {
         if (! is_array($blocks)) {
             return [];
@@ -176,13 +334,24 @@ final class NewsletterBlocks
         $types = self::types();
         $out = [];
 
-        foreach (array_slice(array_values($blocks), 0, self::MAX_BLOCKS) as $block) {
+        foreach (array_values($blocks) as $block) {
+            if ($budget <= 0) {
+                break;
+            }
+
             $type = is_array($block) ? ($block['type'] ?? null) : null;
 
             if (! is_string($type) || ! isset($types[$type])) {
                 continue;
             }
 
+            $container = ! empty($types[$type]['container']);
+
+            if ($container && $depth >= self::MAX_DEPTH) {
+                continue;
+            }
+
+            $budget--;
             $raw = is_array($block['data'] ?? null) ? $block['data'] : [];
             $data = [];
 
@@ -190,11 +359,47 @@ final class NewsletterBlocks
                 $data[$key] = self::field($type, $key, $raw[$key] ?? $default, $default);
             }
 
-            $id = is_string($block['id'] ?? null) && preg_match('/^[a-z0-9]{4,24}$/', $block['id']) ? $block['id'] : self::newId();
-            $out[] = ['id' => $id, 'type' => $type, 'data' => $data];
+            $id = is_string($block['id'] ?? null) && preg_match('/^[a-z0-9]{4,24}$/', $block['id']) && ! isset($seen[$block['id']]) ? $block['id'] : self::newId();
+            $seen[$id] = true;
+            $node = ['id' => $id, 'type' => $type, 'data' => $data];
+
+            if ($container) {
+                $node['data'] = self::fixContainer($type, $node['data']);
+                $count = $type === 'columns' ? (int) $node['data']['count'] : 1;
+                $given = is_array($block['children'] ?? null) ? array_values($block['children']) : [];
+                $columns = [];
+
+                for ($i = 0; $i < $count; $i++) {
+                    $columns[$i] = is_array($given[$i] ?? null) ? array_values($given[$i]) : [];
+                }
+
+                // Moins de colonnes qu'avant : les blocs des colonnes en trop passent dans la dernière, rien n'est perdu.
+                foreach (array_slice($given, $count) as $extra) {
+                    $columns[$count - 1] = array_merge($columns[$count - 1], is_array($extra) ? array_values($extra) : []);
+                }
+
+                // Une boucle et non « array_map » : le compteur de blocs et les identifiants déjà vus doivent être partagés par toutes les colonnes.
+                $node['children'] = [];
+
+                foreach ($columns as $column) {
+                    $node['children'][] = self::normalizeList($column, $depth + 1, $budget, $seen);
+                }
+            }
+
+            $out[] = $node;
         }
 
         return $out;
+    }
+
+    /** Cohérence propre aux conteneurs : des proportions qui conviennent au nombre de colonnes. */
+    private static function fixContainer(string $type, array $data): array
+    {
+        if ($type === 'columns' && ! isset(self::RATIOS[$data['count']][$data['ratio']])) {
+            $data['ratio'] = array_key_first(self::RATIOS[$data['count']]);
+        }
+
+        return $data;
     }
 
     private static function field(string $type, string $key, mixed $value, mixed $default): mixed
@@ -217,9 +422,41 @@ final class NewsletterBlocks
             'media' => max(0, (int) $value),
             'range' => max($spec['min'], min($spec['max'], (int) $value)),
             'toggle' => $value ? '1' : '',
-            'select' => array_key_exists($value, $spec['options']) ? (is_int($default) ? (int) $value : $value) : $default,
+            'select' => is_scalar($value) && array_key_exists($value, $spec['options']) ? (is_int($default) ? (int) $value : $value) : $default,
             default => $default,
         };
+    }
+
+    /**
+     * Tous les blocs de l'arbre, conteneurs compris, dans l'ordre de lecture.
+     *
+     * @param  list<array<string, mixed>>  $blocks
+     * @return list<array<string, mixed>>
+     */
+    public static function flatten(array $blocks): array
+    {
+        $all = [];
+
+        foreach ($blocks as $block) {
+            $all[] = $block;
+
+            foreach ($block['children'] ?? [] as $column) {
+                array_push($all, ...self::flatten($column));
+            }
+        }
+
+        return $all;
+    }
+
+    /**
+     * Identifiants des images citées, partout dans l'arbre.
+     *
+     * @param  list<array<string, mixed>>  $blocks
+     * @return list<int>
+     */
+    public static function mediaIds(array $blocks): array
+    {
+        return collect(self::flatten($blocks))->pluck('data.media')->filter()->map(fn ($id) => (int) $id)->unique()->values()->all();
     }
 
     public static function color(mixed $value): ?string

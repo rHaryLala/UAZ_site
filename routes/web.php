@@ -58,6 +58,8 @@ Route::prefix('admin/newsletter-editor/{newsletter}')->name('admin.newsletter-ed
     $controller = NewsletterEditorController::class;
     Route::get('/', [$controller, 'show'])->name('show');
     Route::post('/render', [$controller, 'render'])->middleware('throttle:newsletter-render')->name('render');
+    Route::post('/rows', [$controller, 'rows'])->middleware('throttle:newsletter-render')->name('rows');
+    Route::get('/templates', [$controller, 'templates'])->middleware('throttle:newsletter-render')->name('templates');
     Route::put('/save', [$controller, 'save'])->middleware('throttle:newsletter-save')->name('save');
     Route::post('/test', [$controller, 'test'])->middleware('throttle:newsletter-test')->name('test');
     Route::post('/send', [$controller, 'send'])->middleware('throttle:newsletter-send')->name('send');

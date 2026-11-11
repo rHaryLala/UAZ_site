@@ -16,27 +16,90 @@ use Illuminate\Support\Facades\URL;
  */
 final class NewsletterRenderer
 {
+    /** Largeur de la lettre et de ses marges (px) : les colonnes en tirent leurs largeurs exactes (les messageries n'aiment pas le « calc »). */
+    public const WIDTH = 640;
+
+    public const SIDE = 32;
+
     /**
      * @param  array{subject?: string, preheader?: string, blocks?: array, theme?: array}  $state
      */
-    public static function html(array $state, ?NewsletterSubscriber $subscriber = null, ?string $unsubscribeUrl = null, bool $editing = false, ?int $selected = null): string
+    public static function html(array $state, ?NewsletterSubscriber $subscriber = null, ?string $unsubscribeUrl = null, bool $editing = false): string
     {
         $theme = NewsletterBlocks::theme($state['theme'] ?? null);
         $blocks = NewsletterBlocks::normalize($state['blocks'] ?? []);
+        $ctx = self::context($blocks, $theme, $editing);
         $unsubscribe = $unsubscribeUrl ?? ($subscriber ? URL::signedRoute('newsletter.unsubscribe', ['subscriber' => $subscriber]) : null);
 
         return view('newsletter.email', [
             'subject' => (string) ($state['subject'] ?? ''),
             'preheader' => (string) ($state['preheader'] ?? ''),
-            'blocks' => $blocks,
+            'body' => self::nodes($blocks, 0, self::WIDTH - 2 * self::SIDE, $ctx),
+            'hasBlocks' => $blocks !== [],
             'theme' => $theme,
-            'headingFont' => $theme['font'] === 'serif' ? "Georgia, 'Times New Roman', Times, serif" : "'Helvetica Neue', Helvetica, Arial, sans-serif",
-            'media' => self::media($blocks),
+            'headingFont' => $ctx['headingFont'],
             'site' => SiteSetting::current(),
             'unsubscribe' => $unsubscribe,
             'editing' => $editing,
-            'selected' => $selected,
         ])->render();
+    }
+
+    /**
+     * Les lignes de la lettre pour quelques blocs seulement (mise à jour du plan de travail : on ne redessine que ce qui a changé).
+     *
+     * @param  list<array<string, mixed>>  $blocks  blocs de premier niveau, déjà valides
+     * @param  array<string, string>  $theme
+     * @return list<string>
+     */
+    public static function rows(array $blocks, array $theme): array
+    {
+        $ctx = self::context($blocks, $theme, true);
+
+        return array_map(fn (array $block) => self::nodes([$block], 0, self::WIDTH - 2 * self::SIDE, $ctx), $blocks);
+    }
+
+    /**
+     * Ce que partagent tous les blocs au dessin : thème, police des titres, images, mode d'édition.
+     *
+     * @param  list<array<string, mixed>>  $blocks
+     * @param  array<string, string>  $theme
+     * @return array{theme: array<string, string>, headingFont: string, media: Collection<int, MediaAsset>, editing: bool}
+     */
+    public static function context(array $blocks, array $theme, bool $editing): array
+    {
+        return [
+            'theme' => $theme,
+            'headingFont' => $theme['font'] === 'serif' ? "Georgia, 'Times New Roman', Times, serif" : "'Helvetica Neue', Helvetica, Arial, sans-serif",
+            'media' => self::media($blocks),
+            'editing' => $editing,
+        ];
+    }
+
+    /**
+     * Dessine une liste de blocs au niveau $depth, dans une place de $width px (récursif : les conteneurs rappellent cette méthode).
+     *
+     * @param  list<array<string, mixed>>  $list
+     * @param  array<string, mixed>  $ctx
+     */
+    public static function nodes(array $list, int $depth, int $width, array $ctx): string
+    {
+        $html = '';
+
+        foreach ($list as $block) {
+            $html .= view('newsletter.node', $ctx + ['ctx' => $ctx, 'block' => $block, 'depth' => $depth, 'width' => $width])->render();
+        }
+
+        return $html;
+    }
+
+    /** Un fond sombre ? Le texte des blocs posés dessus passe alors en clair (voir le bloc « section »). */
+    public static function isDark(string $hex): bool
+    {
+        if (! preg_match('/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $hex, $m)) {
+            return false;
+        }
+
+        return (0.299 * hexdec($m[1]) + 0.587 * hexdec($m[2]) + 0.114 * hexdec($m[3])) < 140;
     }
 
     /** Version texte brut : même contenu, sans mise en forme, pour les messageries qui n'affichent pas le HTML. */
@@ -53,7 +116,7 @@ final class NewsletterRenderer
         $lines[] = (string) ($state['subject'] ?? '');
         $lines[] = str_repeat('=', min(60, max(8, mb_strlen((string) ($state['subject'] ?? '')))));
 
-        foreach ($blocks as $block) {
+        foreach (NewsletterBlocks::flatten($blocks) as $block) {
             $d = $block['data'];
             $lines[] = '';
 
@@ -65,7 +128,7 @@ final class NewsletterRenderer
                 'feature' => $lines[] = trim($d['title']."\n".$strip($d['html']).($d['link'] !== '' ? "\n".$d['link'] : '')),
                 'news' => $lines[] = trim($d['title']."\n".self::newsPosts((int) $d['count'])->map(fn (NewsPost $p) => '- '.$p->title.' : '.$p->url())->implode("\n")),
                 'divider' => $lines[] = '--',
-                default => null,
+                default => $lines = array_slice($lines, 0, -1), // conteneurs et espaces : rien à dire (le contenu des conteneurs suit)
             };
         }
 
@@ -101,8 +164,6 @@ final class NewsletterRenderer
      */
     private static function media(array $blocks): Collection
     {
-        $ids = collect($blocks)->pluck('data.media')->filter()->unique()->values();
-
-        return MediaAsset::with('media')->whereIn('id', $ids)->get()->keyBy('id');
+        return MediaAsset::with('media')->whereIn('id', NewsletterBlocks::mediaIds($blocks))->get()->keyBy('id');
     }
 }

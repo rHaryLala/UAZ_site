@@ -1,121 +1,168 @@
-// Plan de travail de l'éditeur de lettres (dans l'iframe) : on modifie les textes sur place, on clique un bloc pour le sélectionner, une barre
-// flottante permet de le déplacer (glisser), le monter, le descendre, le dupliquer, le supprimer. Ce script ne garde aucun état : il signale ce
-// qui se passe à l'éditeur (window.parent), qui tient l'état de la lettre, l'enregistre et redessine le plan de travail.
+// Plan de travail de l'éditeur de lettres (dans l'iframe) : on modifie les textes sur place, on clique un bloc pour le sélectionner (n'importe quel
+// bloc, même dans une colonne ou un bandeau), une barre flottante permet de le déplacer (glisser), le monter, le descendre, le dupliquer, le
+// supprimer. Ce script ne garde aucun état de la lettre : il signale ce qui se passe à l'éditeur (window.parent), qui tient l'état, l'enregistre
+// et met à jour le plan de travail par window.nl (setRows, select) sans jamais recharger l'iframe pour un simple changement de bloc.
 (() => {
-    const LABELS = { heading: 'Titre', text: 'Texte', image: 'Image', button: 'Bouton', quote: 'Citation', feature: 'Image et texte', news: 'Actualités', divider: 'Séparateur', spacer: 'Espace' };
+    const LABELS = { heading: 'Titre', text: 'Texte', image: 'Image', button: 'Bouton', quote: 'Citation', feature: 'Image et texte', news: 'Actualités', divider: 'Séparateur', spacer: 'Espace', columns: 'Colonnes', section: 'Bandeau' };
     const tell = (message) => window.parent.postMessage({ nl: true, ...message }, '*');
-    const blocks = () => [...document.querySelectorAll('[data-nl-block]')];
-    const indexOf = (el) => Number(el.dataset.nlBlock);
+    const idOf = (el) => el?.dataset.nlId ?? null;
+    const byId = (id) => (id ? document.querySelector('[data-nl-block][data-nl-id="' + id + '"]') : null);
+    const listOf = (block) => block?.parentElement?.closest('[data-nl-list]') ?? null;
+    const root = () => document.querySelector('[data-nl-list="root"]');
 
-    let selected = blocks().find((el) => el.classList.contains('nl-selected')) ?? null;
+    /** Les blocs placés directement dans une liste (la lettre, une colonne, un bandeau), dans l'ordre. */
+    const blocksIn = (list) => [...list.querySelectorAll('[data-nl-block]')].filter((block) => listOf(block) === list);
+
+    let selectedId = null;
     let bar = null;
+    let hovered = null;
     let drop = null;
 
     /* ───────── Texte modifiable sur place ───────── */
-    document.querySelectorAll('[data-nl-field]').forEach((el) => {
+    function bind(scope) {
+        scope.querySelectorAll('[data-nl-field]').forEach((el) => {
+            if (el.dataset.nlBound) return;
+            el.dataset.nlBound = '1';
+            // « plaintext-only » : pas de mise en forme collée dans un titre ; les navigateurs plus anciens retombent sur « true ».
+            el.contentEditable = el.dataset.nlField === 'html' ? 'true' : 'plaintext-only';
+            if (el.contentEditable !== 'true' && el.contentEditable !== 'plaintext-only') el.contentEditable = 'true';
+            el.spellcheck = true;
+            el.lang = 'fr';
+        });
+    }
+
+    const timers = new WeakMap();
+    const report = (el) => {
+        clearTimeout(timers.get(el));
         const block = el.closest('[data-nl-block]');
         const rich = el.dataset.nlField === 'html';
-        let timer = 0;
+        tell({ op: 'edit', id: idOf(block), field: el.dataset.nlField, value: rich ? el.innerHTML : el.textContent.replace(/\s+/g, ' ') });
+    };
 
-        // « plaintext-only » : pas de mise en forme collée dans un titre ; les navigateurs plus anciens retombent sur « true ».
-        el.contentEditable = rich ? 'true' : 'plaintext-only';
-        if (el.contentEditable !== 'true' && el.contentEditable !== 'plaintext-only') el.contentEditable = 'true';
-        el.spellcheck = true;
-        el.lang = 'fr';
-
-        const report = () => {
-            clearTimeout(timer);
-            const value = rich ? el.innerHTML : el.textContent.replace(/\s+/g, ' ');
-            tell({ op: 'edit', index: indexOf(block), field: el.dataset.nlField, value });
-        };
-
-        el.addEventListener('input', () => {
-            clearTimeout(timer);
-            timer = setTimeout(report, 250);
-        });
-        el.addEventListener('blur', () => {
-            report();
-            tell({ op: 'commit' });
-        });
-        el.addEventListener('focus', () => select(block));
-        el.addEventListener('paste', (event) => {
-            event.preventDefault();
-            document.execCommand('insertText', false, event.clipboardData.getData('text/plain'));
-        });
-        el.addEventListener('keydown', (event) => {
-            if (!rich && event.key === 'Enter') {
-                event.preventDefault();
-                el.blur();
-            }
-            if (event.key === 'Escape') el.blur();
-        });
+    document.addEventListener('input', (event) => {
+        const el = event.target.closest?.('[data-nl-field]');
+        if (!el) return;
+        clearTimeout(timers.get(el));
+        timers.set(el, setTimeout(() => report(el), 250));
+    });
+    document.addEventListener('focusout', (event) => {
+        const el = event.target.closest?.('[data-nl-field]');
+        if (!el) return;
+        report(el);
+        tell({ op: 'commit' });
+    });
+    document.addEventListener('focusin', (event) => {
+        const el = event.target.closest?.('[data-nl-field]');
+        if (el) select(idOf(el.closest('[data-nl-block]')));
+    });
+    document.addEventListener('paste', (event) => {
+        if (!event.target.closest?.('[data-nl-field]')) return;
+        event.preventDefault();
+        document.execCommand('insertText', false, event.clipboardData.getData('text/plain'));
     });
 
     /* ───────── Sélection ───────── */
-    function select(block) {
-        if (selected === block) return;
-        selected?.classList.remove('nl-selected');
-        selected = block;
-        selected?.classList.add('nl-selected');
-        placeBar();
-        tell({ op: 'select', index: block ? indexOf(block) : -1 });
+    function paint() {
+        document.querySelectorAll('.nl-selected').forEach((el) => el.classList.remove('nl-selected'));
+        byId(selectedId)?.classList.add('nl-selected');
     }
+
+    function select(id, { notify = true } = {}) {
+        id = id || null;
+        if (id === selectedId && bar) return;
+        selectedId = id;
+        paint();
+        placeBar();
+        if (notify) tell({ op: 'select', id });
+    }
+
+    document.addEventListener('pointerover', (event) => {
+        const block = event.target.closest?.('[data-nl-block]') ?? null;
+        if (block === hovered) return;
+        hovered?.classList.remove('nl-hover');
+        hovered = block;
+        hovered?.classList.add('nl-hover');
+    });
+    document.addEventListener('pointerleave', () => {
+        hovered?.classList.remove('nl-hover');
+        hovered = null;
+    });
 
     document.addEventListener('click', (event) => {
         const link = event.target.closest('a');
         if (link) event.preventDefault(); // on ne quitte jamais le plan de travail par un lien
+        if (event.target.closest('.nl-bar')) return;
+
+        const slot = event.target.closest('[data-nl-slot]');
+        if (slot) {
+            tell({ op: 'slot', parent: slot.dataset.nlParent, col: Number(slot.dataset.nlCol) });
+
+            return;
+        }
 
         const block = event.target.closest('[data-nl-block]');
-        if (event.target.closest('.nl-bar')) return;
-        select(block);
+        select(idOf(block));
+        // Un emplacement d'image vide : un clic suffit pour ouvrir la médiathèque.
+        if (event.target.closest('[data-nl-placeholder]') && block) tell({ op: 'media', id: idOf(block) });
     });
 
     document.addEventListener('dblclick', (event) => {
         const block = event.target.closest('[data-nl-block]');
         if (block && ['image', 'feature'].includes(block.dataset.nlType) && !event.target.closest('[data-nl-field]')) {
-            tell({ op: 'media', index: indexOf(block) });
+            tell({ op: 'media', id: idOf(block) });
         }
     });
 
     document.addEventListener('keydown', (event) => {
         const editing = event.target.closest?.('[contenteditable]');
         const mod = event.ctrlKey || event.metaKey;
+        const key = event.key.toLowerCase();
 
-        if (!editing && mod && event.key.toLowerCase() === 'z') {
+        if (event.key === 'Escape' && editing) editing.blur();
+        else if (!editing && mod && key === 'z') {
             event.preventDefault();
             tell({ op: event.shiftKey ? 'redo' : 'undo' });
-        } else if (!editing && mod && event.key.toLowerCase() === 'y') {
+        } else if (!editing && mod && key === 'y') {
             event.preventDefault();
             tell({ op: 'redo' });
-        } else if (!editing && selected && (event.key === 'Delete' || event.key === 'Backspace')) {
+        } else if (!editing && mod && key === 'd' && selectedId) {
             event.preventDefault();
-            tell({ op: 'del', index: indexOf(selected) });
+            tell({ op: 'dup', id: selectedId });
+        } else if (!editing && selectedId && (event.key === 'Delete' || event.key === 'Backspace')) {
+            event.preventDefault();
+            tell({ op: 'del', id: selectedId });
         } else if (!editing && event.key === 'Escape') {
             select(null);
+        } else if (editing && !event.shiftKey && event.key === 'Enter' && editing.contentEditable === 'plaintext-only') {
+            event.preventDefault();
+            editing.blur();
         }
     });
 
     /* ───────── Barre flottante ───────── */
-    const button = (label, op, title, extra = {}) => {
+    const button = (label, op, title) => {
         const node = document.createElement('button');
         node.type = 'button';
         node.innerHTML = label;
         node.title = title;
         node.setAttribute('aria-label', title);
         node.dataset.op = op;
-        Object.assign(node.dataset, extra);
 
         return node;
     };
+    const separator = () => Object.assign(document.createElement('span'), { className: 'nl-bar__sep' });
 
     function placeBar() {
         bar?.remove();
         bar = null;
-        if (!selected) return;
+        const block = byId(selectedId);
+        if (!block) return;
 
-        const type = selected.dataset.nlType;
-        const index = indexOf(selected);
-        const total = blocks().length;
+        const type = block.dataset.nlType;
+        const siblings = blocksIn(listOf(block));
+        const at = siblings.indexOf(block);
+        const nested = Number(block.dataset.nlDepth) > 0;
+
         bar = document.createElement('div');
         bar.className = 'nl-bar';
         bar.setAttribute('role', 'toolbar');
@@ -129,19 +176,18 @@
         bar.append(tag, grip);
 
         // Mise en forme du texte : seulement dans les blocs qui ont un texte enrichi.
-        if (selected.querySelector('[data-nl-field="html"]')) {
-            const sep = document.createElement('span');
-            sep.className = 'nl-bar__sep';
-            bar.append(sep, button('<b>G</b>', 'bold', 'Gras'), button('<i>I</i>', 'italic', 'Italique'), button('🔗', 'link', 'Ajouter un lien'), button('•&nbsp;≡', 'list', 'Liste à puces'));
+        if (block.querySelector('[data-nl-field="html"]')) {
+            bar.append(separator(), button('<b>G</b>', 'bold', 'Gras'), button('<i>I</i>', 'italic', 'Italique'), button('🔗', 'link', 'Ajouter un lien'), button('•&nbsp;≡', 'list', 'Liste à puces'));
         }
+        if (['image', 'feature'].includes(type)) bar.append(separator(), button('🖼', 'media', 'Choisir la photo'));
 
-        const sep = document.createElement('span');
-        sep.className = 'nl-bar__sep';
         const up = button('↑', 'up', 'Monter');
         const down = button('↓', 'down', 'Descendre');
-        up.disabled = index === 0;
-        down.disabled = index === total - 1;
-        bar.append(sep, up, down, button('⧉', 'dup', 'Dupliquer'), button('＋', 'add', 'Ajouter un bloc dessous'), button('🗑', 'del', 'Supprimer le bloc'));
+        up.disabled = at <= 0;
+        down.disabled = at === siblings.length - 1;
+        bar.append(separator());
+        if (nested) bar.append(button('↰', 'parent', 'Sélectionner le conteneur'));
+        bar.append(up, down, button('⧉', 'dup', 'Dupliquer'), button('＋', 'add', 'Ajouter un bloc dessous'), button('🗑', 'del', 'Supprimer le bloc'));
 
         // Les boutons ne doivent pas faire perdre la sélection du texte.
         bar.addEventListener('mousedown', (event) => event.preventDefault());
@@ -152,8 +198,9 @@
     }
 
     function positionBar() {
-        if (!bar || !selected) return;
-        const rect = selected.getBoundingClientRect();
+        const block = byId(selectedId);
+        if (!bar || !block) return;
+        const rect = block.getBoundingClientRect();
         const top = rect.top + window.scrollY;
         const height = bar.offsetHeight;
         bar.style.top = (top - height - 6 < window.scrollY + 4 ? top + 6 : top - height - 6) + 'px';
@@ -162,57 +209,84 @@
 
     function onBar(event) {
         const op = event.target.closest('button')?.dataset.op;
-        if (!op || !selected) return;
-        const index = indexOf(selected);
+        if (!op || !selectedId) return;
 
-        if (op === 'bold' || op === 'italic') {
-            document.execCommand(op);
-        } else if (op === 'list') {
-            document.execCommand('insertUnorderedList');
-        } else if (op === 'link') {
+        if (op === 'bold' || op === 'italic') document.execCommand(op);
+        else if (op === 'list') document.execCommand('insertUnorderedList');
+        else if (op === 'link') {
             const url = window.prompt('Adresse du lien (https://…)');
             if (url) document.execCommand('createLink', false, url);
-        } else if (['up', 'down', 'dup', 'del', 'add'].includes(op)) {
-            tell({ op, index });
+        } else if (['up', 'down', 'dup', 'del', 'add', 'media', 'parent'].includes(op)) {
+            tell({ op, id: selectedId });
         }
     }
 
-    /* ───────── Déplacement par glisser ───────── */
+    /* ───────── Où va tomber un bloc ? (déplacement par la poignée, ou bloc glissé depuis le panneau « Ajouter ») ───────── */
+    function dropTarget(x, y, ignore = null) {
+        let list = document.elementFromPoint(x, y)?.closest('[data-nl-list]') ?? null;
+        // On ne dépose jamais un bloc dans lui-même : on remonte à la liste qui le contient.
+        while (list && ignore && ignore.contains(list)) list = list.parentElement?.closest('[data-nl-list]') ?? null;
+        list ??= root();
+
+        const items = blocksIn(list).filter((block) => block !== ignore);
+        let index = items.length;
+        for (let i = 0; i < items.length; i++) {
+            const r = items[i].getBoundingClientRect();
+            if (y < r.top + r.height / 2) {
+                index = i;
+                break;
+            }
+        }
+
+        const box = list.getBoundingClientRect();
+        let edge;
+        if (items.length === 0) edge = box.top + Math.min(box.height / 2, 24);
+        else if (index < items.length) edge = items[index].getBoundingClientRect().top;
+        else edge = items[items.length - 1].getBoundingClientRect().bottom;
+
+        return { list, parent: list.dataset.nlParent || null, col: Number(list.dataset.nlCol || 0), index, line: { top: edge, left: box.left, width: box.width } };
+    }
+
+    function showDrop(target) {
+        if (!drop) {
+            drop = document.createElement('div');
+            drop.className = 'nl-drop';
+            document.body.append(drop);
+        }
+        document.querySelectorAll('.nl-drop-list').forEach((el) => el !== target.list && el.classList.remove('nl-drop-list'));
+        if (target.list !== root()) target.list.classList.add('nl-drop-list');
+        drop.style.top = target.line.top + window.scrollY - 2 + 'px';
+        drop.style.left = target.line.left + window.scrollX + 'px';
+        drop.style.width = target.line.width + 'px';
+    }
+
+    function hideDrop() {
+        drop?.remove();
+        drop = null;
+        document.querySelectorAll('.nl-drop-list').forEach((el) => el.classList.remove('nl-drop-list'));
+    }
+
+    /* Déplacement d'un bloc existant : on le saisit par la poignée de la barre. */
     function startDrag(event) {
         event.preventDefault();
-        const from = indexOf(selected);
+        const block = byId(selectedId);
         const grip = event.currentTarget;
         grip.setPointerCapture(event.pointerId);
-        selected.classList.add('nl-dragging');
-        drop = document.createElement('div');
-        drop.className = 'nl-drop';
-        document.body.append(drop);
-        let target = from;
+        block.classList.add('nl-dragging');
+        let target = null;
 
         const move = (e) => {
-            const y = e.clientY + window.scrollY;
-            const list = blocks();
-            target = list.length;
-            for (let i = 0; i < list.length; i++) {
-                const r = list[i].getBoundingClientRect();
-                if (y < r.top + window.scrollY + r.height / 2) {
-                    target = i;
-                    break;
-                }
-            }
-            const edge = target < list.length ? list[target].getBoundingClientRect().top + window.scrollY : list.at(-1).getBoundingClientRect().bottom + window.scrollY;
-            drop.style.top = edge - 2 + 'px';
+            target = dropTarget(e.clientX, e.clientY, block);
+            showDrop(target);
         };
         const end = () => {
             grip.removeEventListener('pointermove', move);
             grip.removeEventListener('pointerup', end);
             grip.removeEventListener('pointercancel', end);
-            selected?.classList.remove('nl-dragging');
-            drop?.remove();
-            drop = null;
-            // L'index d'arrivée est donné avant retrait du bloc : on corrige quand il descend.
-            const to = target > from ? target - 1 : target;
-            if (to !== from) tell({ op: 'move', from, to });
+            block.classList.remove('nl-dragging');
+            hideDrop();
+            // L'index est compté sans le bloc déplacé : l'éditeur le retire d'abord, puis le replace à cet index.
+            if (target) tell({ op: 'move', id: idOf(block), parent: target.parent, col: target.col, index: target.index });
         };
         grip.addEventListener('pointermove', move);
         grip.addEventListener('pointerup', end);
@@ -220,7 +294,90 @@
         move(event);
     }
 
+    /* Un bloc glissé depuis le panneau « Ajouter » (HTML5 : le panneau est dans la page parente, la lettre dans cet iframe). */
+    const isAdd = (event) => [...(event.dataTransfer?.types ?? [])].includes('text/nl-add');
+    document.addEventListener('dragover', (event) => {
+        if (!isAdd(event)) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+        showDrop(dropTarget(event.clientX, event.clientY));
+    });
+    document.addEventListener('dragleave', (event) => {
+        if (isAdd(event) && !event.relatedTarget) hideDrop();
+    });
+    document.addEventListener('drop', (event) => {
+        if (!isAdd(event)) return;
+        event.preventDefault();
+        const target = dropTarget(event.clientX, event.clientY);
+        hideDrop();
+        const [kind, key] = event.dataTransfer.getData('text/nl-add').split(':');
+        tell({ op: 'drop-add', kind, key, parent: target.parent, col: target.col, index: target.index });
+    });
+
+    /* ───────── Mise à jour des lignes de la lettre par l'éditeur ───────── */
+    const ghost = (id) => {
+        const row = document.createElement('tr');
+        row.dataset.nlRow = '';
+        row.dataset.nlGhost = '';
+        const cell = row.appendChild(document.createElement('td'));
+        cell.dataset.nlId = id;
+        cell.textContent = 'Chargement du bloc…';
+
+        return row;
+    };
+    const parseRow = (html) => {
+        const holder = document.createElement('tbody');
+        holder.innerHTML = html;
+
+        return holder.firstElementChild;
+    };
+    const topRows = () => [...root().querySelectorAll(':scope > tbody > tr[data-nl-row]')];
+    const rowId = (row) => row.querySelector(':scope > td[data-nl-id]')?.dataset.nlId;
+
+    /**
+     * Met les lignes de la lettre dans l'état voulu. items : [{ id, html? , ghost? }] dans l'ordre. Une ligne sans html reste telle quelle
+     * (ou devient un bloc « en chargement » si elle n'existe pas encore) ; les lignes absentes de la liste sont retirées.
+     */
+    function setRows(items) {
+        const empty = root().querySelector(':scope > tbody > tr[data-nl-empty]');
+        const current = new Map(topRows().map((row) => [rowId(row), row]));
+        const want = [];
+
+        items.forEach((item) => {
+            let row = current.get(item.id);
+            if (item.html) {
+                const fresh = parseRow(item.html);
+                if (row) row.replaceWith(fresh);
+                row = fresh;
+                bind(row);
+            } else if (!row) {
+                row = ghost(item.id);
+            }
+            want.push(row);
+        });
+
+        const wanted = new Set(want);
+        current.forEach((row) => !wanted.has(row) && row.remove());
+
+        const inPlace = topRows();
+        if (inPlace.length !== want.length || want.some((row, i) => row !== inPlace[i])) want.forEach((row) => empty.before(row));
+        if (empty) empty.hidden = want.length > 0;
+
+        // Le bloc sélectionné a pu être redessiné (ou n'est pas encore arrivé) : on remet les repères.
+        paint();
+        placeBar();
+    }
+
+    window.nl = {
+        setRows,
+        select: (id) => select(id, { notify: false }),
+        reveal: (id) => byId(id)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }),
+        focus: (id) => byId(id)?.querySelector('[data-nl-field]')?.focus(),
+    };
+
     window.addEventListener('resize', positionBar);
+    document.addEventListener('load', positionBar, true); // une image qui finit de charger déplace ce qui suit
+    bind(document);
     placeBar();
     tell({ op: 'ready' });
 })();

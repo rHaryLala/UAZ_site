@@ -2,20 +2,72 @@
 [data-nl-block] {
     position: relative;
     cursor: pointer;
-    transition: background-color 0.12s;
 }
 
-[data-nl-block]:hover {
-    box-shadow: inset 0 0 0 2px rgb(59 108 255 / 0.4);
+/* Le bloc sous le pointeur (le plus profond) et le bloc sélectionné : un contour, pas un cadre qui décale la mise en page. */
+[data-nl-block].nl-hover {
+    outline: 2px solid rgb(59 108 255 / 0.45);
+    outline-offset: -2px;
 }
 
 [data-nl-block].nl-selected {
-    box-shadow: inset 0 0 0 2px #3b6cff;
+    outline: 2px solid #3b6cff;
+    outline-offset: -2px;
     background-image: linear-gradient(rgb(59 108 255 / 0.05), rgb(59 108 255 / 0.05));
 }
 
 [data-nl-block].nl-dragging {
     opacity: 0.35;
+}
+
+/* Bloc en cours de chargement (il vient d'être ajouté et le serveur le dessine) */
+[data-nl-ghost] td {
+    padding: 30px 32px;
+    text-align: center;
+    font: 600 13px/1.4 system-ui, sans-serif;
+    color: #6b7184;
+    background: linear-gradient(100deg, #eef0f6 30%, #ffffff 50%, #eef0f6 70%) 0 0 / 220% 100%;
+    animation: nl-shimmer 1.1s linear infinite;
+}
+
+@keyframes nl-shimmer {
+    to {
+        background-position: -220% 0;
+    }
+}
+
+/* Emplacement « Ajouter ici » dans une colonne ou un bandeau : toujours visible quand il est vide, sinon quand le conteneur est sélectionné */
+[data-nl-slot] {
+    display: none;
+    margin: 6px 0 0;
+    padding: 9px 8px;
+    border: 1.5px dashed rgb(59 108 255 / 0.55);
+    border-radius: 8px;
+    font: 600 12px/1.2 system-ui, sans-serif;
+    color: #3b6cff;
+    text-align: center;
+    cursor: pointer;
+    background: rgb(59 108 255 / 0.04);
+}
+
+[data-nl-slot][data-nl-empty-slot='1'],
+.nl-selected [data-nl-slot] {
+    display: block;
+}
+
+[data-nl-slot][data-nl-empty-slot='1'] {
+    padding: 26px 8px;
+}
+
+[data-nl-slot]:hover {
+    background: rgb(59 108 255 / 0.12);
+}
+
+/* Colonne ou bandeau qui recevra le bloc glissé */
+.nl-drop-list {
+    outline: 2px dashed #3b6cff;
+    outline-offset: -3px;
+    background-image: linear-gradient(rgb(59 108 255 / 0.06), rgb(59 108 255 / 0.06));
 }
 
 [data-nl-field] {

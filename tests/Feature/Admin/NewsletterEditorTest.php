@@ -5,13 +5,16 @@ use App\Filament\Resources\Newsletters\Pages\ListNewsletters;
 use App\Jobs\SendNewsletter;
 use App\Jobs\SendNewsletterMessage;
 use App\Mail\NewsletterMessage;
+use App\Models\MediaAsset;
 use App\Models\Newsletter;
 use App\Models\NewsletterDelivery;
 use App\Models\NewsletterSubscriber;
 use App\Models\User;
 use App\Support\NewsletterBlocks;
 use App\Support\NewsletterRenderer;
+use App\Support\NewsletterTemplates;
 use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
@@ -315,4 +318,204 @@ it('lists the letters and creates one with a starter content, then goes to the e
 
 it('hides the newsletter screens from people without the publishing right', function () {
     $this->actingAs(User::factory()->create())->get('/admin/newsletters')->assertForbidden();
+});
+
+// --- Blocs imbriqués : colonnes et bandeaux -----------------------------------------------------------------------------------------------
+
+it('keeps the tree of a columns block and sanitises what is inside', function () {
+    $blocks = NewsletterBlocks::normalize([[
+        'id' => 'abcd1234ef', 'type' => 'columns', 'data' => ['count' => 2, 'ratio' => '1:2'],
+        'children' => [
+            [['type' => 'heading', 'data' => ['text' => '<script>x</script>Titre']]],
+            [['type' => 'text', 'data' => ['html' => '<p onclick="x()">Texte</p>']], ['type' => 'image', 'data' => ['media' => '12']]],
+        ],
+    ]]);
+
+    expect($blocks)->toHaveCount(1)->and($blocks[0]['children'])->toHaveCount(2)
+        ->and($blocks[0]['data']['ratio'])->toBe('1:2')
+        ->and($blocks[0]['children'][0][0]['data']['text'])->not->toContain('<')
+        ->and($blocks[0]['children'][1][0]['data']['html'])->not->toContain('onclick')
+        ->and($blocks[0]['children'][1][1]['data']['media'])->toBe(12);
+    expect(NewsletterBlocks::mediaIds($blocks))->toBe([12]);
+});
+
+it('fixes the number of columns, their proportions, and merges surplus columns without losing a block', function () {
+    $blocks = NewsletterBlocks::normalize([[
+        'type' => 'columns', 'data' => ['count' => 2, 'ratio' => '1:1:1'],
+        'children' => [[['type' => 'divider']], [['type' => 'spacer']], [['type' => 'text'], ['type' => 'heading']]],
+    ]]);
+
+    expect($blocks[0]['children'])->toHaveCount(2)
+        ->and($blocks[0]['data']['ratio'])->toBe('1:1') // des proportions à trois colonnes ne vont pas à deux
+        ->and(array_column($blocks[0]['children'][1], 'type'))->toBe(['spacer', 'text', 'heading']);
+
+    $three = NewsletterBlocks::normalize([['type' => 'columns', 'data' => ['count' => 3], 'children' => [[['type' => 'text']]]]]);
+    expect($three[0]['children'])->toHaveCount(3)->and($three[0]['children'][2])->toBe([]);
+});
+
+it('allows a section to hold columns but no container deeper than that', function () {
+    $blocks = NewsletterBlocks::normalize([[
+        'type' => 'section', 'children' => [[[
+            'type' => 'columns', 'children' => [[['type' => 'section', 'children' => [[['type' => 'text']]]], ['type' => 'text']], []],
+        ]]],
+    ]]);
+
+    $columns = $blocks[0]['children'][0][0];
+    expect($columns['type'])->toBe('columns')
+        ->and(array_column($columns['children'][0], 'type'))->toBe(['text']); // le conteneur du troisième niveau est refusé, le texte reste
+});
+
+it('gives every block of the tree its own identifier, even when the browser sends duplicates', function () {
+    $blocks = NewsletterBlocks::normalize([
+        ['id' => 'sameid0001', 'type' => 'section', 'children' => [[['id' => 'sameid0001', 'type' => 'text']]]],
+        ['id' => 'sameid0001', 'type' => 'divider'],
+    ]);
+
+    $ids = array_column(NewsletterBlocks::flatten($blocks), 'id');
+    expect($ids)->toHaveCount(3)->and(array_unique($ids))->toHaveCount(3);
+});
+
+it('caps the total number of blocks, nested ones included', function () {
+    $many = array_fill(0, 40, ['type' => 'columns', 'children' => [[['type' => 'text'], ['type' => 'text']], [['type' => 'text']]]]);
+
+    expect(count(NewsletterBlocks::flatten(NewsletterBlocks::normalize($many))))->toBe(NewsletterBlocks::MAX_BLOCKS);
+});
+
+it('lets the spacer take a colour, and refuses anything that is not #rrggbb', function () {
+    $blocks = NewsletterBlocks::normalize([['type' => 'spacer', 'data' => ['height' => 500, 'color' => '#E1EBFF']], ['type' => 'spacer', 'data' => ['color' => 'red; background:url(x)']]]);
+
+    expect($blocks[0]['data'])->toBe(['height' => 160, 'color' => '#e1ebff'])->and($blocks[1]['data']['color'])->toBe('');
+});
+
+it('draws columns with exact pixel widths, side by side, with a gap that disappears on mobile', function () {
+    $block = NewsletterBlocks::make('columns');
+    $html = NewsletterRenderer::html(['subject' => 'x', 'blocks' => [$block], 'theme' => NewsletterBlocks::defaultTheme()]);
+
+    expect($html)->toContain('class="nl-col"')->toContain('class="nl-gap"')->toContain('.nl-gap { display: none !important; }')
+        ->and(substr_count($html, 'class="nl-col"'))->toBe(2)
+        ->and($html)->not->toContain('data-nl-');
+});
+
+it('turns the text light on a dark banner, and leaves it alone on a light one', function () {
+    $dark = NewsletterBlocks::normalize([['type' => 'section', 'data' => ['bg' => '#131a3f'], 'children' => [[['type' => 'text']]]]]);
+    $light = NewsletterBlocks::normalize([['type' => 'section', 'data' => ['bg' => '#f4f1ea'], 'children' => [[['type' => 'text']]]]]);
+    $theme = NewsletterBlocks::defaultTheme();
+
+    expect(NewsletterRenderer::html(['blocks' => $dark, 'theme' => $theme]))->toContain('color:#f1ede4')->toContain('nl-dark')
+        ->and(NewsletterRenderer::html(['blocks' => $light, 'theme' => $theme]))->not->toContain('color:#f1ede4');
+    expect(NewsletterRenderer::isDark('#131a3f'))->toBeTrue()->and(NewsletterRenderer::isDark('#ffffff'))->toBeFalse()->and(NewsletterRenderer::isDark('red'))->toBeFalse();
+});
+
+it('shows the editing marks and drop zones of nested blocks only while editing', function () {
+    $state = ['blocks' => [NewsletterBlocks::make('columns')], 'theme' => NewsletterBlocks::defaultTheme()];
+    $editing = NewsletterRenderer::html($state, null, null, true);
+
+    expect($editing)->toContain('data-nl-list="root"')->toContain('data-nl-slot')->toContain('data-nl-depth="1"')->toContain('data-nl-parent=');
+    expect(NewsletterRenderer::html($state))->not->toContain('data-nl-slot')->not->toContain('data-nl-list');
+});
+
+it('draws one row per top-level block for the incremental update of the artboard', function () {
+    $blocks = NewsletterBlocks::normalize(NewsletterBlocks::starter());
+    $rows = NewsletterRenderer::rows($blocks, NewsletterBlocks::defaultTheme());
+
+    expect($rows)->toHaveCount(3);
+    foreach ($rows as $i => $row) {
+        expect(trim($row))->toStartWith('<tr data-nl-row')->and($row)->toContain('data-nl-id="'.$blocks[$i]['id'].'"');
+    }
+});
+
+it('includes the blocks of columns and banners in the plain-text version', function () {
+    $blocks = NewsletterBlocks::normalize([['type' => 'section', 'children' => [[['type' => 'heading', 'data' => ['text' => 'Bienvenue']], ['type' => 'columns', 'children' => [[['type' => 'text', 'data' => ['html' => '<p>Dans la colonne</p>']]], []]]]]]]);
+    $text = NewsletterRenderer::text(['subject' => 'x', 'blocks' => $blocks]);
+
+    expect($text)->toContain('BIENVENUE')->toContain('Dans la colonne');
+});
+
+it('can place a block of every type, composition included, and each survives normalisation unchanged', function () {
+    foreach (array_keys(NewsletterBlocks::types()) as $type) {
+        $block = NewsletterBlocks::make($type);
+        expect(NewsletterBlocks::normalize([$block]))->toBe([$block]);
+    }
+
+    foreach (NewsletterBlocks::presets() as $key => $preset) {
+        $block = NewsletterBlocks::withIds([$preset['block']])[0];
+        expect(NewsletterBlocks::normalize([$block]))->toBe([$block], "composition {$key}");
+    }
+});
+
+// --- Modèles ----------------------------------------------------------------------------------------------------------------------------
+
+it('offers modern templates that build, normalise without loss and draw without error', function () {
+    expect(NewsletterTemplates::keys())->toContain('news', 'event', 'rector', 'admissions', 'gallery', 'support', 'simple')
+        ->and(NewsletterTemplates::build('inconnu'))->toBeNull();
+
+    foreach (NewsletterTemplates::keys() as $key) {
+        $built = NewsletterTemplates::build($key);
+        expect($built['subject'])->not->toBe('')->and($built['blocks'])->not->toBeEmpty()
+            ->and(NewsletterBlocks::normalize($built['blocks']))->toBe($built['blocks'], "modèle {$key}");
+        expect(NewsletterRenderer::html($built))->toContain('</html>')->not->toContain('data-nl-');
+        expect(NewsletterRenderer::text($built))->not->toBe('');
+    }
+});
+
+it('fills the photo blocks of a template with the latest photos of the media library', function () {
+    $asset = MediaAsset::create(['title' => 'Photo']);
+    $asset->addMedia(UploadedFile::fake()->image('campus.jpg', 800, 600))->toMediaCollection(MediaAsset::COLLECTION);
+
+    $built = NewsletterTemplates::build('event');
+    $photos = collect(NewsletterBlocks::flatten($built['blocks']))->where('type', 'image')->pluck('data.media');
+
+    expect($photos->unique()->all())->toBe([$asset->id]);
+});
+
+it('creates a letter from the chosen template', function () {
+    $this->actingAs($this->editor);
+
+    Livewire::test(CreateNewsletter::class)->fillForm(['subject' => 'Ma lettre', 'template' => 'event'])->call('create')->assertHasNoFormErrors();
+
+    $letter = Newsletter::sole();
+    expect(collect(NewsletterBlocks::flatten($letter->blocks))->pluck('type'))->toContain('columns', 'section')
+        ->and($letter->theme['font'])->toBe('sans');
+});
+
+// --- Points d'accès de l'éditeur --------------------------------------------------------------------------------------------------------
+
+it('draws rows on request, normalised, for editors only', function () {
+    $letter = draftLetter();
+    $payload = ['blocks' => [['id' => 'rowtest001', 'type' => 'heading', 'data' => ['text' => '<b>Un titre</b>']], ['type' => 'nope']], 'theme' => NewsletterBlocks::defaultTheme()];
+
+    $this->postJson(route('admin.newsletter-editor.rows', $letter), $payload)->assertUnauthorized();
+    $this->actingAs(User::factory()->create())->postJson(route('admin.newsletter-editor.rows', $letter), $payload)->assertForbidden();
+
+    $rows = $this->actingAs($this->editor)->postJson(route('admin.newsletter-editor.rows', $letter), $payload)->assertOk()->json('rows');
+    expect($rows)->toHaveCount(1)->and($rows[0])->toContain('data-nl-id="rowtest001"')->not->toContain('<b>');
+
+    $this->actingAs($this->editor)->postJson(route('admin.newsletter-editor.rows', $letter), ['blocks' => array_fill(0, 41, ['type' => 'divider'])])->assertUnprocessable();
+});
+
+it('lists the templates with a preview, blocks and theme, for editors only', function () {
+    $letter = draftLetter();
+
+    $this->getJson(route('admin.newsletter-editor.templates', $letter))->assertUnauthorized();
+    $this->actingAs(User::factory()->create())->getJson(route('admin.newsletter-editor.templates', $letter))->assertForbidden();
+
+    $templates = $this->actingAs($this->editor)->getJson(route('admin.newsletter-editor.templates', $letter))->assertOk()->json('templates');
+    expect($templates)->toHaveCount(count(NewsletterTemplates::keys()))
+        ->and($templates[0])->toHaveKeys(['key', 'name', 'description', 'subject', 'theme', 'blocks', 'preview', 'media'])
+        ->and($templates[0]['preview'])->toContain('<html');
+});
+
+it('gives the editor the block library, with ready-made compositions, and the sender address', function () {
+    $html = $this->actingAs($this->editor)->get(route('admin.newsletter-editor.show', draftLetter()))->assertOk()->getContent();
+
+    expect($html)->toContain('"photo-text"')->toContain('"banner-dark"')->toContain('newsletter@zurcher.edu.mg');
+});
+
+it('sends the letters from the dedicated newsletter address, replies going to the site address', function () {
+    $envelope = (new NewsletterMessage(draftLetter(), subscriber('un@exemple.org')))->envelope();
+
+    expect($envelope->from->address)->toBe('newsletter@zurcher.edu.mg')->and($envelope->from->name)->toBe('Université Adventiste Zurcher');
+
+    config(['newsletter.from.address' => 'autre@zurcher.edu.mg']);
+    expect((new NewsletterMessage(draftLetter(), null, test: true))->envelope()->from->address)->toBe('autre@zurcher.edu.mg');
 });
