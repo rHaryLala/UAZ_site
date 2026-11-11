@@ -139,7 +139,7 @@ it('offers "Soutenir l\'UAZ" next to "Découvrir l\'UAZ" in the hero, so donors 
     $html = $this->get('/')->assertOk()->getContent();
     $hero = substr($html, strpos($html, 'data-hero-title'), 2600);
 
-    expect($hero)->toContain('Découvrir l&#039;UAZ')->toContain('Soutenir l&#039;UAZ')->toContain('href="'.url('/soutenir').'"')
+    expect($hero)->toContain('Découvrir l&#039;UAZ')->toContain('Soutenir l&#039;UAZ')->toContain('href="'.config('uaz.donation_url').'"')
         ->and($hero)->not->toContain('Planifier votre visite');
 
     $this->seed(ContentTranslationsSeeder::class);
@@ -147,7 +147,7 @@ it('offers "Soutenir l\'UAZ" next to "Découvrir l\'UAZ" in the hero, so donors 
 });
 
 it('puts the library catalogue in the top bar of every page, in a new tab', function () {
-    foreach (['/' => 'Catalogue de la bibliothèque', '/formations' => 'Catalogue de la bibliothèque', '/en' => 'Library catalogue'] as $path => $label) {
+    foreach (['/' => 'Catalogue de la bibliothèque', '/formations' => 'Catalogue de la bibliothèque', '/en' => 'Library catalog'] as $path => $label) {
         $html = $this->get($path)->assertOk()->getContent();
         $bar = substr($html, 0, strpos($html, '</header>'));
 

@@ -97,8 +97,8 @@ it('is served in English and Malagasy, with prefixed links and a translated sent
 
     $this->get('/en/centre-de-recherche')->assertOk()
         ->assertSee('<html lang="en"', false)
-        ->assertSee('Research centre')
-        ->assertSee('The centre is directed by ANDRIAMBAHOAKA Manda, head of the Social sciences field.')
+        ->assertSee('Research Center')
+        ->assertSee('The center is directed by ANDRIAMBAHOAKA Manda, head of the Social sciences field.')
         ->assertSee('will be published here')
         ->assertSee('/en/equipe"', false);
 

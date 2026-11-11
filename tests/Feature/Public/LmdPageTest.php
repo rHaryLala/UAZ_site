@@ -77,6 +77,6 @@ it('is served in English and Malagasy with translated data', function () {
     $this->seed(ContentTranslationsSeeder::class);
 
     $this->get('/en/systeme-lmd')->assertOk()->assertSee('<html lang="en"', false)
-        ->assertSee('Three degrees, one path')->assertSee('180 ECTS credits')->assertSee('Business administration')->assertSee('Our programmes');
+        ->assertSee('Three degrees, one path')->assertSee('180 ECTS credits')->assertSee('Business administration')->assertSee('Our majors');
     $this->get('/mg/systeme-lmd')->assertOk()->assertSee('<html lang="mg"', false)->assertSee('Ambaratonga telo, lalana iray')->assertSee('Fitantanana raharaha');
 });

@@ -61,7 +61,7 @@ class ContentTranslationsSeeder extends Seeder
     private const PAGES = [
         'home' => ['Home', 'Fandraisana'],
         'about' => ['About', 'Momba ny UAZ', 'History, vision and values of Zurcher Adventist University.', 'Tantara, fahitana ary soatoavin\'ny Oniversite Advantista Zurcher.'],
-        'admissions' => ['Admissions', 'Fidirana', 'Admission after the baccalaureate, depending on the field of study and the criteria of each programme.', 'Fidirana aorian\'ny bakalorea, araka ny sehatra sy ny fepetra isaky ny taranja.'],
+        'admissions' => ['Admissions', 'Fidirana', 'Admission after the baccalaureate, depending on the major and the requirements of each program.', 'Fidirana aorian\'ny bakalorea, araka ny sehatra sy ny fepetra isaky ny taranja.'],
         'admissions-licence' => ['Bachelor\'s (Licence)', 'Licence'],
         'admissions-master' => ['Master\'s', 'Master'],
         'admissions-fees' => ['Tuition and fees', 'Saram-pianarana'],
@@ -72,8 +72,8 @@ class ContentTranslationsSeeder extends Seeder
         'student-life-dorms' => ['Dormitories', 'Trano fatoriana'],
         'student-life-association' => ['Student association', 'Fikambanan\'ny mpianatra', 'The Student Association (SA) coordinates all the activities planned for the year, under the supervision of the Vice-Rector for Student Affairs.', 'Ny Fikambanan\'ny mpianatra (SA) no mandrindra ny hetsika rehetra voalahatra amin\'ny taona, eo ambany fanaraha-mason\'ny Lefitra Filohan\'ny Oniversite miandraikitra ny raharaha momba ny mpianatra.'],
         'lmd' => ['LMD system', 'Rafitra LMD', 'Bachelor\'s, Master\'s, Doctorate: the UAZ study system.', 'Licence, Master, Doctorat: ny rafitry ny fianarana ao amin\'ny UAZ.'],
-        'research' => ['Research centre (ZRC)', 'Foibe fikarohana (ZRC)', 'The research centre of Zurcher Adventist University.', 'Ny foibe fikarohan\'ny Oniversite Advantista Zurcher.'],
-        'timetables' => ['Timetables', 'Fandaharam-potoana'],
+        'research' => ['Research Center (ZRC)', 'Foibe fikarohana (ZRC)', 'The research center of Zurcher Adventist University.', 'Ny foibe fikarohan\'ny Oniversite Advantista Zurcher.'],
+        'timetables' => ['Class schedules', 'Fandaharam-potoana'],
         'support' => ['Support UAZ', 'Manohana ny UAZ', 'Support Zurcher Adventist University and its students: discover UAZ\'s projects and support them.', 'Ampio ny Oniversite Advantista Zurcher sy ny mpianany: fantaro ny tetikasan\'ny UAZ ary hohano izy ireo.'],
         'privacy' => ['Privacy and cookies', 'Tsiambaratelo sy cookies', 'The data this site uses, the cookies it sets and your rights.', 'Ny angona ampiasain\'ity tranonkala ity, ny cookies apetrany ary ny zonao.'],
     ];
@@ -113,22 +113,23 @@ class ContentTranslationsSeeder extends Seeder
 
         $figures = [
             'Fondation de l’UAZ' => ['UAZ founded', 'Naorina ny UAZ'],
-            'Mentions de licence' => ['Bachelor\'s fields of study', 'Sehatra Licence'],
+            'Mentions de licence' => ['Bachelor\'s majors', 'Sehatra Licence'],
             'Crédits ECTS en licence (3 ans)' => ['ECTS credits in a Bachelor\'s (3 years)', 'Crédits ECTS amin\'ny Licence (3 taona)'],
             'Hectares de campus' => ['Hectares of campus', 'Hektara campus'],
         ];
         $days = ['Lundi – jeudi' => ['Monday – Thursday', 'Alatsinainy – Alakamisy'], 'Vendredi' => ['Friday', 'Zoma']];
         $hours = [
-            '7 h 30 – 12 h et 13 h 30 – 17 h 30' => ['7:30 am – 12 noon and 1:30 pm – 5:30 pm', '7 ora 30 – 12 ora sy 13 ora 30 – 17 ora 30'],
-            '7 h 30 – 12 h' => ['7:30 am – 12 noon', '7 ora 30 – 12 ora'],
+            '7 h 30 – 12 h et 13 h 30 – 17 h 30' => ['7:30 am – 12 pm and 1:30 pm – 5:30 pm', '7 ora 30 – 12 ora sy 13 ora 30 – 17 ora 30'],
+            '7 h 30 – 12 h' => ['7:30 am – 12 pm', '7 ora 30 – 12 ora'],
         ];
 
         foreach ([0 => 'en', 1 => 'mg'] as $i => $locale) {
             $this->fill($settings, $locale, array_filter([
-                'tagline' => ['Preparing today the leaders of tomorrow', 'Manomana ankehitriny ny mpitarika ho avy'][$i],
-                'home_hero_title' => ['Preparing today the leaders of tomorrow', 'Manomana ankehitriny ny mpitarika ho avy'][$i],
+                'site_name' => ['Zurcher Adventist University', 'Oniversite Advantista Zurcher'][$i],
+                'tagline' => ['Preparing tomorrow\'s leaders today', 'Manomana ankehitriny ny mpitarika ho avy'][$i],
+                'home_hero_title' => ['Preparing tomorrow\'s leaders today', 'Manomana ankehitriny ny mpitarika ho avy'][$i],
                 'home_hero_subtitle' => [
-                    'Academic excellence, a lively student life and personal development: UAZ supports you in a modern, green setting that supports well-being.',
+                    'Academic excellence, a vibrant student life and personal growth: UAZ is with you every step of the way, in a modern, green setting that supports well-being.',
                     'Fahaiza-manao ambony ara-pianarana, fiainana mavitrika eo amin\'ny mpianatra ary fampandrosoana manokana: ny UAZ dia miaraka aminao ao anatin\'ny tontolo maoderina sy maitso mandray anjara amin\'ny fahasalamana.',
                 ][$i],
                 'footer_text' => ['Spiritus · Manus · Mens — Service.', 'Spiritus · Manus · Mens — Fanompoana.'][$i],
@@ -168,7 +169,7 @@ class ContentTranslationsSeeder extends Seeder
                 : null;
 
             $this->fill($formation, 'en', array_filter([
-                'title' => "Bachelor's in $en", 'mention' => $en, 'duration' => '3 years (6 semesters)', 'summary' => $summary(0, 'Pathways:'),
+                'title' => "Bachelor's in $en", 'mention' => $en, 'duration' => '3 years (6 semesters)', 'summary' => $summary(0, 'Tracks:'),
             ]));
             $this->fill($formation, 'mg', array_filter([
                 'title' => "Licence amin'ny $mg", 'mention' => $mg, 'duration' => 'Taona 3 (semestra 6)', 'summary' => $summary(1, 'Lalana:'),

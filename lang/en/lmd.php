@@ -9,7 +9,7 @@ return [
         'cue' => 'Climb the degrees',
     ],
     'grade' => 'Bac+:years',
-    'after_master' => 'After the Master',
+    'after_master' => 'After the Master\'s',
     'climb' => [
         'eyebrow' => 'The climb',
         'title' => 'Three degrees, one path',
@@ -21,18 +21,18 @@ return [
         'start' => 'Bac',
     ],
     'licence' => [
-        'title' => 'Our programmes',
+        'title' => 'Our majors',
     ],
     'master' => [
         'title' => 'Master\'s degrees',
         'stages' => 'Two years: M1 then M2',
     ],
     'tracks' => 'Tracks',
-    'link' => 'See the programme',
+    'link' => 'View program',
     'cta' => [
-        'text' => 'Choose your programme and prepare your admission.',
-        'licence' => 'Licence admission',
-        'master' => 'Master admission',
-        'formations' => 'All programmes',
+        'text' => 'Choose your major and prepare your admission.',
+        'licence' => 'Bachelor\'s (Licence) admission',
+        'master' => 'Master\'s admission',
+        'formations' => 'All programs',
     ],
 ];

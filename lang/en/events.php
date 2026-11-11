@@ -5,7 +5,7 @@
  */
 return [
     'hero' => [
-        'eyebrow' => 'Agenda',
+        'eyebrow' => 'Calendar',
     ],
     'next' => [
         'eyebrow' => 'Next up',
@@ -25,11 +25,11 @@ return [
         'now' => 'Happening now',
     ],
     'upcoming' => [
-        'eyebrow' => 'The programme',
-        'empty' => 'No event is scheduled at the moment. Come back soon or follow us on social media.',
+        'eyebrow' => 'What\'s on',
+        'empty' => 'No events are scheduled right now. Check back soon or follow us on social media.',
     ],
     'past' => [
-        'eyebrow' => 'Archive',
+        'eyebrow' => 'Past events',
     ],
     'more' => [
         'text' => 'Never miss a moment on campus.',
@@ -37,7 +37,7 @@ return [
         'news' => 'Read the news',
     ],
     'show' => [
-        'past' => 'Event over',
+        'past' => 'This event has ended',
         'calendar' => [
             'title' => 'Add to my calendar',
             'ics' => 'Calendar file (.ics)',
@@ -47,11 +47,11 @@ return [
             'eyebrow' => 'When',
             'title' => 'The schedule',
             'days' => ':count days',
-            'track' => 'Time of the event within the day',
+            'track' => 'When the event takes place during the day',
         ],
         'about' => 'About the event',
         'others' => [
-            'eyebrow' => 'Also',
+            'eyebrow' => 'More',
             'title' => 'Other events',
         ],
     ],

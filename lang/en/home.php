@@ -7,10 +7,10 @@
 
 return [
     'hero' => [
-        'eyebrow' => 'A programme. A future. A vision.',
+        'eyebrow' => 'An education. A future. A vision.',
         'region' => 'Madagascar / French-speaking university',
-        'title' => 'Preparing today the leaders of tomorrow',
-        'subtitle' => 'Academic excellence, a lively student life and personal development: UAZ supports you in a modern, green setting that supports well-being.',
+        'title' => 'Preparing tomorrow\'s leaders today',
+        'subtitle' => 'Academic excellence, a vibrant student life and personal growth: UAZ is with you every step of the way, in a modern, green setting that supports well-being.',
         'cta_primary' => 'Discover UAZ',
         'cta_secondary' => 'Support UAZ',
         // Phrase du bas du héros : elle défile dans les trois langues, quelle que soit la langue de la page.
@@ -22,8 +22,8 @@ return [
 
     'difference' => [
         'eyebrow' => 'The UAZ difference',
-        'title' => 'Academic excellence, a lively student life and personal development.',
-        'text' => 'UAZ combines experienced permanent faculty, a modern campus, a library, laboratories, relaxation areas, practical projects, cultural and sporting activities, as well as professional and spiritual support.',
+        'title' => 'Academic excellence, a vibrant student life and personal growth.',
+        'text' => 'UAZ brings together experienced full-time faculty, a modern campus, a library, laboratories, places to relax, hands-on projects, cultural and sports activities, and professional and spiritual guidance.',
         'link' => 'Get to know us',
     ],
 
@@ -39,37 +39,37 @@ return [
     ],
 
     'formations' => [
-        'eyebrow' => 'Programmes',
-        'title' => 'A programme. A future. A vision.',
-        'link' => 'Explore all programmes',
-        'paths' => 'Paths suited to your goals.',
+        'eyebrow' => 'Academics',
+        'title' => 'An education. A future. A vision.',
+        'link' => 'Explore all programs',
+        'paths' => 'Programs to match your goals.',
         'continuing' => 'Professional and continuing education',
     ],
 
     'admissions' => [
         'eyebrow' => 'Admissions & financial aid',
-        'title' => 'Admission after the baccalaureate, depending on the grade and the criteria of each programme.',
-        'text' => 'The application includes transcripts, identity documents and official forms. Choose a programme that suits your goals. The academic office supports you throughout your application.',
+        'title' => 'Admission after the baccalaureate, depending on the major and the requirements of each program.',
+        'text' => 'Your application includes transcripts, ID documents and the official forms. Choose the program that fits your goals, and the academic office will guide you through every step.',
         'primary' => 'Application and admission',
         'secondary' => 'Admission information',
     ],
 
     'life' => [
         'eyebrow' => 'Life at UAZ',
-        'title' => 'A modern campus, a lively student life and personal development.',
-        'text' => 'Practical projects, cultural and sporting activities, professional and spiritual support: a setting designed to learn, grow and flourish.',
+        'title' => 'A modern campus, a vibrant student life and personal growth.',
+        'text' => 'Hands-on projects, cultural and sports activities, professional and spiritual support: a place designed for learning, growing and thriving.',
         'link' => 'Discover student life',
     ],
 
     'practice' => [
         'eyebrow' => 'Hands-on learning',
         'title' => 'Learn in the field. Change the world.',
-        'text' => 'Our programmes combine theory, practice, projects, internships and academic support to prepare you concretely for your future.',
+        'text' => 'Our programs combine theory, practice, projects, internships and academic mentoring to prepare you for your career.',
     ],
 
     'testimonials' => [
         'eyebrow' => 'In their own words',
-        'title' => 'They talk about UAZ',
+        'title' => 'What they say about UAZ',
     ],
 
     'news' => [
@@ -85,8 +85,8 @@ return [
     ],
 
     'resources' => [
-        'eyebrow' => 'You are invited',
-        'title' => 'Practical resources at your disposal.',
+        'eyebrow' => 'Welcome',
+        'title' => 'Practical resources, at your service.',
         'link' => 'See all resources',
     ],
 
@@ -96,7 +96,7 @@ return [
 
     'cta' => [
         'eyebrow' => 'Your future takes shape',
-        'title' => 'Preparing today the leaders of tomorrow.',
-        'text' => 'Academic excellence, a lively student life and personal development: UAZ supports you in a modern, green setting that supports well-being.',
+        'title' => 'Preparing tomorrow\'s leaders today.',
+        'text' => 'Academic excellence, a vibrant student life and personal growth: UAZ is with you every step of the way, in a modern, green setting that supports well-being.',
     ],
 ];

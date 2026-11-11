@@ -12,14 +12,14 @@ use Illuminate\Support\Facades\Cache;
 #[Fillable([
     'site_name', 'tagline', 'logo_id', 'default_og_image_id', 'address', 'phone', 'email', 'latitude',
     'longitude', 'opening_hours', 'social_links', 'footer_text', 'footer_legal', 'home_hero_title',
-    'home_hero_subtitle', 'home_hero_image_id', 'home_cta_image_id','formations_hero_image_id', 'key_figures',
+    'home_hero_subtitle', 'home_hero_image_id', 'home_cta_image_id', 'formations_hero_image_id', 'key_figures',
 ])]
 class SiteSetting extends Model
 {
     use HasTranslations;
 
     /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
-    protected array $translatable = ['tagline', 'footer_text', 'footer_legal', 'home_hero_title', 'home_hero_subtitle', 'key_figures', 'opening_hours'];
+    protected array $translatable = ['site_name', 'tagline', 'footer_text', 'footer_legal', 'home_hero_title', 'home_hero_subtitle', 'key_figures', 'opening_hours'];
 
     /** Listes dont la traduction ne remplace que les textes (libellés) : valeurs et suffixes viennent de l'original. */
     protected array $translatableMerge = ['key_figures', 'opening_hours'];

@@ -50,30 +50,30 @@ return [
     'engagement' => [
         'eyebrow' => 'Its commitment',
         'title' => 'The VRAE\'s projects come first',
-        'lead' => 'The Association is required to commit effectively to promoting all the projects and programmes that come directly from the VRAE, according to the way the VRAE has set up its operations.',
+        'lead' => 'The Association is required to commit effectively to promoting all the projects and programs that come directly from the VRAE, according to the way the VRAE has set up its operations.',
         'plan' => 'The Association\'s planning',
-        'lane_vrae' => 'VRAE projects and programmes',
+        'lane_vrae' => 'VRAE projects and programs',
         'lane_others' => 'Other activities',
-        'visual' => 'A schedule where the VRAE\'s projects and programmes are placed first and given emphasis.',
+        'visual' => 'A schedule where the VRAE\'s projects and programs are placed first and given emphasis.',
         'principles' => [
             'promote' => [
                 'word' => 'Promote',
-                'text' => 'Promote all the projects and programmes that come directly from the VRAE, according to the way the VRAE has set up its operations.',
+                'text' => 'Promote all the projects and programs that come directly from the VRAE, according to the way the VRAE has set up its operations.',
             ],
             'discuss' => [
                 'word' => 'Discuss',
                 'text' => 'In business discussions, both parties will find the best ways to carry them out.',
             ],
             'prioritize' => [
-                'word' => 'Prioritise',
-                'text' => 'Make these projects and programmes a priority, and give them emphasis in the Association\'s planning.',
+                'word' => 'Prioritize',
+                'text' => 'Make these projects and programs a priority, and give them emphasis in the Association\'s planning.',
             ],
         ],
     ],
     'closing' => [
         'eyebrow' => 'Going further',
         'title' => 'It is all in the Student Handbook',
-        'text' => 'This page summarises section 3.3 of the UAZ Student Handbook, « The Student Association ». The activities of the year are presented in section 3.4.',
+        'text' => 'This page summarizes section 3.3 of the UAZ Student Handbook, « The Student Association ». The activities of the year are presented in section 3.4.',
         'manual' => 'Download the handbook',
         'more' => 'Also discover',
     ],

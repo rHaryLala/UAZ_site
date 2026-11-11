@@ -6,6 +6,7 @@ use App\Models\Page;
 use App\Models\SiteSetting;
 use App\Models\User;
 use App\Support\Locales;
+use Database\Seeders\ContentTranslationsSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\StructureSeeder;
 use Illuminate\Support\Facades\Cache;
@@ -114,14 +115,14 @@ it('seeds English and Malagasy content for the site structure, without overwriti
     $formation = Formation::where('title', 'Licence en Droit')->firstOrFail();
     $formation->update(['translations' => ['en' => ['title' => 'Law (edited by an editor)']]]);
 
-    $this->seed(Database\Seeders\ContentTranslationsSeeder::class);
-    $this->seed(Database\Seeders\ContentTranslationsSeeder::class); // idempotent
+    $this->seed(ContentTranslationsSeeder::class);
+    $this->seed(ContentTranslationsSeeder::class); // idempotent
 
     $formation = $formation->fresh();
     expect($formation->translation('title', 'en'))->toBe('Law (edited by an editor)')
         ->and($formation->translation('title', 'mg'))->toBe('Licence amin\'ny Lalàna')
-        ->and($formation->translation('summary', 'en'))->toBe('Pathways: Public · Private.')
-        ->and(SiteSetting::current()->translation('tagline', 'en'))->toBe('Preparing today the leaders of tomorrow')
+        ->and($formation->translation('summary', 'en'))->toBe('Tracks: Public · Private.')
+        ->and(SiteSetting::current()->translation('tagline', 'en'))->toBe('Preparing tomorrow\'s leaders today')
         ->and(Page::where('key', 'privacy')->first()->translation('blocks', 'en'))->toHaveCount(9);
 
     $this->get('/en/formations')->assertOk()->assertSee('Law (edited by an editor)')->assertSee('Health sciences');

@@ -7,7 +7,7 @@
 
 return [
     'hero' => [
-        'eyebrow' => 'Fianarana. Ho avy. Fahitana.',
+        'eyebrow' => 'Fianarana. Hoavy. Fahitana.',
         'region' => 'Madagasikara / Oniversite miteny frantsay',
         'title' => 'Manomana ankehitriny ny mpitarika ho avy',
         'subtitle' => 'Fahaiza-manao ambony ara-pianarana, fiainana mavitrika eo amin\'ny mpianatra ary fampandrosoana manokana: ny UAZ dia miaraka aminao ao anatin\'ny tontolo maoderina sy maitso mandray anjara amin\'ny fahasalamana.',
@@ -40,7 +40,7 @@ return [
 
     'formations' => [
         'eyebrow' => 'Fianarana',
-        'title' => 'Fianarana. Ho avy. Fahitana.',
+        'title' => 'Fianarana. Hoavy. Fahitana.',
         'link' => 'Hijery ny fianarana rehetra',
         'paths' => 'Lalana mifanaraka amin\'ny tanjonao.',
         'continuing' => 'Fiofanana ara-asa sy mitohy',
@@ -48,7 +48,7 @@ return [
 
     'admissions' => [
         'eyebrow' => 'Fidirana sy fanampiana ara-bola',
-        'title' => 'Fidirana aorian\'ny bakalorea araka ny mari-pahaizana sy ny fepetra isaky ny taranja.',
+        'title' => 'Fidirana aorian\'ny bakalorea araka ny sehatra sy ny fepetra isaky ny fandaharam-pianarana.',
         'text' => 'Ny antontan-taratasy dia misy ny taratasim-pamarana, ny taratasy mamaritra ny mombamomba anao ary ny taratasy ofisialy. Misafidiana taranja mifanaraka amin\'ny tanjonao. Ny birao ara-pianarana dia manampy anao amin\'ny fangatahanao.',
         'primary' => 'Fangatahana sy fidirana',
         'secondary' => 'Fampahalalana momba ny fidirana',

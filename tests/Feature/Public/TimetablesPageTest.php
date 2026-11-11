@@ -114,8 +114,8 @@ it('is served in English and Malagasy with translated scenes', function () {
 
     $this->get('/en/emplois-du-temps')->assertOk()
         ->assertSee('<html lang="en"', false)
-        ->assertSee('Find the timetable of your programme')
-        ->assertSee('Bachelor&#039;s in Law', false)->assertSee('Open the timetable');
+        ->assertSee('Find the class schedule for your major')
+        ->assertSee('Bachelor&#039;s in Law', false)->assertSee('Open the class schedule');
 
     $this->get('/mg/emplois-du-temps')->assertOk()->assertSee('<html lang="mg"', false)->assertSee('Sokafy ny fandaharam-potoana');
 });

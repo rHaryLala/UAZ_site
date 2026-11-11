@@ -64,7 +64,7 @@ return [
     'story' => [
         'eyebrow' => 'Zavatra niainana',
         'quote' => 'Fohy ny fotoana nandalovako tao amin\'ny UAZ saingy nahasoa tokoa, ara-pianarana, ara-tsosialy ary ara-panahy. Noho ny tontolo voajanahary miavaka sy ny fiadanana tsy hita toa azy, ny UAZ dia manome tontolo mety indrindra ho an\'ny fifantohana sy ny fahasalamana.',
-        'more' => 'Mifanohitra amin\'ny eritreritra mahazatra, ny UAZ dia tsy fanamafisana fotsiny: toerana fianarana, fivoarana ary fahafahana izy izay tena manambatra ny lalan\'ny mpianatra.',
+        'more' => 'Mifanohitra amin\'ny eritreritra mahazatra, ny UAZ dia tsy fitakiana avo fotsiny: toerana fianarana, fivoarana ary fahafahana izy izay tena manatsara ny lalan\'ny mpianatra.',
     ],
 
     'dates' => [
