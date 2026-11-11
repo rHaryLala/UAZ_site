@@ -505,3 +505,11 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 6. **Défaut corrigé au passage :** Laravel convertit les chaînes vides en `null` avant le contrôleur. Dans le thème, une valeur vide (en-tête masqué, élément masqué, filet désactivé) était donc lue comme « absente » et reprenait sa valeur d'origine : l'en-tête ne pouvait pas être désactivé. Une clé présente mais nulle est désormais une vraie valeur vide.
 **Aussi :** le bouton d'un bloc aligné à droite ou au centre utilise des marges automatiques plutôt que l'attribut `align` de son tableau (qui le faisait flotter) ; `text-align` en ligne annule le centrage historique des tableaux, d'où les marges automatiques.
 **Tests :** `NewsletterHeaderTest` (14), et `tests/e2e/newsletter-editor.mjs` (clic, disposition, hashtag sur la lettre, emplacements, hauteur, taille du logo, masquage qui survit au rechargement).
+
+## D-066 · Images des lettres : jointes au message en local, JPEG pour les messageries (11 novembre 2026)
+
+**Constat (premier vrai envoi d'essai) :** le sceau, les icônes et les photos n'apparaissaient pas chez le destinataire : les adresses d'images pointaient vers `localhost` (APP_URL local), invisible depuis l'extérieur.
+**Décisions :**
+1. **Images jointes (« cid: »)** : quand l'adresse du site est locale (`localhost`, `127.0.0.1`, `.test`, `.local`), chaque image hébergée par le site et présente sur le disque est jointe au message et référencée en `cid:`. Les liens et les images d'autres sites ne sont pas touchés. Réglage `NEWSLETTER_EMBED_IMAGES` : vide = automatique, `true` = toujours, `false` = jamais. En production (site public), les images restent chargées depuis le site : messages plus légers, et c'est l'usage courant des lettres envoyées en nombre.
+2. **JPEG pour les lettres :** Outlook (ordinateur) n'affiche pas le WebP. Les photos de la médiathèque ont une conversion `mail` (JPEG, 1200 px, qualité 82) utilisée par les lettres ; sans elle, repli sur la version WebP `card`, puis sur l'original. Pour les photos déjà en médiathèque : `php artisan media-library:regenerate --only-missing --force` (à lancer une fois après le déploiement ; long sur un petit serveur, sans conséquence pour le site pendant ce temps).
+**Tests :** `NewsletterEditorTest` (pièces jointes en local, réglage, site public, conversion JPEG et repli).

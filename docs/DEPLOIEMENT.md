@@ -296,6 +296,7 @@ L'envoi passe par la file d'attente (un travail par abonné) : il faut donc **`q
 - **Délivrabilité :** enregistrements **SPF** et **DKIM** du domaine d'expédition publiés, **DMARC** conseillé ; sans cela les lettres finissent en indésirables.
 - **Essai avant la première vraie lettre :** envoyer un test à une adresse Gmail et une adresse Outlook, vérifier le bouton « Se désinscrire » de la messagerie et le lien du pied de page.
 - Suivi : le tableau *Newsletter* indique envois réussis et échecs (message d'erreur au survol). Les échecs définitifs sont aussi dans `storage/logs/laravel-*.log` et la table `failed_jobs`.
+- **Images :** sur un site public, les images (sceau, icônes, photos) sont chargées depuis `APP_URL` : cette adresse doit donc être l'adresse publique en `https://`. En local elles sont jointes au message (`NEWSLETTER_EMBED_IMAGES`, voir D-066). Les lettres utilisent une version JPEG des photos : après le déploiement, lancer une fois `php artisan media-library:regenerate --only-missing --force`.
 - Nouvelle migration : `2026_11_13_100000_create_newsletters_tables` (`php artisan migrate --force`).
 
 ## Vidéo d'en-tête de « À propos »

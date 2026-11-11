@@ -18,6 +18,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
+use Symfony\Component\Mime\Email;
 
 beforeEach(function () {
     $this->seed(RolesAndPermissionsSeeder::class);
@@ -518,4 +519,53 @@ it('sends the letters from the dedicated newsletter address, replies going to th
 
     config(['newsletter.from.address' => 'autre@zurcher.edu.mg']);
     expect((new NewsletterMessage(draftLetter(), null, test: true))->envelope()->from->address)->toBe('autre@zurcher.edu.mg');
+});
+
+// --- Images des courriers --------------------------------------------------------------------------------------------------------------
+
+/** Le message tel que Symfony l'enverrait (transport « array » des tests). */
+function sentEmail(NewsletterMessage $mail): Email
+{
+    $mailer = Mail::mailer('array');
+    $mailer->to('moi@exemple.org')->send($mail);
+
+    return $mailer->getSymfonyTransport()->messages()->last()->getOriginalMessage();
+}
+
+it('attaches the images of the site to the message when the site is local, so they show up in the mailbox', function () {
+    $letter = draftLetter(['theme' => ['header' => '1'] + NewsletterBlocks::modernHeader(['facebook' => 'https://facebook.com/uaz'])]);
+    $email = sentEmail(new NewsletterMessage($letter, null, test: true));
+    $html = $email->getHtmlBody();
+
+    expect($html)->toContain('src="cid:')->not->toMatch('~src="https?://(localhost|127\.0\.0\.1)~')
+        ->and(count($email->getAttachments()))->toBeGreaterThanOrEqual(2); // le sceau et l'icône Facebook
+    expect($html)->toContain('href="https://facebook.com/uaz"'); // les liens ne sont pas touchés
+});
+
+it('leaves the image addresses alone when attaching is switched off or the site is public', function () {
+    $letter = draftLetter();
+
+    config(['newsletter.embed_images' => false]);
+    $email = sentEmail(new NewsletterMessage($letter, null, test: true));
+    expect($email->getHtmlBody())->toContain('src="http')->not->toContain('src="cid:')->and($email->getAttachments())->toBe([]);
+
+    config(['newsletter.embed_images' => null, 'app.url' => 'https://test.zurcher.edu.mg']);
+    URL::forceRootUrl('https://test.zurcher.edu.mg');
+    expect(sentEmail(new NewsletterMessage($letter, null, test: true))->getHtmlBody())->not->toContain('src="cid:');
+    URL::forceRootUrl(null);
+
+    config(['newsletter.embed_images' => true]);
+    expect(sentEmail(new NewsletterMessage($letter, null, test: true))->getHtmlBody())->toContain('src="cid:');
+});
+
+it('makes a JPEG for the letters when a photo is added to the library, and falls back to WebP before it exists', function () {
+    $asset = MediaAsset::create(['title' => 'Photo']);
+    $asset->addMedia(UploadedFile::fake()->image('campus.jpg', 1600, 900))->toMediaCollection(MediaAsset::COLLECTION);
+    $file = $asset->fresh()->file();
+
+    expect($file->hasGeneratedConversion('mail'))->toBeTrue()
+        ->and(NewsletterRenderer::imageUrl($asset->fresh()))->toEndWith('-mail.jpg');
+
+    $file->forceFill(['generated_conversions' => ['card' => true]])->save();
+    expect(NewsletterRenderer::imageUrl($asset->fresh()))->toEndWith('-card.webp');
 });

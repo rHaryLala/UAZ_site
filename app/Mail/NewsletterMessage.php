@@ -11,6 +11,8 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Support\Facades\URL;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\DataPart;
 
 /**
  * Une lettre d'information, pour UN abonné (lien de désinscription personnel et signé) ou pour un envoi d'essai ($subscriber = null).
@@ -19,7 +21,56 @@ use Illuminate\Support\Facades\URL;
  */
 class NewsletterMessage extends Mailable
 {
-    public function __construct(public Newsletter $newsletter, public ?NewsletterSubscriber $subscriber = null, public bool $test = false) {}
+    /** @var array<string, string> images à joindre : identifiant (cid) => fichier */
+    private array $embeds = [];
+
+    public function __construct(public Newsletter $newsletter, public ?NewsletterSubscriber $subscriber = null, public bool $test = false)
+    {
+        // Les images repérées au dessin du courrier sont jointes au message au moment de l'envoi.
+        $this->withSymfonyMessage(function (Email $message): void {
+            // Des images « de page », sans nom de fichier : avec un nom, Gmail les affiche aussi comme pièces jointes sous l'objet du message.
+            foreach ($this->embeds as $cid => $path) {
+                $message->addPart((new DataPart((string) file_get_contents($path), null, (string) mime_content_type($path)))->setContentId($cid.'@uaz.site')->asInline());
+            }
+        });
+    }
+
+    /** Joint-on les images ? Voir config/newsletter.php (« embed_images »). */
+    private function shouldEmbed(): bool
+    {
+        $setting = config('newsletter.embed_images');
+
+        if ($setting !== null && $setting !== '') {
+            return filter_var($setting, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        $host = (string) parse_url(url('/'), PHP_URL_HOST);
+
+        return in_array($host, ['localhost', '127.0.0.1', '::1'], true) || str_ends_with($host, '.test') || str_ends_with($host, '.local');
+    }
+
+    /**
+     * Remplace chaque image hébergée par ce site (et présente sur le disque) par une pièce jointe intégrée (« cid: »). Les images d'autres sites
+     * et les liens ne sont pas touchés.
+     */
+    private function embedLocalImages(string $html): string
+    {
+        $base = rtrim(url('/'), '/');
+        $this->embeds = [];
+
+        return (string) preg_replace_callback('~\ssrc="('.preg_quote($base, '~').'/[^"?#]+)(?:[?#][^"]*)?"~', function (array $match) use ($base): string {
+            $path = public_path(rawurldecode(ltrim(substr($match[1], strlen($base)), '/')));
+
+            if (! is_file($path)) {
+                return $match[0];
+            }
+
+            $cid = md5($path);
+            $this->embeds[$cid] = $path;
+
+            return ' src="cid:'.$cid.'@uaz.site"';
+        }, $html);
+    }
 
     private function unsubscribeUrl(): ?string
     {
@@ -41,8 +92,10 @@ class NewsletterMessage extends Mailable
     {
         $unsubscribe = $this->unsubscribeUrl();
 
+        $html = $this->newsletter->html($this->subscriber, $unsubscribe);
+
         return new Content(
-            htmlString: $this->newsletter->html($this->subscriber, $unsubscribe),
+            htmlString: $this->shouldEmbed() ? $this->embedLocalImages($html) : $html,
             text: 'mail.newsletter-plain',
             with: ['text' => $this->newsletter->plainText($unsubscribe)],
         );

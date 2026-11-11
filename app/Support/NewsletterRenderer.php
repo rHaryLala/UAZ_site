@@ -168,9 +168,22 @@ final class NewsletterRenderer
     }
 
     /** Adresse absolue d'une image de la médiathèque (les courriers sont lus hors du site). */
-    public static function imageUrl(?MediaAsset $asset, string $conversion = 'card'): ?string
+    public static function imageUrl(?MediaAsset $asset, string $conversion = 'mail'): ?string
     {
-        return $asset && $asset->file() ? url($asset->url($conversion)) : null;
+        $file = $asset?->file();
+
+        if (! $file) {
+            return null;
+        }
+
+        // Le JPEG des lettres s'il existe (toutes les messageries l'affichent), sinon la version WebP « card », sinon l'original.
+        foreach ([$conversion, 'card'] as $name) {
+            if ($file->hasGeneratedConversion($name)) {
+                return url($file->getUrl($name));
+            }
+        }
+
+        return url($file->getUrl());
     }
 
     /**
