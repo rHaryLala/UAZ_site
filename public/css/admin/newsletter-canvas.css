@@ -183,3 +183,37 @@
     background: #3b6cff;
     pointer-events: none;
 }
+
+/* En-tête de la lettre : cliquable (réglages dans le panneau), hashtag modifiable sur place */
+[data-nl-header] {
+    cursor: pointer;
+}
+
+[data-nl-header]:hover {
+    box-shadow: inset 0 0 0 2px rgb(124 158 255 / 0.8);
+}
+
+[data-nl-header].nl-selected {
+    box-shadow: inset 0 0 0 3px #7c9eff;
+}
+
+[data-nl-theme-field] {
+    min-width: 1ch;
+    border-radius: 3px;
+    outline: none;
+    cursor: text;
+}
+
+[data-nl-theme-field]:hover {
+    background: rgb(255 255 255 / 0.12);
+}
+
+[data-nl-theme-field]:focus {
+    background: rgb(255 255 255 / 0.18);
+    box-shadow: 0 0 0 3px rgb(124 158 255 / 0.6);
+}
+
+[data-nl-theme-field]:empty::before {
+    content: '#hashtag';
+    opacity: 0.5;
+}

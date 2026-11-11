@@ -42,6 +42,11 @@ class PageController extends Controller
             ]);
         }
 
+        // « Soutenir l'UAZ » : directement vers le site des dons s'il est défini (anciens liens et favoris compris).
+        if ($page->key === 'support' && filled(config('uaz.donation_url'))) {
+            return redirect()->away(config('uaz.donation_url'));
+        }
+
         // « Soutenir l'UAZ » : page dédiée aux dons et aux projets.
         if ($page->key === 'support') {
             return view('pages.support', [

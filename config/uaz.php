@@ -53,10 +53,11 @@ return [
     ],
 
     /*
-    | Don en ligne : adresse de la page de paiement (Stripe Checkout, PayPal, mobile money, site de la fondation…).
-    | Vide : la page « Soutenir l'UAZ » propose de contacter l'équipe et annonce que le don en ligne arrive bientôt.
+    | Don en ligne : site qui reçoit les dons (par défaut funding.zurcher.edu.mg). Tant qu'il est défini, « Donner » et « Soutenir l'UAZ »
+    | (menus, accueil, /soutenir et /soutenir/{projet}) envoient directement vers lui, sans passer par une page du site.
+    | Vide (UAZ_DONATION_URL=) : la page « Soutenir l'UAZ » reprend du service, propose de contacter l'équipe et annonce que le don en ligne arrive bientôt.
     */
-    'donation_url' => env('UAZ_DONATION_URL'),
+    'donation_url' => env('UAZ_DONATION_URL', 'https://funding.zurcher.edu.mg'),
 
     /*
     | Contacts de l'appel aux dons (document « Appel aux dons - UAZ »).

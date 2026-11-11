@@ -31,7 +31,9 @@ class SeoController extends Controller
             ]);
 
             $models = [
-                [Page::published()->where('key', '!=', 'home')->get(), '0.7', 'monthly'],
+                // « Soutenir l'UAZ » renvoie vers un autre site quand l'adresse des dons est définie : pas dans le plan du site.
+                [Page::published()->where('key', '!=', 'home')
+                    ->when(filled(config('uaz.donation_url')), fn ($query) => $query->where('key', '!=', 'support'))->get(), '0.7', 'monthly'],
                 [Formation::published()->get(), '0.8', 'monthly'],
                 [NewsPost::published()->get(), '0.6', 'never'],
                 [Event::published()->get(), '0.5', 'weekly'],

@@ -199,6 +199,45 @@ try {
     check(await until(async () => (await canvas.locator('body').evaluate((el) => getComputedStyle(el).backgroundColor)) === 'rgb(251, 249, 244)'), 'thème : le fond autour de la lettre change');
     check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === nbBefore), 'thème : le contenu reste identique après le rechargement du plan de travail');
 
+    // En-tête : un clic l'ouvre dans le panneau ; disposition de l'UAZ ; hashtag modifié sur la lettre ; emplacements ; hauteur ; masquage durable.
+    const header = canvas.locator('[data-nl-header]');
+    await header.click({ position: { x: 250, y: 18 } });
+    check(await until(async () => /En-tête de la lettre/.test(await page.locator('[data-nl-pane="block"]').innerText())), 'en-tête : un clic sur l\'en-tête ouvre ses réglages');
+    await page.getByRole('button', { name: 'Disposition de l\'UAZ' }).click();
+    check(await until(async () => (await header.locator('td[align="center"] img.nl-hd-logo').count()) === 1 && (await header.locator('[data-nl-theme-field]').count()) === 1), 'en-tête : « Disposition de l\'UAZ » met le sceau au centre et le hashtag à gauche');
+    check(await until(async () => (await header.locator('img.nl-hd-ico').count()) >= 1), 'en-tête : les icônes des réseaux sociaux du site s\'affichent');
+    if (out) await page.screenshot({ path: path.join(out, 'nl-entete.png') });
+    await header.locator('[data-nl-theme-field]').click();
+    await page.keyboard.press('Control+A');
+    await page.keyboard.type('#UAZNEWS');
+    await page.keyboard.press('Enter');
+    check(await until(async () => (await page.locator('[data-nl-header-tag]').inputValue()) === '#UAZNEWS'), 'en-tête : le hashtag modifié sur la lettre apparaît dans le panneau');
+    await page.locator('.ve-field', { hasText: 'Hashtag' }).first().getByRole('button', { name: 'Droite' }).click();
+    check(await until(async () => (await header.locator('td[align="right"] [data-nl-theme-field]').count()) === 1), 'en-tête : le hashtag passe à droite');
+    await page.locator('.ve-field', { hasText: 'Logo' }).first().getByRole('button', { name: 'Masqué' }).click();
+    check(await until(async () => (await header.locator('img.nl-hd-logo').count()) === 0), 'en-tête : le logo peut être masqué');
+    await page.locator('[data-nl-undo]').click();
+    check(await until(async () => (await header.locator('img.nl-hd-logo').count()) === 1), 'en-tête : annuler remet le logo');
+    await page.locator('.ve-field', { hasText: 'Hauteur de l\'en-tête' }).locator('input[type=range]').evaluate((el) => { el.value = '210'; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); });
+    check(await until(async () => Math.round((await header.evaluate((el) => el.getBoundingClientRect().height))) >= 210), 'en-tête : la hauteur se règle');
+    await page.locator('.ve-field', { hasText: 'Taille du logo' }).locator('input[type=range]').evaluate((el) => { el.value = '140'; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); });
+    check(await until(async () => Math.round(await header.locator('img.nl-hd-logo').evaluate((el) => el.getBoundingClientRect().width)) === 140), 'en-tête : la taille du logo se règle');
+    await saved();
+    const savedTheme = JSON.parse(tinker('echo json_encode(App\\Models\\Newsletter::find(' + id + ')->theme);'));
+    check(savedTheme.header_tag_text === '#UAZNEWS' && savedTheme.header_tag === 'right' && savedTheme.header_height === 210 && savedTheme.header_logo_size === 140, 'en-tête : les réglages sont enregistrés');
+    await page.getByLabel('Afficher l\'en-tête').uncheck();
+    check(await until(async () => (await header.count()) === 0), 'en-tête : on peut le masquer');
+    await saved();
+    await page.reload({ waitUntil: 'load' });
+    check(await until(async () => (await top.count()) > 0) && (await header.count()) === 0, 'en-tête : masqué, il le reste après rechargement');
+    await page.locator('[data-nl-tab="letter"]').click();
+    await page.getByRole('button', { name: 'Régler l\'en-tête…' }).click();
+    await page.getByLabel('Afficher l\'en-tête').check();
+    const back = await until(async () => (await header.count()) === 1);
+    if (!back) console.log('   (en-tête : ' + (await header.count()) + ' | panneau : ' + (await page.locator('[data-nl-pane="block"]').innerText()).slice(0, 80).replace(/\n/g, ' / ') + ' | toast : ' + (await page.locator('[data-nl-toast]').innerText()) + ')');
+    check(back, 'en-tête : il se réaffiche avec ses réglages');
+    await page.locator('[data-nl-tab="letter"]').click();
+
     // Modèles : appliquer, puis annuler.
     const sizeBefore = (await top.count());
     await page.getByRole('button', { name: 'Choisir un modèle…' }).click();

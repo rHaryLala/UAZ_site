@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\NewsletterMessage;
 use App\Models\MediaAsset;
 use App\Models\Newsletter;
+use App\Models\SiteSetting;
 use App\Support\NewsletterBlocks;
 use App\Support\NewsletterRenderer;
 use App\Support\NewsletterTemplates;
@@ -53,10 +54,18 @@ class NewsletterEditorController extends Controller
                 'palette' => NewsletterBlocks::PALETTE,
                 'media' => $this->mediaMap($state['blocks']),
                 'defaults' => NewsletterBlocks::defaultTheme(),
+                'header' => [
+                    'items' => NewsletterBlocks::HEADER_ITEMS,
+                    'slots' => NewsletterBlocks::SLOTS,
+                    'socials' => NewsletterBlocks::SOCIALS,
+                    'site' => array_filter((SiteSetting::current()->social_links ?? []) + ['website' => url('/')]),
+                    'uaz' => NewsletterBlocks::modernHeader(SiteSetting::current()->social_links ?? []),
+                ],
                 'email' => $request->user()->email,
                 'urls' => [
                     'render' => route('admin.newsletter-editor.render', $newsletter),
                     'rows' => route('admin.newsletter-editor.rows', $newsletter),
+                    'header' => route('admin.newsletter-editor.header', $newsletter),
                     'templates' => route('admin.newsletter-editor.templates', $newsletter),
                     'save' => route('admin.newsletter-editor.save', $newsletter),
                     'test' => route('admin.newsletter-editor.test', $newsletter),
@@ -97,6 +106,16 @@ class NewsletterEditorController extends Controller
         $blocks = NewsletterBlocks::normalize($data['blocks']);
 
         return response()->json(['rows' => NewsletterRenderer::rows($blocks, NewsletterBlocks::theme($data['theme'] ?? null)), 'media' => $this->mediaMap($blocks)]);
+    }
+
+    /** Dessine l'en-tête seul (lignes du bandeau) : réglé en direct, il n'oblige pas à recharger toute la lettre. */
+    public function header(Request $request, Newsletter $newsletter): JsonResponse
+    {
+        abort_unless($request->user(), 401);
+        abort_unless($request->user()->can('view', $newsletter), 403);
+        $data = $request->validate(['theme' => ['nullable', 'array']]);
+
+        return response()->json(['html' => NewsletterRenderer::header(NewsletterBlocks::theme($data['theme'] ?? null), true)]);
     }
 
     /** Les modèles de lettre, chacun avec son aperçu (la lettre entière, telle qu'elle partirait), pour choisir sans deviner. */

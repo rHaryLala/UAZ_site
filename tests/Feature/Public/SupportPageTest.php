@@ -67,11 +67,12 @@ it('keeps the honest state of online donation in the hero, the doors and the clo
         ->assertSee('Bientôt disponible')->assertSee('Nous contacter')
         ->assertSee('/contact?sujet=Soutenir%20l%27UAZ', false)
         ->assertDontSee('Faire un don');
+});
 
+it('redirects to the donation site as soon as its address is set', function () {
     config(['uaz.donation_url' => 'https://pay.example.test/uaz']);
 
-    $html = $this->get('/soutenir')->assertOk()->assertSee('Faire un don')->getContent();
-    expect(substr_count($html, 'https://pay.example.test/uaz'))->toBe(3); // héros, porte « don en ligne », invitation
+    $this->get('/soutenir')->assertRedirect('https://pay.example.test/uaz');
 });
 
 it('lists the donation contacts of the call for donations', function () {

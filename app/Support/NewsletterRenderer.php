@@ -34,6 +34,7 @@ final class NewsletterRenderer
         return view('newsletter.email', [
             'subject' => (string) ($state['subject'] ?? ''),
             'preheader' => (string) ($state['preheader'] ?? ''),
+            'header' => self::header($theme, $editing),
             'body' => self::nodes($blocks, 0, self::WIDTH - 2 * self::SIDE, $ctx),
             'hasBlocks' => $blocks !== [],
             'theme' => $theme,
@@ -41,6 +42,22 @@ final class NewsletterRenderer
             'site' => SiteSetting::current(),
             'unsubscribe' => $unsubscribe,
             'editing' => $editing,
+        ])->render();
+    }
+
+    /**
+     * Les lignes de l'en-tête (bandeau, et filet doré s'il est demandé) : le plan de travail les remplace seules quand on règle l'en-tête.
+     * Elles comprennent le petit blanc avant le contenu (avec un filet, ou sans en-tête).
+     *
+     * @param  array<string, string|int>  $theme
+     */
+    public static function header(array $theme, bool $editing = false): string
+    {
+        return view('newsletter.header', [
+            'theme' => $theme,
+            'editing' => $editing,
+            'headingFont' => $theme['font'] === 'serif' ? "Georgia, 'Times New Roman', Times, serif" : "'Helvetica Neue', Helvetica, Arial, sans-serif",
+            'dark' => self::isDark($theme['header_color']),
         ])->render();
     }
 

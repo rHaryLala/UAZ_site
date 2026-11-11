@@ -14,12 +14,20 @@
     const blocksIn = (list) => [...list.querySelectorAll('[data-nl-block]')].filter((block) => listOf(block) === list);
 
     let selectedId = null;
+    let headerOn = false; // l'en-tête de la lettre est sélectionné
     let bar = null;
     let hovered = null;
     let drop = null;
 
     /* ───────── Texte modifiable sur place ───────── */
     function bind(scope) {
+        scope.querySelectorAll('[data-nl-theme-field]').forEach((el) => {
+            if (el.dataset.nlBound) return;
+            el.dataset.nlBound = '1';
+            el.contentEditable = 'plaintext-only';
+            if (el.contentEditable !== 'plaintext-only') el.contentEditable = 'true';
+            el.spellcheck = false;
+        });
         scope.querySelectorAll('[data-nl-field]').forEach((el) => {
             if (el.dataset.nlBound) return;
             el.dataset.nlBound = '1';
@@ -39,19 +47,39 @@
         tell({ op: 'edit', id: idOf(block), field: el.dataset.nlField, value: rich ? el.innerHTML : el.textContent.replace(/\s+/g, ' ') });
     };
 
+    const reportTheme = (el) => {
+        clearTimeout(timers.get(el));
+        tell({ op: 'theme-edit', key: el.dataset.nlThemeField, value: el.textContent.replace(/\s+/g, ' ').trim() });
+    };
+
     document.addEventListener('input', (event) => {
+        const themeField = event.target.closest?.('[data-nl-theme-field]');
+        if (themeField) {
+            clearTimeout(timers.get(themeField));
+            timers.set(themeField, setTimeout(() => reportTheme(themeField), 250));
+
+            return;
+        }
         const el = event.target.closest?.('[data-nl-field]');
         if (!el) return;
         clearTimeout(timers.get(el));
         timers.set(el, setTimeout(() => report(el), 250));
     });
     document.addEventListener('focusout', (event) => {
+        const themeField = event.target.closest?.('[data-nl-theme-field]');
+        if (themeField) {
+            reportTheme(themeField);
+            tell({ op: 'commit' });
+
+            return;
+        }
         const el = event.target.closest?.('[data-nl-field]');
         if (!el) return;
         report(el);
         tell({ op: 'commit' });
     });
     document.addEventListener('focusin', (event) => {
+        if (event.target.closest?.('[data-nl-theme-field]')) return selectHeader();
         const el = event.target.closest?.('[data-nl-field]');
         if (el) select(idOf(el.closest('[data-nl-block]')));
     });
@@ -65,11 +93,23 @@
     function paint() {
         document.querySelectorAll('.nl-selected').forEach((el) => el.classList.remove('nl-selected'));
         byId(selectedId)?.classList.add('nl-selected');
+        if (headerOn) document.querySelector('[data-nl-header]')?.classList.add('nl-selected');
+    }
+
+    /** L'en-tête de la lettre (bandeau, logo, hashtag, réseaux) : un clic dessus ouvre ses réglages dans le panneau. */
+    function selectHeader({ notify = true } = {}) {
+        if (headerOn && !selectedId) return;
+        headerOn = true;
+        selectedId = null;
+        paint();
+        placeBar();
+        if (notify) tell({ op: 'header' });
     }
 
     function select(id, { notify = true } = {}) {
         id = id || null;
-        if (id === selectedId && bar) return;
+        if (id === selectedId && bar && !headerOn) return;
+        headerOn = false;
         selectedId = id;
         paint();
         placeBar();
@@ -92,6 +132,8 @@
         const link = event.target.closest('a');
         if (link) event.preventDefault(); // on ne quitte jamais le plan de travail par un lien
         if (event.target.closest('.nl-bar')) return;
+
+        if (event.target.closest('[data-nl-header]')) return selectHeader();
 
         const slot = event.target.closest('[data-nl-slot]');
         if (slot) {
@@ -368,9 +410,25 @@
         placeBar();
     }
 
+    /** Remplace les lignes de l'en-tête (et le petit blanc qui suit) par celles que le serveur vient de dessiner. */
+    function setHeader(html) {
+        const body = root().querySelector(':scope > tbody');
+        const old = [...body.querySelectorAll(':scope > tr[data-nl-hdr]')];
+        const anchor = old.at(-1)?.nextElementSibling ?? body.firstElementChild;
+        const holder = document.createElement('tbody');
+        holder.innerHTML = html;
+        [...holder.children].forEach((row) => anchor.before(row));
+        old.forEach((row) => row.remove());
+        bind(body);
+        paint();
+        positionBar();
+    }
+
     window.nl = {
         setRows,
+        setHeader,
         select: (id) => select(id, { notify: false }),
+        selectHeader: (on) => (on ? selectHeader({ notify: false }) : ((headerOn = false), paint())),
         reveal: (id) => byId(id)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }),
         focus: (id) => byId(id)?.querySelector('[data-nl-field]')?.focus(),
     };

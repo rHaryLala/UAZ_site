@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\MediaAsset;
+use App\Models\SiteSetting;
 
 /**
  * Modèles de lettres proposés à la création (et dans l'éditeur) : une mise en page moderne déjà composée, à adapter. Chaque modèle donne un thème,
@@ -126,7 +127,10 @@ final class NewsletterTemplates
     private static function catalog(): array
     {
         $month = ucfirst(now()->translatedFormat('F Y'));
-        $sans = ['font' => 'sans', 'header_color' => self::NAVY];
+        // Tous les modèles reprennent l'en-tête de l'UAZ (hashtag, sceau au centre, réseaux sociaux du site), sur un grand bandeau bleu.
+        $header = NewsletterBlocks::modernHeader(SiteSetting::current()->social_links ?? []);
+        $sans = ['font' => 'sans'] + $header;
+        $serif = ['font' => 'serif'] + $header;
 
         return [
             'news' => [
@@ -135,7 +139,7 @@ final class NewsletterTemplates
                 'subject' => 'Les nouvelles de l’UAZ — '.$month,
                 'theme' => $sans,
                 'blocks' => [
-                    self::section(['bg' => self::NAVY, 'padding' => 'lg'], [
+                    self::section(['bg' => '#232e66', 'padding' => 'lg'], [
                         self::eyebrow('LETTRE D’INFORMATION · '.mb_strtoupper($month), self::GOLD, 'center'),
                         self::h('Les nouvelles de l’UAZ', ['size' => 38, 'level' => 'h1', 'align' => 'center']),
                         self::t('<p>Des nouvelles du campus, de nos étudiants et de nos enseignants, racontées en quelques lignes.</p>', ['align' => 'center', 'size' => 17]),
@@ -189,7 +193,7 @@ final class NewsletterTemplates
                 'name' => 'Mot du recteur',
                 'description' => 'Un courrier éditorial : portrait et texte en deux colonnes, une citation, une signature.',
                 'subject' => 'Le mot du recteur — '.$month,
-                'theme' => ['font' => 'serif'],
+                'theme' => $serif,
                 'blocks' => [
                     self::spacer(6),
                     self::eyebrow('LE MOT DU RECTEUR', '#8a724b'),
@@ -260,7 +264,7 @@ final class NewsletterTemplates
                 'name' => 'Soutenir l’UAZ',
                 'description' => 'Un appel à la générosité : bandeau chaleureux, citation d’un bénéficiaire et projets en cours.',
                 'subject' => 'Ensemble, construisons l’avenir de l’UAZ',
-                'theme' => ['font' => 'serif'],
+                'theme' => $serif,
                 'blocks' => [
                     self::section(['bg' => '#8a724b', 'padding' => 'lg'], [
                         self::eyebrow('SOUTENIR L’UAZ', '#ffffff', 'center'),
@@ -283,7 +287,7 @@ final class NewsletterTemplates
                 'name' => 'Lettre simple',
                 'description' => 'Un titre, un texte, un bouton : l’essentiel, sans fioritures.',
                 'subject' => 'Lettre d’information de l’UAZ — '.$month,
-                'theme' => [],
+                'theme' => $serif,
                 'blocks' => [
                     self::h('Un titre pour votre lettre', ['size' => 30]),
                     self::t('<p>Écrivez votre message ici. Sélectionnez des mots pour les mettre en gras, en italique ou en faire un lien.</p>'),

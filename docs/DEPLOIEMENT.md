@@ -295,7 +295,7 @@ L'envoi passe par la file d'attente (un travail par abonné) : il faut donc **`q
 - **Cadence :** `NEWSLETTER_SECONDS_BETWEEN` (2 secondes par défaut) sépare deux courriers. Vérifier la limite de l'hébergeur de courrier (souvent 100 à 500 messages/heure pour un SMTP mutualisé) et l'augmenter si besoin ; au-delà de quelques milliers d'abonnés, préférer un service d'envoi dédié (Brevo, Amazon SES, Mailgun) en SMTP.
 - **Délivrabilité :** enregistrements **SPF** et **DKIM** du domaine d'expédition publiés, **DMARC** conseillé ; sans cela les lettres finissent en indésirables.
 - **Essai avant la première vraie lettre :** envoyer un test à une adresse Gmail et une adresse Outlook, vérifier le bouton « Se désinscrire » de la messagerie et le lien du pied de page.
-- Suivi : le tableau *Lettres d'information* indique envois réussis et échecs (message d'erreur au survol). Les échecs définitifs sont aussi dans `storage/logs/laravel-*.log` et la table `failed_jobs`.
+- Suivi : le tableau *Newsletter* indique envois réussis et échecs (message d'erreur au survol). Les échecs définitifs sont aussi dans `storage/logs/laravel-*.log` et la table `failed_jobs`.
 - Nouvelle migration : `2026_11_13_100000_create_newsletters_tables` (`php artisan migrate --force`).
 
 ## Vidéo d'en-tête de « À propos »

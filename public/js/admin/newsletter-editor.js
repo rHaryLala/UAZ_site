@@ -16,6 +16,7 @@
     let state = clone(boot.state);
     const media = { ...(boot.media || {}) };
     let selected = null; // identifiant du bloc sélectionné
+    let headerSelected = false; // l'en-tête de la lettre est sélectionné (ses réglages s'affichent dans l'onglet « Bloc »)
     let insertTarget = null; // où ira le prochain bloc ajouté : { parent, col, index }
     let tab = 'add';
     let history = [JSON.stringify(state)];
@@ -368,21 +369,67 @@
         pushHistory();
         scheduleSave();
         if (render === 'full') renderFull();
+        else if (render === 'header') refreshHeader();
         else if (render) sync();
         if (panels) renderPanels();
+    }
+
+    /* ───────── En-tête de la lettre : redessiné seul, sans recharger le plan de travail ───────── */
+    const isHeaderKey = (key) => key === 'header' || key.startsWith('header_') || key.startsWith('social_');
+    let headerSeq = 0;
+
+    function refreshHeader() {
+        clearTimeout(timers.header);
+        timers.header = setTimeout(async () => {
+            const seq = ++headerSeq;
+            try {
+                const result = await api(urls.header, 'POST', { theme: state.theme });
+                if (seq === headerSeq && ready) callFrame('setHeader', result.html);
+            } catch (error) {
+                toast('L\'en-tête n\'a pas pu être mis à jour : ' + error.message, 'error');
+            }
+        }, 70);
+    }
+
+    /** Un réglage du thème : l'en-tête se redessine seul, le reste (couleurs, police) recharge le plan de travail. */
+    function setThemeKey(key, value, { final = true } = {}) {
+        state.theme[key] = value;
+        if (final) commit({ panels: false, render: isHeaderKey(key) ? 'header' : 'full' });
+        else {
+            scheduleSave();
+            if (isHeaderKey(key)) refreshHeader();
+            else {
+                clearTimeout(timers.full);
+                timers.full = setTimeout(renderFull, 250);
+            }
+        }
+    }
+
+    function selectHeader() {
+        selected = null;
+        headerSelected = true;
+        insertTarget = null;
+        tab = 'block';
+        callFrame('select', null);
+        callFrame('selectHeader', true);
+        renderPanels();
     }
 
     function travel(step) {
         const target = cursor + step;
         if (target < 0 || target >= history.length) return;
-        const before = JSON.stringify(state.theme);
+        const before = clone(state.theme);
         cursor = target;
         state = JSON.parse(history[cursor]);
         if (selected && !find(selected)) selected = null;
         updateHistoryButtons();
         scheduleSave();
-        if (before !== JSON.stringify(state.theme)) renderFull();
-        else sync();
+        const changed = Object.keys(state.theme).filter((key) => state.theme[key] !== before[key]);
+        if (changed.some((key) => !isHeaderKey(key))) renderFull();
+        else {
+            if (changed.length) refreshHeader();
+            sync();
+        }
         callFrame('select', selected);
         renderPanels();
         $('[data-nl-subject]').value = state.subject;
@@ -461,6 +508,8 @@
 
     function selectBlock(id, { reveal = false } = {}) {
         selected = id;
+        headerSelected = false;
+        callFrame('selectHeader', false);
         insertTarget = null;
         if (tab === 'add' || tab === 'block') tab = id ? 'block' : 'add';
         callFrame('select', id);
@@ -475,6 +524,7 @@
 
         if (m.op === 'select') {
             selected = m.id;
+            headerSelected = false;
             insertTarget = null;
             if (tab === 'add' || tab === 'block') tab = m.id ? 'block' : 'add';
             renderPanels();
@@ -486,6 +536,13 @@
                 scheduleSave();
                 renderStructure();
             }
+        } else if (m.op === 'header') selectHeader();
+        else if (m.op === 'theme-edit') {
+            // Le hashtag modifié sur la lettre : le plan de travail le montre déjà, il n'y a rien à redessiner.
+            state.theme[m.key] = m.value;
+            scheduleSave();
+            const input = $('[data-nl-header-tag]');
+            if (input && input !== document.activeElement) input.value = m.value;
         } else if (m.op === 'commit') pushHistory();
         else if (m.op === 'up') shift(m.id, -1);
         else if (m.op === 'down') shift(m.id, 1);
@@ -718,9 +775,47 @@
         return h('div', { class: 've-field' }, h('span', { class: 've-label' }, spec.label), control);
     }
 
+    /** Réglages de l'en-tête : couleur, hauteur, emplacement de chaque élément, taille du logo, hashtag, réseaux sociaux. */
+    function renderHeaderPanel(pane) {
+        const theme = state.theme;
+        const info = boot.header;
+        const set = (key, value, options) => (setThemeKey(key, value, options), renderHeaderPanel(pane));
+        const range = (key, title, min, max) => h('div', { class: 've-field' }, h('span', { class: 've-label' }, title), rangeControl({ min, max, unit: ' px', label: title }, theme[key], (v) => setThemeKey(key, v, { final: false }), (v) => setThemeKey(key, v)));
+        const shown = !!theme.header;
+
+        pane.replaceChildren(
+            ...[
+                h('div', { class: 've-block-head' }, h('strong', {}, 'En-tête de la lettre'), h('span', { class: 've-hint' }, 'Cliquez sur le hashtag pour le modifier directement.')),
+                h('div', { class: 've-field' }, h('label', { class: 'nl-toggle' }, h('input', { type: 'checkbox', checked: shown, onchange: (event) => set('header', event.target.checked ? '1' : '') }), 'Afficher l\'en-tête')),
+                shown ? h('div', { class: 've-field' }, h('span', { class: 've-label' }, 'Couleur de fond'), colorControl(theme.header_color, (picked) => set('header_color', picked), null, ['#232e66', '#131a3f', '#8a724b', '#1d2233', '#ffffff', '#e1ebff'])) : null,
+                shown ? range('header_height', 'Hauteur de l\'en-tête', 60, 260) : null,
+                shown ? h('div', { class: 'nl-section' }, 'Emplacement des éléments') : null,
+                ...(shown
+                    ? Object.entries(info.items).map(([item, title]) => h('div', { class: 've-field' }, h('span', { class: 've-label' }, title), segmented(info.slots, theme['header_' + item], (value) => set('header_' + item, value))))
+                    : []),
+                shown && theme.header_logo ? range('header_logo_size', 'Taille du logo', 32, 160) : null,
+                shown && theme.header_tag
+                    ? h('div', { class: 've-field' }, h('label', { class: 've-label', for: 'nl-header-tag' }, 'Texte du hashtag'), h('input', { id: 'nl-header-tag', class: 'nl-input', 'data-nl-header-tag': '', maxlength: 40, value: theme.header_tag_text, placeholder: '#UAZINFOS', oninput: (event) => setThemeKey('header_tag_text', event.target.value, { final: false }), onchange: (event) => setThemeKey('header_tag_text', event.target.value) }))
+                    : null,
+                shown ? h('div', { class: 've-field' }, h('label', { class: 'nl-toggle' }, h('input', { type: 'checkbox', checked: !!theme.header_rule, onchange: (event) => set('header_rule', event.target.checked ? '1' : '') }), 'Filet doré sous l\'en-tête')) : null,
+                shown ? h('div', { class: 'nl-section' }, 'Réseaux sociaux') : null,
+                shown && theme.header_social === '' ? h('p', { class: 'nl-hint' }, 'Placez « Réseaux sociaux » à gauche, au centre ou à droite pour les afficher. Une icône n\'apparaît que si son adresse est renseignée.') : null,
+                ...(shown
+                    ? Object.entries(info.socials).map(([network, title]) =>
+                          h('div', { class: 've-field' }, h('label', { class: 've-label', for: 'nl-social-' + network }, title), h('input', { id: 'nl-social-' + network, type: 'url', class: 'nl-input', value: theme['social_' + network], placeholder: 'https://…', oninput: (event) => setThemeKey('social_' + network, event.target.value, { final: false }), onchange: (event) => setThemeKey('social_' + network, event.target.value) })),
+                      )
+                    : []),
+                shown ? h('div', { class: 've-actions' },
+                    h('button', { type: 'button', class: 've-btn ve-btn--sm', onclick: () => { Object.entries(info.socials).forEach(([network]) => info.site[network] && (theme['social_' + network] = info.site[network])); commit({ panels: false, render: 'header' }); renderHeaderPanel(pane); } }, 'Reprendre les adresses du site'),
+                    h('button', { type: 'button', class: 've-btn ve-btn--sm', onclick: () => { Object.entries(info.uaz).forEach(([key, value]) => (!key.startsWith('social_') || !theme[key]) && (theme[key] = value)); commit({ panels: false, render: 'header' }); renderHeaderPanel(pane); } }, 'Disposition de l\'UAZ')) : null,
+            ].filter(Boolean),
+        );
+    }
+
     function renderBlock() {
         const pane = $('[data-nl-pane="block"]');
         if (!pane) return;
+        if (headerSelected) return renderHeaderPanel(pane);
         const block = selected ? find(selected) : null;
 
         if (!block) {
@@ -753,7 +848,7 @@
         const pane = $('[data-nl-pane="letter"]');
         if (!pane) return;
         const theme = state.theme;
-        const setTheme = (key, value) => ((theme[key] = value), commit({ panels: false, render: 'full' }), renderLetter());
+        const setTheme = (key, value) => (setThemeKey(key, value), renderLetter());
         const colorRow = (key, title, colors) => h('div', { class: 've-field' }, h('span', { class: 've-label' }, title), colorControl(theme[key], (picked) => setTheme(key, picked), null, colors));
 
         pane.replaceChildren(
@@ -773,9 +868,8 @@
             colorRow('gold', 'Filets et détails', ['#8a724b', '#e0b957', '#232e66', '#9aa1b5']),
             h('div', { class: 'nl-section' }, 'Typographie'),
             h('div', { class: 've-field' }, h('span', { class: 've-label' }, 'Police des titres'), segmented({ serif: 'Avec empattements', sans: 'Sans empattements' }, theme.font, (value) => setTheme('font', value))),
-            h('div', { class: 'nl-section' }, 'Bandeau du haut'),
-            h('div', { class: 've-field' }, h('label', { class: 'nl-toggle' }, h('input', { type: 'checkbox', checked: !!theme.header, onchange: (event) => setTheme('header', event.target.checked ? '1' : '') }), 'Afficher le logo de l\'UAZ')),
-            theme.header ? colorRow('header_color', 'Couleur du bandeau', ['#131a3f', '#232e66', '#8a724b', '#1d2233', '#ffffff']) : null,
+            h('div', { class: 'nl-section' }, 'En-tête'),
+            h('div', { class: 've-field' }, h('button', { type: 'button', class: 've-btn', onclick: selectHeader }, 'Régler l\'en-tête…'), h('p', { class: 've-hint' }, 'Logo, hashtag, réseaux sociaux, hauteur et emplacements : cliquez aussi directement sur l\'en-tête de la lettre.')),
             ].filter(Boolean),
         );
     }

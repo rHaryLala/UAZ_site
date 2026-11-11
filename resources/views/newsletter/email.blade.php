@@ -44,23 +44,7 @@
         <tr>
             <td align="center" class="nl-outer" style="padding:24px 12px;">
                 <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:640px;background:{{ $theme['card'] }};" {!! $editing ? 'data-nl-list="root"' : '' !!}>
-                    @if ($theme['header'])
-                        <tr>
-                            <td class="nl-pad" style="background:{{ $theme['header_color'] }};padding:22px 32px;" {!! $editing ? 'data-nl-lock="header"' : '' !!}>
-                                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                                    <tr>
-                                        <td style="padding-right:14px;"><img src="{{ asset('icon-192.png') }}" width="44" height="44" alt="" style="display:block;border-radius:50%;"></td>
-                                        <td style="font-family:{{ $headingFont }};color:#ffffff;font-size:17px;line-height:1.25;letter-spacing:.02em;">
-                                            Université Adventiste<br><span style="color:#e0b957;">Zurcher</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr><td style="height:3px;line-height:3px;font-size:3px;background:{{ $theme['gold'] }};">&nbsp;</td></tr>
-                    @endif
-
-                    <tr><td style="height:10px;line-height:10px;font-size:10px;">&nbsp;</td></tr>
+                    {!! $header !!}
                     {!! $body !!}
 
                     @if ($editing)

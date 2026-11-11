@@ -31,10 +31,59 @@ final class NewsletterBlocks
 
     private const ALIGN = ['left' => 'Gauche', 'center' => 'Centré', 'right' => 'Droite'];
 
-    /** @return array<string, string> */
-    public static function defaultTheme(): array
+    /** Emplacements possibles d'un élément de l'en-tête (vide = masqué). */
+    public const SLOTS = ['left' => 'Gauche', 'center' => 'Centre', 'right' => 'Droite', '' => 'Masqué'];
+
+    /** Éléments de l'en-tête : leur clé dans le thème (header_xxx) et leur nom. */
+    public const HEADER_ITEMS = ['logo' => 'Logo', 'name' => 'Nom de l\'université', 'tag' => 'Hashtag', 'social' => 'Réseaux sociaux'];
+
+    /** Réseaux sociaux de l'en-tête (les mêmes que dans les réglages du site, plus le site web). */
+    public const SOCIALS = ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'tiktok' => 'TikTok', 'website' => 'Site web'];
+
+    /**
+     * Réglages de l'en-tête (en plus du thème) : emplacements, tailles, hashtag, adresses des réseaux sociaux. Les valeurs d'origine reproduisent
+     * l'ancien en-tête (logo et nom à gauche) : une lettre déjà écrite ou envoyée ne change pas d'aspect.
+     *
+     * @return array<string, string|int>
+     */
+    public static function headerDefaults(): array
     {
         return [
+            'header_logo' => 'left', 'header_name' => 'left', 'header_tag' => '', 'header_social' => '',
+            'header_tag_text' => '#UAZINFOS', 'header_height' => 88, 'header_logo_size' => 44, 'header_rule' => '1', // filet doré sous l'en-tête et petit blanc avant le contenu
+        ] + array_fill_keys(array_map(fn (string $network) => 'social_'.$network, array_keys(self::SOCIALS)), '');
+    }
+
+    /**
+     * La disposition de l'UAZ : hashtag à gauche, sceau au centre, réseaux sociaux à droite, sur un grand bandeau bleu (celle des modèles).
+     * Les adresses des réseaux viennent des réglages du site.
+     *
+     * @param  array<string, string|null>  $socials  adresses par réseau
+     * @return array<string, string|int>
+     */
+    public static function modernHeader(array $socials = []): array
+    {
+        $theme = ['header' => '1', 'header_color' => '#232e66', 'header_logo' => 'center', 'header_name' => '', 'header_tag' => 'left', 'header_social' => 'right', 'header_height' => 150, 'header_logo_size' => 110, 'header_rule' => ''];
+
+        foreach (array_keys(self::SOCIALS) as $network) {
+            $theme['social_'.$network] = self::socialUrl((string) ($socials[$network] ?? ($network === 'website' ? url('/') : '')));
+        }
+
+        return $theme;
+    }
+
+    /** Une adresse de réseau social : http(s) seulement. */
+    private static function socialUrl(string $value): string
+    {
+        $url = self::url($value);
+
+        return str_starts_with($url, 'http') ? $url : '';
+    }
+
+    /** @return array<string, string|int> */
+    public static function defaultTheme(): array
+    {
+        return self::headerDefaults() + [
             'background' => '#eef0f6', // fond autour de la lettre
             'card' => '#ffffff', // fond de la lettre
             'text' => '#1d2233',
@@ -58,7 +107,25 @@ final class NewsletterBlocks
         }
 
         $out['font'] = in_array($theme['font'] ?? null, ['serif', 'sans'], true) ? $theme['font'] : $default['font'];
-        $out['header'] = ($theme['header'] ?? $default['header']) ? '1' : '';
+        // Une chaîne vide arrive « null » (le middleware de Laravel convertit les chaînes vides en null) : c'est une VRAIE valeur (masqué, désactivé),
+        // qui ne doit pas être confondue avec une clé absente (lettre ancienne) qui garde la valeur d'origine.
+        $has = fn (string $key): bool => array_key_exists($key, $theme);
+        $out['header'] = $has('header') ? ($theme['header'] ? '1' : '') : $default['header'];
+
+        foreach (array_keys(self::HEADER_ITEMS) as $item) {
+            $key = 'header_'.$item;
+            $slot = $has($key) ? (string) ($theme[$key] ?? '') : $default[$key];
+            $out[$key] = array_key_exists($slot, self::SLOTS) ? $slot : $default[$key];
+        }
+
+        $out['header_rule'] = $has('header_rule') ? ($theme['header_rule'] ? '1' : '') : $default['header_rule'];
+        $out['header_tag_text'] = array_key_exists('header_tag_text', $theme) ? trim(mb_substr(strip_tags((string) $theme['header_tag_text']), 0, 40)) : $default['header_tag_text'];
+        $out['header_height'] = max(60, min(260, (int) ($theme['header_height'] ?? $default['header_height'])));
+        $out['header_logo_size'] = max(32, min(160, (int) ($theme['header_logo_size'] ?? $default['header_logo_size'])));
+
+        foreach (array_keys(self::SOCIALS) as $network) {
+            $out['social_'.$network] = self::socialUrl((string) ($theme['social_'.$network] ?? ''));
+        }
 
         return $out;
     }

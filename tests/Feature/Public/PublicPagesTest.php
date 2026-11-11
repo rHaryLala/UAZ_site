@@ -5,13 +5,19 @@ use App\Enums\PublicationStatus;
 use App\Models\Event;
 use App\Models\Faculty;
 use App\Models\Formation;
+use App\Models\Menu;
 use App\Models\NewsCategory;
 use App\Models\NewsPost;
 use App\Models\Page;
 use App\Models\PhotoAlbum;
+use App\Models\Project;
+use App\Models\TeamMember;
 use App\Models\User;
+use App\Services\CampusWeather;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\StructureSeeder;
+use Illuminate\Http\Client\Factory;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(fn () => $this->seed(StructureSeeder::class));
 
@@ -163,7 +169,7 @@ it('sends the enrol buttons to the online registration site', function () {
 });
 
 it('renders team profile cards that open an enlarged sheet with the quote and message', function () {
-    $member = \App\Models\TeamMember::factory()->create(['name' => 'Dr Test Exemple', 'quote' => 'Servir avec excellence.', 'bio' => 'Bienvenue à l\'UAZ.']);
+    $member = TeamMember::factory()->create(['name' => 'Dr Test Exemple', 'quote' => 'Servir avec excellence.', 'bio' => 'Bienvenue à l\'UAZ.']);
 
     $this->get('/equipe')->assertOk()
         ->assertSee('data-team-grid', false)
@@ -174,7 +180,7 @@ it('renders team profile cards that open an enlarged sheet with the quote and me
 });
 
 it('renders a download list block as a styled list with file types and safe links', function () {
-    $page = \App\Models\Page::factory()->create([
+    $page = Page::factory()->create([
         'title' => 'Documents', 'slug' => 'documents-test', 'path' => 'documents-test',
         'blocks' => [['type' => 'download_list', 'data' => ['title' => 'Centre', 'items' => [
             ['title' => 'Liste des frais', 'text' => 'Frais 2026', 'url' => 'https://example.test/frais.pdf'],
@@ -207,17 +213,30 @@ it('serves the Soutenir page with its projects and an honest online-donation sta
         ->assertSee('Bientôt disponible')
         ->assertDontSee('Faire un don');
 
-    config(['uaz.donation_url' => 'https://pay.example.test/uaz']);
+});
 
-    $this->get('/soutenir')->assertOk()
-        ->assertSee('https://pay.example.test/uaz', false)
-        ->assertSee('Faire un don');
+it('sends "Donner" and "Soutenir l\'UAZ" straight to the donation site, whatever the entry point', function () {
+    $funding = 'https://funding.zurcher.edu.mg';
+    expect(config('uaz.donation_url'))->toBe($funding);
+
+    $this->get('/soutenir')->assertRedirect($funding);
+    $this->get('/soutenir/un-grand-dortoir-pour-les-garcons')->assertRedirect($funding);
+    $this->get('/soutenir/projet-inconnu')->assertNotFound();
+
+    // les liens du site (menus, accueil) ne passent plus par une page intermédiaire
+    expect(Page::where('key', 'support')->first()->url())->toBe($funding)
+        ->and(collect(Menu::resolved('topbar'))->firstWhere('label', 'Donner')['url'])->toBe($funding);
+
+    // et la page n'est plus annoncée aux moteurs de recherche
+    expect($this->get('/sitemap.xml')->getContent())->not->toContain('/soutenir');
 });
 
 it('serves a project sheet and hides inactive projects', function () {
+    config(['uaz.donation_url' => null]);
+
     $this->get('/soutenir/un-grand-dortoir-pour-les-garcons')->assertOk()->assertSee('Budget prévu')->assertSee('275 000 €');
 
-    \App\Models\Project::factory()->create(['title' => 'Projet caché', 'slug' => 'projet-cache', 'is_active' => false]);
+    Project::factory()->create(['title' => 'Projet caché', 'slug' => 'projet-cache', 'is_active' => false]);
 
     $this->get('/soutenir/projet-cache')->assertNotFound();
     $this->get('/soutenir')->assertDontSee('Projet caché');
@@ -247,21 +266,21 @@ it('has the page images the config announces', function () {
 it('shows the campus weather in the footer when the service answers, and nothing when it fails', function () {
     config(['uaz.weather.enabled' => true]);
     Cache::flush();
-    \Illuminate\Support\Facades\Http::fake(['api.open-meteo.com/*' => \Illuminate\Support\Facades\Http::response(['current' => ['temperature_2m' => 21.6, 'weather_code' => 2, 'is_day' => 1]])]);
+    Http::fake(['api.open-meteo.com/*' => Http::response(['current' => ['temperature_2m' => 21.6, 'weather_code' => 2, 'is_day' => 1]])]);
 
     $this->get('/contact')->assertOk()->assertSee('22 °C', false)->assertSee('Partiellement nuageux')->assertSee('data-weather', false);
     $this->getJson('/meteo')->assertOk()->assertJson(['temperature' => 22, 'label' => 'Partiellement nuageux', 'icon' => 'cloud-sun']);
 
     Cache::flush();
     // Http::fake() n'écrase pas les stubs précédents : on repart d'une fabrique neuve.
-    \Illuminate\Support\Facades\Http::swap(new \Illuminate\Http\Client\Factory);
-    \Illuminate\Support\Facades\Http::fake(['api.open-meteo.com/*' => \Illuminate\Support\Facades\Http::response('erreur', 500)]);
+    Http::swap(new Factory);
+    Http::fake(['api.open-meteo.com/*' => Http::response('erreur', 500)]);
 
     $this->get('/contact')->assertOk()->assertDontSee('data-weather', false);
 });
 
 it('describes weather codes in French with a matching icon', function () {
-    $weather = app(\App\Services\CampusWeather::class);
+    $weather = app(CampusWeather::class);
 
     expect($weather->describe(0, true))->toBe(['Ciel dégagé', 'sun'])
         ->and($weather->describe(0, false))->toBe(['Ciel dégagé', 'moon'])

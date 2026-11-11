@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\HasSeo;
+use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\Publishable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +19,7 @@ use Spatie\Sluggable\SlugOptions;
 ])]
 class Page extends Model
 {
-    use HasFactory, HasSeo, HasSlug, Publishable, HasTranslations;
+    use HasFactory, HasSeo, HasSlug, HasTranslations, Publishable;
 
     /** Attributs dont la traduction vit dans la colonne « translations » (voir HasTranslations). */
     protected array $translatable = ['title', 'summary', 'blocks', 'seo_title', 'seo_description'];
@@ -96,6 +96,11 @@ class Page extends Model
 
     public function url(): string
     {
+        // « Soutenir l'UAZ » : les liens du site (menus, accueil) vont directement au site des dons s'il est défini.
+        if ($this->key === 'support' && filled(config('uaz.donation_url'))) {
+            return config('uaz.donation_url');
+        }
+
         return $this->key === 'home' ? url('/') : url('/'.$this->path);
     }
 

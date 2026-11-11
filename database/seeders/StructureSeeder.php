@@ -11,6 +11,7 @@ use App\Models\Menu;
 use App\Models\Page;
 use App\Models\Project;
 use App\Models\SiteSetting;
+use App\Support\FormationAdmission;
 use Illuminate\Database\Seeder;
 
 /**
@@ -110,7 +111,8 @@ class StructureSeeder extends Seeder
                         'summary' => "Parcours : $parcours.",
                         'description' => '<p>'.self::TODO.' : présentation détaillée de la formation.</p>',
                         'career_prospects' => '<p>'.self::TODO.' : débouchés professionnels.</p>',
-                        'admission_requirements' => '<p>Admission après le baccalauréat, selon la mention et les critères de la filière. '.self::TODO.' : conditions détaillées.</p>',
+                        'admission_requirements' => FormationAdmission::html($mention)
+                            ?? '<p>Admission après le baccalauréat, selon la mention et les critères de la filière. '.self::TODO.' : conditions détaillées.</p>',
                         'is_featured' => true,
                         'sort_order' => $order,
                         'status' => PublicationStatus::Published,

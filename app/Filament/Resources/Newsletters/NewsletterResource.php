@@ -38,7 +38,7 @@ class NewsletterResource extends Resource
 
     protected static ?string $pluralModelLabel = 'lettres';
 
-    protected static ?string $navigationLabel = 'Lettres d\'information';
+    protected static ?string $navigationLabel = 'Newsletter';
 
     protected static ?string $recordTitleAttribute = 'subject';
 
