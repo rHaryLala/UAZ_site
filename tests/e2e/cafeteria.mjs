@@ -104,10 +104,63 @@ async function reducedMotion() {
     check(await page.locator('[data-caf-text]').nth(2).isVisible(), 'mouvement réduit : le triptyque reste utilisable');
 }
 
+// Menu de la semaine : tableau par semaine saisi dans le back-office. Ne s'affiche que s'il existe une semaine en cours ou à venir : sinon le contrôle est ignoré.
+async function menu() {
+    const open = async (context) => {
+        const page = await context.newPage();
+        await hideNewsletter(page);
+        await page.goto(`${url}#menu`, { waitUntil: 'load' });
+        await page.waitForTimeout(1200);
+        return page;
+    };
+    const visibleColumns = (page, panel) => page.evaluate((p) => [...document.querySelectorAll(`[data-caf-week-panel="${p}"] thead [data-caf-day]`)].filter((e) => e.getBoundingClientRect().width > 0).length, panel);
+
+    const desktopPage = await open(await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'fr-FR' }));
+    if ((await desktopPage.locator('#menu').count()) === 0) {
+        console.log('~ menu : aucune semaine en cours ou à venir, contrôles ignorés');
+        return;
+    }
+
+    const first = await desktopPage.locator('[data-caf-week-panel]').first().getAttribute('data-caf-week-panel');
+    check(await desktopPage.evaluate(() => document.querySelector('#menu').classList.contains('is-live')), 'menu : le script s\'active (is-live)');
+    check((await desktopPage.locator(`[data-caf-week-panel="${first}"] tbody tr`).count()) === 3 && (await desktopPage.locator(`[data-caf-week-panel="${first}"] thead th[scope="col"]`).count()) === 7, 'menu : trois repas (matin, midi, soir) × sept jours');
+    check((await visibleColumns(desktopPage, first)) === 7, 'menu : les sept jours sont visibles sur grand écran');
+
+    const tabs = desktopPage.locator('[data-caf-week]');
+    if ((await tabs.count()) > 1) {
+        check((await tabs.first().getAttribute('aria-selected')) === 'true' && (await desktopPage.locator('[data-caf-week-panel]').nth(1).isHidden()), 'menu : seule la première semaine est affichée');
+        await tabs.nth(1).click();
+        check((await tabs.nth(1).getAttribute('aria-selected')) === 'true' && (await desktopPage.locator('[data-caf-week-panel]').nth(1).isVisible()) && (await desktopPage.locator('[data-caf-week-panel]').first().isHidden()), 'menu : un clic sur l\'onglet change de semaine');
+        await tabs.nth(1).focus();
+        await desktopPage.keyboard.press('ArrowLeft');
+        check((await tabs.first().getAttribute('aria-selected')) === 'true' && (await tabs.first().evaluate((e) => e === document.activeElement)), 'menu : les flèches du clavier changent de semaine');
+    }
+    if (out) await desktopPage.locator('#menu').screenshot({ path: path.join(out, '4c-menu.png') });
+    await desktopPage.context().close();
+
+    // Mobile : un seul jour à la fois, au choix.
+    const mobilePage = await open(await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'fr-FR' }));
+    check((await visibleColumns(mobilePage, first)) === 1, 'menu mobile : un seul jour est affiché');
+    const before = await mobilePage.locator(`[data-caf-week-panel="${first}"] thead th.caf-table__day:visible`).innerText();
+    await mobilePage.locator(`[data-caf-week-panel="${first}"] [data-caf-chip]`).nth(6).click();
+    const after = await mobilePage.locator(`[data-caf-week-panel="${first}"] thead th.caf-table__day:visible`).innerText();
+    check(before !== after && (await visibleColumns(mobilePage, first)) === 1, `menu mobile : le bouton du jour change la colonne (${before.split('\n')[0]} → ${after.split('\n')[0]})`);
+    check((await mobilePage.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)) <= 1, 'menu mobile : aucun défilement horizontal');
+    if (out) await mobilePage.locator('#menu').screenshot({ path: path.join(out, 'm3-menu.png') });
+    await mobilePage.context().close();
+
+    // Sans JavaScript : toutes les semaines et tous les jours restent affichés (le tableau défile à l'horizontale).
+    const plain = await open(await browser.newContext({ viewport: { width: 1440, height: 900 }, javaScriptEnabled: false }));
+    const panels = await plain.locator('[data-caf-week-panel]').count();
+    check((await plain.locator('#menu.is-live').count()) === 0 && (await plain.locator('[data-caf-week-panel]:visible').count()) === panels, `menu sans JavaScript : les ${panels} semaine(s) sont affichées`);
+    await plain.context().close();
+}
+
 try {
     await desktop();
     await mobile();
     await reducedMotion();
+    await menu();
 } catch (error) {
     console.log(`✗ parcours interrompu : ${error.message.split('\n')[0]}`);
     failures++;

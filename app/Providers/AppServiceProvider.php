@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Middleware\SetLocale;
 use App\Listeners\OptimizeUploadedImage;
+use App\Models\CafeteriaMenu;
 use App\Models\ContactMessage;
 use App\Models\Event as EventModel;
 use App\Models\Faculty;
@@ -59,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
         Testimonial::class => ManagedContentPolicy::class,
         Partner::class => ManagedContentPolicy::class,
         Project::class => ManagedContentPolicy::class,
+        CafeteriaMenu::class => ManagedContentPolicy::class,
         NewsCategory::class => ManagedContentPolicy::class,
         Newsletter::class => NewsletterPolicy::class,
         MediaAsset::class => MediaAssetPolicy::class,

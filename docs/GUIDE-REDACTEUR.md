@@ -303,3 +303,23 @@ témoignage, projet, faculté, image), le bloc **Traductions** (replié, sous le
 - **Réglages du site** → onglet **Traductions** : slogan, titre et sous-titre de l'accueil, libellés des chiffres clés, horaires, pied de page.
 - **Images** : traduisez le texte alternatif (lu par les lecteurs d'écran) dans la fiche de l'image de la médiathèque.
 - Les libellés des **menus** se traduisent dans le code (`lang/en.json`, `lang/mg.json`) : demandez-le à l'équipe technique avant d'ajouter une rubrique.
+
+## Menus de la cafétéria (un tableau par semaine)
+
+Le menu de la semaine s'affiche sur la page **Cafétéria** (Vie étudiante), sous le titre « Le menu de la semaine », dans un tableau : trois repas
+(matin, midi, soir) × sept jours. S'il y a plusieurs semaines, des onglets permettent de passer de l'une à l'autre ; sur téléphone, on choisit le jour.
+
+**Où :** menu de gauche → **Contenus** → **Menus de la cafétéria**.
+
+- **Nouveau menu** : choisissez le **premier jour de la semaine** (les menus de l'UAZ vont du **mardi au lundi** : prenez le mardi). Le site propose
+  d'office la semaine qui suit le dernier menu enregistré. Une seule fiche par semaine.
+- **Repas de la semaine** : un onglet par jour (le nom et la date du jour sont affichés d'après la date choisie). Dans chaque case, écrivez **un plat par
+  ligne**, comme sur le menu papier. Un repas laissé vide s'affiche par un tiret.
+- **Mention sous le tableau** (facultative) : une courte phrase, par exemple si le menu peut changer.
+- **Affiché sur le site** : décochez pour garder un menu en préparation. Seules la **semaine en cours** et les **semaines à venir** sont visibles sur le site ;
+  une semaine passée disparaît toute seule, vous n'avez rien à supprimer (elle reste dans la liste). S'il n'y a aucun menu à afficher, la section n'apparaît pas.
+- **Dupliquer vers une autre semaine** (menu ⋮ de la ligne) : les menus de la cafétéria tournent sur plusieurs semaines. Choisissez le nouveau premier jour ; la copie
+  est **non affichée** : relisez-la, modifiez ce qui change, puis cochez « Affiché sur le site ».
+- Les plats s'affichent **tels que vous les écrivez**, dans leur langue (français, anglais, malgache) : ils ne sont pas traduits ; seuls les titres et les dates du
+  tableau changent avec la langue du site.
+- **Voir sur le site** (en haut de la fiche) ouvre la page au niveau du tableau.

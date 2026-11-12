@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CafeteriaMenu;
 use App\Models\Event;
 use App\Models\Faculty;
 use App\Models\Formation;
@@ -80,6 +81,8 @@ class PageController extends Controller
                 'service' => $media->get((int) ($found[1][0] ?? 0)),
                 'kitchen' => $media->get((int) ($found[1][1] ?? 0)),
                 'team' => $media->get((int) ($found[1][2] ?? 0)),
+                // Menus de la semaine en cours et des suivantes (les semaines sans aucun plat saisi ne sont pas montrées).
+                'menus' => CafeteriaMenu::currentAndUpcoming()->limit(4)->get()->reject(fn (CafeteriaMenu $menu) => $menu->isEmpty())->values(),
             ]);
         }
 

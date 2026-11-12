@@ -473,3 +473,292 @@
 .caf-invite__text .word {
     display: inline-block;
 }
+
+/* ───────── Au menu : un tableau par semaine ─────────
+ * Sept colonnes (jours) × trois lignes (matin, midi, soir). Sans JavaScript, toutes les semaines sont empilées et le tableau défile à l'horizontale ;
+ * avec JavaScript (`is-live`) : onglets par semaine et, sous 1024 px, un seul jour à la fois (le jour d'aujourd'hui par défaut). */
+.caf-menu {
+    padding: clamp(4.5rem, 9vw, 8rem) 0;
+    background: #fff;
+}
+
+.caf-menu__head {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+@media (min-width: 1024px) {
+    .caf-menu__head {
+        grid-template-columns: 1fr minmax(0, 24rem);
+        align-items: end;
+        gap: 4rem;
+    }
+}
+
+.caf-menu__lead {
+    font-family: var(--font-serif);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.4rem);
+    line-height: 1.4;
+    color: var(--caf-ink);
+}
+
+/* Onglets de semaine (visibles seulement avec JavaScript : sans lui, les semaines sont déjà toutes affichées). */
+.caf-weeks {
+    display: none;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.caf-menu.is-live .caf-weeks {
+    display: flex;
+}
+
+.caf-week {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid rgb(28 37 64 / 0.2);
+    background: #fff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--caf-ink);
+    transition:
+        background-color 0.25s,
+        color 0.25s,
+        border-color 0.25s;
+}
+
+.caf-week:hover {
+    border-color: var(--caf-ink);
+}
+
+.caf-week[aria-selected='true'] {
+    border-color: var(--caf-ink);
+    background: var(--caf-ink);
+    color: #fff;
+}
+
+.caf-week__now {
+    padding: 0.125rem 0.5rem;
+    background: var(--caf-terra);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.caf-menu__panel + .caf-menu__panel {
+    margin-top: clamp(3rem, 6vw, 5rem);
+}
+
+.caf-menu.is-live .caf-menu__panel[hidden] {
+    display: none;
+}
+
+/* Sans onglets, chaque semaine porte son titre ; avec onglets, il confirme les dates complètes. */
+.caf-menu__week {
+    margin-bottom: 1.5rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    font-weight: 400;
+    color: var(--caf-ink);
+}
+
+/* Choix du jour : petit écran seulement, et seulement avec JavaScript. */
+.caf-days {
+    display: none;
+}
+
+@media (max-width: 1023px) {
+    .caf-menu.is-live .caf-days {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 0.25rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.caf-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    min-height: 3.5rem;
+    padding: 0.5rem 0;
+    border: 1px solid rgb(28 37 64 / 0.16);
+    background: var(--caf-cream);
+    color: var(--caf-ink);
+}
+
+.caf-day__abbr {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.caf-day__num {
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    line-height: 1;
+}
+
+.caf-day.is-today {
+    border-color: var(--caf-terra);
+}
+
+.caf-day[aria-pressed='true'] {
+    border-color: var(--caf-ink);
+    background: var(--caf-ink);
+    color: #fff;
+}
+
+/* Le tableau */
+.caf-table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgb(28 37 64 / 0.14);
+    background: #fff;
+}
+
+.caf-table {
+    width: 100%;
+    min-width: 58rem;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+@media (max-width: 1023px) {
+    .caf-menu.is-live .caf-table {
+        min-width: 0;
+    }
+
+    /* Un seul jour : les autres colonnes sont masquées (les lecteurs d'écran ne les lisent pas non plus). */
+    .caf-menu.is-live .caf-table [data-caf-day]:not(.is-on) {
+        display: none;
+    }
+}
+
+.caf-table th,
+.caf-table td {
+    border: 1px solid rgb(28 37 64 / 0.12);
+    vertical-align: top;
+    text-align: left;
+}
+
+.caf-table__corner {
+    width: 5.5rem;
+    background: var(--caf-ink);
+}
+
+.caf-table__day {
+    padding: 1rem 0.875rem;
+    background: var(--caf-ink);
+    color: #fff;
+}
+
+.caf-table__dow {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.75);
+}
+
+.caf-table__date {
+    display: block;
+    margin-top: 0.25rem;
+    font-family: var(--font-serif);
+    font-size: 1.375rem;
+    font-weight: 400;
+    line-height: 1.1;
+}
+
+.caf-table__now {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    background: var(--caf-terra);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.caf-table__meal {
+    width: 5.5rem;
+    padding: 1rem 0.75rem;
+    background: var(--caf-cream);
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--caf-terra);
+}
+
+.caf-table td {
+    padding: 1rem 0.875rem;
+}
+
+.caf-table td.is-today {
+    background: rgb(184 74 38 / 0.07);
+}
+
+.caf-dishes {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--caf-ink);
+}
+
+.caf-dishes li {
+    position: relative;
+    padding-left: 0.875rem;
+    overflow-wrap: anywhere;
+}
+
+.caf-dishes li::before {
+    content: '';
+    position: absolute;
+    top: 0.6em;
+    left: 0;
+    width: 0.4rem;
+    height: 2px;
+    background: var(--caf-terra);
+}
+
+.caf-dishes__none {
+    color: rgb(28 37 64 / 0.4);
+}
+
+.caf-menu__note {
+    margin-top: 1.25rem;
+    max-width: 48rem;
+    font-size: 0.9375rem;
+    font-style: italic;
+    color: rgb(28 37 64 / 0.75);
+}
+
+/* Petit écran : le libellé du repas passe au-dessus de la colonne du jour, plus de largeur pour les plats. */
+@media (max-width: 1023px) {
+    .caf-table__corner,
+    .caf-table__meal {
+        width: 4.25rem;
+        padding-inline: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .caf-menu.is-live .caf-table__day {
+        padding: 0.875rem;
+    }
+}

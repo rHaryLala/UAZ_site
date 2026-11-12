@@ -30,6 +30,9 @@
                 <h1 id="caf-title" class="caf-title" data-caf-title>{{ __('Cafétéria') }}</h1>
                 <svg class="caf-title__stroke" viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true" focusable="false" data-caf-stroke><path d="M4 12 C 60 2, 110 20, 170 9 S 300 16, 396 5" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
                 <p class="caf-hero__lead" data-caf-hide data-caf-fade>{{ __('Une expérience culinaire simple, équilibrée et inspirante.') }}</p>
+                @if ($menus->isNotEmpty())
+                    <p class="mt-8" data-caf-hide data-caf-fade><x-button href="#menu" variant="navy" arrow>{{ __('Voir le menu de la semaine') }}</x-button></p>
+                @endif
             </div>
 
             <div class="caf-plate" data-caf-plate>
@@ -87,7 +90,95 @@
         </div>
     </section>
 
-    {{-- 4. LES COULISSES : un triptyque dont le volet choisi s'ouvre (clic, survol ou clavier) --}}
+    {{-- 4. AU MENU : un tableau par semaine (semaine en cours et suivantes), saisi dans le back-office (Menus de la cafétéria).
+         Sans JavaScript : toutes les semaines sont empilées et le tableau défile ; avec : onglets par semaine et, sur petit écran, un jour à la fois (animations : cafeteria.js). --}}
+    @if ($menus->isNotEmpty())
+        @php($mealLabels = ['morning' => __('Matin'), 'noon' => __('Midi'), 'evening' => __('Soir')])
+        <section id="menu" class="caf-menu" data-caf-menu aria-labelledby="caf-menu-title">
+            <div class="container-site">
+                <header class="caf-menu__head">
+                    <div>
+                        <p class="eyebrow mb-5" data-reveal>{{ __('Au menu') }}</p>
+                        <h2 id="caf-menu-title" class="caf-h2" data-reveal>{{ __('Le menu de la semaine') }}</h2>
+                    </div>
+                    <p class="caf-menu__lead" data-reveal data-reveal-delay="0.1">{{ __('Matin, midi et soir : les repas servis à la cafétéria, semaine après semaine.') }}</p>
+                </header>
+
+                @if ($menus->count() > 1)
+                    <div class="caf-weeks" role="tablist" aria-label="{{ __('Choisir la semaine') }}" data-caf-weeks>
+                        @foreach ($menus as $menu)
+                            <button type="button" role="tab" id="caf-week-tab-{{ $menu->id }}" class="caf-week" aria-selected="{{ $loop->first ? 'true' : 'false' }}" aria-controls="caf-week-{{ $menu->id }}" tabindex="{{ $loop->first ? '0' : '-1' }}" data-caf-week="{{ $menu->id }}">
+                                <span class="caf-week__range">{{ $menu->shortRange() }}</span>
+                                @if ($menu->isCurrent())<span class="caf-week__now">{{ __('En cours') }}</span>@endif
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
+                @foreach ($menus as $menu)
+                    @php($days = $menu->days())
+                    @php($todayIndex = collect($days)->search(fn ($day) => $day['today']))
+                    <div id="caf-week-{{ $menu->id }}" class="caf-menu__panel" data-caf-week-panel="{{ $menu->id }}" data-caf-today="{{ $todayIndex === false ? 0 : $todayIndex }}" @if ($menus->count() > 1) role="tabpanel" aria-labelledby="caf-week-tab-{{ $menu->id }}" @endif>
+                        <h3 class="caf-menu__week" id="caf-week-title-{{ $menu->id }}">{{ $menu->rangeLabel() }}</h3>
+
+                        <div class="caf-days" role="group" aria-label="{{ __('Choisir le jour') }}" data-caf-days>
+                            @foreach ($days as $i => $day)
+                                <button type="button" class="caf-day {{ $day['today'] ? 'is-today' : '' }}" aria-pressed="false" data-caf-chip="{{ $i }}">
+                                    <span class="caf-day__abbr">{{ $day['abbr'] }}</span>
+                                    <span class="caf-day__num">{{ $day['date']->format('j') }}</span>
+                                    <span class="sr-only">{{ $day['name'] }} {{ $day['short'] }}</span>
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <div class="caf-table-wrap" role="region" aria-labelledby="caf-week-title-{{ $menu->id }}" tabindex="0">
+                            <table class="caf-table">
+                                <caption class="sr-only">{{ __('Menu de la cafétéria') }} — {{ $menu->rangeLabel() }}</caption>
+                                <thead>
+                                    <tr>
+                                        <td class="caf-table__corner"><span class="sr-only">{{ __('Repas') }}</span></td>
+                                        @foreach ($days as $i => $day)
+                                            <th scope="col" class="caf-table__day {{ $day['today'] ? 'is-today' : '' }}" data-caf-day="{{ $i }}" @if ($day['today']) aria-current="date" @endif>
+                                                <span class="caf-table__dow">{{ $day['name'] }}</span>
+                                                <span class="caf-table__date">{{ $day['short'] }}</span>
+                                                @if ($day['today'])<span class="caf-table__now">{{ __('Aujourd\'hui') }}</span>@endif
+                                            </th>
+                                        @endforeach
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($mealLabels as $meal => $label)
+                                        <tr>
+                                            <th scope="row" class="caf-table__meal"><span>{{ $label }}</span></th>
+                                            @foreach ($days as $i => $day)
+                                                <td class="{{ $day['today'] ? 'is-today' : '' }}" data-caf-day="{{ $i }}">
+                                                    @if ($day['meals'][$meal])
+                                                        <ul class="caf-dishes">
+                                                            @foreach ($day['meals'][$meal] as $dish)
+                                                                <li>{{ $dish }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @else
+                                                        <span aria-hidden="true" class="caf-dishes__none">—</span><span class="sr-only">{{ __('Non renseigné') }}</span>
+                                                    @endif
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if (filled($menu->note))
+                            <p class="caf-menu__note">{{ $menu->note }}</p>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- 5. LES COULISSES : un triptyque dont le volet choisi s'ouvre (clic, survol ou clavier) --}}
     <section class="caf-triptych-section" data-caf-triptych aria-labelledby="caf-triptych-title">
         <div class="container-site">
             <h2 id="caf-triptych-title" class="caf-h2" data-reveal>{{ __('Du buffet à la cuisine') }}</h2>
@@ -106,7 +197,7 @@
         </div>
     </section>
 
-    {{-- 5. L'AMBIANCE : trois mots qui défilent ; le défilement de la page les accélère et les incline --}}
+    {{-- 6. L'AMBIANCE : trois mots qui défilent ; le défilement de la page les accélère et les incline --}}
     <section class="caf-marquee-section" aria-labelledby="caf-marquee-title">
         <p class="sr-only" id="caf-marquee-title">{{ __('Paix, fraternité, gratitude') }}</p>
         <div class="caf-marquee" data-caf-marquee aria-hidden="true">
@@ -123,7 +214,7 @@
         <p class="container-site mx-auto mt-12 max-w-2xl text-center font-serif text-xl leading-relaxed text-navy-900 md:text-2xl" data-reveal>{{ __('Une ambiance accueillante, calme, et propice au repos au milieu de vos journées d\'étude ou de travail.') }}</p>
     </section>
 
-    {{-- 6. L'INVITATION --}}
+    {{-- 7. L'INVITATION --}}
     <section class="caf-invite on-dark" data-caf-invite aria-labelledby="caf-invite-title">
         <div class="container-site">
             <h2 id="caf-invite-title" class="caf-invite__text" data-caf-invite-text>{{ __('Chaque passage est une invitation à prendre soin de vous.') }}</h2>

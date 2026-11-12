@@ -1,11 +1,12 @@
-// Page « Cafétéria » : six scènes (voir resources/views/pages/cafeteria.blade.php).
+// Page « Cafétéria » : sept scènes (voir resources/views/pages/cafeteria.blade.php).
 //
 //  1. L'assiette     : « Cafétéria » se sert lettre à lettre, la couronne de mots tourne autour de l'assiette (et accélère avec le défilement).
 //  2. Trois nourritures : écran épinglé, la citation se révèle phrase après phrase, soulignements tracés (DrawSVG), le fond change de couleur.
 //  3. À l'assiette   : six mots entourés « à la main » à leur arrivée et au survol.
-//  4. Le triptyque   : trois volets, celui qu'on choisit s'ouvre (survol, clic ou clavier) ; sur petit écran, tout reste empilé.
-//  5. L'ambiance     : bandeau de mots dont la vitesse, le sens et l'inclinaison suivent le défilement de la page.
-//  6. L'invitation   : les mots de la phrase arrivent tour à tour de gauche et de droite.
+//  4. Au menu        : le tableau des repas de la semaine ; onglets par semaine et, sur petit écran, choix du jour (sans animation).
+//  5. Le triptyque   : trois volets, celui qu'on choisit s'ouvre (survol, clic ou clavier) ; sur petit écran, tout reste empilé.
+//  6. L'ambiance     : bandeau de mots dont la vitesse, le sens et l'inclinaison suivent le défilement de la page.
+//  7. L'invitation   : les mots de la phrase arrivent tour à tour de gauche et de droite.
 //
 // Renforcement progressif : sans JavaScript ou avec « réduire les animations », la page reste complète (voir resources/css/cafeteria.css).
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
@@ -18,8 +19,9 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 export function initCafeteria() {
-    // Le triptyque fonctionne aussi sans animation (changements instantanés).
+    // Le triptyque et le menu de la semaine fonctionnent aussi sans animation (changements instantanés).
     triptych();
+    menu();
 
     const mm = gsap.matchMedia();
 
@@ -140,7 +142,58 @@ function tiles() {
     }
 }
 
-/* ───────── 4. Le triptyque ───────── */
+/* ───────── 4. Au menu ─────────
+ * Renforcement progressif du tableau de la semaine (resources/views/pages/cafeteria.blade.php) : onglets par semaine (flèches, début, fin) et, sous 1024 px,
+ * choix du jour (aujourd'hui par défaut). Sans ce script, toutes les semaines et tous les jours restent affichés. */
+function menu() {
+    const root = $('[data-caf-menu]');
+    if (!root) return;
+
+    root.classList.add('is-live');
+
+    // Onglets de semaine
+    const tabs = $$('[data-caf-week]', root);
+    const panels = $$('[data-caf-week-panel]', root);
+    if (tabs.length > 1) {
+        const select = (id, focus = false) => {
+            tabs.forEach((tab) => {
+                const on = tab.dataset.cafWeek === id;
+                tab.setAttribute('aria-selected', String(on));
+                tab.tabIndex = on ? 0 : -1;
+                if (on && focus) tab.focus();
+            });
+            panels.forEach((panel) => {
+                panel.hidden = panel.dataset.cafWeekPanel !== id;
+            });
+        };
+
+        tabs.forEach((tab, i) => {
+            tab.addEventListener('click', () => select(tab.dataset.cafWeek));
+            tab.addEventListener('keydown', (event) => {
+                const target = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i - 1 + tabs.length) % tabs.length, Home: 0, End: tabs.length - 1 }[event.key];
+                if (target === undefined) return;
+                event.preventDefault();
+                select(tabs[target].dataset.cafWeek, true);
+            });
+        });
+        select(tabs[0].dataset.cafWeek);
+    }
+
+    // Choix du jour, panneau par panneau (visible sous 1024 px seulement : voir cafeteria.css)
+    panels.forEach((panel) => {
+        const chips = $$('[data-caf-chip]', panel);
+        const cells = $$('[data-caf-day]', panel);
+        const show = (day) => {
+            chips.forEach((chip) => chip.setAttribute('aria-pressed', String(chip.dataset.cafChip === String(day))));
+            cells.forEach((cell) => cell.classList.toggle('is-on', cell.dataset.cafDay === String(day)));
+        };
+
+        chips.forEach((chip) => chip.addEventListener('click', () => show(chip.dataset.cafChip)));
+        show(panel.dataset.cafToday ?? 0);
+    });
+}
+
+/* ───────── 5. Le triptyque ───────── */
 function triptych() {
     const section = $('[data-caf-triptych]');
     const panels = $$('[data-caf-panel]', section ?? document);
@@ -207,7 +260,7 @@ function triptych() {
     });
 }
 
-/* ───────── 5. L'ambiance : bandeau défilant ───────── */
+/* ───────── 6. L'ambiance : bandeau défilant ───────── */
 function marquee() {
     const track = $('[data-caf-track]');
     if (!track) return;
@@ -230,7 +283,7 @@ function marquee() {
     });
 }
 
-/* ───────── 6. L'invitation ───────── */
+/* ───────── 7. L'invitation ───────── */
 function invite() {
     const text = $('[data-caf-invite-text]');
     if (!text) return;
