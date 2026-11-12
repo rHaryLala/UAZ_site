@@ -5,6 +5,7 @@
 #   sudo ADMIN_EMAIL=vous@exemple.mg bash provision-prod.sh prepare    # installe le site à côté de l'existant ; rien ne change pour les visiteurs
 #   sudo bash provision-prod.sh switch                                  # zurcher.edu.mg passe sur le nouveau site (annulable)
 #   sudo bash provision-prod.sh rollback                                # retour au site Next.js, en quelques secondes
+#   sudo bash provision-prod.sh update                                  # site DÉJÀ en ligne : nouvelle version du code (sauvegarde, migration, contrôle, retour automatique)
 #   sudo bash provision-prod.sh status
 #
 # Préparé à l'avance, par SSH, dans $STAGE (rien d'autre à envoyer) :
@@ -22,7 +23,7 @@ APP_DIR="${APP_DIR:-/var/www/uaz-laravel}"
 STAGE="${STAGE:-/home/rabenamana/uaz-deploy}"
 DB_NAME="${DB_NAME:-uaz_laravel}"
 DB_USER="${DB_USER:-uaz_laravel}"
-SECRETS_DIR="/root/.uaz-laravel"
+SECRETS_DIR="${SECRETS_DIR:-/root/.uaz-laravel}"
 SERVICE="uaz-laravel-queue"
 AVAIL=/etc/nginx/sites-available
 ENABLED=/etc/nginx/sites-enabled
@@ -176,6 +177,30 @@ EOF
 }
 
 # ─────────────────────────────────────────────────────────────
+# Installe le code d'un dossier source dans $APP_DIR : .env, storage/ (photos, journaux, sessions) et public/storage ne sont jamais touchés.
+sync_code() { # sync_code DOSSIER_SOURCE
+    local src="$1"
+    mkdir -p "$APP_DIR"
+    rsync -a --delete --exclude=/.env --exclude=/storage/ --exclude=/public/storage "$src/" "$APP_DIR/"
+    mkdir -p "$APP_DIR"/storage/{app/public,framework/{cache,sessions,views},logs} "$APP_DIR/bootstrap/cache"
+    chown -R root:www-data "$APP_DIR"
+    chown -R www-data:www-data "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
+    find "$APP_DIR" -type d -not -path "$APP_DIR/storage/*" -not -path "$APP_DIR/bootstrap/cache/*" -exec chmod 755 {} +
+    find "$APP_DIR" -type f -not -path "$APP_DIR/storage/*" -not -path "$APP_DIR/bootstrap/cache/*" -exec chmod 644 {} +
+    chmod -R ug+rwX,o-rwx "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
+    chmod +x "$APP_DIR/artisan"
+    ln -sfn ../storage/app/public "$APP_DIR/public/storage"
+}
+
+# Reconstruit les caches de Laravel et relance la file d'attente (à appeler après tout changement de code).
+refresh_app() {
+    artisan optimize:clear
+    artisan optimize
+    artisan filament:optimize 2>/dev/null || true
+    systemctl restart "$SERVICE"
+}
+
+# ─────────────────────────────────────────────────────────────
 phase_prepare() {
     step "0. Vérifications préalables"
     [ -f "$STAGE/app/artisan" ] || die "Code introuvable : $STAGE/app/artisan"
@@ -201,16 +226,7 @@ SQL
     ok "base et utilisateur prêts (mot de passe dans $pass_file)"
 
     step "2. Code dans $APP_DIR"
-    mkdir -p "$APP_DIR"
-    rsync -a --delete --exclude=/.env --exclude=/storage/ --exclude=/public/storage "$STAGE/app/" "$APP_DIR/"
-    mkdir -p "$APP_DIR"/storage/{app/public,framework/{cache,sessions,views},logs} "$APP_DIR/bootstrap/cache"
-    chown -R root:www-data "$APP_DIR"
-    chown -R www-data:www-data "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
-    find "$APP_DIR" -type d -not -path "$APP_DIR/storage/*" -not -path "$APP_DIR/bootstrap/cache/*" -exec chmod 755 {} +
-    find "$APP_DIR" -type f -not -path "$APP_DIR/storage/*" -not -path "$APP_DIR/bootstrap/cache/*" -exec chmod 644 {} +
-    chmod -R ug+rwX,o-rwx "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
-    chmod +x "$APP_DIR/artisan"
-    ln -sfn ../storage/app/public "$APP_DIR/public/storage"
+    sync_code "$STAGE/app"
     ok "code en place"
 
     step "3. Configuration (.env)"
@@ -344,6 +360,86 @@ EOF
 }
 
 # ─────────────────────────────────────────────────────────────
+# Nouvelle version du code sur le site DÉJÀ en ligne. Le contenu (base, photos) n'est jamais écrasé : seules les migrations s'appliquent.
+phase_update() {
+    step "Mise à jour de $DOMAIN"
+    [ -f "$APP_DIR/storage/.data-imported" ] || die "Le site n'est pas installé : lancez d'abord « prepare » puis « switch »."
+    [ -f "$STAGE/app/artisan" ] && [ -f "$STAGE/app/vendor/autoload.php" ] && [ -f "$STAGE/app/public/build/manifest.json" ] || die "Dossier préparé incomplet : $STAGE/app (code, vendor/, public/build)"
+    nginx -t 2>/dev/null || die "La configuration Nginx est en erreur : rien n'est modifié (nginx -t)"
+    ok "version préparée présente, Nginx sain"
+
+    step "1. Sauvegardes (base et code actuels)"
+    local backups="$SECRETS_DIR/backups" ts
+    ts="$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$backups" && chmod 700 "$backups"
+    mysqldump --single-transaction --routines "$DB_NAME" | gzip > "$backups/db-$ts.sql.gz"
+    tar -czf "$backups/code-$ts.tar.gz" -C "$APP_DIR" --exclude=./storage --exclude=./public/storage .
+    ls -1t "$backups"/db-*.sql.gz 2>/dev/null | tail -n +6 | xargs -r rm -f
+    ls -1t "$backups"/code-*.tar.gz 2>/dev/null | tail -n +6 | xargs -r rm -f
+    ok "sauvegardes dans $backups (base $(du -h "$backups/db-$ts.sql.gz" | cut -f1), code $(du -h "$backups/code-$ts.tar.gz" | cut -f1) ; les cinq dernières sont conservées)"
+
+    # Remet le code d'avant (sauvegarde ci-dessus) : appelé si la migration ou les contrôles échouent.
+    restore_previous() {
+        local tmp; tmp="$(mktemp -d)"
+        tar -xzf "$backups/code-$ts.tar.gz" -C "$tmp"
+        sync_code "$tmp"
+        rm -rf "$tmp"
+        refresh_app
+    }
+
+    step "2. Code"
+    sync_code "$STAGE/app"
+    ok "nouveau code en place"
+
+    step "3. Base de données et caches"
+    if ! artisan migrate --force --no-interaction; then
+        warn "migration en échec : retour automatique au code précédent"
+        restore_previous
+        die "mise à jour annulée : le code d'avant est remis en place ; la migration en échec a pu laisser une table à moitié créée, la base d'avant est sauvegardée dans $backups/db-$ts.sql.gz"
+    fi
+    refresh_app
+    ok "migrations appliquées, caches reconstruits, file d'attente relancée"
+
+    step "4. Contrôles sur https://$DOMAIN"
+    local failed=0 code body i
+    live() { # live CHEMIN [TEXTE] : le 200 est attendu (le rechargement progressif de Nginx / des caches peut prendre quelques secondes)
+        code='000'
+        for i in 1 2 3 4 5 6 7 8 9 10; do
+            code="$(curl -s -o /tmp/uaz-live.html -w '%{http_code}' --max-time 30 --resolve "$DOMAIN:443:127.0.0.1" "https://$DOMAIN$1" || true)"
+            [ "$code" = '200' ] && break
+            sleep 1
+        done
+        if [ "$code" != '200' ]; then warn "$1 → $code (attendu 200)"; failed=1; return; fi
+        if [ -n "${2:-}" ] && ! grep -q -- "$2" /tmp/uaz-live.html; then warn "$1 → 200 mais « $2 » est absent"; return; fi
+        ok "$1 → 200${2:+ (« $2 » présent)}"
+    }
+    live /up
+    live /
+    live /formations
+    live /vie-etudiante/cafeteria 'Le menu de la semaine'
+    live /actualites
+    live /admin/login
+    live /sitemap.xml
+    live /en
+    rm -f /tmp/uaz-live.html
+
+    if [ "$failed" -ne 0 ]; then
+        warn "contrôle en échec : retour automatique au code précédent"
+        restore_previous
+        die "mise à jour annulée : le code d'avant est remis en place (la base garde ses nouvelles tables, sans effet sur l'ancien code ; sauvegarde : $backups/db-$ts.sql.gz)"
+    fi
+
+    cat <<EOF
+
+════════════════════════════════════════════════════════════
+ Site mis à jour : https://$DOMAIN
+ Sauvegardes     : $backups  (base $ts, code $ts)
+ Retour au code précédent, si besoin :
+   sudo mkdir -p /tmp/uaz-avant && sudo tar -xzf $backups/code-$ts.tar.gz -C /tmp/uaz-avant && sudo bash $(basename "$0") restore /tmp/uaz-avant
+════════════════════════════════════════════════════════════
+EOF
+}
+# ─────────────────────────────────────────────────────────────
 phase_switch() {
     step "Bascule de $DOMAIN vers le site Laravel"
     [ -f "$AVAIL/$NEW_CONF" ] || die "Lancez d'abord « prepare »."
@@ -397,6 +493,15 @@ phase_rollback() {
     ok "$DOMAIN est de nouveau servi par le site Next.js (processus sur le port 3100, jamais arrêté)"
 }
 
+# Remet en place le code d'une sauvegarde déjà extraite dans un dossier (voir la fin de « update »).
+phase_restore() {
+    local src="${2:-}"
+    [ -n "$src" ] && [ -f "$src/artisan" ] || die "Usage : provision-prod.sh restore DOSSIER_EXTRAIT_DE_LA_SAUVEGARDE (le dossier doit contenir « artisan »)"
+    step "Retour au code de $src"
+    sync_code "$src"
+    refresh_app
+    ok "code précédent remis en place"
+}
 phase_status() {
     echo "Site actif sur $DOMAIN :"
     if [ -L "$ENABLED/$NEW_CONF" ]; then echo "  Laravel ($NEW_CONF)"; elif [ -L "$ENABLED/$OLD_CONF" ]; then echo "  Next.js ($OLD_CONF)"; else echo "  ?"; fi
@@ -409,5 +514,7 @@ case "$PHASE" in
     switch)   phase_switch ;;
     rollback) phase_rollback ;;
     status)   phase_status ;;
-    *) die "Usage : provision-prod.sh prepare | switch | rollback | status" ;;
+    update)   phase_update ;;
+    restore)  phase_restore "$@" ;;
+    *) die "Usage : provision-prod.sh prepare | switch | rollback | status | update | restore DOSSIER" ;;
 esac
