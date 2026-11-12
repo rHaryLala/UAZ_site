@@ -8,7 +8,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('newsletter:import-mailpoet {file : Export CSV de MailPoet} {--dry-run : Affiche le résultat sans rien enregistrer}')]
-#[Description('Importe un export CSV de MailPoet dans les abonnés de la lettre d\'information (mêmes règles que le bouton du back-office)')]
+#[Description('Importe un export CSV de MailPoet dans les abonnés de la newsletter (mêmes règles que le bouton du back-office)')]
 class ImportMailpoetSubscribers extends Command
 {
     public function handle(): int

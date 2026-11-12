@@ -1,4 +1,4 @@
-// Fenêtre « Lettre d'information » dans un vrai navigateur : ouverture à la première visite, pas de réouverture, réouverture après 20 jours,
+// Fenêtre « Newsletter » dans un vrai navigateur : ouverture à la première visite, pas de réouverture, réouverture après 20 jours,
 // bouton « S'abonner » de la barre du haut, abonnement, puis plus jamais de fenêtre automatique.
 // Prérequis : serveur lancé. Usage : node tests/e2e/newsletter.mjs [dossier-captures]
 import { execFileSync } from 'node:child_process';

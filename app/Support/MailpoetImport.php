@@ -8,11 +8,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
- * Importe dans les abonnés de la lettre d'information un export CSV de MailPoet (extension WordPress de l'ancien site).
+ * Importe dans les abonnés de la newsletter un export CSV de MailPoet (extension WordPress de l'ancien site).
  *
  * Règles (le consentement des personnes prime sur la complétude de la liste) :
  *  - « subscribed »   → abonné actif (date de confirmation, à défaut date d'abonnement) ;
- *  - « unconfirmed »  → « non confirmé » : ne reçoit rien tant que la personne ne s'abonne pas elle-même (fenêtre « S'abonner » du site) ;
+ *  - « unconfirmed »  → abonné actif aussi : l'abonnement sur le site est immédiat (aucune confirmation par e-mail), les adresses restées « en attente » dans MailPoet
+ *                       sont donc reprises directement comme abonnées (décision de l'UAZ, voir D-074) ;
  *  - « unsubscribed » → enregistré comme désinscrit : la désinscription est conservée, la personne ne sera pas réinscrite par erreur ;
  *  - « bounced »      → ignoré (adresse qui n'existe plus ou refuse le courrier) ;
  *  - une adresse déjà désinscrite sur ce site n'est JAMAIS réinscrite par l'import ; une adresse déjà active n'est pas modifiée ;
@@ -22,7 +23,7 @@ use Illuminate\Support\Str;
 final class MailpoetImport
 {
     /** @var list<string> Compteurs rendus, dans l'ordre d'affichage. */
-    public const COUNTERS = ['active_added', 'active_confirmed', 'already', 'pending_added', 'unsubscribed_added', 'unsubscribed_marked', 'kept_unsubscribed', 'bounced', 'invalid', 'duplicates', 'unknown_status'];
+    public const COUNTERS = ['active_added', 'unconfirmed_included', 'active_confirmed', 'already', 'unsubscribed_added', 'unsubscribed_marked', 'kept_unsubscribed', 'bounced', 'invalid', 'duplicates', 'unknown_status'];
 
     /**
      * @return array{total: int, counts: array<string, int>, invalid: list<string>}
@@ -84,26 +85,17 @@ final class MailpoetImport
         $subscribedAt = self::date($row['subscribed_at']);
         $confirmedAt = self::date($row['confirmed_at']) ?? $subscribedAt ?? now();
 
-        if ($status === 'subscribed') {
+        // « unconfirmed » : abonné comme les autres (l'abonnement est immédiat sur ce site, il n'y a plus de confirmation à attendre).
+        if ($status === 'subscribed' || $status === 'unconfirmed') {
             if (! $existing) {
                 $counts['active_added']++;
+                $counts['unconfirmed_included'] += $status === 'unconfirmed' ? 1 : 0;
                 $dryRun || self::create($email, $subscribedAt, ['confirmed_at' => $confirmedAt]);
             } elseif ($existing->unsubscribed_at !== null) {
                 $counts['kept_unsubscribed']++; // désinscrit sur ce site : on ne réinscrit jamais
             } elseif ($existing->confirmed_at === null) {
                 $counts['active_confirmed']++;
                 $dryRun || $existing->forceFill(['confirmed_at' => $confirmedAt])->save();
-            } else {
-                $counts['already']++;
-            }
-
-            return;
-        }
-
-        if ($status === 'unconfirmed') {
-            if (! $existing) {
-                $counts['pending_added']++;
-                $dryRun || self::create($email, $subscribedAt, []);
             } else {
                 $counts['already']++;
             }
@@ -222,11 +214,10 @@ final class MailpoetImport
         $c = $result['counts'];
         $lines = [
             ($dryRun ? 'SIMULATION : rien n\'a été enregistré. ' : '').$result['total'].' ligne(s) lue(s).',
-            $c['active_added'].' abonné(s) actif(s) ajouté(s)'.($c['active_confirmed'] ? ', '.$c['active_confirmed'].' en attente désormais confirmé(s)' : '').'.',
+            $c['active_added'].' abonné(s) actif(s) ajouté(s)'.($c['unconfirmed_included'] ? ' (dont '.$c['unconfirmed_included'].' qui n\'avaient pas confirmé dans MailPoet)' : '').($c['active_confirmed'] ? ', '.$c['active_confirmed'].' adresse(s) déjà présente(s) mais non confirmée(s) désormais abonnée(s)' : '').'.',
         ];
 
         foreach ([
-            'pending_added' => '%d adresse(s) non confirmée(s) ajoutée(s) (elles ne reçoivent rien tant que la personne ne s\'abonne pas elle-même)',
             'unsubscribed_added' => '%d désinscription(s) conservée(s)',
             'unsubscribed_marked' => '%d abonné(s) déjà présent(s) marqué(s) désinscrit(s)',
             'already' => '%d déjà présent(s), non modifié(s)',

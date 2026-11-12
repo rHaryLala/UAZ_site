@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/** Envoi d'une lettre à un abonné : en attente, envoyé, échoué (avec la raison) ou ignoré (désinscrit entre-temps). */
+/** Envoi d'une newsletter à un abonné : en attente, envoyé, échoué (avec la raison) ou ignoré (désinscrit entre-temps). */
 #[Fillable(['newsletter_id', 'newsletter_subscriber_id', 'status', 'error', 'sent_at'])]
 class NewsletterDelivery extends Model
 {

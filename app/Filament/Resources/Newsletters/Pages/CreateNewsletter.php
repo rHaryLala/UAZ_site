@@ -11,7 +11,7 @@ class CreateNewsletter extends CreateRecord
 {
     protected static string $resource = NewsletterResource::class;
 
-    /** Une lettre neuve reprend le modèle choisi (blocs, couleurs, police ; photos de la médiathèque posées d'office). */
+    /** Une newsletter neuve reprend le modèle choisi (blocs, couleurs, police ; photos de la médiathèque posées d'office). */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $built = NewsletterTemplates::build((string) ($data['template'] ?? '')) ?? NewsletterTemplates::build('simple');
@@ -33,6 +33,6 @@ class CreateNewsletter extends CreateRecord
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return 'Lettre créée : composez-la sur le plan de travail.';
+        return 'Newsletter créée : composez-la sur le plan de travail.';
     }
 }

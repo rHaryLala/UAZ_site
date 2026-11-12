@@ -34,7 +34,7 @@ return [
     ],
     'more' => [
         'text' => 'Ne manquez aucun rendez-vous du campus.',
-        'subscribe' => 'S\'abonner à la lettre d\'information',
+        'subscribe' => 'S\'abonner à la newsletter',
         'news' => 'Lire les actualités',
     ],
     'show' => [

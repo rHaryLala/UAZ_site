@@ -6,8 +6,8 @@ use App\Models\Newsletter;
 use App\Models\User;
 
 /**
- * Lettres d'information : rédiger et envoyer un courrier à tous les abonnés est un acte de publication, réservé à ceux qui ont le droit
- * « content.publish » (éditeurs et super-administrateurs). Une lettre déjà envoyée n'est plus modifiable ni supprimable (elle fait foi).
+ * Newsletters : rédiger et envoyer un courrier à tous les abonnés est un acte de publication, réservé à ceux qui ont le droit
+ * « content.publish » (éditeurs et super-administrateurs). Une newsletter déjà envoyée n'est plus modifiable ni supprimable (elle fait foi).
  */
 class NewsletterPolicy
 {

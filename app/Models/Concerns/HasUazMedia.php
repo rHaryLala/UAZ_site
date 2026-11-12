@@ -10,7 +10,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 /**
  * Conversions d'images communes à tous les modèles : `thumb`, `card` et `hero`
  * en WebP, plus leurs variantes AVIF (`*-avif`) lorsque GD sait en produire. Les
- * photos de la médiathèque ont en plus `mail` : un JPEG de 1200 px pour les lettres d'information.
+ * photos de la médiathèque ont en plus `mail` : un JPEG de 1200 px pour les newsletters.
  *
  * @mixin HasMedia
  */
@@ -24,7 +24,7 @@ trait HasUazMedia
             return;
         }
 
-        // Les photos de la médiathèque servent aussi aux lettres d'information : Outlook (ordinateur) n'affiche pas le WebP, d'où un JPEG.
+        // Les photos de la médiathèque servent aussi aux newsletters : Outlook (ordinateur) n'affiche pas le WebP, d'où un JPEG.
         if ($this instanceof MediaAsset) {
             $this->addMediaConversion('mail')->width(1200)->format('jpg')->quality(82)->nonOptimized();
         }

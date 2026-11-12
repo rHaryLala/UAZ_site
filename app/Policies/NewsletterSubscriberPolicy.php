@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Models\NewsletterSubscriber;
 use App\Models\User;
 
-/** Abonnés à la lettre d'information : lecture seule dans l'admin (mêmes droits que les messages de contact) ; suppression possible. */
+/** Abonnés à la newsletter : lecture seule dans l'admin (mêmes droits que les messages de contact) ; suppression possible. */
 class NewsletterSubscriberPolicy
 {
     public function viewAny(User $user): bool

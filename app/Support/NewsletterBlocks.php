@@ -3,7 +3,7 @@
 namespace App\Support;
 
 /**
- * Les blocs d'une lettre d'information et leur thème. Cette classe est la seule source de vérité :
+ * Les blocs d'une newsletter et leur thème. Cette classe est la seule source de vérité :
  *  - l'éditeur visuel en tire la liste des blocs à ajouter et le panneau de réglages de chaque bloc (champs décrits ici) ;
  *  - le serveur s'en sert pour valider tout ce que le navigateur envoie (normalize) : types connus, champs connus, couleurs au format
  *    #rrggbb, liens http(s)/mailto/tel, longueurs bornées, texte enrichi assaini. Le navigateur n'est jamais cru sur parole.
@@ -14,7 +14,7 @@ namespace App\Support;
  */
 final class NewsletterBlocks
 {
-    /** Nombre maximal de blocs dans la lettre, conteneurs et blocs imbriqués compris. */
+    /** Nombre maximal de blocs dans la newsletter, conteneurs et blocs imbriqués compris. */
     public const MAX_BLOCKS = 100;
 
     /** Un conteneur n'est accepté qu'aux niveaux 0 et 1 : au niveau 2, il n'y a plus que des blocs simples. */
@@ -42,7 +42,7 @@ final class NewsletterBlocks
 
     /**
      * Réglages de l'en-tête (en plus du thème) : emplacements, tailles, hashtag, adresses des réseaux sociaux. Les valeurs d'origine reproduisent
-     * l'ancien en-tête (logo et nom à gauche) : une lettre déjà écrite ou envoyée ne change pas d'aspect.
+     * l'ancien en-tête (logo et nom à gauche) : une newsletter déjà écrite ou envoyée ne change pas d'aspect.
      *
      * @return array<string, string|int>
      */
@@ -84,8 +84,8 @@ final class NewsletterBlocks
     public static function defaultTheme(): array
     {
         return self::headerDefaults() + [
-            'background' => '#eef0f6', // fond autour de la lettre
-            'card' => '#ffffff', // fond de la lettre
+            'background' => '#eef0f6', // fond autour de la newsletter
+            'card' => '#ffffff', // fond de la newsletter
             'text' => '#1d2233',
             'accent' => '#232e66', // titres, liens
             'gold' => '#8a724b', // filets, détails
@@ -108,7 +108,7 @@ final class NewsletterBlocks
 
         $out['font'] = in_array($theme['font'] ?? null, ['serif', 'sans'], true) ? $theme['font'] : $default['font'];
         // Une chaîne vide arrive « null » (le middleware de Laravel convertit les chaînes vides en null) : c'est une VRAIE valeur (masqué, désactivé),
-        // qui ne doit pas être confondue avec une clé absente (lettre ancienne) qui garde la valeur d'origine.
+        // qui ne doit pas être confondue avec une clé absente (newsletter ancienne) qui garde la valeur d'origine.
         $has = fn (string $key): bool => array_key_exists($key, $theme);
         $out['header'] = $has('header') ? ($theme['header'] ? '1' : '') : $default['header'];
 
@@ -133,7 +133,7 @@ final class NewsletterBlocks
     /**
      * Description des blocs. 'fields' : réglages du panneau (kind : text, select, color, media, range, toggle, url) ;
      * 'inline' : champs modifiés directement sur le plan de travail (rich = texte enrichi, sinon texte brut d'une ligne) ;
-     * 'group' : rubrique du panneau « Ajouter » ; 'container' : le bloc porte d'autres blocs ; 'bleed' : à pleine largeur de la lettre.
+     * 'group' : rubrique du panneau « Ajouter » ; 'container' : le bloc porte d'autres blocs ; 'bleed' : à pleine largeur de la newsletter.
      *
      * @return array<string, array<string, mixed>>
      */
@@ -232,7 +232,7 @@ final class NewsletterBlocks
                     ['key' => 'bg', 'label' => 'Couleur de fond', 'kind' => 'color', 'empty' => 'Sans fond'],
                     ['key' => 'padding', 'label' => 'Marges intérieures', 'kind' => 'select', 'options' => ['none' => 'Aucune', 'sm' => 'Petites', 'md' => 'Moyennes', 'lg' => 'Grandes'], 'segmented' => true],
                     ['key' => 'radius', 'label' => 'Coins', 'kind' => 'select', 'options' => [0 => 'Droits', 8 => 'Arrondis', 20 => 'Très arrondis'], 'segmented' => true],
-                    ['key' => 'inset', 'label' => 'Dans les marges de la lettre (sinon bord à bord)', 'kind' => 'toggle'],
+                    ['key' => 'inset', 'label' => 'Dans les marges de la newsletter (sinon bord à bord)', 'kind' => 'toggle'],
                 ],
             ],
             'divider' => [
@@ -326,7 +326,7 @@ final class NewsletterBlocks
             'banner-dark' => [
                 'label' => 'Bandeau foncé', 'hint' => 'Un fond bleu nuit : le texte passe en clair tout seul.',
                 'block' => self::node('section', $dark + ['padding' => 'lg'], [[
-                    self::node('heading', ['text' => 'LETTRE D’INFORMATION', 'size' => 12, 'upper' => '1', 'color' => '#e0b957', 'align' => 'center']),
+                    self::node('heading', ['text' => 'NEWSLETTER', 'size' => 12, 'upper' => '1', 'color' => '#e0b957', 'align' => 'center']),
                     self::node('heading', ['text' => 'Un grand titre qui accroche', 'size' => 36, 'level' => 'h1', 'align' => 'center']),
                     self::node('text', ['align' => 'center']),
                     self::node('button', ['bg' => '#e0b957', 'color' => '#131a3f', 'radius' => 999]),
@@ -335,7 +335,7 @@ final class NewsletterBlocks
         ];
     }
 
-    /** Lettre de départ : un titre, un texte et un bouton. */
+    /** Newsletter de départ : un titre, un texte et un bouton. */
     public static function starter(): array
     {
         return self::withIds(array_map(fn (string $type) => self::node($type), ['heading', 'text', 'button']));

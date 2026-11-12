@@ -11,7 +11,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Envoie une lettre à UN abonné et note le résultat (newsletter_deliveries). Le couple (lettre, abonné) est unique : même relancé, ce travail
+ * Envoie une newsletter à UN abonné et note le résultat (newsletter_deliveries). Le couple (newsletter, abonné) est unique : même relancé, ce travail
  * n'envoie jamais deux fois. Un abonné désinscrit entre-temps est ignoré. En cas d'échec, la file réessaie (1 puis 5 minutes), puis l'échec est noté.
  */
 class SendNewsletterMessage implements ShouldQueue

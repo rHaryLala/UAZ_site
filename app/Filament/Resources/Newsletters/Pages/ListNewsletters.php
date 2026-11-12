@@ -13,7 +13,7 @@ class ListNewsletters extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [CreateAction::make()->label('Nouvelle lettre')];
+        return [CreateAction::make()->label('Nouvelle newsletter')];
     }
 
     public function getSubheading(): ?string
@@ -21,7 +21,7 @@ class ListNewsletters extends ListRecords
         $count = Newsletter::audienceCount();
 
         return $count === 0
-            ? 'Aucun abonné actif pour le moment : une lettre ne partirait à personne.'
-            : 'Chaque lettre part à '.$count.' abonné'.($count > 1 ? 's' : '').' actif'.($count > 1 ? 's' : '').' (adresse confirmée, non désinscrit).';
+            ? 'Aucun abonné actif pour le moment : une newsletter ne partirait à personne.'
+            : 'Chaque newsletter part à '.$count.' abonné'.($count > 1 ? 's' : '').' actif'.($count > 1 ? 's' : '').' (adresse confirmée, non désinscrit).';
     }
 }

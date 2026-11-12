@@ -97,7 +97,7 @@ it('shows the dialog without announcing a confirmation e-mail', function () {
 
     $html = $this->get('/')->assertOk()->getContent();
 
-    expect($html)->toContain('data-newsletter-dialog')->toContain('Nous n&#039;utilisons votre adresse que pour cette lettre.')
+    expect($html)->toContain('data-newsletter-dialog')->toContain('Nous n&#039;utilisons votre adresse que pour cette newsletter.')
         ->not->toContain('Un e-mail de confirmation vous sera envoyé');
 
     $this->get('/en')->assertOk()->assertSee('We only use your address for this newsletter.')->assertDontSee('confirmation email will be sent');

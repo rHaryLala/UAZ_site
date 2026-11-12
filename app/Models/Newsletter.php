@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Lettre d'information composée dans l'éditeur visuel du back-office (plan de travail). Cycle : brouillon (modifiable) → en cours d'envoi →
+ * Newsletter composée dans l'éditeur visuel du back-office (plan de travail). Cycle : brouillon (modifiable) → en cours d'envoi →
  * envoyée (figée). Elle part à chaque abonné ACTIF (confirmé, non désinscrit) ; chaque envoi est tracé dans newsletter_deliveries.
  *
  * Contenu : une liste de blocs (App\Support\NewsletterBlocks) et un thème (couleurs, police) ; le courrier est dessiné par
@@ -29,17 +29,17 @@ class Newsletter extends Model
 
     protected static function booted(): void
     {
-        // Une lettre envoyée fait foi : plus de modification de son contenu, ni de suppression, quels que soient les droits (le super-administrateur
+        // Une newsletter envoyée fait foi : plus de modification de son contenu, ni de suppression, quels que soient les droits (le super-administrateur
         // contourne les politiques d'accès : la règle est donc aussi posée ici).
         static::updating(function (Newsletter $newsletter): void {
             if ($newsletter->getOriginal('status') !== self::DRAFT && $newsletter->isDirty(['subject', 'preheader', 'blocks', 'theme'])) {
-                throw new \LogicException('Une lettre envoyée ne peut plus être modifiée.');
+                throw new \LogicException('Une newsletter envoyée ne peut plus être modifiée.');
             }
         });
 
         static::deleting(function (Newsletter $newsletter): void {
             if (! $newsletter->isDraft()) {
-                throw new \LogicException('Une lettre envoyée ne peut pas être supprimée.');
+                throw new \LogicException('Une newsletter envoyée ne peut pas être supprimée.');
             }
         });
     }
@@ -49,7 +49,7 @@ class Newsletter extends Model
         return ['blocks' => 'array', 'theme' => 'array', 'sent_at' => 'datetime', 'recipients_count' => 'integer'];
     }
 
-    /** Lettre neuve : un titre et un texte d'exemple pour ne pas démarrer d'une page blanche. */
+    /** Newsletter neuve : un titre et un texte d'exemple pour ne pas démarrer d'une page blanche. */
     public static function startingBlocks(): array
     {
         return NewsletterBlocks::starter();
@@ -83,7 +83,7 @@ class Newsletter extends Model
         ];
     }
 
-    /** Nombre d'abonnés qui recevraient la lettre maintenant. */
+    /** Nombre d'abonnés qui recevraient la newsletter maintenant. */
     public static function audienceCount(): int
     {
         return NewsletterSubscriber::active()->count();
@@ -101,7 +101,7 @@ class Newsletter extends Model
             $fresh = static::query()->lockForUpdate()->findOrFail($this->id);
 
             if (! $fresh->isDraft()) {
-                throw new \LogicException('Cette lettre a déjà été envoyée.');
+                throw new \LogicException('Cette newsletter a déjà été envoyée.');
             }
 
             $count = self::audienceCount();
@@ -117,7 +117,7 @@ class Newsletter extends Model
         SendNewsletter::dispatch($this->id);
     }
 
-    /** Passe la lettre à « envoyée » quand chaque destinataire a été traité (envoyé, échoué ou ignoré). */
+    /** Passe la newsletter à « envoyée » quand chaque destinataire a été traité (envoyé, échoué ou ignoré). */
     public function finalizeIfComplete(): void
     {
         $this->refresh();
@@ -149,7 +149,7 @@ class Newsletter extends Model
         return NewsletterRenderer::html($this->state(), $subscriber, $unsubscribeUrl);
     }
 
-    /** Version texte de la lettre pour les logiciels de messagerie qui n'affichent pas le HTML. */
+    /** Version texte de la newsletter pour les logiciels de messagerie qui n'affichent pas le HTML. */
     public function plainText(?string $unsubscribeUrl = null): string
     {
         return NewsletterRenderer::text($this->state(), $unsubscribeUrl);

@@ -53,7 +53,7 @@ Route::prefix('admin/visual-editor/{page}')->name('admin.visual-editor.')->group
     Route::post('/publish', [$controller, 'publish'])->middleware('throttle:30,1')->name('publish');
 });
 
-// Éditeur visuel des lettres d'information (droits vérifiés dans le contrôleur : politique NewsletterPolicy).
+// Éditeur visuel des newsletters (droits vérifiés dans le contrôleur : politique NewsletterPolicy).
 Route::prefix('admin/newsletter-editor/{newsletter}')->name('admin.newsletter-editor.')->group(function () {
     $controller = NewsletterEditorController::class;
     Route::get('/', [$controller, 'show'])->name('show');
@@ -94,7 +94,7 @@ $publicRoutes = function (): void {
     Route::get('/equipe', TeamController::class)->name('team');
     Route::get('/contact', ContactController::class)->name('contact');
 
-    // Lettre d'information : abonnement immédiat (JSON, depuis la fenêtre du site) et désinscription par lien signé.
+    // Newsletter : abonnement immédiat (JSON, depuis la fenêtre du site) et désinscription par lien signé.
     Route::post('/newsletter', [NewsletterController::class, 'subscribe'])->middleware('throttle:6,1')->name('newsletter.subscribe');
     Route::get('/newsletter/desinscription/{subscriber}', [NewsletterController::class, 'unsubscribe'])->middleware('signed')->name('newsletter.unsubscribe');
     Route::get('/recherche', SearchController::class)->name('search');

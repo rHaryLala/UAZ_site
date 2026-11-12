@@ -18,8 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Éditeur visuel des lettres d'information : la lettre s'affiche comme elle partira (plan de travail), on modifie les textes sur place,
- * on ajoute, déplace, duplique et supprime des blocs, on règle les couleurs. Le navigateur envoie l'état de la lettre ; le serveur le
+ * Éditeur visuel des newsletters : la newsletter s'affiche comme elle partira (plan de travail), on modifie les textes sur place,
+ * on ajoute, déplace, duplique et supprime des blocs, on règle les couleurs. Le navigateur envoie l'état de la newsletter ; le serveur le
  * valide (App\Support\NewsletterBlocks::normalize), le dessine (App\Support\NewsletterRenderer) et l'enregistre : il n'est jamais cru sur parole.
  * Droits : politique NewsletterPolicy (brouillon et « content.publish »).
  */
@@ -78,13 +78,13 @@ class NewsletterEditorController extends Controller
         ]);
     }
 
-    /** Dessine la lettre pour l'état envoyé, sans rien enregistrer : c'est le contenu du plan de travail. */
+    /** Dessine la newsletter pour l'état envoyé, sans rien enregistrer : c'est le contenu du plan de travail. */
     public function render(Request $request, Newsletter $newsletter): JsonResponse
     {
         abort_unless($request->user(), 401);
         abort_unless($request->user()->can('view', $newsletter), 403);
         $state = $this->state($request);
-        // Repères de modification seulement pour un brouillon qu'on a le droit de modifier ; une lettre envoyée s'affiche telle quelle.
+        // Repères de modification seulement pour un brouillon qu'on a le droit de modifier ; une newsletter envoyée s'affiche telle quelle.
         $editing = $this->canEdit($request, $newsletter);
 
         return response()->json([
@@ -95,8 +95,8 @@ class NewsletterEditorController extends Controller
     }
 
     /**
-     * Dessine quelques blocs de premier niveau (une ligne de la lettre chacun) : le plan de travail ne redessine que ce qui a changé,
-     * au lieu de recharger toute la lettre. Sert aussi à préparer d'avance les blocs du panneau « Ajouter ».
+     * Dessine quelques blocs de premier niveau (une ligne de la newsletter chacun) : le plan de travail ne redessine que ce qui a changé,
+     * au lieu de recharger toute la newsletter. Sert aussi à préparer d'avance les blocs du panneau « Ajouter ».
      */
     public function rows(Request $request, Newsletter $newsletter): JsonResponse
     {
@@ -108,7 +108,7 @@ class NewsletterEditorController extends Controller
         return response()->json(['rows' => NewsletterRenderer::rows($blocks, NewsletterBlocks::theme($data['theme'] ?? null)), 'media' => $this->mediaMap($blocks)]);
     }
 
-    /** Dessine l'en-tête seul (lignes du bandeau) : réglé en direct, il n'oblige pas à recharger toute la lettre. */
+    /** Dessine l'en-tête seul (lignes du bandeau) : réglé en direct, il n'oblige pas à recharger toute la newsletter. */
     public function header(Request $request, Newsletter $newsletter): JsonResponse
     {
         abort_unless($request->user(), 401);
@@ -118,7 +118,7 @@ class NewsletterEditorController extends Controller
         return response()->json(['html' => NewsletterRenderer::header(NewsletterBlocks::theme($data['theme'] ?? null), true)]);
     }
 
-    /** Les modèles de lettre, chacun avec son aperçu (la lettre entière, telle qu'elle partirait), pour choisir sans deviner. */
+    /** Les modèles de newsletter, chacun avec son aperçu (la newsletter entière, telle qu'elle partirait), pour choisir sans deviner. */
     public function templates(Request $request, Newsletter $newsletter): JsonResponse
     {
         abort_unless($request->user(), 401);
@@ -160,7 +160,7 @@ class NewsletterEditorController extends Controller
         return response()->json(['saved_at' => now()->format('H:i:s')]);
     }
 
-    /** Envoi d'essai à une adresse (sans toucher aux abonnés ni à la lettre). */
+    /** Envoi d'essai à une adresse (sans toucher aux abonnés ni à la newsletter). */
     public function test(Request $request, Newsletter $newsletter): JsonResponse
     {
         $this->authorizeUpdate($request, $newsletter);
@@ -188,7 +188,7 @@ class NewsletterEditorController extends Controller
         $state = $this->state($request);
 
         if ($state['subject'] === '') {
-            return response()->json(['message' => 'Donnez un objet à la lettre avant de l\'envoyer.'], 422);
+            return response()->json(['message' => 'Donnez un objet à la newsletter avant de l\'envoyer.'], 422);
         }
 
         $newsletter->forceFill([
@@ -213,7 +213,7 @@ class NewsletterEditorController extends Controller
         abort_unless($this->canEdit($request, $newsletter), 403);
     }
 
-    /** Un brouillon, et le droit de publier. Le super-administrateur contourne les politiques : on ne s'en remet pas à elles pour figer une lettre envoyée. */
+    /** Un brouillon, et le droit de publier. Le super-administrateur contourne les politiques : on ne s'en remet pas à elles pour figer une newsletter envoyée. */
     private function canEdit(Request $request, Newsletter $newsletter): bool
     {
         return $newsletter->isDraft() && $request->user()?->can('update', $newsletter) === true;

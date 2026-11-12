@@ -6,7 +6,7 @@ use App\Models\MediaAsset;
 use App\Models\SiteSetting;
 
 /**
- * Modèles de lettres proposés à la création (et dans l'éditeur) : une mise en page moderne déjà composée, à adapter. Chaque modèle donne un thème,
+ * Modèles de newsletters proposés à la création (et dans l'éditeur) : une mise en page moderne déjà composée, à adapter. Chaque modèle donne un thème,
  * un objet et des blocs ; les images sont posées automatiquement avec les dernières photos de la médiathèque (s'il y en a), sinon elles
  * restent à choisir. Les textes sont des exemples en français à remplacer.
  */
@@ -140,7 +140,7 @@ final class NewsletterTemplates
                 'theme' => $sans,
                 'blocks' => [
                     self::section(['bg' => '#232e66', 'padding' => 'lg'], [
-                        self::eyebrow('LETTRE D’INFORMATION · '.mb_strtoupper($month), self::GOLD, 'center'),
+                        self::eyebrow('NEWSLETTER · '.mb_strtoupper($month), self::GOLD, 'center'),
                         self::h('Les nouvelles de l’UAZ', ['size' => 38, 'level' => 'h1', 'align' => 'center']),
                         self::t('<p>Des nouvelles du campus, de nos étudiants et de nos enseignants, racontées en quelques lignes.</p>', ['align' => 'center', 'size' => 17]),
                         self::spacer(8),
@@ -284,12 +284,12 @@ final class NewsletterTemplates
             ],
 
             'simple' => [
-                'name' => 'Lettre simple',
+                'name' => 'Newsletter simple',
                 'description' => 'Un titre, un texte, un bouton : l’essentiel, sans fioritures.',
-                'subject' => 'Lettre d’information de l’UAZ — '.$month,
+                'subject' => 'Newsletter de l’UAZ — '.$month,
                 'theme' => $serif,
                 'blocks' => [
-                    self::h('Un titre pour votre lettre', ['size' => 30]),
+                    self::h('Un titre pour votre newsletter', ['size' => 30]),
                     self::t('<p>Écrivez votre message ici. Sélectionnez des mots pour les mettre en gras, en italique ou en faire un lien.</p>'),
                     NewsletterBlocks::node('divider', ['width' => 'short']),
                     self::t('<p>Un second paragraphe, une annonce, un remerciement.</p>'),

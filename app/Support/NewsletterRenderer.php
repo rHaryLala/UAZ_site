@@ -10,13 +10,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 
 /**
- * Dessine une lettre d'information : le courrier HTML (tables et styles en ligne, pour les logiciels de messagerie) et sa version texte.
+ * Dessine une newsletter : le courrier HTML (tables et styles en ligne, pour les logiciels de messagerie) et sa version texte.
  * L'éditeur visuel affiche exactement ce que cette classe produit ($editing = true ajoute seulement des repères pour modifier sur place) :
  * ce qu'on voit sur le plan de travail est ce qui part.
  */
 final class NewsletterRenderer
 {
-    /** Largeur de la lettre et de ses marges (px) : les colonnes en tirent leurs largeurs exactes (les messageries n'aiment pas le « calc »). */
+    /** Largeur de la newsletter et de ses marges (px) : les colonnes en tirent leurs largeurs exactes (les messageries n'aiment pas le « calc »). */
     public const WIDTH = 640;
 
     public const SIDE = 32;
@@ -62,7 +62,7 @@ final class NewsletterRenderer
     }
 
     /**
-     * Les lignes de la lettre pour quelques blocs seulement (mise à jour du plan de travail : on ne redessine que ce qui a changé).
+     * Les lignes de la newsletter pour quelques blocs seulement (mise à jour du plan de travail : on ne redessine que ce qui a changé).
      *
      * @param  list<array<string, mixed>>  $blocks  blocs de premier niveau, déjà valides
      * @param  array<string, string>  $theme
@@ -176,7 +176,7 @@ final class NewsletterRenderer
             return null;
         }
 
-        // Le JPEG des lettres s'il existe (toutes les messageries l'affichent), sinon la version WebP « card », sinon l'original.
+        // Le JPEG des newsletters s'il existe (toutes les messageries l'affichent), sinon la version WebP « card », sinon l'original.
         foreach ([$conversion, 'card'] as $name) {
             if ($file->hasGeneratedConversion($name)) {
                 return url($file->getUrl($name));

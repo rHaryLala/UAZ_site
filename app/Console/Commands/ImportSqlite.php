@@ -15,7 +15,7 @@ use Throwable;
 #[Description('Recopie le contenu d\'une base SQLite (poste de développement) dans la base configurée (MariaDB en production)')]
 class ImportSqlite extends Command
 {
-    /** Tables propres à la machine d'origine : sessions, caches, files d'attente, et données d'essai (messages, abonnés, lettres). */
+    /** Tables propres à la machine d'origine : sessions, caches, files d'attente, et données d'essai (messages, abonnés, newsletters). */
     private const SKIPPED = [
         'migrations', 'cache', 'cache_locks', 'sessions', 'jobs', 'job_batches', 'failed_jobs', 'password_reset_tokens',
         'contact_messages', 'newsletter_subscribers', 'newsletters', 'newsletter_deliveries',

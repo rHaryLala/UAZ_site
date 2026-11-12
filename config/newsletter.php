@@ -2,13 +2,13 @@
 
 return [
     /*
-     * Cadence d'envoi : délai, en secondes, entre deux e-mails d'une même lettre. Les hébergeurs limitent le nombre de messages par heure
-     * (voir docs/DEPLOIEMENT.md) : une cadence régulière évite qu'une lettre soit bloquée ou classée en courrier indésirable.
+     * Cadence d'envoi : délai, en secondes, entre deux e-mails d'une même newsletter. Les hébergeurs limitent le nombre de messages par heure
+     * (voir docs/DEPLOIEMENT.md) : une cadence régulière évite qu'une newsletter soit bloquée ou classée en courrier indésirable.
      * Ignoré quand la file d'attente est « sync » (développement : tout part immédiatement).
      */
     'seconds_between_messages' => (int) env('NEWSLETTER_SECONDS_BETWEEN', 2),
 
-    /** Expéditeur des lettres : une adresse dédiée, distincte de celle des messages du site (réponses aux formulaires, confirmations). */
+    /** Expéditeur des newsletters : une adresse dédiée, distincte de celle des messages du site (réponses aux formulaires, confirmations). */
     'from' => [
         'address' => env('NEWSLETTER_FROM_ADDRESS', 'newsletter@zurcher.edu.mg'),
         'name' => env('NEWSLETTER_FROM_NAME', 'Université Adventiste Zurcher'),

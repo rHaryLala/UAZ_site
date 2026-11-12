@@ -8,11 +8,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Lettre d'information : abonnement depuis la fenêtre du site (réponse JSON) et désinscription par lien signé.
+ * Newsletter : abonnement depuis la fenêtre du site (réponse JSON) et désinscription par lien signé.
  *
  * L'abonnement est IMMÉDIAT : un clic sur « S'abonner » suffit, aucun e-mail de confirmation n'est envoyé (décision de l'UAZ, voir D-073).
  * Contrepartie : n'importe qui peut saisir l'adresse de quelqu'un d'autre. Protections : validation, limitation de débit (route),
- * champ piège contre les robots, lien de désinscription en un clic dans chaque lettre, et suppression possible depuis le back-office.
+ * champ piège contre les robots, lien de désinscription en un clic dans chaque newsletter, et suppression possible depuis le back-office.
  */
 class NewsletterController extends Controller
 {
@@ -24,7 +24,7 @@ class NewsletterController extends Controller
             ['email' => __('adresse e-mail')],
         );
 
-        $message = __('Merci ! Vous êtes abonné(e) à la lettre d\'information de l\'UAZ.');
+        $message = __('Merci ! Vous êtes abonné(e) à la newsletter de l\'UAZ.');
 
         // Robot détecté (champ piège rempli) : on simule un succès sans rien enregistrer.
         if (filled($data['website'] ?? null)) {
@@ -48,7 +48,7 @@ class NewsletterController extends Controller
 
         return view('newsletter.status', [
             'title' => __('Désinscription effectuée'),
-            'text' => __('Votre adresse a été retirée de la lettre d\'information de l\'UAZ. Vous ne recevrez plus de message de notre part.'),
+            'text' => __('Votre adresse a été retirée de la newsletter de l\'UAZ. Vous ne recevrez plus de message de notre part.'),
         ]);
     }
 }

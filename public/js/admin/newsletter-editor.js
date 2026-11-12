@@ -1,7 +1,7 @@
-// Éditeur de lettres d'information (coque) : panneau (Ajouter / Structure / Bloc / Lettre), historique, enregistrement automatique, essai et envoi.
-// L'état de la lettre (objet, aperçu, blocs, thème) vit ici : les blocs forment un ARBRE (colonnes et bandeaux portent d'autres blocs, repérés par leur
+// Éditeur de newsletters (coque) : panneau (Ajouter / Structure / Bloc / Newsletter), historique, enregistrement automatique, essai et envoi.
+// L'état de la newsletter (objet, aperçu, blocs, thème) vit ici : les blocs forment un ARBRE (colonnes et bandeaux portent d'autres blocs, repérés par leur
 // identifiant). Le plan de travail (iframe, newsletter-canvas.js) affiche le courrier dessiné par le serveur (App\Support\NewsletterRenderer, le même
-// code que l'envoi) et signale ce qu'on y fait. Pour rester instantané, la lettre n'est jamais rechargée pour un simple changement de bloc : chaque
+// code que l'envoi) et signale ce qu'on y fait. Pour rester instantané, la newsletter n'est jamais rechargée pour un simple changement de bloc : chaque
 // bloc de premier niveau est dessiné à part, mis en cache selon son contenu, et seules les lignes modifiées sont remplacées. Les blocs du panneau
 // « Ajouter » sont préparés d'avance : ajouter, dupliquer, déplacer, annuler s'affichent sans attendre le serveur. Le serveur valide tout.
 (() => {
@@ -16,7 +16,7 @@
     let state = clone(boot.state);
     const media = { ...(boot.media || {}) };
     let selected = null; // identifiant du bloc sélectionné
-    let headerSelected = false; // l'en-tête de la lettre est sélectionné (ses réglages s'affichent dans l'onglet « Bloc »)
+    let headerSelected = false; // l'en-tête de la newsletter est sélectionné (ses réglages s'affichent dans l'onglet « Bloc »)
     let insertTarget = null; // où ira le prochain bloc ajouté : { parent, col, index }
     let tab = 'add';
     let history = [JSON.stringify(state)];
@@ -162,7 +162,7 @@
             return false;
         }
         if (countAll() + countAll([block]) > boot.max) {
-            toast('Une lettre ne peut pas dépasser ' + boot.max + ' blocs.', 'error');
+            toast('Une newsletter ne peut pas dépasser ' + boot.max + ' blocs.', 'error');
 
             return false;
         }
@@ -256,7 +256,7 @@
         if (wanted.size) flushRows();
     }
 
-    /** Prépare d'avance les blocs du panneau « Ajouter » : un clic les pose sur la lettre sans attendre. */
+    /** Prépare d'avance les blocs du panneau « Ajouter » : un clic les pose sur la newsletter sans attendre. */
     async function prefetchLibrary() {
         const blocks = library.map((entry) => entry.block).filter((block) => !cache.has(keyOf(block)));
         if (!blocks.length) return;
@@ -305,7 +305,7 @@
                     snapshot.forEach((block) => rowKeys.set(block.id, keyOf(block)));
                     ready = true;
                     callFrame('select', selected);
-                    sync(); // la lettre a pu changer pendant le chargement
+                    sync(); // la newsletter a pu changer pendant le chargement
                     prefetchLibrary();
                 },
                 { once: true },
@@ -374,7 +374,7 @@
         if (panels) renderPanels();
     }
 
-    /* ───────── En-tête de la lettre : redessiné seul, sans recharger le plan de travail ───────── */
+    /* ───────── En-tête de la newsletter : redessiné seul, sans recharger le plan de travail ───────── */
     const isHeaderKey = (key) => key === 'header' || key.startsWith('header_') || key.startsWith('social_');
     let headerSeq = 0;
 
@@ -538,7 +538,7 @@
             }
         } else if (m.op === 'header') selectHeader();
         else if (m.op === 'theme-edit') {
-            // Le hashtag modifié sur la lettre : le plan de travail le montre déjà, il n'y a rien à redessiner.
+            // Le hashtag modifié sur la newsletter : le plan de travail le montre déjà, il n'y a rien à redessiner.
             state.theme[m.key] = m.value;
             scheduleSave();
             const input = $('[data-nl-header-tag]');
@@ -554,7 +554,7 @@
             insertTarget = afterTarget(m.id);
             tab = 'add';
             renderPanels();
-            toast('Choisissez le bloc à ajouter dans le panneau de gauche, ou glissez-le sur la lettre.');
+            toast('Choisissez le bloc à ajouter dans le panneau de gauche, ou glissez-le sur la newsletter.');
         } else if (m.op === 'slot') {
             insertTarget = { parent: m.parent, col: m.col, index: null };
             tab = 'add';
@@ -602,7 +602,7 @@
             return parent ? 'dans ' + (parent.type === 'columns' ? 'la colonne ' + (insertTarget.col + 1) + ' des colonnes' : 'le bandeau') : 'à la position choisie';
         }
 
-        return selected ? 'sous le bloc sélectionné' : 'à la fin de la lettre';
+        return selected ? 'sous le bloc sélectionné' : 'à la fin de la newsletter';
     }
 
     function renderAdd() {
@@ -621,7 +621,7 @@
                     class: 've-card nl-card',
                     draggable: 'true',
                     onkeydown: (event) => (event.key === 'Enter' || event.key === ' ') && (event.preventDefault(), insertEntry(entry.kind, entry.key)),
-                    title: 'Cliquer pour ajouter, ou glisser sur la lettre',
+                    title: 'Cliquer pour ajouter, ou glisser sur la newsletter',
                     onclick: () => insertEntry(entry.kind, entry.key),
                     ondragstart: (event) => {
                         event.dataTransfer.setData('text/nl-add', entry.kind + ':' + entry.key);
@@ -635,7 +635,7 @@
             );
 
         pane.replaceChildren(...[
-            h('p', { class: 've-pane__intro' }, 'Cliquez sur un bloc pour l\'ajouter ' + describeTarget() + ', ou glissez-le directement sur la lettre.'),
+            h('p', { class: 've-pane__intro' }, 'Cliquez sur un bloc pour l\'ajouter ' + describeTarget() + ', ou glissez-le directement sur la newsletter.'),
             insertTarget ? h('button', { type: 'button', class: 've-btn ve-btn--sm', onclick: () => ((insertTarget = null), renderAdd()) }, 'Annuler le choix de l\'emplacement') : null,
             ...groups.map(([group, title]) => h('section', { class: 'nl-group' }, h('h3', { class: 'nl-section' }, title), h('div', { class: 've-library' }, library.filter((entry) => entry.group === group).map(card)))),
         ].filter(Boolean));
@@ -707,7 +707,7 @@
             );
         };
 
-        pane.replaceChildren(h('p', { class: 've-pane__intro' }, state.blocks.length ? 'Glissez pour changer l\'ordre, même d\'une colonne à l\'autre.' : 'La lettre est vide.'), list(state.blocks, null, 0));
+        pane.replaceChildren(h('p', { class: 've-pane__intro' }, state.blocks.length ? 'Glissez pour changer l\'ordre, même d\'une colonne à l\'autre.' : 'La newsletter est vide.'), list(state.blocks, null, 0));
     }
 
     /* ───────── Champs de réglage ───────── */
@@ -785,7 +785,7 @@
 
         pane.replaceChildren(
             ...[
-                h('div', { class: 've-block-head' }, h('strong', {}, 'En-tête de la lettre'), h('span', { class: 've-hint' }, 'Cliquez sur le hashtag pour le modifier directement.')),
+                h('div', { class: 've-block-head' }, h('strong', {}, 'En-tête de la newsletter'), h('span', { class: 've-hint' }, 'Cliquez sur le hashtag pour le modifier directement.')),
                 h('div', { class: 've-field' }, h('label', { class: 'nl-toggle' }, h('input', { type: 'checkbox', checked: shown, onchange: (event) => set('header', event.target.checked ? '1' : '') }), 'Afficher l\'en-tête')),
                 shown ? h('div', { class: 've-field' }, h('span', { class: 've-label' }, 'Couleur de fond'), colorControl(theme.header_color, (picked) => set('header_color', picked), null, ['#232e66', '#131a3f', '#8a724b', '#1d2233', '#ffffff', '#e1ebff'])) : null,
                 shown ? range('header_height', 'Hauteur de l\'en-tête', 60, 260) : null,
@@ -861,20 +861,20 @@
                 h('input', { id: 'nl-preheader', class: 'nl-input', maxlength: 190, value: state.preheader, placeholder: 'Une ligne affichée à côté de l\'objet', oninput: (event) => ((state.preheader = event.target.value), scheduleSave()), onchange: () => pushHistory() }),
                 h('p', { class: 've-hint' }, 'Visible dans la liste des messages, avant l\'ouverture.')),
             h('div', { class: 'nl-section' }, 'Couleurs'),
-            colorRow('background', 'Fond autour de la lettre', ['#eef0f6', '#fbf9f4', '#e1ebff', '#131a3f', '#ffffff']),
-            colorRow('card', 'Fond de la lettre', ['#ffffff', '#fbf9f4', '#f4f6fb', '#e1ebff']),
+            colorRow('background', 'Fond autour de la newsletter', ['#eef0f6', '#fbf9f4', '#e1ebff', '#131a3f', '#ffffff']),
+            colorRow('card', 'Fond de la newsletter', ['#ffffff', '#fbf9f4', '#f4f6fb', '#e1ebff']),
             colorRow('text', 'Texte', ['#1d2233', '#23272d', '#131a3f', '#4b5160']),
             colorRow('accent', 'Titres et liens', ['#232e66', '#131a3f', '#8a724b', '#b4452f', '#1f8a5b']),
             colorRow('gold', 'Filets et détails', ['#8a724b', '#e0b957', '#232e66', '#9aa1b5']),
             h('div', { class: 'nl-section' }, 'Typographie'),
             h('div', { class: 've-field' }, h('span', { class: 've-label' }, 'Police des titres'), segmented({ serif: 'Avec empattements', sans: 'Sans empattements' }, theme.font, (value) => setTheme('font', value))),
             h('div', { class: 'nl-section' }, 'En-tête'),
-            h('div', { class: 've-field' }, h('button', { type: 'button', class: 've-btn', onclick: selectHeader }, 'Régler l\'en-tête…'), h('p', { class: 've-hint' }, 'Logo, hashtag, réseaux sociaux, hauteur et emplacements : cliquez aussi directement sur l\'en-tête de la lettre.')),
+            h('div', { class: 've-field' }, h('button', { type: 'button', class: 've-btn', onclick: selectHeader }, 'Régler l\'en-tête…'), h('p', { class: 've-hint' }, 'Logo, hashtag, réseaux sociaux, hauteur et emplacements : cliquez aussi directement sur l\'en-tête de la newsletter.')),
             ].filter(Boolean),
         );
     }
 
-    /* ───────── Modèles de lettre ───────── */
+    /* ───────── Modèles de newsletter ───────── */
     const templatesDialog = $('[data-nl-dialog="templates"]');
     let templatesLoaded = null;
 
@@ -1052,15 +1052,15 @@
         error.hidden = true;
         $('[data-nl-send-confirm]').checked = false;
         if (!state.subject.trim()) {
-            toast('Donnez d\'abord un objet à la lettre (en haut de l\'écran).', 'error');
+            toast('Donnez d\'abord un objet à la newsletter (en haut de l\'écran).', 'error');
             $('[data-nl-subject]').focus();
 
             return;
         }
         submit.disabled = boot.audience === 0;
         $('[data-nl-send-text]').textContent = boot.audience === 0
-            ? 'Aucun abonné actif pour le moment : la lettre ne partirait à personne.'
-            : 'La lettre « ' + state.subject + ' » va être envoyée à ' + boot.audience + ' abonné' + (boot.audience > 1 ? 's' : '') + ' actif' + (boot.audience > 1 ? 's' : '') + ' (adresse confirmée, non désinscrit), depuis ' + boot.from + '.';
+            ? 'Aucun abonné actif pour le moment : la newsletter ne partirait à personne.'
+            : 'La newsletter « ' + state.subject + ' » va être envoyée à ' + boot.audience + ' abonné' + (boot.audience > 1 ? 's' : '') + ' actif' + (boot.audience > 1 ? 's' : '') + ' (adresse confirmée, non désinscrit), depuis ' + boot.from + '.';
         // Oublis courants : une image vide ne s'affiche pas dans le courrier, un bouton sans adresse mène à la page d'accueil du site.
         const all = [...walk()];
         const warnings = [];
@@ -1068,7 +1068,7 @@
         const blind = all.filter((block) => block.type === 'button' && !block.data.url).length;
         if (bare) warnings.push(bare + ' bloc' + (bare > 1 ? 's' : '') + ' « image » sans photo (ils n\'apparaîtront pas).');
         if (blind) warnings.push(blind + ' bouton' + (blind > 1 ? 's' : '') + ' sans adresse de lien (ils mèneront à la page d\'accueil du site).');
-        if (!all.length) warnings.push('La lettre est vide.');
+        if (!all.length) warnings.push('La newsletter est vide.');
         const warn = $('[data-nl-send-warn]');
         warn.hidden = warnings.length === 0;
         warn.replaceChildren(...warnings.map((text) => h('li', {}, text)));

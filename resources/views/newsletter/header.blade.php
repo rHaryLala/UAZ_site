@@ -1,5 +1,5 @@
 {{--
-    En-tête de la lettre : un bandeau de couleur dont on règle la hauteur, avec quatre éléments que l'on place à gauche, au centre ou à droite
+    En-tête de la newsletter : un bandeau de couleur dont on règle la hauteur, avec quatre éléments que l'on place à gauche, au centre ou à droite
     (ou que l'on masque) : le logo (sceau de l'UAZ), le nom de l'université, un hashtag et les icônes des réseaux sociaux.
     $theme : le thème validé ; $dark : le fond est sombre (texte et icônes en blanc) ; $editing : repères de modification du plan de travail.
 --}}

@@ -1,7 +1,7 @@
-// Éditeur de lettres d'information dans un vrai navigateur : plan de travail (la lettre comme elle partira), sélection d'un bloc (même imbriqué), texte
+// Éditeur de newsletters dans un vrai navigateur : plan de travail (la newsletter comme elle partira), sélection d'un bloc (même imbriqué), texte
 // modifié sur place, barre flottante, ajout instantané, blocs glissés dans une colonne, emplacements « Ajouter ici », colonnes (2 puis 3), bandeau,
 // bande d'espace colorée, déplacement, duplication, suppression, annulation, structure en arbre, thème, modèles, image de la médiathèque,
-// enregistrement automatique, écran mobile, envoi d'essai, envoi à tous les abonnés actifs (et à eux seuls) depuis l'adresse dédiée, lettre figée.
+// enregistrement automatique, écran mobile, envoi d'essai, envoi à tous les abonnés actifs (et à eux seuls) depuis l'adresse dédiée, newsletter figée.
 // Prérequis : serveur lancé, compte admin@uaz.test, courrier en mode « log ». Usage : node tests/e2e/newsletter-editor.mjs [dossier-captures]
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -45,7 +45,7 @@ try {
 
     // La liste et son ouverture dans l'éditeur.
     await page.goto(`${base}/admin/newsletters`, { waitUntil: 'networkidle' });
-    check((await page.locator('body').innerText()).includes('E2E lettre') && (await page.locator('body').innerText()).includes('Brouillon'), 'la liste montre la lettre en brouillon');
+    check((await page.locator('body').innerText()).includes('E2E newsletter') && (await page.locator('body').innerText()).includes('Brouillon'), 'la liste montre la newsletter en brouillon');
     check((await page.locator('body').innerText()).includes('2 abonnés actifs'), 'la liste annonce le nombre d\'abonnés actifs');
     await page.goto(`${base}/admin/newsletter-editor/${id}`, { waitUntil: 'load' });
     const canvas = page.frameLocator('[data-nl-frame]');
@@ -56,7 +56,7 @@ try {
     const addTab = () => page.locator('[data-nl-tab="add"]').click();
     const card = (name) => page.locator('.nl-card', { hasText: name }).first();
 
-    check(await until(async () => (await top.count()) === 3), 'le plan de travail affiche la lettre (titre, texte, bouton)');
+    check(await until(async () => (await top.count()) === 3), 'le plan de travail affiche la newsletter (titre, texte, bouton)');
     check((await canvas.locator('body').innerText()).includes('Université Adventiste') && (await canvas.locator('body').innerText()).includes('Se désinscrire'), 'le bandeau et le pied de page (désinscription) sont là');
     await wait(2500); // les blocs du panneau « Ajouter » se préparent d'avance
     if (out) await page.screenshot({ path: path.join(out, 'nl-plan-de-travail.png') });
@@ -103,7 +103,7 @@ try {
     await canvas.locator('[data-nl-type="spacer"]').first().waitFor();
     await page.locator('[data-nl-pane="block"] .ve-field', { hasText: 'Couleur' }).locator('.nl-swatch').nth(9).click(); // #e1ebff (le rang 0 est « transparent »)
     check(await until(async () => (await canvas.locator('[data-nl-type="spacer"] > div').first().evaluate((el) => getComputedStyle(el).backgroundColor)) === 'rgb(225, 235, 255)'), 'espace : la couleur choisie colore la bande');
-    check((await canvas.locator('[data-nl-type="spacer"]').first().evaluate((el) => el.getBoundingClientRect().width)) > 630, 'espace : la bande va d\'un bord à l\'autre de la lettre');
+    check((await canvas.locator('[data-nl-type="spacer"]').first().evaluate((el) => el.getBoundingClientRect().width)) > 630, 'espace : la bande va d\'un bord à l\'autre de la newsletter');
     await canvas.locator('.nl-bar [data-op="del"]').click();
 
     // Colonnes : « Photo + texte » (image dans la première colonne, titre + texte + bouton dans la seconde).
@@ -192,17 +192,17 @@ try {
     await page.keyboard.press('Escape');
     check(await until(async () => /<(b|strong)>/i.test(await paragraph.innerHTML()), 4000), 'texte : le gras s\'applique sur le plan de travail');
 
-    // Thème : couleur de fond de la lettre (rechargement complet : le contenu et la structure sont conservés).
+    // Thème : couleur de fond de la newsletter (rechargement complet : le contenu et la structure sont conservés).
     const nbBefore = await canvas.locator('[data-nl-block]').count();
     await page.locator('[data-nl-tab="letter"]').click();
-    await page.locator('[data-nl-pane="letter"] .ve-field', { hasText: 'Fond autour de la lettre' }).locator('.nl-swatch').nth(1).click();
-    check(await until(async () => (await canvas.locator('body').evaluate((el) => getComputedStyle(el).backgroundColor)) === 'rgb(251, 249, 244)'), 'thème : le fond autour de la lettre change');
+    await page.locator('[data-nl-pane="letter"] .ve-field', { hasText: 'Fond autour de la newsletter' }).locator('.nl-swatch').nth(1).click();
+    check(await until(async () => (await canvas.locator('body').evaluate((el) => getComputedStyle(el).backgroundColor)) === 'rgb(251, 249, 244)'), 'thème : le fond autour de la newsletter change');
     check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === nbBefore), 'thème : le contenu reste identique après le rechargement du plan de travail');
 
-    // En-tête : un clic l'ouvre dans le panneau ; disposition de l'UAZ ; hashtag modifié sur la lettre ; emplacements ; hauteur ; masquage durable.
+    // En-tête : un clic l'ouvre dans le panneau ; disposition de l'UAZ ; hashtag modifié sur la newsletter ; emplacements ; hauteur ; masquage durable.
     const header = canvas.locator('[data-nl-header]');
     await header.click({ position: { x: 250, y: 18 } });
-    check(await until(async () => /En-tête de la lettre/.test(await page.locator('[data-nl-pane="block"]').innerText())), 'en-tête : un clic sur l\'en-tête ouvre ses réglages');
+    check(await until(async () => /En-tête de la newsletter/.test(await page.locator('[data-nl-pane="block"]').innerText())), 'en-tête : un clic sur l\'en-tête ouvre ses réglages');
     await page.getByRole('button', { name: 'Disposition de l\'UAZ' }).click();
     check(await until(async () => (await header.locator('td[align="center"] img.nl-hd-logo').count()) === 1 && (await header.locator('[data-nl-theme-field]').count()) === 1), 'en-tête : « Disposition de l\'UAZ » met le sceau au centre et le hashtag à gauche');
     check(await until(async () => (await header.locator('img.nl-hd-ico').count()) >= 1), 'en-tête : les icônes des réseaux sociaux du site s\'affichent');
@@ -211,7 +211,7 @@ try {
     await page.keyboard.press('Control+A');
     await page.keyboard.type('#UAZNEWS');
     await page.keyboard.press('Enter');
-    check(await until(async () => (await page.locator('[data-nl-header-tag]').inputValue()) === '#UAZNEWS'), 'en-tête : le hashtag modifié sur la lettre apparaît dans le panneau');
+    check(await until(async () => (await page.locator('[data-nl-header-tag]').inputValue()) === '#UAZNEWS'), 'en-tête : le hashtag modifié sur la newsletter apparaît dans le panneau');
     await page.locator('.ve-field', { hasText: 'Hashtag' }).first().getByRole('button', { name: 'Droite' }).click();
     check(await until(async () => (await header.locator('td[align="right"] [data-nl-theme-field]').count()) === 1), 'en-tête : le hashtag passe à droite');
     await page.locator('.ve-field', { hasText: 'Logo' }).first().getByRole('button', { name: 'Masqué' }).click();
@@ -241,10 +241,10 @@ try {
     // Modèles : appliquer, puis annuler.
     const sizeBefore = (await top.count());
     await page.getByRole('button', { name: 'Choisir un modèle…' }).click();
-    await page.locator('.nl-tpl', { hasText: 'Lettre simple' }).getByRole('button', { name: /Utiliser/ }).click();
-    check(await until(async () => (await top.count()) === 5 && (await types()).join() === 'heading,text,divider,text,button'), 'modèle : « Lettre simple » remplace la mise en page');
+    await page.locator('.nl-tpl', { hasText: 'Newsletter simple' }).getByRole('button', { name: /Utiliser/ }).click();
+    check(await until(async () => (await top.count()) === 5 && (await types()).join() === 'heading,text,divider,text,button'), 'modèle : « Newsletter simple » remplace la mise en page');
     await page.locator('[data-nl-undo]').click();
-    check(await until(async () => (await top.count()) === sizeBefore), 'modèle : Ctrl+Z revient à la lettre d\'avant');
+    check(await until(async () => (await top.count()) === sizeBefore), 'modèle : Ctrl+Z revient à la newsletter d\'avant');
     await page.locator('[data-nl-redo]').click();
     await page.locator('[data-nl-undo]').click();
 
@@ -252,7 +252,7 @@ try {
     await canvas.locator('[data-nl-placeholder]').first().click();
     check(await until(async () => page.locator('[data-nl-media]').evaluate((d) => d.open)), 'image : un clic sur l\'emplacement vide ouvre la médiathèque');
     await page.locator('[data-nl-media-grid] .ve-thumb').first().click();
-    check(await until(async () => (await canvas.locator('[data-nl-type="image"] img').count()) >= 1), 'image : la photo choisie apparaît dans la lettre');
+    check(await until(async () => (await canvas.locator('[data-nl-type="image"] img').count()) >= 1), 'image : la photo choisie apparaît dans la newsletter');
     if (out) await page.screenshot({ path: path.join(out, 'nl-plan-image.png') });
 
     // Écran mobile : les colonnes s'empilent.
@@ -264,11 +264,11 @@ try {
     if (out) await page.screenshot({ path: path.join(out, 'nl-plan-mobile.png') });
     await page.locator('[data-nl-device="desktop"]').click();
 
-    // Tout est enregistré, rechargement : la lettre revient identique (arbre compris).
+    // Tout est enregistré, rechargement : la newsletter revient identique (arbre compris).
     await saved();
     const countBefore = await canvas.locator('[data-nl-block]').count();
     await page.reload({ waitUntil: 'load' });
-    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === countBefore), `rechargement : la lettre est retrouvée telle qu'elle a été laissée (${countBefore} blocs, colonnes comprises)`);
+    check(await until(async () => (await canvas.locator('[data-nl-block]').count()) === countBefore), `rechargement : la newsletter est retrouvée telle qu'elle a été laissée (${countBefore} blocs, colonnes comprises)`);
 
     // Envoi d'essai (courrier en mode « log »).
     await page.locator('[data-nl-open-test]').click();
@@ -287,15 +287,15 @@ try {
     await page.locator('[data-nl-send-submit]').click();
     check(await until(async () => page.url().endsWith('/admin/newsletters'), 12000), 'envoi : retour à la liste après l\'envoi');
     await wait(1500);
-    check(tinker('$n=App\\Models\\Newsletter::find(' + id + '); echo $n->status, "|", $n->recipients_count, "|", $n->deliveries()->where("status","sent")->count();') === 'sent|2|2', 'envoi : la lettre est « envoyée », 2 destinataires, 2 envois réussis');
-    check(tinker('echo App\\Models\\NewsletterDelivery::where("newsletter_id",' + id + ')->join("newsletter_subscribers","newsletter_subscribers.id","=","newsletter_deliveries.newsletter_subscriber_id")->whereIn("email",["e2e-nl-attente@example.test","e2e-nl-parti@example.test"])->count();') === '0', 'envoi : ni l\'abonné en attente, ni le désinscrit ne reçoivent la lettre');
+    check(tinker('$n=App\\Models\\Newsletter::find(' + id + '); echo $n->status, "|", $n->recipients_count, "|", $n->deliveries()->where("status","sent")->count();') === 'sent|2|2', 'envoi : la newsletter est « envoyée », 2 destinataires, 2 envois réussis');
+    check(tinker('echo App\\Models\\NewsletterDelivery::where("newsletter_id",' + id + ')->join("newsletter_subscribers","newsletter_subscribers.id","=","newsletter_deliveries.newsletter_subscriber_id")->whereIn("email",["e2e-nl-attente@example.test","e2e-nl-parti@example.test"])->count();') === '0', 'envoi : ni l\'abonné en attente, ni le désinscrit ne reçoivent la newsletter');
     const log = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'storage', 'logs', 'laravel.log'), 'utf8').slice(-600000);
     check(/List-Unsubscribe: <[^>]*desinscription/.test(log), 'envoi : chaque courrier porte son lien de désinscription personnel (en-tête List-Unsubscribe)');
-    check(/From:[^<]*\n? ?<newsletter@zurcher\.edu\.mg>/.test(log), 'envoi : les lettres partent de newsletter@zurcher.edu.mg');
+    check(/From:[^<]*\n? ?<newsletter@zurcher\.edu\.mg>/.test(log), 'envoi : les newsletters partent de newsletter@zurcher.edu.mg');
 
-    // Lettre figée.
+    // Newsletter figée.
     await page.goto(`${base}/admin/newsletter-editor/${id}`, { waitUntil: 'load' });
-    check(await until(async () => (await page.locator('.ve-notice').count()) === 1 && (await page.locator('[data-nl-tab]').count()) === 0), 'après envoi : la lettre est figée (plus d\'onglets de modification)');
+    check(await until(async () => (await page.locator('.ve-notice').count()) === 1 && (await page.locator('[data-nl-tab]').count()) === 0), 'après envoi : la newsletter est figée (plus d\'onglets de modification)');
     check((await page.locator('[data-nl-open-send]').count()) === 0, 'après envoi : plus de bouton « Envoyer »');
     check(await until(async () => (await page.frameLocator('[data-nl-frame]').locator('[data-nl-block]').count()) === 0 && (await page.frameLocator('[data-nl-frame]').locator('body').innerText()).includes('Bonjour à toute la communauté')), 'après envoi : le plan de travail s\'affiche sans repères d\'édition');
 

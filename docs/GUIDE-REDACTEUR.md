@@ -253,27 +253,27 @@ Dans chaque formulaire (actualité, événement, page, album…), le champ image
 
 En vue grille, la médiathèque n'a plus de numéros de page : 36 fichiers s'affichent d'abord, puis la suite se charge toute seule en descendant (ou avec le bouton **Charger plus**). Un compteur indique « 36 sur 186 fichier(s) affiché(s) ». Une nouvelle recherche ou un nouveau filtre repart du début. La vue liste garde sa pagination classique.
 
-## Lettre d'information : fenêtre « S'abonner »
+## Newsletter : fenêtre « S'abonner »
 
 - Les **nouveaux visiteurs** voient une fenêtre d'abonnement quelques secondes après leur arrivée. Si elle est fermée sans abonnement, elle **revient 20 jours plus tard** sur le même navigateur ; une fois abonné, elle ne revient plus. Le bouton **S'abonner** de la barre du haut l'ouvre à tout moment.
-- Un clic sur **S'abonner** suffit : la personne est **inscrite immédiatement**, aucun e-mail de confirmation n'est envoyé. Chaque lettre contient un lien de désinscription en un clic ; vous pouvez aussi supprimer un abonné depuis la liste (Personnes & messages → Abonnés à la lettre).
-- **Personnes & messages → Abonnés à la lettre** : liste des abonnés (Abonné / En attente / Désinscrit), export CSV des abonnés actifs, suppression sur demande.
-- La lettre se **compose et s'envoie depuis le site** (section suivante).
+- Un clic sur **S'abonner** suffit : la personne est **inscrite immédiatement**, aucun e-mail de confirmation n'est envoyé. Chaque newsletter contient un lien de désinscription en un clic ; vous pouvez aussi supprimer un abonné depuis la liste (Personnes & messages → Abonnés à la newsletter).
+- **Personnes & messages → Abonnés à la newsletter** : liste des abonnés (Abonné / En attente / Désinscrit), export CSV des abonnés actifs, suppression sur demande.
+- La newsletter se **compose et s'envoie depuis le site** (section suivante).
 
-## Écrire et envoyer une lettre d'information
+## Écrire et envoyer une newsletter
 
-1. **Personnes & messages → Newsletter → Nouvelle lettre.** Donnez un objet (la ligne que l'abonné voit dans sa boîte) et **choisissez un modèle** (Actualités du mois, Événement, Mot du recteur, Admissions, Galerie souvenirs, Soutenir l'UAZ, Lettre simple) : chaque carte montre la lettre entière. Les photos du modèle sont les dernières de la médiathèque ; on change tout ensuite. L'éditeur s'ouvre.
-2. **Le plan de travail est la lettre elle-même.** Cliquez sur un texte pour le modifier sur place ; sélectionnez des mots pour les mettre en gras, en italique ou en faire un lien. Cliquer sur un bloc affiche sa barre d'outils (monter, descendre, dupliquer, supprimer) ; on peut aussi le glisser.
-3. **Panneau de gauche :** *Ajouter* (titre, texte, image, bouton, citation, actualités du site ; mise en page : colonnes, bandeau, séparateur, espace ; compositions toutes faites : photo + texte, deux ou trois photos, chiffres clés…), *Structure* (l'arbre des blocs), *Bloc* (réglages du bloc choisi : taille, alignement, couleur, image), *Lettre* (modèle, texte d'aperçu, couleurs, police, bandeau du haut).
-   - **Ajouter un bloc :** cliquez sur sa carte (il se place sous le bloc sélectionné) ou **glissez-la sur la lettre** : un trait bleu montre où elle tombera, et une colonne ou un bandeau s'entoure quand il la recevra.
+1. **Personnes & messages → Newsletter → Nouvelle newsletter.** Donnez un objet (la ligne que l'abonné voit dans sa boîte) et **choisissez un modèle** (Actualités du mois, Événement, Mot du recteur, Admissions, Galerie souvenirs, Soutenir l'UAZ, Newsletter simple) : chaque carte montre la newsletter entière. Les photos du modèle sont les dernières de la médiathèque ; on change tout ensuite. L'éditeur s'ouvre.
+2. **Le plan de travail est la newsletter elle-même.** Cliquez sur un texte pour le modifier sur place ; sélectionnez des mots pour les mettre en gras, en italique ou en faire un lien. Cliquer sur un bloc affiche sa barre d'outils (monter, descendre, dupliquer, supprimer) ; on peut aussi le glisser.
+3. **Panneau de gauche :** *Ajouter* (titre, texte, image, bouton, citation, actualités du site ; mise en page : colonnes, bandeau, séparateur, espace ; compositions toutes faites : photo + texte, deux ou trois photos, chiffres clés…), *Structure* (l'arbre des blocs), *Bloc* (réglages du bloc choisi : taille, alignement, couleur, image), *Newsletter* (modèle, texte d'aperçu, couleurs, police, bandeau du haut).
+   - **Ajouter un bloc :** cliquez sur sa carte (il se place sous le bloc sélectionné) ou **glissez-la sur la newsletter** : un trait bleu montre où elle tombera, et une colonne ou un bandeau s'entoure quand il la recevra.
    - **Colonnes et bandeaux** : posez-les, puis mettez-y n'importe quels blocs, photos comprises. Cliquez sur le fond d'une colonne pour régler les **proportions**, l'**écart** et le **nombre de colonnes** (2 ou 3 : aucun bloc n'est perdu en changeant). « ＋ Ajouter ici » apparaît dans chaque colonne ; la flèche « ↰ » de la barre d'un bloc sélectionne son conteneur. Un bandeau sombre met son texte en clair tout seul.
    - **Photo + texte** : posez la composition « Photo + texte » (ou « Texte + photo »), cliquez sur l'emplacement de la photo pour la choisir dans la médiathèque.
-   - **L'en-tête** (le bandeau du haut) : cliquez dessus pour le régler. Vous choisissez pour chaque élément (logo, nom de l'université, hashtag, réseaux sociaux) **gauche, centre, droite ou masqué**, la **hauteur** du bandeau, la **taille du logo**, la couleur de fond et le filet doré. Le **hashtag** se modifie directement sur la lettre. Les **icônes de réseaux sociaux** (Facebook, Instagram, YouTube, LinkedIn, TikTok) n'apparaissent que si leur adresse est renseignée : « Reprendre les adresses du site » les remplit d'un coup. « Disposition de l'UAZ » remet la mise en page par défaut (hashtag à gauche, sceau au centre, icônes à droite).
-   - **Bande de couleur** : le bloc *Espace* a une couleur ; posé entre deux blocs il fait une bande d'un bord à l'autre de la lettre.
+   - **L'en-tête** (le bandeau du haut) : cliquez dessus pour le régler. Vous choisissez pour chaque élément (logo, nom de l'université, hashtag, réseaux sociaux) **gauche, centre, droite ou masqué**, la **hauteur** du bandeau, la **taille du logo**, la couleur de fond et le filet doré. Le **hashtag** se modifie directement sur la newsletter. Les **icônes de réseaux sociaux** (Facebook, Instagram, YouTube, LinkedIn, TikTok) n'apparaissent que si leur adresse est renseignée : « Reprendre les adresses du site » les remplit d'un coup. « Disposition de l'UAZ » remet la mise en page par défaut (hashtag à gauche, sceau au centre, icônes à droite).
+   - **Bande de couleur** : le bloc *Espace* a une couleur ; posé entre deux blocs il fait une bande d'un bord à l'autre de la newsletter.
 4. **Le travail est enregistré automatiquement** (indication en haut). Les boutons ordinateur/mobile montrent le rendu ; les flèches annulent et rétablissent.
 5. **Envoyer un test** à votre propre adresse avant tout : l'objet commence par [TEST].
-6. **Envoyer…** : la fenêtre rappelle le nombre d'abonnés actifs ; la lettre part à chacun avec son lien de désinscription personnel. Les abonnés *non confirmés* et *désinscrits* ne reçoivent rien.
-7. Une lettre **envoyée est figée** : elle reste consultable (le tableau indique envois réussis et échecs) mais ne peut plus être modifiée ni supprimée. Pour la suivante, utilisez **Dupliquer** sur une lettre précédente ou créez-en une nouvelle.
+6. **Envoyer…** : la fenêtre rappelle le nombre d'abonnés actifs ; la newsletter part à chacun avec son lien de désinscription personnel. Les abonnés *non confirmés* et *désinscrits* ne reçoivent rien.
+7. Une newsletter **envoyée est figée** : elle reste consultable (le tableau indique envois réussis et échecs) mais ne peut plus être modifiée ni supprimée. Pour la suivante, utilisez **Dupliquer** sur une newsletter précédente ou créez-en une nouvelle.
 
 > L'envoi se fait en arrière-plan, à raison d'un courrier toutes les quelques secondes : 500 abonnés demandent une vingtaine de minutes. Le statut passe à *Envoyée* quand tout est parti.
 
@@ -326,7 +326,7 @@ Le menu de la semaine s'affiche sur la page **Cafétéria** (Vie étudiante), so
 
 ## Reprendre les abonnés de MailPoet (ancien site)
 
-**Où :** Personnes & messages → **Abonnés à la lettre** → bouton **Importer un export MailPoet** (réservé aux administrateurs).
+**Où :** Personnes & messages → **Abonnés à la newsletter** → bouton **Importer un export MailPoet** (réservé aux administrateurs).
 
 1. Dans WordPress (ancien site), MailPoet → Listes → exportez la liste d'abonnés au format **CSV**.
 2. Sur le nouveau site, cliquez sur **Importer un export MailPoet** et déposez le fichier. Cochez d'abord **Simulation** si vous voulez voir le résultat sans rien enregistrer.
@@ -336,8 +336,8 @@ Ce que fait l'import (les colonnes sont reconnues par leur titre : E-mail, État
 
 | État MailPoet | Résultat sur le site |
 | --- | --- |
-| **subscribed** (abonné) | **Abonné** actif : il reçoit les lettres. La date d'abonnement est conservée ; à défaut de date de confirmation, la date d'abonnement en tient lieu. |
-| **unconfirmed** (non confirmé) | **Non confirmé** : il ne reçoit **rien** tant que la personne ne s'abonne pas elle-même (fenêtre « S'abonner » du site). |
+| **subscribed** (abonné) | **Abonné** actif : il reçoit les newsletters. La date d'abonnement est conservée ; à défaut de date de confirmation, la date d'abonnement en tient lieu. |
+| **unconfirmed** (non confirmé) | **Abonné** actif, comme les autres : l'abonnement sur ce site est immédiat, il n'y a plus de confirmation à attendre. |
 | **unsubscribed** (désinscrit) | **Désinscrit** : la désinscription est conservée. |
 | **bounced** (rebond) | Ignoré : l'adresse n'existe plus ou refuse le courrier. |
 

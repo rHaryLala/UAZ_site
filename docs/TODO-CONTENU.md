@@ -85,11 +85,11 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 - [ ] Retirer les mentions `TODO-CONTENU` du texte avant de publier.
 - À relire si le site ajoute des statistiques, une vidéo YouTube intégrée ou une carte Google : un bandeau de consentement deviendrait alors nécessaire.
 
-## Lettre d'information
+## Newsletter
 
 - [ ] **Texte de la fenêtre** (« Restez proche de l'UAZ ») : à valider par l'UAZ.
-- [ ] **Outil d'envoi** de la lettre (Brevo, Mailchimp…) ou envoi depuis le site : à décider ; contenu et fréquence à définir.
-- [ ] **SMTP de production** : sans lui, aucun courriel ne part (notification du formulaire de contact, lettres d'information, envoi d'essai) (`sudo bash ~/uaz-deploy/provision-prod.sh mail` sur le serveur). L'abonnement à la lettre, lui, n'en dépend plus.
+- [ ] **Outil d'envoi** de la newsletter (Brevo, Mailchimp…) ou envoi depuis le site : à décider ; contenu et fréquence à définir.
+- [ ] **SMTP de production** : sans lui, aucun courriel ne part (notification du formulaire de contact, newsletters, envoi d'essai) (`sudo bash ~/uaz-deploy/provision-prod.sh mail` sur le serveur). L'abonnement à la newsletter, lui, n'en dépend plus.
 - [ ] Page « Confidentialité et cookies » : durée de conservation après désinscription (`TODO-CONTENU` dans la page).
 
 ## Page Bibliothèque

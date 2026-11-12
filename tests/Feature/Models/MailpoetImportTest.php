@@ -28,7 +28,7 @@ function mailpoetRow(string $email, string $state = 'subscribed', string $at = '
     return sprintf('%s,Prénom,Nom,"%s","%s",%s,%s,"Liste De Diffusion De Newsletter"', $email, $at, $confirmed, $state === 'bounced' ? 'subscribed' : $state, $state);
 }
 
-it('turns the three MailPoet states into active, pending and unsubscribed subscribers, and ignores the bounces', function () {
+it('turns subscribed and unconfirmed addresses into subscribers, keeps the unsubscribed ones as such, and ignores the bounces', function () {
     $path = mailpoetFile([
         mailpoetRow('actif@exemple.test', 'subscribed', '2026-06-22 12:19:27', '2026-06-23 05:43:37'),
         mailpoetRow('attente@exemple.test', 'unconfirmed', '2026-07-21 14:15:32'),
@@ -39,16 +39,17 @@ it('turns the three MailPoet states into active, pending and unsubscribed subscr
     $result = MailpoetImport::run($path);
 
     expect($result['total'])->toBe(4)
-        ->and($result['counts'])->toMatchArray(['active_added' => 1, 'pending_added' => 1, 'unsubscribed_added' => 1, 'bounced' => 1])
+        ->and($result['counts'])->toMatchArray(['active_added' => 2, 'unconfirmed_included' => 1, 'unsubscribed_added' => 1, 'bounced' => 1])
         ->and(NewsletterSubscriber::count())->toBe(3)
         ->and(NewsletterSubscriber::where('email', 'rebond@exemple.test')->exists())->toBeFalse();
 
     expect(NewsletterSubscriber::where('email', 'actif@exemple.test')->first()->status())->toBe('active')
-        ->and(NewsletterSubscriber::where('email', 'attente@exemple.test')->first()->status())->toBe('pending')
+        // « unconfirmed » : abonné directement, l'abonnement est immédiat sur ce site
+        ->and(NewsletterSubscriber::where('email', 'attente@exemple.test')->first()->status())->toBe('active')
         ->and(NewsletterSubscriber::where('email', 'parti@exemple.test')->first()->status())->toBe('unsubscribed');
 
-    // Seuls les abonnés actifs reçoivent les lettres.
-    expect(NewsletterSubscriber::active()->pluck('email')->all())->toBe(['actif@exemple.test']);
+    // Seuls les abonnés actifs reçoivent la newsletter : les deux premiers, pas le désinscrit.
+    expect(NewsletterSubscriber::active()->pluck('email')->sort()->values()->all())->toBe(['actif@exemple.test', 'attente@exemple.test']);
 });
 
 it('keeps the real subscription and confirmation dates', function () {
@@ -107,7 +108,7 @@ it('can be run again without creating duplicates or changing anything', function
     $again = MailpoetImport::run($path);
 
     expect(NewsletterSubscriber::count())->toBe(3)
-        ->and($again['counts'])->toMatchArray(['already' => 3, 'active_added' => 0, 'pending_added' => 0, 'unsubscribed_added' => 0]);
+        ->and($again['counts'])->toMatchArray(['already' => 3, 'active_added' => 0, 'unconfirmed_included' => 0, 'unsubscribed_added' => 0]);
 });
 
 it('reports what it would do in a simulation without writing anything', function () {
@@ -117,7 +118,7 @@ it('reports what it would do in a simulation without writing anything', function
     $simulation = MailpoetImport::run($path, dryRun: true);
 
     expect(NewsletterSubscriber::count())->toBe(1)
-        ->and($simulation['counts'])->toMatchArray(['active_added' => 1, 'already' => 1, 'pending_added' => 1]);
+        ->and($simulation['counts'])->toMatchArray(['active_added' => 2, 'already' => 1, 'unconfirmed_included' => 1]);
 
     $real = MailpoetImport::run($path);
     expect($real['counts'])->toBe($simulation['counts'])->and(NewsletterSubscriber::count())->toBe(3);
@@ -152,7 +153,7 @@ it('writes a readable summary, one sentence per line', function () {
     $result = MailpoetImport::run(mailpoetFile([mailpoetRow('a@exemple.test'), mailpoetRow('b@exemple.test', 'unconfirmed'), mailpoetRow('c@exemple.test', 'bounced'), mailpoetRow('nimporte')]));
     $summary = implode("\n", MailpoetImport::summary($result));
 
-    expect($summary)->toContain('4 ligne(s) lue(s)')->toContain('1 abonné(s) actif(s) ajouté(s)')->toContain('1 adresse(s) non confirmée(s)')
+    expect($summary)->toContain('4 ligne(s) lue(s)')->toContain('2 abonné(s) actif(s) ajouté(s) (dont 1 qui n\'avaient pas confirmé dans MailPoet)')
         ->toContain('1 adresse(s) en rebond ignorée(s)')->toContain('1 adresse(s) invalide(s)')->toContain('nimporte')
         ->and(implode("\n", MailpoetImport::summary($result, true)))->toContain('SIMULATION');
 });

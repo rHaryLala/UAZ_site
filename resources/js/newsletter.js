@@ -1,5 +1,5 @@
 import { t } from './i18n.js';
-// Fenêtre « Lettre d'information » : s'ouvre seule à la première visite, puis de nouveau après 20 jours tant que la personne ne s'est pas
+// Fenêtre « Newsletter » : s'ouvre seule à la première visite, puis de nouveau après 20 jours tant que la personne ne s'est pas
 // abonnée (mémoire dans le navigateur : localStorage, aucun cookie). Se déclenche aussi depuis les boutons [data-newsletter-open]
 // (« S'abonner » de la barre du haut et du menu). L'envoi se fait en JSON, sans recharger la page.
 const KEY = 'uaz.newsletter';

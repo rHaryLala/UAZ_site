@@ -1,4 +1,4 @@
-{{-- Choix du modèle d'une lettre neuve : chaque carte montre la lettre telle qu'elle partirait (aperçu réduit, non cliquable). --}}
+{{-- Choix du modèle d'une newsletter neuve : chaque carte montre la newsletter telle qu'elle partirait (aperçu réduit, non cliquable). --}}
 @php
     $names = \App\Support\NewsletterTemplates::list();
 @endphp

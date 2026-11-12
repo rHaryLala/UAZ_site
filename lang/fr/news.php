@@ -13,7 +13,7 @@ return [
     'cursor' => 'Lire',
     'more' => [
         'text' => 'Recevez les nouvelles de l\'UAZ directement dans votre boîte e-mail.',
-        'subscribe' => 'S\'abonner à la lettre d\'information',
+        'subscribe' => 'S\'abonner à la newsletter',
         'events' => 'Voir les événements',
     ],
     'article' => [

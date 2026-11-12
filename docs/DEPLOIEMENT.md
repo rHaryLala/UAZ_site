@@ -285,21 +285,21 @@ sudo systemctl reload php8.3-fpm        # vide l'OPcache (validate_timestamps = 
 - [ ] Sauvegarde automatique active **et restauration testée**
 - [ ] HTTPS valide, note A sur SSL Labs, en-têtes vérifiés (securityheaders.com)
 - [ ] `queue:work` actif (`systemctl status uaz-queue`), cron du planificateur présent
-- [ ] Lettre d'information : SMTP réel, SPF/DKIM, envoi d'essai reçu et lien de désinscription vérifié
+- [ ] Newsletter : SMTP réel, SPF/DKIM, envoi d'essai reçu et lien de désinscription vérifié
 
-## Envoi des lettres d'information
+## Envoi des newsletters
 
 L'envoi passe par la file d'attente (un travail par abonné) : il faut donc **`queue:work` actif** (section 5) et un **courrier sortant réel**.
 
 - `.env` : `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_SCHEME` (`smtps` pour le port 465, vide pour 587 avec STARTTLS), `MAIL_FROM_ADDRESS` (une adresse du domaine, ex. `no-reply@zurcher.edu.mg`). Puis `php artisan config:cache`.
-- **Adresse d'expédition des lettres :** `NEWSLETTER_FROM_ADDRESS=newsletter@zurcher.edu.mg` et `NEWSLETTER_FROM_NAME` (défaut : « Université Adventiste Zurcher »), distincts de `MAIL_FROM_ADDRESS`. La boîte `newsletter@zurcher.edu.mg` doit exister (les réponses vont à l'adresse du site) et le compte SMTP être autorisé à envoyer en son nom ; SPF et DKIM du domaine couvrent cette adresse.
+- **Adresse d'expédition des newsletters :** `NEWSLETTER_FROM_ADDRESS=newsletter@zurcher.edu.mg` et `NEWSLETTER_FROM_NAME` (défaut : « Université Adventiste Zurcher »), distincts de `MAIL_FROM_ADDRESS`. La boîte `newsletter@zurcher.edu.mg` doit exister (les réponses vont à l'adresse du site) et le compte SMTP être autorisé à envoyer en son nom ; SPF et DKIM du domaine couvrent cette adresse.
 - `QUEUE_CONNECTION=database` (déjà le réglage de production) ; `APP_URL` en `https://` : les liens de désinscription sont signés à partir de cette adresse.
 - **Configuration (serveur partagé de zurcher.edu.mg) :** `sudo bash ~/uaz-deploy/provision-prod.sh mail` pose les questions (serveur, port, identifiant, mot de passe masqué, adresse d'expédition, destinataire du formulaire de contact) et recharge la configuration. Pour Google Workspace : `smtp.gmail.com`, port 587, un **mot de passe d'application** du compte d'envoi (validation en deux étapes requise), adresse d'expédition = ce compte.
 - **Cadence :** `NEWSLETTER_SECONDS_BETWEEN` (2 secondes par défaut) sépare deux courriers. Vérifier la limite de l'hébergeur de courrier (souvent 100 à 500 messages/heure pour un SMTP mutualisé) et l'augmenter si besoin ; au-delà de quelques milliers d'abonnés, préférer un service d'envoi dédié (Brevo, Amazon SES, Mailgun) en SMTP.
-- **Délivrabilité :** enregistrements **SPF** et **DKIM** du domaine d'expédition publiés, **DMARC** conseillé ; sans cela les lettres finissent en indésirables.
-- **Essai avant la première vraie lettre :** envoyer un test à une adresse Gmail et une adresse Outlook, vérifier le bouton « Se désinscrire » de la messagerie et le lien du pied de page.
+- **Délivrabilité :** enregistrements **SPF** et **DKIM** du domaine d'expédition publiés, **DMARC** conseillé ; sans cela les newsletters finissent en indésirables.
+- **Essai avant la première vraie newsletter :** envoyer un test à une adresse Gmail et une adresse Outlook, vérifier le bouton « Se désinscrire » de la messagerie et le lien du pied de page.
 - Suivi : le tableau *Newsletter* indique envois réussis et échecs (message d'erreur au survol). Les échecs définitifs sont aussi dans `storage/logs/laravel-*.log` et la table `failed_jobs`.
-- **Images :** sur un site public, les images (sceau, icônes, photos) sont chargées depuis `APP_URL` : cette adresse doit donc être l'adresse publique en `https://`. En local elles sont jointes au message (`NEWSLETTER_EMBED_IMAGES`, voir D-066). Les lettres utilisent une version JPEG des photos : après le déploiement, lancer une fois `php artisan media-library:regenerate --only-missing --force`.
+- **Images :** sur un site public, les images (sceau, icônes, photos) sont chargées depuis `APP_URL` : cette adresse doit donc être l'adresse publique en `https://`. En local elles sont jointes au message (`NEWSLETTER_EMBED_IMAGES`, voir D-066). Les newsletters utilisent une version JPEG des photos : après le déploiement, lancer une fois `php artisan media-library:regenerate --only-missing --force`.
 - Nouvelle migration : `2026_11_13_100000_create_newsletters_tables` (`php artisan migrate --force`).
 
 ## Vidéo d'en-tête de « À propos »

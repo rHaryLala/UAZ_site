@@ -5,8 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Lettres d'information : la lettre rédigée dans le back-office (brouillon, en cours d'envoi, envoyée) et, pour chaque lettre, une ligne par
- * abonné destinataire. Le couple (lettre, abonné) est unique : un abonné ne reçoit jamais deux fois la même lettre, même si l'envoi est relancé.
+ * Newsletters : la newsletter rédigée dans le back-office (brouillon, en cours d'envoi, envoyée) et, pour chaque newsletter, une ligne par
+ * abonné destinataire. Le couple (newsletter, abonné) est unique : un abonné ne reçoit jamais deux fois la même newsletter, même si l'envoi est relancé.
  */
 return new class extends Migration
 {
@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('subject', 190);
             $table->string('preheader', 190)->nullable();
-            $table->json('blocks'); // la lettre : une liste de blocs (titre, texte, image, bouton…), voir App\Support\NewsletterBlocks
+            $table->json('blocks'); // la newsletter : une liste de blocs (titre, texte, image, bouton…), voir App\Support\NewsletterBlocks
             $table->json('theme')->nullable(); // couleurs et police du plan de travail
             $table->string('status', 20)->default('draft')->index();
             $table->timestamp('sent_at')->nullable();

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex, nofollow">
-    <title>Lettre · {{ $newsletter->subject }}</title>
+    <title>Newsletter · {{ $newsletter->subject }}</title>
     <link rel="icon" type="image/png" href="{{ asset('favicon-32.png') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/visual-editor.css') }}?v={{ filemtime(public_path('css/admin/visual-editor.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/admin/newsletter-editor.css') }}?v={{ filemtime(public_path('css/admin/newsletter-editor.css')) }}">
@@ -13,7 +13,7 @@
 <body class="ve-body nl-body">
 <div class="ve nl" data-nl data-device="desktop">
     <header class="ve-top">
-        <a class="ve-top__back" href="{{ $boot['urls']['list'] }}" title="Retour à la liste des lettres" data-nl-back>
+        <a class="ve-top__back" href="{{ $boot['urls']['list'] }}" title="Retour à la liste des newsletters" data-nl-back>
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
             <span>Quitter</span>
         </a>
@@ -21,7 +21,7 @@
         <div class="ve-top__title nl-subject">
             <label class="sr-only" for="nl-subject">Objet du courrier</label>
             <input id="nl-subject" type="text" maxlength="190" placeholder="Objet du courrier" data-nl-subject value="{{ $newsletter->subject }}" @disabled($boot['locked'])>
-            <span class="ve-status" data-nl-status role="status" aria-live="polite">{{ $boot['locked'] ? 'Lettre envoyée' : 'Chargement…' }}</span>
+            <span class="ve-status" data-nl-status role="status" aria-live="polite">{{ $boot['locked'] ? 'Newsletter envoyée' : 'Chargement…' }}</span>
         </div>
 
         <div class="ve-top__group" role="group" aria-label="Taille de l'écran">
@@ -46,10 +46,10 @@
         @if ($boot['locked'])
             <div class="ve-pane">
                 <div class="ve-notice">
-                    <p class="ve-notice__eyebrow">{{ $boot['status'] === 'sending' ? 'Envoi en cours' : 'Lettre envoyée' }}</p>
+                    <p class="ve-notice__eyebrow">{{ $boot['status'] === 'sending' ? 'Envoi en cours' : 'Newsletter envoyée' }}</p>
                     <p>
                         @if ($boot['status'] === 'sending')
-                            Cette lettre part à {{ $boot['recipients'] }} abonné(s). Elle ne peut plus être modifiée.
+                            Cette newsletter part à {{ $boot['recipients'] }} abonné(s). Elle ne peut plus être modifiée.
                         @else
                             Envoyée le {{ $boot['sentAt'] }} à {{ $boot['recipients'] }} abonné(s). Elle ne peut plus être modifiée : pour une nouvelle version, dupliquez-la depuis la liste.
                         @endif
@@ -61,7 +61,7 @@
                 <button type="button" role="tab" class="ve-tab is-on" data-nl-tab="add" aria-selected="true">Ajouter</button>
                 <button type="button" role="tab" class="ve-tab" data-nl-tab="structure" aria-selected="false">Structure</button>
                 <button type="button" role="tab" class="ve-tab" data-nl-tab="block" aria-selected="false">Bloc</button>
-                <button type="button" role="tab" class="ve-tab" data-nl-tab="letter" aria-selected="false">Lettre</button>
+                <button type="button" role="tab" class="ve-tab" data-nl-tab="letter" aria-selected="false">Newsletter</button>
             </div>
             <div class="ve-pane" data-nl-pane="add"></div>
             <div class="ve-pane" data-nl-pane="structure" hidden></div>
@@ -73,7 +73,7 @@
 
     <main class="ve-stage nl-stage" data-nl-stage>
         <div class="ve-frame-wrap" data-nl-frame-wrap>
-            <iframe class="ve-frame" data-nl-frame title="Plan de travail : la lettre telle qu'elle sera reçue"></iframe>
+            <iframe class="ve-frame" data-nl-frame title="Plan de travail : la newsletter telle qu'elle sera reçue"></iframe>
         </div>
     </main>
 
@@ -100,8 +100,8 @@
             <h2 id="nl-send-title">Envoyer à tous les abonnés ?</h2>
             <p data-nl-send-text></p>
             <ul class="nl-dialog__checks" data-nl-send-warn hidden></ul>
-            <p class="nl-dialog__warn">L'envoi ne peut pas être annulé, et la lettre ne sera plus modifiable.</p>
-            <label class="nl-check"><input type="checkbox" required data-nl-send-confirm> J'ai relu la lettre et fait un envoi d'essai si nécessaire.</label>
+            <p class="nl-dialog__warn">L'envoi ne peut pas être annulé, et la newsletter ne sera plus modifiable.</p>
+            <label class="nl-check"><input type="checkbox" required data-nl-send-confirm> J'ai relu la newsletter et fait un envoi d'essai si nécessaire.</label>
             <p class="nl-dialog__error" data-nl-send-error role="alert" hidden></p>
             <div class="nl-dialog__actions">
                 <button type="button" class="ve-btn" data-nl-close>Annuler</button>
@@ -110,14 +110,14 @@
         </form>
     </dialog>
 
-    {{-- Modèles de lettre --}}
+    {{-- Modèles de newsletter --}}
     <dialog class="nl-dialog nl-dialog--wide" data-nl-dialog="templates" aria-labelledby="nl-tpl-title">
         <div class="nl-dialog__form">
             <div class="nl-dialog__head">
                 <h2 id="nl-tpl-title">Choisir un modèle</h2>
                 <button type="button" class="ve-icon" data-nl-close aria-label="Fermer">✕</button>
             </div>
-            <p>Le modèle remplace la mise en page de la lettre ; vous pourrez tout modifier ensuite (et revenir en arrière avec Ctrl+Z).</p>
+            <p>Le modèle remplace la mise en page de la newsletter ; vous pourrez tout modifier ensuite (et revenir en arrière avec Ctrl+Z).</p>
             <div class="nl-tpl-grid" data-nl-templates-grid></div>
         </div>
     </dialog>

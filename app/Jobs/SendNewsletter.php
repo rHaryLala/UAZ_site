@@ -8,8 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
 /**
- * Lance l'envoi d'une lettre : un travail par abonné actif (App\Jobs\SendNewsletterMessage), espacés de quelques secondes pour ne pas dépasser
- * les limites d'envoi de l'hébergeur (config/newsletter.php). Relançable sans risque : un abonné qui a déjà reçu la lettre est ignoré.
+ * Lance l'envoi d'une newsletter : un travail par abonné actif (App\Jobs\SendNewsletterMessage), espacés de quelques secondes pour ne pas dépasser
+ * les limites d'envoi de l'hébergeur (config/newsletter.php). Relançable sans risque : un abonné qui a déjà reçu la newsletter est ignoré.
  */
 class SendNewsletter implements ShouldQueue
 {

@@ -40,7 +40,7 @@
                             </ul>
                         </div>
                     @elseif ($item['url'] === '#newsletter')
-                        {{-- « S'abonner » : ouvre la fenêtre de la lettre d'information (resources/js/newsletter.js). --}}
+                        {{-- « S'abonner » : ouvre la fenêtre de la newsletter (resources/js/newsletter.js). --}}
                         <button type="button" data-newsletter-open aria-haspopup="dialog" class="py-2">{{ $item['label'] }}</button>
                     @else
                         <a href="{{ $item['url'] }}" class="py-2" @if ($item['new_tab']) target="_blank" rel="noopener noreferrer" @endif>{{ $item['label'] }}</a>

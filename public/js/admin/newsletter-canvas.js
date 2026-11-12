@@ -1,6 +1,6 @@
-// Plan de travail de l'éditeur de lettres (dans l'iframe) : on modifie les textes sur place, on clique un bloc pour le sélectionner (n'importe quel
+// Plan de travail de l'éditeur de newsletters (dans l'iframe) : on modifie les textes sur place, on clique un bloc pour le sélectionner (n'importe quel
 // bloc, même dans une colonne ou un bandeau), une barre flottante permet de le déplacer (glisser), le monter, le descendre, le dupliquer, le
-// supprimer. Ce script ne garde aucun état de la lettre : il signale ce qui se passe à l'éditeur (window.parent), qui tient l'état, l'enregistre
+// supprimer. Ce script ne garde aucun état de la newsletter : il signale ce qui se passe à l'éditeur (window.parent), qui tient l'état, l'enregistre
 // et met à jour le plan de travail par window.nl (setRows, select) sans jamais recharger l'iframe pour un simple changement de bloc.
 (() => {
     const LABELS = { heading: 'Titre', text: 'Texte', image: 'Image', button: 'Bouton', quote: 'Citation', feature: 'Image et texte', news: 'Actualités', divider: 'Séparateur', spacer: 'Espace', columns: 'Colonnes', section: 'Bandeau' };
@@ -10,11 +10,11 @@
     const listOf = (block) => block?.parentElement?.closest('[data-nl-list]') ?? null;
     const root = () => document.querySelector('[data-nl-list="root"]');
 
-    /** Les blocs placés directement dans une liste (la lettre, une colonne, un bandeau), dans l'ordre. */
+    /** Les blocs placés directement dans une liste (la newsletter, une colonne, un bandeau), dans l'ordre. */
     const blocksIn = (list) => [...list.querySelectorAll('[data-nl-block]')].filter((block) => listOf(block) === list);
 
     let selectedId = null;
-    let headerOn = false; // l'en-tête de la lettre est sélectionné
+    let headerOn = false; // l'en-tête de la newsletter est sélectionné
     let bar = null;
     let hovered = null;
     let drop = null;
@@ -96,7 +96,7 @@
         if (headerOn) document.querySelector('[data-nl-header]')?.classList.add('nl-selected');
     }
 
-    /** L'en-tête de la lettre (bandeau, logo, hashtag, réseaux) : un clic dessus ouvre ses réglages dans le panneau. */
+    /** L'en-tête de la newsletter (bandeau, logo, hashtag, réseaux) : un clic dessus ouvre ses réglages dans le panneau. */
     function selectHeader({ notify = true } = {}) {
         if (headerOn && !selectedId) return;
         headerOn = true;
@@ -336,7 +336,7 @@
         move(event);
     }
 
-    /* Un bloc glissé depuis le panneau « Ajouter » (HTML5 : le panneau est dans la page parente, la lettre dans cet iframe). */
+    /* Un bloc glissé depuis le panneau « Ajouter » (HTML5 : le panneau est dans la page parente, la newsletter dans cet iframe). */
     const isAdd = (event) => [...(event.dataTransfer?.types ?? [])].includes('text/nl-add');
     document.addEventListener('dragover', (event) => {
         if (!isAdd(event)) return;
@@ -356,7 +356,7 @@
         tell({ op: 'drop-add', kind, key, parent: target.parent, col: target.col, index: target.index });
     });
 
-    /* ───────── Mise à jour des lignes de la lettre par l'éditeur ───────── */
+    /* ───────── Mise à jour des lignes de la newsletter par l'éditeur ───────── */
     const ghost = (id) => {
         const row = document.createElement('tr');
         row.dataset.nlRow = '';
@@ -377,7 +377,7 @@
     const rowId = (row) => row.querySelector(':scope > td[data-nl-id]')?.dataset.nlId;
 
     /**
-     * Met les lignes de la lettre dans l'état voulu. items : [{ id, html? , ghost? }] dans l'ordre. Une ligne sans html reste telle quelle
+     * Met les lignes de la newsletter dans l'état voulu. items : [{ id, html? , ghost? }] dans l'ordre. Une ligne sans html reste telle quelle
      * (ou devient un bloc « en chargement » si elle n'existe pas encore) ; les lignes absentes de la liste sont retirées.
      */
     function setRows(items) {

@@ -208,12 +208,12 @@ class StructureSeeder extends Seeder
                     .'<li><strong>XSRF-TOKEN</strong> : protège les formulaires contre les envois frauduleux. Même durée de vie.</li></ul>'
                     .'<p>Ils ne servent ni à vous suivre d\'une visite à l\'autre, ni à des statistiques, ni à de la publicité. Ils ne contiennent aucune information vous identifiant. '
                     .'Vous pouvez les refuser dans les réglages de votre navigateur : le site reste lisible, mais le formulaire de contact risque de ne plus fonctionner.</p>'),
-                $block('Mémoire de votre navigateur', '<p>Sans cookie, le site retient dans votre navigateur (stockage local) <strong>une seule information</strong> : si la fenêtre d\'abonnement à la lettre d\'information vous a déjà été proposée, et si vous vous êtes abonné. '
+                $block('Mémoire de votre navigateur', '<p>Sans cookie, le site retient dans votre navigateur (stockage local) <strong>une seule information</strong> : si la fenêtre d\'abonnement à la newsletter vous a déjà été proposée, et si vous vous êtes abonné. '
                     .'Elle sert uniquement à ne pas vous la reproposer à chaque page : vous la revoyez au plus une fois tous les 20 jours, tant que vous n\'êtes pas abonné. '
                     .'Cette information reste sur votre appareil et n\'est jamais envoyée au site ; vous pouvez l\'effacer en vidant les données du site dans votre navigateur.</p>'),
-                $block('La lettre d\'information', '<p>Si vous vous abonnez, nous enregistrons <strong>votre adresse e-mail</strong> et la date de votre abonnement. '
+                $block('La newsletter', '<p>Si vous vous abonnez, nous enregistrons <strong>votre adresse e-mail</strong> et la date de votre abonnement. '
                     .'L\'abonnement est immédiat : nous ne vous envoyons pas d\'e-mail de confirmation. '
-                    .'Chaque message contient un lien pour vous désinscrire en un clic. Votre adresse n\'est utilisée que pour cette lettre.</p>'
+                    .'Chaque message contient un lien pour vous désinscrire en un clic. Votre adresse n\'est utilisée que pour cette newsletter.</p>'
                     .'<p>Durée de conservation après désinscription : '.self::TODO.' (à fixer par l\'UAZ).</p>'),
                 $block('Le formulaire de contact', '<p>Quand vous nous écrivez, nous recevons les informations que vous saisissez : <strong>nom, adresse e-mail, téléphone (facultatif), sujet et message</strong>. '
                     .'Elles servent uniquement à vous répondre. Votre message est transmis par e-mail à l\'UAZ et conservé dans l\'espace d\'administration du site, accessible aux seules personnes autorisées.</p>'
@@ -297,7 +297,7 @@ class StructureSeeder extends Seeder
                 $url('Notre équipe', '/equipe'),
                 array_merge($url('Alumni', 'https://alumni-auz.api.mg/'), ['new_tab' => true]),
                 $url('Yearbook', '/yearbook'),
-                // « S'abonner » ouvre la fenêtre de la lettre d'information (pas une page).
+                // « S'abonner » ouvre la fenêtre de la newsletter (pas une page).
                 $url('S\'abonner', '#newsletter'),
                 $url('Actualités', '/actualites'),
                 // Catalogue de la bibliothèque : accessible dès le haut de chaque page (site de la bibliothèque, nouvel onglet).

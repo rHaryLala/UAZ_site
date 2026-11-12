@@ -83,7 +83,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Limites de l'éditeur de lettres : une limite PROPRE à chaque action. Avec « throttle:10,1 », Laravel compte toutes les routes limitées d'un
+        // Limites de l'éditeur de newsletters : une limite PROPRE à chaque action. Avec « throttle:10,1 », Laravel compte toutes les routes limitées d'un
         // même utilisateur ensemble : les mises à jour du plan de travail auraient épuisé l'envoi d'essai (« Too Many Attempts »).
         foreach (['newsletter-render' => 240, 'newsletter-save' => 120, 'newsletter-test' => 10, 'newsletter-send' => 5] as $name => $perMinute) {
             RateLimiter::for($name, fn (Request $request) => Limit::perMinute($perMinute)->by($name.'|'.($request->user()?->getAuthIdentifier() ?? $request->ip())));

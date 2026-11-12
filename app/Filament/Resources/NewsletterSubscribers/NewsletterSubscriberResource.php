@@ -14,7 +14,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-/** Abonnés à la lettre d'information (fenêtre « S'abonner » du site) : lecture seule, export CSV, suppression sur demande (droit à l'effacement). */
+/** Abonnés à la newsletter (fenêtre « S'abonner » du site) : lecture seule, export CSV, suppression sur demande (droit à l'effacement). */
 class NewsletterSubscriberResource extends Resource
 {
     protected static ?string $model = NewsletterSubscriber::class;
@@ -25,9 +25,9 @@ class NewsletterSubscriberResource extends Resource
 
     protected static ?string $modelLabel = 'abonné';
 
-    protected static ?string $pluralModelLabel = 'abonnés à la lettre';
+    protected static ?string $pluralModelLabel = 'abonnés à la newsletter';
 
-    protected static ?string $navigationLabel = 'Abonnés à la lettre';
+    protected static ?string $navigationLabel = 'Abonnés à la newsletter';
 
     protected static ?string $recordTitleAttribute = 'email';
 

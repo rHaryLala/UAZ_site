@@ -10,7 +10,7 @@ namespace App\Support;
 final class JsStrings
 {
     public const KEYS = [
-        // Lettre d'information
+        // Newsletter
         'Trop de tentatives. Réessayez dans une minute.',
         'Une erreur est survenue. Réessayez dans quelques instants.',
         'Connexion impossible. Vérifiez votre réseau et réessayez.',

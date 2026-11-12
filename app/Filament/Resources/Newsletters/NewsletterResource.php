@@ -23,7 +23,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 /**
- * Lettres d'information : la liste des lettres (brouillons, en cours d'envoi, envoyées) et leur suivi. La rédaction se fait dans l'éditeur
+ * Newsletters : la liste des newsletters (brouillons, en cours d'envoi, envoyées) et leur suivi. La rédaction se fait dans l'éditeur
  * visuel (plan de travail), ouvert depuis chaque ligne : voir App\Http\Controllers\Admin\NewsletterEditorController.
  */
 class NewsletterResource extends Resource
@@ -34,9 +34,9 @@ class NewsletterResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Personnes & messages';
 
-    protected static ?string $modelLabel = 'lettre';
+    protected static ?string $modelLabel = 'newsletter';
 
-    protected static ?string $pluralModelLabel = 'lettres';
+    protected static ?string $pluralModelLabel = 'newsletters';
 
     protected static ?string $navigationLabel = 'Newsletter';
 
@@ -48,8 +48,8 @@ class NewsletterResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Nouvelle lettre')
-                ->description('Donnez un objet : vous composerez ensuite la lettre directement sur le plan de travail.')
+            Section::make('Nouvelle newsletter')
+                ->description('Donnez un objet : vous composerez ensuite la newsletter directement sur le plan de travail.')
                 ->schema([
                     TextInput::make('subject')->label('Objet du courrier')->required()->maxLength(190)
                         ->placeholder('Ex. : Les nouvelles de l\'UAZ, novembre 2026')
@@ -108,13 +108,13 @@ class NewsletterResource extends Resource
                         ->action(function (Newsletter $record): void {
                             $copy = $record->replicate(['status', 'sent_at', 'recipients_count']);
                             $copy->forceFill(['subject' => 'Copie de '.$record->subject, 'status' => Newsletter::DRAFT, 'created_by' => auth()->id()])->save();
-                            Notification::make()->title('Lettre dupliquée : c\'est un nouveau brouillon.')->success()->send();
+                            Notification::make()->title('Newsletter dupliquée : c\'est un nouveau brouillon.')->success()->send();
                         }),
                     DeleteAction::make()->visible(fn (Newsletter $record) => $record->isDraft()),
                 ])->icon(Heroicon::OutlinedEllipsisVertical)->tooltip('Actions'),
             ])
-            ->emptyStateHeading('Aucune lettre pour le moment')
-            ->emptyStateDescription('Créez votre première lettre : elle sera envoyée à tous les abonnés qui ont confirmé leur adresse.');
+            ->emptyStateHeading('Aucune newsletter pour le moment')
+            ->emptyStateDescription('Créez votre première newsletter : elle sera envoyée à tous les abonnés qui ont confirmé leur adresse.');
     }
 
     /** @return array<string, string> */

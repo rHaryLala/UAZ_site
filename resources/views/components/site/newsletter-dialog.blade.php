@@ -1,4 +1,4 @@
-{{-- Fenêtre « S'abonner à la lettre d'information » : s'ouvre seule à la première visite (puis tous les 20 jours tant que la personne n'est pas
+{{-- Fenêtre « S'abonner à la newsletter » : s'ouvre seule à la première visite (puis tous les 20 jours tant que la personne n'est pas
      abonnée, sur le même navigateur) ou depuis « S'abonner » dans la barre du haut. Logique : resources/js/newsletter.js. --}}
 <dialog data-newsletter-dialog data-delay-days="20" class="student-dialog" aria-labelledby="newsletter-title">
     <div class="ornament relative bg-white p-8 text-ink-800 shadow-lift sm:p-10">
@@ -7,7 +7,7 @@
         </button>
 
         <div data-newsletter-form-wrap>
-            <p class="eyebrow mb-3">{{ __('Lettre d\'information') }}</p>
+            <p class="eyebrow mb-3">{{ __('Newsletter') }}</p>
             <h2 id="newsletter-title" class="font-serif text-2xl text-navy-900 sm:text-3xl">{{ __('Restez proche de l\'UAZ') }}</h2>
             <span class="mt-4 mb-5 block h-0.5 w-12 bg-sun-400" aria-hidden="true"></span>
             <p class="mb-6 text-ink-700">{{ __('Actualités, événements et nouvelles du campus directement dans votre boîte mail. Vous pouvez vous désinscrire à tout moment.') }}</p>
@@ -27,7 +27,7 @@
                 </div>
 
                 <p id="newsletter-feedback" data-newsletter-error class="field-error mt-3" role="alert" hidden></p>
-                <p class="mt-4 text-xs text-ink-600">{{ __('Nous n\'utilisons votre adresse que pour cette lettre.') }}
+                <p class="mt-4 text-xs text-ink-600">{{ __('Nous n\'utilisons votre adresse que pour cette newsletter.') }}
                     @if ($privacyPage ?? null)
                         <a href="{{ $privacyPage->url() }}" class="underline underline-offset-4">{{ __('En savoir plus') }}</a>
                     @endif
@@ -36,7 +36,7 @@
         </div>
 
         <div data-newsletter-done hidden role="status" aria-live="polite">
-            <p class="eyebrow mb-3">{{ __('Lettre d\'information') }}</p>
+            <p class="eyebrow mb-3">{{ __('Newsletter') }}</p>
             <p class="flex items-center gap-3 font-serif text-2xl text-navy-900"><x-ico name="check" class="size-6 shrink-0 text-gold-600" /> {{ __('Vous êtes abonné(e)') }}</p>
             <span class="mt-4 mb-5 block h-0.5 w-12 bg-sun-400" aria-hidden="true"></span>
             <p class="text-ink-700" data-newsletter-message></p>

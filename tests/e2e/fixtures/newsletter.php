@@ -2,7 +2,7 @@
 
 /*
  * Données d'essai pour tests/e2e/newsletter-editor.mjs : « up » crée quatre abonnés (deux actifs, un en attente de confirmation, un désinscrit)
- * et une lettre en brouillon « E2E lettre » ; « down » les supprime (et les envois liés). Usage : php tests/e2e/fixtures/newsletter.php up|down
+ * et une newsletter en brouillon « E2E newsletter » ; « down » les supprime (et les envois liés). Usage : php tests/e2e/fixtures/newsletter.php up|down
  */
 
 use App\Models\Newsletter;
@@ -15,7 +15,7 @@ require __DIR__.'/../../../vendor/autoload.php';
 $app = require __DIR__.'/../../../bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
 
-// Nettoyage direct en base : une lettre envoyée ne peut pas être supprimée par le modèle (c'est voulu), mais ces lettres d'essai doivent disparaître.
+// Nettoyage direct en base : une newsletter envoyée ne peut pas être supprimée par le modèle (c'est voulu), mais ces newsletters d'essai doivent disparaître.
 $ids = DB::table('newsletters')->where('subject', 'like', 'E2E %')->pluck('id');
 DB::table('newsletter_deliveries')->whereIn('newsletter_id', $ids)->delete();
 DB::table('newsletters')->whereIn('id', $ids)->delete();
@@ -33,7 +33,7 @@ NewsletterSubscriber::create(['email' => 'e2e-nl-attente@example.test', 'confirm
 NewsletterSubscriber::create(['email' => 'e2e-nl-parti@example.test', 'confirmed_at' => now()->subDay(), 'unsubscribed_at' => now()]);
 
 $newsletter = Newsletter::create([
-    'subject' => 'E2E lettre', 'blocks' => NewsletterBlocks::starter(), 'theme' => NewsletterBlocks::defaultTheme(), 'status' => Newsletter::DRAFT,
+    'subject' => 'E2E newsletter', 'blocks' => NewsletterBlocks::starter(), 'theme' => NewsletterBlocks::defaultTheme(), 'status' => Newsletter::DRAFT,
 ]);
 
 echo $newsletter->id."\n";

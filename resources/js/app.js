@@ -16,7 +16,7 @@ initAnimations();
 // Fenêtre « Étudiant » de la barre du haut (choix Registrar / Moodle).
 if (document.querySelector('[data-student-dialog]')) import('./student-dialog.js').then((m) => m.initStudentDialog());
 
-// Fenêtre « Lettre d'information » : ouverture à la première visite, puis tous les 20 jours si non abonné.
+// Fenêtre « Newsletter » : ouverture à la première visite, puis tous les 20 jours si non abonné.
 if (document.querySelector('[data-newsletter-dialog]')) import('./newsletter.js').then((m) => m.initNewsletter());
 
 // Frais académiques : simulateur de relevé et boutons « Copier » (indépendants des animations).

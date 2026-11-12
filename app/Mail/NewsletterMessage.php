@@ -18,7 +18,7 @@ use Symfony\Component\Mime\Part\Multipart\RelatedPart;
 use Symfony\Component\Mime\Part\TextPart;
 
 /**
- * Une lettre d'information, pour UN abonné (lien de désinscription personnel et signé) ou pour un envoi d'essai ($subscriber = null).
+ * Une newsletter, pour UN abonné (lien de désinscription personnel et signé) ou pour un envoi d'essai ($subscriber = null).
  * Le courrier est dessiné par App\Support\NewsletterRenderer, comme l'aperçu de l'éditeur. L'envoi n'est pas mis en file ici : c'est le travail
  * App\Jobs\SendNewsletterMessage qui l'est (un par abonné), pour tracer chaque envoi.
  */

@@ -53,7 +53,7 @@
                     {!! $body !!}
 
                     @if ($editing)
-                        <tr data-nl-empty {!! $hasBlocks ? 'hidden' : '' !!}><td class="nl-pad" style="padding:60px 32px;text-align:center;color:#9aa1b5;font-size:15px;">La lettre est vide. Ajoutez un premier bloc depuis le panneau de gauche.</td></tr>
+                        <tr data-nl-empty {!! $hasBlocks ? 'hidden' : '' !!}><td class="nl-pad" style="padding:60px 32px;text-align:center;color:#9aa1b5;font-size:15px;">La newsletter est vide. Ajoutez un premier bloc depuis le panneau de gauche.</td></tr>
                     @endif
 
                     {{-- Pied de page : toujours présent (adresse et lien de désinscription obligatoires), non modifiable. --}}
@@ -63,7 +63,7 @@
                             PK 135, Route Nationale 7, Antsirabe, Madagascar<br>
                             <a href="{{ url('/') }}" style="color:{{ $theme['accent'] }};">{{ preg_replace('#^https?://#', '', url('/')) }}</a>
                             <br><br>
-                            Vous recevez ce message car vous êtes abonné(e) à la lettre d'information de l'UAZ.<br>
+                            Vous recevez ce message car vous êtes abonné(e) à la newsletter de l'UAZ.<br>
                             @if ($unsubscribe)
                                 <a href="{{ $unsubscribe }}" style="color:#6b7184;">Se désinscrire</a>
                             @else
