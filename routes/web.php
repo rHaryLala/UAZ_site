@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\MediaBrowserController;
 use App\Http\Controllers\Admin\NewsletterEditorController;
+use App\Http\Controllers\Admin\RetouchePhotoController;
 use App\Http\Controllers\Admin\VisualEditorController;
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\ContactController;
@@ -51,6 +52,12 @@ Route::prefix('admin/visual-editor/{page}')->name('admin.visual-editor.')->group
     Route::put('/draft', [$controller, 'saveDraft'])->middleware('throttle:120,1')->name('draft');
     Route::delete('/draft', [$controller, 'discardDraft'])->name('draft.discard');
     Route::post('/publish', [$controller, 'publish'])->middleware('throttle:30,1')->name('publish');
+});
+
+// Retouche photo : l'atelier plein écran, et la recherche / le remplacement de la photo d'une personne de l'équipe (droits vérifiés dans le contrôleur).
+Route::prefix('admin/retouche-photo')->name('admin.retouche.')->group(function () {
+    Route::get('/', [RetouchePhotoController::class, 'index'])->name('index');
+    Route::match(['get', 'post'], '/personnes', [RetouchePhotoController::class, 'people'])->middleware('throttle:60,1')->name('people');
 });
 
 // Éditeur visuel des newsletters (droits vérifiés dans le contrôleur : politique NewsletterPolicy).

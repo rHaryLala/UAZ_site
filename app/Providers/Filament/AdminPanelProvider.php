@@ -2,31 +2,43 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\MediaAssets\MediaAssetResource;
+use App\Filament\Resources\MediaAssets\Pages\ListMediaAssets;
 use App\Filament\Widgets\ContentOverview;
+use App\Filament\Widgets\LatestDrafts;
+use App\Filament\Widgets\LatestMessages;
+use App\Filament\Widgets\QuickActions;
+use App\Models\MediaAsset;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\Pages\Login;
+use Filament\Auth\Pages\PasswordReset\RequestPasswordReset;
+use Filament\Auth\Pages\PasswordReset\ResetPassword;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
-use Filament\Pages\Dashboard;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
+use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Livewire\Livewire;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         // Pages de connexion et de mot de passe oublié : celles qui portent la scène de l'aube.
-        $authPages = [\Filament\Auth\Pages\Login::class, \Filament\Auth\Pages\PasswordReset\RequestPasswordReset::class, \Filament\Auth\Pages\PasswordReset\ResetPassword::class];
+        $authPages = [Login::class, RequestPasswordReset::class, ResetPassword::class];
 
         return $panel
             ->default()
@@ -35,7 +47,7 @@ class AdminPanelProvider extends PanelProvider
             // Mode SPA : la navigation remplace le contenu sans recharger la page (scripts et styles conservés), avec préchargement au survol.
             ->spa(hasPrefetching: true)
             // L'éditeur visuel est une page plein écran à part : il se charge normalement (pas par la navigation SPA du panneau).
-            ->spaUrlExceptions(fn (): array => [url('/admin/visual-editor/*'), url('/admin/newsletter-editor/*')])
+            ->spaUrlExceptions(fn (): array => [url('/admin/visual-editor/*'), url('/admin/newsletter-editor/*'), url('/admin/retouche-photo*'), url('/admin/studio*')])
             ->login()
             ->passwordReset()
             ->brandName('UAZ · Administration')
@@ -55,6 +67,15 @@ class AdminPanelProvider extends PanelProvider
             ->multiFactorAuthentication([
                 AppAuthentication::make()->recoverable(),
             ])
+            // Outils plein écran (retouche des photos, Studio UAZ) : des pages à part, ouvertes depuis le menu.
+            ->navigationItems([
+                NavigationItem::make('Retouche photo')
+                    ->group('Site & médias')
+                    ->icon(Heroicon::OutlinedSparkles)
+                    ->sort(5)
+                    ->url(fn (): string => route('admin.retouche.index'))
+                    ->visible(fn (): bool => (bool) auth()->user()?->can('create', MediaAsset::class)),
+            ])
             ->navigationGroups([
                 NavigationGroup::make('Contenus'),
                 NavigationGroup::make('Formations'),
@@ -62,25 +83,25 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Site & médias'),
             ])
             // Pages de connexion : l'aube (scène, feuille de style et script ne sont chargés que sur ces pages).
-            ->renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_START, fn (): \Illuminate\Contracts\View\View => view('filament.auth.scene'), scopes: $authPages)
-            ->renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_END, fn (): \Illuminate\Contracts\View\View => view('filament.auth.back'), scopes: $authPages)
-            ->renderHook(\Filament\View\PanelsRenderHook::HEAD_END, fn (): \Illuminate\Contracts\View\View => view('filament.auth.assets'), scopes: $authPages)
+            ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, fn (): View => view('filament.auth.scene'), scopes: $authPages)
+            ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_END, fn (): View => view('filament.auth.back'), scopes: $authPages)
+            ->renderHook(PanelsRenderHook::HEAD_END, fn (): View => view('filament.auth.assets'), scopes: $authPages)
             // Sélecteur de médias façon WordPress (composant Alpine chargé une fois pour tout le panneau).
             ->renderHook(
-                \Filament\View\PanelsRenderHook::HEAD_END,
+                PanelsRenderHook::HEAD_END,
                 fn (): string => '<script src="'.asset('js/admin/media-picker.js').'?v='.filemtime(public_path('js/admin/media-picker.js')).'" defer></script>',
             )
             // Zone de glisser-déposer au-dessus de la médiathèque.
             ->renderHook(
-                \Filament\View\PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_BEFORE,
-                fn (): \Illuminate\Contracts\View\View => view('filament.media.dropzone'),
-                scopes: \App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class,
+                PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_BEFORE,
+                fn (): View => view('filament.media.dropzone'),
+                scopes: ListMediaAssets::class,
             )
             // « Charger plus » de la médiathèque en grille (la vue liste garde sa pagination).
             ->renderHook(
-                \Filament\View\PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER,
-                fn (): string => \App\Filament\Resources\MediaAssets\MediaAssetResource::isGrid() ? view('filament.media.load-more', ['counts' => \Livewire\Livewire::current()->mediaCounts()])->render() : '',
-                scopes: \App\Filament\Resources\MediaAssets\Pages\ListMediaAssets::class,
+                PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER,
+                fn (): string => MediaAssetResource::isGrid() ? view('filament.media.load-more', ['counts' => Livewire::current()->mediaCounts()])->render() : '',
+                scopes: ListMediaAssets::class,
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -89,10 +110,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                \App\Filament\Widgets\QuickActions::class,
+                QuickActions::class,
                 ContentOverview::class,
-                \App\Filament\Widgets\LatestDrafts::class,
-                \App\Filament\Widgets\LatestMessages::class,
+                LatestDrafts::class,
+                LatestMessages::class,
             ])
             ->middleware([
                 EncryptCookies::class,
