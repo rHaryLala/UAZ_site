@@ -44,9 +44,9 @@ reload_nginx() { nginx -t && systemctl reload nginx; }
 
 preview_check() { # preview_check CHEMIN CODE_ATTENDU  (Nginx met un instant à écouter après un rechargement : quelques essais avant de conclure)
     local code='000' i
-    for i in 1 2 3 4 5 6 7 8; do
+    for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
         code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -H "Host: $DOMAIN" "http://127.0.0.1:$PREVIEW_PORT$1" || true)"
-        [ "$code" != '000' ] && break
+        [ "$code" = "$2" ] && break
         sleep 1
     done
     if [ "$code" = "$2" ]; then ok "$1 → $code"; else warn "$1 → $code (attendu $2)"; FAILED=1; fi
@@ -363,14 +363,17 @@ phase_switch() {
     fi
     systemctl reload nginx
 
+    # Le rechargement de Nginx est progressif : pendant quelques secondes, les anciens processus répondent encore avec l'ancienne configuration
+    # (le Next.js, qui n'a pas de page /up : 404). On attend donc le 200 du nouveau site avant de conclure à un échec.
     local code='000' i
-    for i in 1 2 3 4 5 6 7 8; do   # le rechargement de Nginx est asynchrone : on attend qu'il écoute avant de conclure à un échec
+    for i in $(seq 1 20); do
         code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 --resolve "$DOMAIN:443:127.0.0.1" "https://$DOMAIN/up" || true)"
-        [ "$code" != '000' ] && break
+        [ "$code" = '200' ] && break
         sleep 1
     done
     if [ "$code" != "200" ]; then
-        warn "https://$DOMAIN/up → $code : retour automatique à l'ancien site"
+        warn "https://$DOMAIN/up → $code après 20 s : retour automatique à l'ancien site"
+        curl -sI --max-time 15 --resolve "$DOMAIN:443:127.0.0.1" "https://$DOMAIN/up" | sed 's/^/      réponse : /' | head -12 || true
         phase_rollback; die "bascule annulée"
     fi
     ok "https://$DOMAIN est servi par le site Laravel"
