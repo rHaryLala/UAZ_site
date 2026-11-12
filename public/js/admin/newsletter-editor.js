@@ -1130,6 +1130,62 @@
         }
     });
 
+    /* ───────── Largeur du panneau : on l'étire ou on le réduit (glisser la poignée, ou flèches ; double-clic = taille d'origine) ───────── */
+    (() => {
+        const handle = $('[data-nl-resizer]');
+        const shell = $('[data-nl]');
+        if (!handle || !shell) return;
+        const STORE = 'nl-panel-width';
+        const MIN = 240;
+        const panel = handle.parentElement;
+        const current = () => panel.getBoundingClientRect().width;
+        const original = current() || 352;
+        const limit = () => Math.max(MIN + 60, Math.min(760, window.innerWidth * 0.65));
+        const apply = (width, save = true) => {
+            const value = Math.round(Math.max(MIN, Math.min(limit(), width)));
+            shell.style.setProperty('--panel', value + 'px');
+            handle.setAttribute('aria-valuenow', String(value));
+            if (save) {
+                try { localStorage.setItem(STORE, String(value)); } catch { /* stockage indisponible : la largeur ne sera pas retenue */ }
+            }
+        };
+        try {
+            const saved = Number(localStorage.getItem(STORE));
+            if (saved) apply(saved, false);
+        } catch { /* ignoré */ }
+        handle.setAttribute('aria-valuemin', String(MIN));
+        handle.setAttribute('aria-valuemax', String(Math.round(limit())));
+
+        handle.addEventListener('pointerdown', (event) => {
+            event.preventDefault();
+            handle.setPointerCapture(event.pointerId);
+            handle.classList.add('is-dragging');
+            shell.classList.add('is-resizing');
+        });
+        handle.addEventListener('pointermove', (event) => {
+            if (handle.hasPointerCapture(event.pointerId)) apply(event.clientX - shell.getBoundingClientRect().left, false);
+        });
+        const stop = (event) => {
+            if (!handle.hasPointerCapture(event.pointerId)) return;
+            handle.releasePointerCapture(event.pointerId);
+            handle.classList.remove('is-dragging');
+            shell.classList.remove('is-resizing');
+            apply(current() || original);
+        };
+        handle.addEventListener('pointerup', stop);
+        handle.addEventListener('pointercancel', stop);
+        handle.addEventListener('dblclick', () => apply(original));
+        handle.addEventListener('keydown', (event) => {
+            const step = event.shiftKey ? 60 : 20;
+            const now = current() || original;
+            if (event.key === 'ArrowLeft') (event.preventDefault(), apply(now - step));
+            else if (event.key === 'ArrowRight') (event.preventDefault(), apply(now + step));
+            else if (event.key === 'Home') (event.preventDefault(), apply(MIN));
+            else if (event.key === 'End') (event.preventDefault(), apply(limit()));
+        });
+        window.addEventListener('resize', () => apply(current() || original, false));
+    })();
+
     /* ───────── Démarrage ───────── */
     updateHistoryButtons();
     if (!locked) {

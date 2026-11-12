@@ -32,7 +32,7 @@ final class NewsletterBlocks
     private const ALIGN = ['left' => 'Gauche', 'center' => 'Centré', 'right' => 'Droite'];
 
     /** « Photo en fond » : où se place le texte. */
-    public const HERO_LAYOUTS = ['left' => 'Panneau à gauche', 'right' => 'Panneau à droite', 'center' => 'Panneau au centre', 'bottom' => 'Bandeau en bas', 'text' => 'Texte sur la photo (photo assombrie)'];
+    public const HERO_LAYOUTS = ['left' => 'Panneau à gauche', 'right' => 'Panneau à droite', 'center' => 'Panneau au centre', 'bottom' => 'Bandeau en bas', 'text' => 'Texte sur la photo'];
 
     /** Mosaïque (« bento ») : dispositions proposées et nombre de photos de chacune. */
     public const MOSAIC_LAYOUTS = ['1-2' => 'Une grande + deux', '2-1' => 'Deux + une grande', '3' => 'Trois égales', '2x2' => 'Quatre en grille', '1-3' => 'Une large + trois'];

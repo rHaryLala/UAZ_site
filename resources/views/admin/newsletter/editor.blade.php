@@ -42,7 +42,8 @@
         @endunless
     </header>
 
-    <aside class="ve-panel" aria-label="Panneau de l'éditeur">
+    <aside class="ve-panel nl-panel" aria-label="Panneau de l'éditeur">
+        <div class="nl-resizer" role="separator" aria-orientation="vertical" aria-label="Largeur du panneau : glissez, ou utilisez les flèches gauche et droite (double-clic : taille d'origine)" tabindex="0" data-nl-resizer></div>
         @if ($boot['locked'])
             <div class="ve-pane">
                 <div class="ve-notice">

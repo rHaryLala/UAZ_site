@@ -67,6 +67,7 @@
 /* Réglages d'un bloc */
 .nl-seg {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.2rem;
     padding: 0.2rem;
     border: 1px solid var(--line);
@@ -75,7 +76,10 @@
 }
 
 .nl-seg button {
-    flex: 1;
+    flex: 1 1 5.2rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.2;
     padding: 0.4rem 0.3rem;
     border: 0;
     border-radius: 6px;
@@ -265,6 +269,62 @@
 
     .nl .ve-panel {
         max-height: 16rem;
+    }
+}
+
+/* Panneau de gauche à largeur réglable : une poignée sur son bord droit */
+.nl-panel {
+    position: relative;
+    min-width: 0;
+}
+
+.nl-resizer {
+    position: absolute;
+    top: 0;
+    right: -5px;
+    bottom: 0;
+    z-index: 30;
+    width: 10px;
+    cursor: col-resize;
+    touch-action: none;
+}
+
+.nl-resizer::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 3px;
+    width: 4px;
+    height: 44px;
+    border-radius: 4px;
+    background: #c3c9da;
+    transform: translateY(-50%);
+    transition: background 0.15s;
+}
+
+.nl-resizer:hover::after,
+.nl-resizer:focus-visible::after,
+.nl-resizer.is-dragging::after {
+    background: var(--gold, #c9a84c);
+}
+
+.nl-resizer:focus-visible {
+    outline: 2px solid var(--gold, #c9a84c);
+    outline-offset: -2px;
+}
+
+.nl.is-resizing {
+    cursor: col-resize;
+    user-select: none;
+}
+
+.nl.is-resizing .ve-frame-wrap {
+    pointer-events: none;
+}
+
+@media (max-width: 900px) {
+    .nl-resizer {
+        display: none;
     }
 }
 
