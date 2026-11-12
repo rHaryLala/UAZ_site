@@ -60,7 +60,7 @@ class NewsletterResource extends Resource
             Section::make('Modèle')->columnSpanFull()
                 ->description('Une mise en page moderne déjà composée : vous changerez tout (textes, photos, couleurs, colonnes) sur le plan de travail.')
                 ->schema([
-                    ViewField::make('template')->hiddenLabel()->view('filament.forms.newsletter-template-picker')->default('news')->live()
+                    ViewField::make('template')->hiddenLabel()->view('filament.forms.newsletter-template-picker')->default('une')->live()
                         ->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
                             // L'objet est proposé d'après le modèle tant qu'on n'a rien écrit soi-même.
                             $built = $state ? NewsletterTemplates::build($state) : null;

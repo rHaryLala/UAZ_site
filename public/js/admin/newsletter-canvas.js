@@ -3,7 +3,7 @@
 // supprimer. Ce script ne garde aucun état de la newsletter : il signale ce qui se passe à l'éditeur (window.parent), qui tient l'état, l'enregistre
 // et met à jour le plan de travail par window.nl (setRows, select) sans jamais recharger l'iframe pour un simple changement de bloc.
 (() => {
-    const LABELS = { heading: 'Titre', text: 'Texte', image: 'Image', button: 'Bouton', quote: 'Citation', feature: 'Image et texte', news: 'Actualités', divider: 'Séparateur', spacer: 'Espace', columns: 'Colonnes', section: 'Bandeau' };
+    const LABELS = { heading: 'Titre', text: 'Texte', image: 'Image', button: 'Bouton', quote: 'Citation', feature: 'Image et texte', hero: 'Photo en fond', mosaic: 'Mosaïque', news: 'Actualités', divider: 'Séparateur', spacer: 'Espace', columns: 'Colonnes', section: 'Bandeau' };
     const tell = (message) => window.parent.postMessage({ nl: true, ...message }, '*');
     const idOf = (el) => el?.dataset.nlId ?? null;
     const byId = (id) => (id ? document.querySelector('[data-nl-block][data-nl-id="' + id + '"]') : null);
@@ -145,13 +145,13 @@
         const block = event.target.closest('[data-nl-block]');
         select(idOf(block));
         // Un emplacement d'image vide : un clic suffit pour ouvrir la médiathèque.
-        if (event.target.closest('[data-nl-placeholder]') && block) tell({ op: 'media', id: idOf(block) });
+        if (event.target.closest('[data-nl-placeholder]') && block) tell({ op: 'media', id: idOf(block), field: event.target.closest('[data-nl-media]')?.dataset.nlMedia || 'media' });
     });
 
     document.addEventListener('dblclick', (event) => {
         const block = event.target.closest('[data-nl-block]');
-        if (block && ['image', 'feature'].includes(block.dataset.nlType) && !event.target.closest('[data-nl-field]')) {
-            tell({ op: 'media', id: idOf(block) });
+        if (block && ['image', 'feature', 'hero', 'mosaic'].includes(block.dataset.nlType) && !event.target.closest('[data-nl-field]')) {
+            tell({ op: 'media', id: idOf(block), field: event.target.closest('[data-nl-media]')?.dataset.nlMedia || 'media' });
         }
     });
 
@@ -221,7 +221,7 @@
         if (block.querySelector('[data-nl-field="html"]')) {
             bar.append(separator(), button('<b>G</b>', 'bold', 'Gras'), button('<i>I</i>', 'italic', 'Italique'), button('🔗', 'link', 'Ajouter un lien'), button('•&nbsp;≡', 'list', 'Liste à puces'));
         }
-        if (['image', 'feature'].includes(type)) bar.append(separator(), button('🖼', 'media', 'Choisir la photo'));
+        if (['image', 'feature', 'hero', 'mosaic'].includes(type)) bar.append(separator(), button('🖼', 'media', 'Choisir la photo'));
 
         const up = button('↑', 'up', 'Monter');
         const down = button('↓', 'down', 'Descendre');

@@ -449,7 +449,7 @@
         callFrame('select', block.id);
         callFrame('reveal', block.id);
         // Un bloc d'image sans image : on propose tout de suite la médiathèque.
-        if (['image', 'feature'].includes(block.type)) setTimeout(() => chooseMedia(block.id), 250);
+        if (['image', 'feature', 'hero', 'mosaic'].includes(block.type)) setTimeout(() => chooseMedia(block.id), 250);
     }
 
     function moveTo(id, target) {
@@ -563,7 +563,7 @@
         } else if (m.op === 'parent') {
             const at = locate(m.id);
             if (at?.parent) selectBlock(at.parent.id, { reveal: true });
-        } else if (m.op === 'media') chooseMedia(m.id);
+        } else if (m.op === 'media') chooseMedia(m.id, m.field);
         else if (m.op === 'undo') travel(-1);
         else if (m.op === 'redo') travel(1);
     });
@@ -591,7 +591,7 @@
     /** Petit schéma d'un bloc, pour le reconnaître d'un coup d'œil. */
     const WIRES = {
         heading: 'bar', text: 'lines', image: 'img', button: 'btn', quote: 'quo lines', feature: 'img lines', news: 'row row', columns: 'col col', section: 'band', divider: 'hr', spacer: 'gap',
-        'photo-text': 'img lines', 'text-photo': 'lines img', 'two-photos': 'img img', 'three-photos': 'img img img', figures: 'fig fig fig', 'banner-light': 'band', 'banner-dark': 'band dark',
+        hero: 'hero', mosaic: 'tile tile tile', 'photo-text': 'img lines', 'text-photo': 'lines img', 'two-photos': 'img img', 'three-photos': 'img img img', figures: 'fig fig fig', 'banner-light': 'band', 'banner-dark': 'band dark',
     };
     const wire = (key) => h('span', { class: 'nl-wire', 'aria-hidden': 'true' }, (WIRES[key] ?? 'lines').split(' ').map((part) => h('i', { class: 'nl-w nl-w--' + part })));
 
@@ -609,6 +609,7 @@
         const pane = $('[data-nl-pane="add"]');
         const groups = [
             ['content', 'Contenu'],
+            ['effects', 'Effets (photo en fond, mosaïque)'],
             ['layout', 'Mise en page'],
             ['preset', 'Compositions toutes faites'],
         ];
@@ -761,6 +762,7 @@
         } else if (spec.kind === 'color') control = colorControl(value, (picked) => (setData(block, spec.key, picked), renderBlock()), spec.empty ?? null);
         else if (spec.kind === 'range') control = rangeControl(spec, value, (v) => setData(block, spec.key, v, { final: false }), (v) => setData(block, spec.key, v));
         else if (spec.kind === 'toggle') control = h('label', { class: 'nl-toggle' }, h('input', { type: 'checkbox', checked: !!value, onchange: (event) => setData(block, spec.key, event.target.checked ? '1' : '') }), 'Oui');
+        else if (spec.kind === 'text') control = h('input', { type: 'text', class: 'nl-input', value, maxlength: spec.max ?? 60, placeholder: spec.placeholder ?? '', oninput: (event) => setData(block, spec.key, event.target.value, { final: false }), onchange: (event) => setData(block, spec.key, event.target.value) });
         else if (spec.kind === 'url') control = h('input', { type: 'url', class: 'nl-input', value, placeholder: 'https://…', oninput: (event) => setData(block, spec.key, event.target.value, { final: false }), onchange: (event) => setData(block, spec.key, event.target.value) });
         else if (spec.kind === 'media') {
             const asset = media[value];
@@ -768,7 +770,7 @@
                 'div',
                 { class: 've-media-field' },
                 asset ? h('img', { src: asset.thumb, alt: asset.alt }) : h('span', { class: 've-media-field__empty' }, 'Aucune image'),
-                h('div', {}, h('button', { type: 'button', class: 've-btn ve-btn--sm', onclick: () => chooseMedia(block.id) }, asset ? 'Changer' : 'Choisir une image'), asset ? h('button', { type: 'button', class: 've-btn ve-btn--sm', onclick: () => (setData(block, spec.key, 0), renderBlock()) }, 'Retirer') : null),
+                h('div', {}, h('button', { type: 'button', class: 've-btn ve-btn--sm', onclick: () => chooseMedia(block.id, spec.key) }, asset ? 'Changer' : 'Choisir une image'), asset ? h('button', { type: 'button', class: 've-btn ve-btn--sm', onclick: () => (setData(block, spec.key, 0), renderBlock()) }, 'Retirer') : null),
             );
         }
 
@@ -929,6 +931,7 @@
     const more = $('[data-nl-media-more]');
     const uploadForm = $('[data-nl-media-upload]');
     let mediaTarget = null;
+    let mediaField = 'media';
     let mediaPage = 1;
     let mediaQuery = '';
     let pendingFile = null;
@@ -949,9 +952,10 @@
         more.hidden = !json.has_more;
     }
 
-    function chooseMedia(id) {
+    function chooseMedia(id, key = 'media') {
         if (locked || !id || !find(id)) return;
         mediaTarget = id;
+        mediaField = key || 'media';
         pendingFile = null;
         uploadForm.hidden = true;
         mediaDialog.showModal();
@@ -962,7 +966,7 @@
         const block = find(mediaTarget);
         if (block) {
             media[asset.id] = asset;
-            block.data.media = asset.id;
+            block.data[mediaField] = asset.id;
             selected = block.id;
             mediaDialog.close();
             commit();
@@ -1064,7 +1068,7 @@
         // Oublis courants : une image vide ne s'affiche pas dans le courrier, un bouton sans adresse mène à la page d'accueil du site.
         const all = [...walk()];
         const warnings = [];
-        const bare = all.filter((block) => ['image', 'feature'].includes(block.type) && !block.data.media).length;
+        const bare = all.filter((block) => ['image', 'feature', 'hero', 'mosaic'].includes(block.type) && !block.data.media).length;
         const blind = all.filter((block) => block.type === 'button' && !block.data.url).length;
         if (bare) warnings.push(bare + ' bloc' + (bare > 1 ? 's' : '') + ' « image » sans photo (ils n\'apparaîtront pas).');
         if (blind) warnings.push(blind + ' bouton' + (blind > 1 ? 's' : '') + ' sans adresse de lien (ils mèneront à la page d\'accueil du site).');

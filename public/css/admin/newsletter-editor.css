@@ -325,6 +325,9 @@
 .nl-w--col { border: 1.5px dashed #8d98c4; background: transparent; }
 .nl-w--band { background: #dcd6c8; }
 .nl-w--dark { background: #232e66; }
+.nl-w--hero { flex: 2; background: linear-gradient(90deg, #232e66 0 45%, #aab6e0 45%); }
+.nl-w--tile { background: linear-gradient(135deg, #aab6e0, #d9def2); }
+.nl-w--tile:nth-child(2) { flex: 0.6; }
 .nl-w--hr { align-self: center; flex: 1; height: 2px; }
 .nl-w--gap { background: repeating-linear-gradient(90deg, #c3c9da 0 3px, transparent 3px 7px); }
 

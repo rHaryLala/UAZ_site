@@ -7,6 +7,7 @@ use App\Models\NewsletterSubscriber;
 use App\Models\NewsPost;
 use App\Models\SiteSetting;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
 /**
@@ -142,6 +143,7 @@ final class NewsletterRenderer
                 'text' => $lines[] = $strip($d['html']),
                 'button' => $lines[] = $d['label'].($d['url'] !== '' ? ' : '.$d['url'] : ''),
                 'quote' => $lines[] = '« '.$d['text'].' »'.($d['author'] !== '' ? ' — '.$d['author'] : ''),
+                'hero' => $lines[] = trim(implode("\n", array_filter([$d['eyebrow'], mb_strtoupper($d['title']), $d['text'], $d['button_label'].($d['button_url'] !== '' ? ' : '.$d['button_url'] : '')]))),
                 'feature' => $lines[] = trim($d['title']."\n".$strip($d['html']).($d['link'] !== '' ? "\n".$d['link'] : '')),
                 'news' => $lines[] = trim($d['title']."\n".self::newsPosts((int) $d['count'])->map(fn (NewsPost $p) => '- '.$p->title.' : '.$p->url())->implode("\n")),
                 'divider' => $lines[] = '--',
@@ -184,6 +186,86 @@ final class NewsletterRenderer
         }
 
         return url($file->getUrl());
+    }
+
+    /**
+     * Une photo recadrée À LA TAILLE EXACTE (« cover » : elle remplit le cadre, centrée), en JPEG, au double de la taille d'affichage pour les écrans nets.
+     * Les messageries ne savent pas recadrer (« object-fit » est mal pris en charge) : les mosaïques et les photos en fond reçoivent donc des fichiers déjà
+     * découpés. Le fichier est créé au premier besoin dans storage/app/public/newsletter-tiles puis réutilisé ; en cas d'échec, la photo entière sert de repli.
+     *
+     * @param  float  $darken  0 à 1 : assombrit la photo (texte clair posé directement dessus)
+     */
+    public static function crop(?MediaAsset $asset, int $width, int $height, float $darken = 0): ?string
+    {
+        $file = $asset?->file();
+
+        if (! $file || $width < 8 || $height < 8) {
+            return self::imageUrl($asset);
+        }
+
+        $source = $file->getPath();
+
+        if (! is_file($source)) {
+            return self::imageUrl($asset);
+        }
+
+        $name = sprintf('%d-%d-%dx%d%s-%s.jpg', $asset->id, $file->id, $width, $height, $darken > 0 ? '-d'.(int) round($darken * 100) : '', substr(md5(filemtime($source).filesize($source)), 0, 6));
+        $disk = Storage::disk('public');
+        $target = 'newsletter-tiles/'.$name;
+
+        if (! $disk->exists($target)) {
+            try {
+                self::writeCrop($source, $disk->path($target), $width * 2, $height * 2, $darken);
+            } catch (\Throwable $e) {
+                report($e);
+
+                return self::imageUrl($asset);
+            }
+        }
+
+        return url('/storage/'.$target);
+    }
+
+    /** Découpe « cover » avec GD : l'image est réduite pour couvrir le cadre, puis centrée. */
+    private static function writeCrop(string $source, string $destination, int $width, int $height, float $darken): void
+    {
+        $image = @imagecreatefromstring((string) file_get_contents($source));
+
+        if (! $image) {
+            throw new \RuntimeException('Image illisible : '.basename($source));
+        }
+
+        [$sw, $sh] = [imagesx($image), imagesy($image)];
+        $scale = max($width / $sw, $height / $sh);
+        [$cw, $ch] = [(int) ceil($width / $scale), (int) ceil($height / $scale)];
+        $canvas = imagecreatetruecolor($width, $height);
+        imagefill($canvas, 0, 0, imagecolorallocate($canvas, 255, 255, 255)); // fond blanc sous les PNG transparents
+        imagecopyresampled($canvas, $image, 0, 0, (int) max(0, floor(($sw - $cw) / 2)), (int) max(0, floor(($sh - $ch) / 2)), $width, $height, min($cw, $sw), min($ch, $sh));
+
+        if ($darken > 0) {
+            imagealphablending($canvas, true);
+            imagefilledrectangle($canvas, 0, 0, $width, $height, imagecolorallocatealpha($canvas, 8, 12, 36, (int) round(127 * (1 - min(0.85, $darken)))));
+        }
+
+        $directory = dirname($destination);
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0775, true);
+        }
+
+        $temporary = $destination.'.'.bin2hex(random_bytes(4)).'.tmp';
+        imagejpeg($canvas, $temporary, 82);
+        rename($temporary, $destination); // d'un coup : une messagerie ne lit jamais un fichier à moitié écrit
+    }
+
+    /** « #131a3f » + 88 % → « rgba(19,26,63,0.88) » (le panneau translucide des messageries qui le permettent). */
+    public static function rgba(string $hex, int $percent): string
+    {
+        if (! preg_match('/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $hex, $m)) {
+            return $hex;
+        }
+
+        return sprintf('rgba(%d,%d,%d,%s)', hexdec($m[1]), hexdec($m[2]), hexdec($m[3]), rtrim(rtrim(number_format(max(0, min(100, $percent)) / 100, 2, '.', ''), '0'), '.'));
     }
 
     /**

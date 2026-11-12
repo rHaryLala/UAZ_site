@@ -447,7 +447,7 @@ it('can place a block of every type, composition included, and each survives nor
 // --- Modèles ----------------------------------------------------------------------------------------------------------------------------
 
 it('offers modern templates that build, normalise without loss and draw without error', function () {
-    expect(NewsletterTemplates::keys())->toContain('news', 'event', 'rector', 'admissions', 'gallery', 'support', 'simple')
+    expect(NewsletterTemplates::keys())->toContain('une', 'recit', 'magazine', 'affiche', 'actualites', 'simple')
         ->and(NewsletterTemplates::build('inconnu'))->toBeNull();
 
     foreach (NewsletterTemplates::keys() as $key) {
@@ -463,16 +463,51 @@ it('fills the photo blocks of a template with the latest photos of the media lib
     $asset = MediaAsset::create(['title' => 'Photo']);
     $asset->addMedia(UploadedFile::fake()->image('campus.jpg', 800, 600))->toMediaCollection(MediaAsset::COLLECTION);
 
-    $built = NewsletterTemplates::build('event');
+    $built = NewsletterTemplates::build('recit');
     $photos = collect(NewsletterBlocks::flatten($built['blocks']))->where('type', 'image')->pluck('data.media');
 
     expect($photos->unique()->all())->toBe([$asset->id]);
+
+    // Photo en fond et mosaïque : tous les emplacements affichés reçoivent une photo (les cases en trop, non).
+    $une = collect(NewsletterBlocks::flatten(NewsletterTemplates::build('une')['blocks']));
+    $mosaic = $une->firstWhere('type', 'mosaic')['data'];
+    expect($une->firstWhere('type', 'hero')['data']['media'])->toBe($asset->id)
+        ->and([$mosaic['media'], $mosaic['media2'], $mosaic['media3']])->toBe([$asset->id, $asset->id, $asset->id])
+        ->and($mosaic['media4'])->toBe(0);
+});
+
+it('draws the hero and mosaic blocks as exact-size photos, with parallax, badge and offset shadow', function () {
+    $asset = MediaAsset::create(['title' => 'Photo']);
+    $asset->addMedia(UploadedFile::fake()->image('campus.jpg', 1200, 800))->toMediaCollection(MediaAsset::COLLECTION);
+
+    $html = NewsletterRenderer::html(NewsletterTemplates::build('une'));
+    expect($html)->toContain('background-attachment:fixed')->toContain('newsletter-tiles/')->toContain('v:fill')->toContain('border-radius:50%')
+        ->toContain('Nouveau')->toContain('class="nl-tile"');
+
+    $html = NewsletterRenderer::html(NewsletterTemplates::build('recit'));
+    expect($html)->toContain('padding:0 18px 18px 0');
+
+    // Dans le plan de travail, une case vide invite à choisir sa photo ; dans le courrier envoyé, rien de tel.
+    $empty = ['subject' => 'x', 'theme' => NewsletterBlocks::defaultTheme(), 'blocks' => NewsletterBlocks::normalize(NewsletterBlocks::withIds([NewsletterBlocks::node('mosaic', ['layout' => '2x2']), NewsletterBlocks::node('hero')]))];
+    expect(NewsletterRenderer::html($empty, null, null, true))->toContain('data-nl-media="media4"')->toContain('data-nl-media="media"')
+        ->and(NewsletterRenderer::html($empty))->not->toContain('data-nl-');
+});
+
+it('keeps the tile and hero fields within their limits', function () {
+    $blocks = NewsletterBlocks::normalize(NewsletterBlocks::withIds([
+        NewsletterBlocks::node('hero', ['layout' => 'nope', 'height' => 9000, 'tone' => 'rose', 'opacity' => 3, 'badge' => '<b>'.str_repeat('x', 80).'</b>']),
+        NewsletterBlocks::node('mosaic', ['layout' => 'nope', 'gap' => 99, 'frame' => 'javascript:1']),
+    ]));
+
+    expect($blocks[0]['data']['layout'])->toBe('left')->and($blocks[0]['data']['height'])->toBeLessThanOrEqual(560)->and($blocks[0]['data']['tone'])->toBe('navy')
+        ->and(mb_strlen($blocks[0]['data']['badge']))->toBeLessThanOrEqual(24)->and($blocks[0]['data']['badge'])->not->toContain('<')
+        ->and($blocks[1]['data']['layout'])->toBe('1-2')->and($blocks[1]['data']['gap'])->toBeLessThanOrEqual(14)->and($blocks[1]['data']['frame'])->toBe('');
 });
 
 it('creates a letter from the chosen template', function () {
     $this->actingAs($this->editor);
 
-    Livewire::test(CreateNewsletter::class)->fillForm(['subject' => 'Ma lettre', 'template' => 'event'])->call('create')->assertHasNoFormErrors();
+    Livewire::test(CreateNewsletter::class)->fillForm(['subject' => 'Ma lettre', 'template' => 'actualites'])->call('create')->assertHasNoFormErrors();
 
     $letter = Newsletter::sole();
     expect(collect(NewsletterBlocks::flatten($letter->blocks))->pluck('type'))->toContain('columns', 'section')

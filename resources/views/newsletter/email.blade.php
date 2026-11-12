@@ -28,6 +28,8 @@
             .nl-cols { width: 100% !important; }
             .nl-col { display: block !important; width: 100% !important; max-width: 100% !important; padding-bottom: 14px !important; }
             .nl-gap { display: none !important; }
+            .nl-tile { width: 100% !important; height: auto !important; }
+            .nl-hero-cell { display: block !important; width: 100% !important; padding-left: 16px !important; padding-right: 16px !important; box-sizing: border-box; text-align: left !important; }
             .nl-hd { padding-left: 16px !important; padding-right: 16px !important; }
             .nl-hd-logo { width: 72px !important; height: 72px !important; }
             .nl-hd-ico { width: 20px !important; height: 20px !important; margin-left: 6px !important; }

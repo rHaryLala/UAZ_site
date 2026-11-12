@@ -31,6 +31,17 @@ final class NewsletterBlocks
 
     private const ALIGN = ['left' => 'Gauche', 'center' => 'Centré', 'right' => 'Droite'];
 
+    /** « Photo en fond » : où se place le texte. */
+    public const HERO_LAYOUTS = ['left' => 'Panneau à gauche', 'right' => 'Panneau à droite', 'center' => 'Panneau au centre', 'bottom' => 'Bandeau en bas', 'text' => 'Texte sur la photo (photo assombrie)'];
+
+    /** Mosaïque (« bento ») : dispositions proposées et nombre de photos de chacune. */
+    public const MOSAIC_LAYOUTS = ['1-2' => 'Une grande + deux', '2-1' => 'Deux + une grande', '3' => 'Trois égales', '2x2' => 'Quatre en grille', '1-3' => 'Une large + trois'];
+
+    public const MOSAIC_TILES = ['1-2' => 3, '2-1' => 3, '3' => 3, '2x2' => 4, '1-3' => 4];
+
+    /** Champs « photo » de la mosaïque, dans l'ordre. */
+    public const MOSAIC_MEDIA = ['media', 'media2', 'media3', 'media4'];
+
     /** Emplacements possibles d'un élément de l'en-tête (vide = masqué). */
     public const SLOTS = ['left' => 'Gauche', 'center' => 'Centre', 'right' => 'Droite', '' => 'Masqué'];
 
@@ -164,13 +175,14 @@ final class NewsletterBlocks
             ],
             'image' => [
                 'label' => 'Image', 'hint' => 'Une photo de la médiathèque, n’importe où.', 'group' => 'content',
-                'defaults' => ['media' => 0, 'link' => '', 'width' => 100, 'align' => 'center', 'radius' => 0],
+                'defaults' => ['media' => 0, 'link' => '', 'width' => 100, 'align' => 'center', 'radius' => 0, 'shadow' => ''],
                 'inline' => [],
                 'fields' => [
                     ['key' => 'media', 'label' => 'Image', 'kind' => 'media'],
                     ['key' => 'width', 'label' => 'Largeur', 'kind' => 'select', 'options' => [100 => 'Pleine', 75 => '3/4', 50 => 'Moitié', 33 => 'Tiers'], 'segmented' => true],
                     ['key' => 'align', 'label' => 'Alignement', 'kind' => 'select', 'options' => self::ALIGN, 'segmented' => true],
                     ['key' => 'radius', 'label' => 'Coins', 'kind' => 'select', 'options' => [0 => 'Droits', 8 => 'Arrondis', 24 => 'Très arrondis'], 'segmented' => true],
+                    ['key' => 'shadow', 'label' => 'Ombre colorée décalée (rectangle derrière la photo)', 'kind' => 'color', 'empty' => 'Aucune'],
                     ['key' => 'link', 'label' => 'Lien au clic (facultatif)', 'kind' => 'url'],
                 ],
             ],
@@ -211,6 +223,39 @@ final class NewsletterBlocks
                 'fields' => [
                     ['key' => 'count', 'label' => 'Nombre d’articles', 'kind' => 'range', 'min' => 1, 'max' => 6, 'unit' => ''],
                     ['key' => 'excerpt', 'label' => 'Afficher le résumé', 'kind' => 'toggle'],
+                ],
+            ],
+            'hero' => [
+                'label' => 'Photo en fond', 'hint' => 'Une grande photo avec du texte par-dessus : panneau coloré, badge rond, effet parallax.', 'group' => 'effects', 'bleed' => true,
+                'defaults' => ['media' => 0, 'height' => 400, 'layout' => 'left', 'tone' => 'navy', 'opacity' => 88, 'parallax' => '', 'eyebrow' => 'SURTITRE', 'title' => 'Un grand titre qui accroche', 'text' => 'Deux phrases pour donner envie de lire la suite.', 'button_label' => 'En savoir plus', 'button_url' => '', 'badge' => ''],
+                'inline' => ['eyebrow' => false, 'title' => false, 'text' => false, 'button_label' => false],
+                'fields' => [
+                    ['key' => 'media', 'label' => 'Photo de fond', 'kind' => 'media'],
+                    ['key' => 'height', 'label' => 'Hauteur', 'kind' => 'range', 'min' => 240, 'max' => 560, 'unit' => 'px'],
+                    ['key' => 'layout', 'label' => 'Texte', 'kind' => 'select', 'options' => self::HERO_LAYOUTS],
+                    ['key' => 'tone', 'label' => 'Couleur du panneau', 'kind' => 'select', 'options' => ['navy' => 'Bleu nuit', 'blue' => 'Bleu UAZ', 'gold' => 'Or', 'paper' => 'Crème'], 'segmented' => true],
+                    ['key' => 'opacity', 'label' => 'Transparence du panneau (selon la messagerie)', 'kind' => 'select', 'options' => [100 => 'Opaque', 88 => 'Légère', 72 => 'Moyenne', 55 => 'Forte'], 'segmented' => true],
+                    ['key' => 'parallax', 'label' => 'Effet parallax (la photo reste fixe quand on fait défiler)', 'kind' => 'toggle'],
+                    ['key' => 'badge', 'label' => 'Badge rond (texte court, facultatif)', 'kind' => 'text', 'max' => 24],
+                    ['key' => 'button_url', 'label' => 'Adresse du bouton', 'kind' => 'url'],
+                ],
+            ],
+            'mosaic' => [
+                'label' => 'Mosaïque (bento)', 'hint' => 'Des photos de tailles différentes, assemblées comme une grille de magazine.', 'group' => 'effects',
+                'defaults' => ['layout' => '1-2', 'height' => 340, 'gap' => 8, 'radius' => 0, 'frame' => '', 'tile_bg' => '#e1ebff', 'link' => '', 'media' => 0, 'media2' => 0, 'media3' => 0, 'media4' => 0],
+                'inline' => [],
+                'fields' => [
+                    ['key' => 'layout', 'label' => 'Disposition', 'kind' => 'select', 'options' => self::MOSAIC_LAYOUTS],
+                    ['key' => 'height', 'label' => 'Hauteur', 'kind' => 'select', 'options' => [260 => 'Compacte', 340 => 'Standard', 440 => 'Haute'], 'segmented' => true],
+                    ['key' => 'gap', 'label' => 'Écart entre les photos', 'kind' => 'select', 'options' => [4 => 'Fin', 8 => 'Moyen', 14 => 'Large'], 'segmented' => true],
+                    ['key' => 'radius', 'label' => 'Coins', 'kind' => 'select', 'options' => [0 => 'Droits', 8 => 'Arrondis', 18 => 'Très arrondis'], 'segmented' => true],
+                    ['key' => 'frame', 'label' => 'Cadre autour de chaque photo', 'kind' => 'color', 'empty' => 'Sans cadre'],
+                    ['key' => 'tile_bg', 'label' => 'Couleur d\'une case sans photo', 'kind' => 'color'],
+                    ['key' => 'media', 'label' => 'Photo 1', 'kind' => 'media'],
+                    ['key' => 'media2', 'label' => 'Photo 2', 'kind' => 'media'],
+                    ['key' => 'media3', 'label' => 'Photo 3', 'kind' => 'media'],
+                    ['key' => 'media4', 'label' => 'Photo 4 (selon la disposition)', 'kind' => 'media'],
+                    ['key' => 'link', 'label' => 'Lien au clic, sur toutes les photos (facultatif)', 'kind' => 'url'],
                 ],
             ],
             'columns' => [
@@ -487,6 +532,7 @@ final class NewsletterBlocks
             'color' => self::color($value) ?? (($default === '') ? '' : $default),
             'url' => self::url((string) $value),
             'media' => max(0, (int) $value),
+            'text' => trim(mb_substr(strip_tags((string) $value), 0, (int) ($spec['max'] ?? 60))),
             'range' => max($spec['min'], min($spec['max'], (int) $value)),
             'toggle' => $value ? '1' : '',
             'select' => is_scalar($value) && array_key_exists($value, $spec['options']) ? (is_int($default) ? (int) $value : $value) : $default,
@@ -523,7 +569,19 @@ final class NewsletterBlocks
      */
     public static function mediaIds(array $blocks): array
     {
-        return collect(self::flatten($blocks))->pluck('data.media')->filter()->map(fn ($id) => (int) $id)->unique()->values()->all();
+        $types = self::types();
+        $ids = [];
+
+        // Tous les champs « photo » de chaque bloc (une mosaïque en a plusieurs).
+        foreach (self::flatten($blocks) as $block) {
+            foreach ($types[$block['type']]['fields'] ?? [] as $spec) {
+                if (($spec['kind'] ?? null) === 'media' && ! empty($block['data'][$spec['key']])) {
+                    $ids[] = (int) $block['data'][$spec['key']];
+                }
+            }
+        }
+
+        return array_values(array_unique($ids));
     }
 
     public static function color(mixed $value): ?string
