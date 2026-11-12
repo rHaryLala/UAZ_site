@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\MediaBrowserController;
 use App\Http\Controllers\Admin\NewsletterEditorController;
 use App\Http\Controllers\Admin\RetouchePhotoController;
+use App\Http\Controllers\Admin\StudioController;
 use App\Http\Controllers\Admin\VisualEditorController;
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\ContactController;
@@ -58,6 +59,16 @@ Route::prefix('admin/visual-editor/{page}')->name('admin.visual-editor.')->group
 Route::prefix('admin/retouche-photo')->name('admin.retouche.')->group(function () {
     Route::get('/', [RetouchePhotoController::class, 'index'])->name('index');
     Route::match(['get', 'post'], '/personnes', [RetouchePhotoController::class, 'people'])->middleware('throttle:60,1')->name('people');
+});
+
+// Studio UAZ : l'éditeur de visuels plein écran et les visuels enregistrés de chaque personne (droits vérifiés dans le contrôleur).
+Route::prefix('admin/studio')->name('admin.studio.')->group(function () {
+    Route::get('/', [StudioController::class, 'index'])->name('index');
+    Route::get('/designs', [StudioController::class, 'list'])->name('designs.index');
+    Route::post('/designs', [StudioController::class, 'store'])->middleware('throttle:60,1')->name('designs.store');
+    Route::get('/designs/{design}', [StudioController::class, 'show'])->name('designs.show');
+    Route::put('/designs/{design}', [StudioController::class, 'update'])->middleware('throttle:120,1')->name('designs.update');
+    Route::delete('/designs/{design}', [StudioController::class, 'destroy'])->name('designs.destroy');
 });
 
 // Éditeur visuel des newsletters (droits vérifiés dans le contrôleur : politique NewsletterPolicy).

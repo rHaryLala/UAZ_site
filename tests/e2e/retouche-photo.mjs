@@ -31,7 +31,7 @@ try {
     await page.waitForURL('**/admin');
 
     // Le menu du back-office propose l'atelier.
-    check(await until(async () => (await page.locator('body').innerText()).includes('Retouche photo')), 'le menu du back-office propose « Retouche photo »');
+    check(await until(async () => (await page.locator('a[href*="/admin/retouche-photo"]').count()) > 0), 'le menu du back-office propose « Retouche photo »');
 
     errors.length = 0; // le tableau de bord de Filament a ses propres scripts
     await page.goto(`${base}/admin/retouche-photo`, { waitUntil: 'load' });

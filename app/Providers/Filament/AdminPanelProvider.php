@@ -75,6 +75,12 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(5)
                     ->url(fn (): string => route('admin.retouche.index'))
                     ->visible(fn (): bool => (bool) auth()->user()?->can('create', MediaAsset::class)),
+                \Filament\Navigation\NavigationItem::make('Studio UAZ')
+                    ->group('Site & médias')
+                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedPhoto)
+                    ->sort(6)
+                    ->url(fn (): string => route('admin.studio.index'))
+                    ->visible(fn (): bool => (bool) auth()->user()?->can('create', \App\Models\MediaAsset::class)),
             ])
             ->navigationGroups([
                 NavigationGroup::make('Contenus'),

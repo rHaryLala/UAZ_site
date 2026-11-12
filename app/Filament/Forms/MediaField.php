@@ -2,6 +2,7 @@
 
 namespace App\Filament\Forms;
 
+use App\Filament\Resources\MediaAssets\MediaAssetResource;
 use App\Models\MediaAsset;
 use Filament\Forms\Components\Field;
 
@@ -67,11 +68,14 @@ class MediaField extends Field
             'alt' => (string) $asset->alt,
             'thumb' => $asset->previewUrl('thumb'),
             'card' => $asset->previewUrl('card'),
+            'full' => $asset->isImage() ? $asset->url('') : null,
+            'width' => $asset->dimensions()[0],
+            'height' => $asset->dimensions()[1],
             'filename' => $file?->file_name,
             'size' => $file?->human_readable_size,
             'type' => $asset->isPdf() ? 'pdf' : 'image',
             'date' => $asset->created_at?->translatedFormat('j F Y'),
-            'edit_url' => \App\Filament\Resources\MediaAssets\MediaAssetResource::getUrl('edit', ['record' => $asset]),
+            'edit_url' => MediaAssetResource::getUrl('edit', ['record' => $asset]),
         ];
     }
 }

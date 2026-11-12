@@ -345,3 +345,32 @@ Ce que fait l'import (les colonnes sont reconnues par leur titre : E-mail, État
 | **bounced** (rebond) | Ignoré : l'adresse n'existe plus ou refuse le courrier. |
 
 Garanties : une personne **déjà désinscrite sur le nouveau site n'est jamais réinscrite** par un import ; un abonné déjà actif n'est pas modifié ; les adresses sont nettoyées (espaces, « ; » final, majuscules) et celles qui ne sont pas des adresses valides sont listées puis ignorées ; **l'import peut être refait** sans créer de doublons. Le fichier lui-même n'est conservé nulle part.
+
+## Studio UAZ : fabriquer un visuel
+
+**Où :** menu *Site & médias* → **Studio UAZ**. Cinq modèles dans le style des écrans de l'université (fond marine, cyan, grands titres, photo en fondu) :
+
+| Modèle | Pour |
+|---|---|
+| **Écran d'accueil** | l'ouverture d'un culte, d'une semaine de prière, d'une conférence (« Bienvenue »…), avec 1, 2 ou 3 photos |
+| **Direct** | « Le direct commence bientôt », « en direct », « terminé » (trois boutons de modèles rapides) |
+| **Annonce** | un événement : titre, sous-titre, et trois infos (quand, où, entrée) |
+| **Verset ou citation** | une parole en grand sur une photo assombrie, avec le logo « Toutes choses nouvelles » |
+| **Félicitations** | un portrait, le nom en grand, un mot de l'université |
+
+1. **Modèles :** cliquez sur un modèle. **Contenu :** remplissez les champs (un compteur indique la longueur maximale ; le texte se réduit tout seul s'il est long, et une alerte rouge bloque l'export s'il déborde vraiment).
+2. **Photos :** *Choisir* ouvre la médiathèque (ou *Envoyer une photo* depuis votre ordinateur). *Cadrage ↔ ↕* et *Zoom* règlent ce qui reste dans le cadre. *Retoucher* ouvre la photo dans la Retouche photo ; son bouton **Renvoyer au Studio UAZ** la remet dans le visuel.
+3. **Formats :** un onglet par format (16:9 pour les écrans, 1:1 et 4:5 pour les publications, 9:16 pour les stories). En Story, cochez *Zones couvertes par l'interface* : ce qui est dans les bandes rouges sera masqué par Instagram ou Facebook.
+4. **Enregistrement :** automatique ; *Mes visuels* permet de reprendre, dupliquer ou supprimer vos visuels (chacun ne voit que les siens).
+5. **Exporter :** *PNG* (prêt à publier), *PNG haute définition ×2*, *JPEG* (léger) ou *Tous les formats (.zip)*. Le fichier s'appelle `UAZ_ACC_2026-11-13_semaine-de-priere_16x9.png`.
+
+Le panneau de gauche s'élargit ou se réduit en glissant sa barre grise (ou avec les flèches).
+
+## Retouche photo
+
+**Où :** menu *Site & médias* → **Retouche photo** (atelier façon Lightroom, tout se passe dans votre navigateur ; les photos ne quittent pas votre ordinateur tant que vous ne cliquez pas sur « Mettre en photo de profil »). Ouvrez une ou plusieurs photos (ou glissez-les), puis :
+- **Studio UAZ** (bouton en haut du panneau) : blancs neutres, peau lumineuse, noirs profonds, fond blanc de studio et cadrage portrait, en un clic ; chaque réglage reste modifiable. « Studio UAZ sur toutes » l'applique à toute la pellicule.
+- Lumière, couleur, couleur par teinte, effets, **recadrage** (formats prêts : 4:5, 9:16, identité 35 × 45…), **fond** (studio, couleur, flou, image, transparent), **masques** (personne, fond, cheveux, peau, vêtements, pinceau, dégradés), **filigrane**.
+- **Exporter :** JPEG, PNG ou WebP, taille réelle ou réduite. **Netteté à l'export** (Standard par défaut) redonne de la finesse aux photos réduites ; laissez-la sur Standard sauf cas particulier. Avec plusieurs photos : *Tout exporter (ZIP)*.
+- **Mettre en photo de profil :** cherche un membre de l'équipe (ou un témoignage) et remplace sa photo par la photo retouchée ; l'ancienne photo reste dans la médiathèque.
+- Le premier détourage télécharge un modèle d'environ 45 Mo (une seule fois, connexion Internet nécessaire) ; lumière, couleur et recadrage marchent sans Internet.
