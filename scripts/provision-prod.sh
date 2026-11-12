@@ -110,8 +110,8 @@ server {
     gzip_min_length 1024;
 
     # Ancien site Next.js : le français était servi sous /fr ; ici il est à la racine
-    location ~ ^/fr(/|$) {
-        rewrite ^/fr/?(.*)$ /$1 permanent;
+    location ~ ^/fr(/|\$) {
+        rewrite ^/fr/?(.*)\$ /\$1 permanent;
     }
 
     # Vérification Google Search Console du domaine (fichier de l'ancien site)
