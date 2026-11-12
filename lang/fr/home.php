@@ -18,7 +18,7 @@ return [
         // Phrase du bas du héros, en trois langues (défilement : français, anglais, malgache). TODO-CONTENU : traduction malgache à faire relire.
         'note' => 'Votre futur commence ici !',
         'note_en' => 'Your future starts here!',
-        'note_mg' => 'Eto no manomboka ny hoavanao!',
+        'note_mg' => 'Eto no manomboka ny hoavinao!',
         'scroll' => 'Faire défiler',
     ],
 
@@ -34,7 +34,7 @@ return [
         // Trois langues, glitch entre chaque version. TODO-CONTENU : faire relire le malgache.
         'lines' => ['Votre', 'futur', 'commence', 'ici.'],
         'lines_en' => ['Your', 'future', 'starts', 'here.'],
-        'lines_mg' => ['Eto no', 'manomboka', 'ny', 'hoavanao.'],
+        'lines_mg' => ['Eto no', 'manomboka', 'ny', 'hoavinao.'],
         'sound_on' => 'Activer le son de la vidéo',
         'sound_off' => 'Couper le son de la vidéo',
         'play' => 'Lire la vidéo « Votre futur commence ici »',

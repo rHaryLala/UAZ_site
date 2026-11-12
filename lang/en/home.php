@@ -16,7 +16,7 @@ return [
         // Phrase du bas du héros : elle défile dans les trois langues, quelle que soit la langue de la page.
         'note' => 'Votre futur commence ici !',
         'note_en' => 'Your future starts here!',
-        'note_mg' => 'Eto no manomboka ny hoavanao!',
+        'note_mg' => 'Eto no manomboka ny hoavinao!',
         'scroll' => 'Scroll',
     ],
 
@@ -31,7 +31,7 @@ return [
         // Titre en quatre lignes, glitch entre les trois langues : identique dans toutes les langues du site.
         'lines' => ['Votre', 'futur', 'commence', 'ici.'],
         'lines_en' => ['Your', 'future', 'starts', 'here.'],
-        'lines_mg' => ['Eto no', 'manomboka', 'ny', 'hoavanao.'],
+        'lines_mg' => ['Eto no', 'manomboka', 'ny', 'hoavinao.'],
         'sound_on' => 'Turn the video sound on',
         'sound_off' => 'Turn the video sound off',
         'play' => 'Play the video "Your future starts here"',

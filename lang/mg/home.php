@@ -16,7 +16,7 @@ return [
         // Phrase du bas du héros : elle défile dans les trois langues, quelle que soit la langue de la page.
         'note' => 'Votre futur commence ici !',
         'note_en' => 'Your future starts here!',
-        'note_mg' => 'Eto no manomboka ny hoavanao!',
+        'note_mg' => 'Eto no manomboka ny hoavinao!',
         'scroll' => 'Mizora',
     ],
 
@@ -31,10 +31,10 @@ return [
         // Titre en quatre lignes, glitch entre les trois langues : identique dans toutes les langues du site.
         'lines' => ['Votre', 'futur', 'commence', 'ici.'],
         'lines_en' => ['Your', 'future', 'starts', 'here.'],
-        'lines_mg' => ['Eto no', 'manomboka', 'ny', 'hoavanao.'],
+        'lines_mg' => ['Eto no', 'manomboka', 'ny', 'hoavinao.'],
         'sound_on' => 'Alefaso ny feon\'ny horonan-tsary',
         'sound_off' => 'Atsaharo ny feon\'ny horonan-tsary',
-        'play' => 'Alefaso ny horonan-tsary « Eto no manomboka ny hoavanao »',
+        'play' => 'Alefaso ny horonan-tsary « Eto no manomboka ny hoavinao »',
         'video_label' => 'Horonan-tsary fampahafantarana ny UAZ',
     ],
 
@@ -95,7 +95,7 @@ return [
     ],
 
     'cta' => [
-        'eyebrow' => 'Mihetsika ny hoavanao',
+        'eyebrow' => 'Mihetsika ny hoavinao',
         'title' => 'Manomana ankehitriny ny mpitarika ho avy.',
         'text' => 'Fahaiza-manao ambony ara-pianarana, fiainana mavitrika eo amin\'ny mpianatra ary fampandrosoana manokana: ny UAZ dia miaraka aminao ao anatin\'ny tontolo maoderina sy maitso mandray anjara amin\'ny fahasalamana.',
     ],
