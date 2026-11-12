@@ -185,7 +185,7 @@
                 </button>
             </form>
 
-            <div class="max-h-[58vh] overflow-y-auto overscroll-contain pb-2" x-bind:aria-busy="loading">
+            <div data-lenis-prevent class="max-h-[58vh] overflow-y-auto overscroll-contain pb-2" x-bind:aria-busy="loading">
                 {{-- Résultats insérés par JavaScript --}}
                 <div x-ref="results" aria-live="polite"></div>
 
@@ -219,6 +219,7 @@
         aria-modal="true"
         aria-label="{{ __('Menu du site') }}"
         data-open="false"
+        data-lenis-prevent
         class="menu-overlay on-dark fixed inset-0 z-[60] overflow-y-auto bg-navy-900 text-white"
     >
         <x-madagascar class="pointer-events-none absolute top-[8%] right-[-4rem] h-[120%] text-navy-800/70 sm:right-[8%]" data-menu-deco />

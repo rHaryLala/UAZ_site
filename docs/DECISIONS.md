@@ -631,3 +631,10 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 3. **Plan de travail de l'éditeur :** la mention « (le lien personnel est ajouté à chaque envoi) » reste, puisqu'aucun abonné n'y est encore choisi.
 **Point d'attention (non traité) :** une désinscription par simple ouverture du lien (GET) peut être déclenchée par un antivirus ou un filtre de messagerie qui « visite » les liens ; si des abonnés disparaissent sans l'avoir demandé, passer à une page de confirmation avec bouton (POST) et à `List-Unsubscribe-Post`.
 **Tests :** `NewsletterEditorTest` (lien d'essai, absence d'effet, signature, lien réel).
+
+## D-077 · Menu mobile : défilement bloqué par Lenis (13 novembre 2026)
+
+**Constat :** sur petit écran (fenêtre étroite, émulation mobile), le menu plein écran ne montrait que ses premières rubriques : la suite (Ressources et pages utiles, Espaces, langues, « S'inscrire », adresse, réseaux sociaux) restait hors de l'écran sans pouvoir défiler à la molette ou au pavé tactile.
+**Cause :** à l'ouverture du menu, le défilement fluide (Lenis) est suspendu (`lenis.stop()`), et Lenis **bloque alors la molette sur toute la page**, y compris dans le menu qui défile pourtant seul.
+**Correctif :** attribut `data-lenis-prevent` sur le menu plein écran et sur la liste de résultats de la recherche (les deux zones qui défilent seules).
+**Test :** `tests/e2e/mobile-menu-scroll.mjs` (molette, ordinateur à fenêtre étroite et téléphone, jusqu'à la dernière rubrique).
