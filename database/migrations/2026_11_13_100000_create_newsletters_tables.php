@@ -33,7 +33,7 @@ return new class extends Migration
             $table->text('error')->nullable();
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();
-            $table->unique(['newsletter_id', 'newsletter_subscriber_id']);
+            $table->unique(['newsletter_id', 'newsletter_subscriber_id'], 'newsletter_delivery_unique'); // nom court : MariaDB limite les identifiants à 64 caractères
         });
     }
 

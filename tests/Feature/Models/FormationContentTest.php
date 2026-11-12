@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Formation;
+use App\Models\Redirect;
 use App\Models\Testimonial;
 use App\Support\FormationContent;
 use App\Support\Locales;
@@ -83,4 +84,12 @@ it('adds the student testimonial once and sets the placeholder testimonials asid
         ->and($kerena->first()->is_active)->toBeTrue()
         ->and($kerena->first()->translation('quote', 'en'))->toContain('place of learning')
         ->and($placeholder->refresh()->is_active)->toBeFalse();
+});
+
+it('redirects the old Next.js addresses to their equivalent pages', function () {
+    // la migration a déjà été jouée sur la base de test ; on vérifie la table de redirections
+    expect(Redirect::map()['/formations/communication']['to'] ?? null)->toBe('/formations/licence-en-communication')
+        ->and(Redirect::map()['/universite/equipe']['to'] ?? null)->toBe('/equipe');
+
+    $this->get('/formations/droit')->assertRedirect('/formations/licence-en-droit')->assertStatus(301);
 });
