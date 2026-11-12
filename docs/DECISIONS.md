@@ -617,3 +617,7 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 
 **Complément (13 novembre 2026) — panneau de l'éditeur :** la largeur du panneau de gauche est **réglable** (poignée sur son bord droit, glisser ou flèches, double-clic = taille d'origine, minimum 240 px, maximum 65 % de l'écran, retenue dans `localStorage`, désactivée sur petit écran où le panneau passe au-dessus). Les sélecteurs à plusieurs choix (`.nl-seg`) **passent à la ligne** au lieu de déborder, et l'étiquette « Texte sur la photo (photo assombrie) » est raccourcie en « Texte sur la photo ».
 **Tests :** `tests/e2e/newsletter-panel.mjs`.
+
+**Correctif (13 novembre 2026) — champ vidé :** un champ texte vidé dans l'éditeur (bouton sans libellé du modèle « Magazine », surtitre supprimé, tampon retiré) **reprenait sa valeur par défaut** à l'enregistrement : Laravel convertit les chaînes vides d'une requête JSON en `null`, et `NewsletterBlocks::normalize` lisait `null` comme « absent ». Un `null` explicite sur un champ texte vaut désormais « vidé » ; un champ réellement absent garde sa valeur par défaut.
+**Parallax :** vérifié, l'instruction `background-attachment: fixed` est bien dans le courrier envoyé ; c'est la messagerie qui la reconnaît ou non (voir D-075, point 2).
+**Test :** `NewsletterEditorTest` (« keeps a text field the editor emptied… »).

@@ -628,3 +628,19 @@ it('offers every template as a ready-made set of blocks in the add panel, photos
     // Les photos posées par les modèles sont connues de l'éditeur (miniatures du panneau de réglages) même quand la newsletter n'en contient pas.
     expect($html)->toContain('"media":{"'.$asset->id.'"');
 });
+
+it('keeps a text field the editor emptied (a button without label stays without button) instead of restoring the default', function () {
+    $letter = draftLetter();
+    $state = letterState([['type' => 'hero', 'data' => ['button_label' => '', 'eyebrow' => '', 'title' => 'Titre']]]);
+
+    // Laravel convertit '' en null dans une requête JSON : le serveur doit comprendre « vidé », pas « absent ».
+    $this->actingAs($this->editor)->putJson(route('admin.newsletter-editor.save', $letter), $state)->assertOk();
+
+    $data = $letter->refresh()->blocks[0]['data'];
+    expect($data['button_label'])->toBe('')->and($data['eyebrow'])->toBe('')->and($data['title'])->toBe('Titre')
+        ->and(NewsletterRenderer::html(['subject' => 'x', 'theme' => NewsletterBlocks::defaultTheme(), 'blocks' => $letter->blocks]))->not->toContain('En savoir plus');
+
+    // Un champ absent de la requête reprend bien sa valeur par défaut.
+    $this->actingAs($this->editor)->putJson(route('admin.newsletter-editor.save', $letter), letterState([['type' => 'hero', 'data' => ['title' => 'Titre']]]))->assertOk();
+    expect($letter->refresh()->blocks[0]['data']['button_label'])->toBe('En savoir plus');
+});

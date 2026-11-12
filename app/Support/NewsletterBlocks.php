@@ -468,7 +468,10 @@ final class NewsletterBlocks
             $data = [];
 
             foreach ($types[$type]['defaults'] as $key => $default) {
-                $data[$key] = self::field($type, $key, $raw[$key] ?? $default, $default);
+                // Laravel transforme les champs vides d'une requête JSON en null : pour un champ texte, null signifie « vidé » (un bouton sans libellé,
+                // un surtitre supprimé…), pas « valeur absente » (qui, elle, reprend la valeur par défaut).
+                $value = array_key_exists($key, $raw) && $raw[$key] === null && is_string($default) ? '' : ($raw[$key] ?? $default);
+                $data[$key] = self::field($type, $key, $value, $default);
             }
 
             $id = is_string($block['id'] ?? null) && preg_match('/^[a-z0-9]{4,24}$/', $block['id']) && ! isset($seen[$block['id']]) ? $block['id'] : self::newId();
