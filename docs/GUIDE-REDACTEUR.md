@@ -323,3 +323,22 @@ Le menu de la semaine s'affiche sur la page **Cafétéria** (Vie étudiante), so
 - Les plats s'affichent **tels que vous les écrivez**, dans leur langue (français, anglais, malgache) : ils ne sont pas traduits ; seuls les titres et les dates du
   tableau changent avec la langue du site.
 - **Voir sur le site** (en haut de la fiche) ouvre la page au niveau du tableau.
+
+## Reprendre les abonnés de MailPoet (ancien site)
+
+**Où :** Personnes & messages → **Abonnés à la lettre** → bouton **Importer un export MailPoet** (réservé aux administrateurs).
+
+1. Dans WordPress (ancien site), MailPoet → Listes → exportez la liste d'abonnés au format **CSV**.
+2. Sur le nouveau site, cliquez sur **Importer un export MailPoet** et déposez le fichier. Cochez d'abord **Simulation** si vous voulez voir le résultat sans rien enregistrer.
+3. Un compte rendu s'affiche : combien d'abonnés ajoutés, en attente, désinscrits, ignorés.
+
+Ce que fait l'import (les colonnes sont reconnues par leur titre : E-mail, État global, Temps d'abonnement, Temps de confirmation) :
+
+| État MailPoet | Résultat sur le site |
+| --- | --- |
+| **subscribed** (abonné) | **Abonné** actif : il reçoit les lettres. La date d'abonnement est conservée ; à défaut de date de confirmation, la date d'abonnement en tient lieu. |
+| **unconfirmed** (non confirmé) | **En attente de confirmation** : il ne reçoit **rien** tant qu'il n'a pas cliqué sur un lien de confirmation. |
+| **unsubscribed** (désinscrit) | **Désinscrit** : la désinscription est conservée. |
+| **bounced** (rebond) | Ignoré : l'adresse n'existe plus ou refuse le courrier. |
+
+Garanties : une personne **déjà désinscrite sur le nouveau site n'est jamais réinscrite** par un import ; un abonné déjà actif n'est pas modifié ; les adresses sont nettoyées (espaces, « ; » final, majuscules) et celles qui ne sont pas des adresses valides sont listées puis ignorées ; **l'import peut être refait** sans créer de doublons. Le fichier lui-même n'est conservé nulle part.
