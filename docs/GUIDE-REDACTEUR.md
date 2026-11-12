@@ -348,7 +348,7 @@ Garanties : une personne **déjà désinscrite sur le nouveau site n'est jamais 
 
 ## Studio UAZ : fabriquer un visuel
 
-**Où :** menu *Site & médias* → **Studio UAZ**. Cinq modèles dans le style des écrans de l'université (fond marine, cyan, grands titres, photo en fondu) :
+**Où :** menu *Site & médias* → **Studio UAZ**. Douze modèles dans le style des écrans et des affiches de l'université (fond marine, cyan, grands titres, photo en fondu) :
 
 | Modèle | Pour |
 |---|---|
@@ -357,6 +357,19 @@ Garanties : une personne **déjà désinscrite sur le nouveau site n'est jamais 
 | **Annonce** | un événement : titre, sous-titre, et trois infos (quand, où, entrée) |
 | **Verset ou citation** | une parole en grand sur une photo assombrie, avec le logo « Toutes choses nouvelles » |
 | **Félicitations** | un portrait, le nom en grand, un mot de l'université |
+| **Affiche photo** | une grande photo avec un titre qui mêle trait fin et gras (salons, journées, concours) |
+| **Salutation (Bon Sabbat)** | le message du jour en deux langues, sur une belle photo |
+| **Témoignage** | une parole et un portrait rond |
+| **Programme** | un horaire : jusqu'à six lignes (heure, activité, lieu) |
+| **Inscriptions** | titre, date limite en pastille, filières, adresse |
+| **Chiffres clés** | trois ou quatre chiffres en grand |
+| **Thème de l'année** | le logo « Toutes choses nouvelles » et un verset |
+
+**Modifier directement sur le visuel (comme dans la newsletter) :**
+- **Cliquez** sur un texte, une photo ou un décor : un cadre apparaît avec une barre d'outils. **Glissez** pour le déplacer ; **A− / A+** pour le grossir ou le réduire ; **✎** (ou double-clic) pour changer son texte ; **Suppr** pour le supprimer. Une **photo** du modèle se recadre en la glissant (molette : zoom).
+- **Ctrl+Z / Ctrl+Y** : annuler et rétablir. **Flèches** : ajuster d'un pixel (avec Maj : dix). **Ctrl+D** : dupliquer un élément ajouté.
+- L'onglet **Éléments** liste tout ce qui est sur le visuel (on y réaffiche ce qu'on a supprimé) et permet d'**ajouter** un texte, une pastille, un rectangle, un cercle, une ligne, une photo, le sceau de l'UAZ ou le logo « Toutes choses nouvelles ».
+- Exporter → **Ajouter à la médiathèque** : le visuel devient une image de la médiathèque, à insérer ensuite dans une newsletter (bloc Image) ou une page.
 
 1. **Modèles :** cliquez sur un modèle. **Contenu :** remplissez les champs (un compteur indique la longueur maximale ; le texte se réduit tout seul s'il est long, et une alerte rouge bloque l'export s'il déborde vraiment).
 2. **Photos :** *Choisir* ouvre la médiathèque (ou *Envoyer une photo* depuis votre ordinateur). *Cadrage ↔ ↕* et *Zoom* règlent ce qui reste dans le cadre. *Retoucher* ouvre la photo dans la Retouche photo ; son bouton **Renvoyer au Studio UAZ** la remet dans le visuel.

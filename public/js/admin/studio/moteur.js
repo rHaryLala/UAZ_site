@@ -116,6 +116,35 @@
     class Pen {
         constructor(ctx, W, H, env) {
             this.c = ctx; this.W = W; this.H = H; this.env = env; this.alertes = [];
+            this.registre = [];   // les éléments dessinés (et ceux masqués), pour les sélectionner sur le visuel
+            const o = env.options || {};
+            this.masques = new Set(o.masques || []);
+            this.decalages = (o.decalages || {})[env.format] || {};
+            this.tailles = o.tailles || {};
+        }
+
+        masque(id) { return !!id && this.masques.has(id); }
+
+        decalage(id) { return (id && this.decalages[id]) || [0, 0]; }
+
+        facteur(id) { return (id && this.tailles[id]) || 1; }
+
+        /** Note un élément pour la sélection sur le visuel. rect = { x, y, w, h } (déjà décalé) ; plus : champs, nom, type, masque… */
+        noter(id, type, nom, rect, plus = {}) {
+            if (!id) { return; }
+            this.registre.push(Object.assign({ id, type, nom, rect, champs: [], masque: false }, plus));
+        }
+
+        /** Un morceau de décor : dessiné par fn, masquable, déplaçable, sélectionnable. */
+        groupe(id, nom, rect, fn, plus = {}) {
+            if (this.masque(id)) { this.noter(id, 'decor', nom, null, Object.assign({ masque: true }, plus)); return false; }
+            const [dx, dy] = this.decalage(id);
+            this.c.save(); this.c.translate(dx, dy);
+            fn();
+            this.c.restore();
+            this.noter(id, 'decor', nom, { x: rect.x + dx, y: rect.y + dy, w: rect.w, h: rect.h }, plus);
+
+            return true;
         }
 
         alerte(message, niveau = 'attention') { if (!this.alertes.some((a) => a.message === message)) { this.alertes.push({ message, niveau }); } }
@@ -160,6 +189,13 @@
          */
         texteCouleurs(parties, o) {
             const c = this.c;
+            if (o.id && this.masque(o.id)) {
+                this.noter(o.id, 'texte', o.nom || o.id, null, { masque: true, champs: o.champs || [] });
+
+                return { h: 0, bas: o.y, taille: o.taille, lignes: 0, depasse: false, masque: true };
+            }
+            const fac = this.facteur(o.id);
+            o = Object.assign({}, o, { taille: o.taille * fac, min: o.min ? o.min * fac : undefined });
             const poids = o.poids || 500, esp = o.espacement || 0, ig = o.interligne || 1.2;
             const jetons = [];
             parties.forEach(({ t, c: couleur }) => {
@@ -190,12 +226,17 @@
             const depasse = (o.lignesMax && lignes.length > o.lignesMax) || tropLarge;
             const lh = taille * ig;
             const espaceW = this.largeur(' ', taille, esp);
+            const [dx, dy] = this.decalage(o.id);
+            let largeurMax = 0;
+            c.save();
+            c.translate(dx, dy);
             c.textBaseline = 'alphabetic';
             c.textAlign = 'left';
             lignes.forEach((ligne, i) => {
                 const base = o.y + i * lh + lh / 2 + (o.capitales ? 0.36 : 0.34) * taille;
                 const texte = ligne.map((j) => j.mot).join(' ');
                 const largeurLigne = this.largeur(texte, taille, esp) - (SPACING ? esp * taille : 0);
+                largeurMax = Math.max(largeurMax, largeurLigne);
                 let x = o.x;
                 if (o.alignement === 'centre') { x = o.x + (o.w - largeurLigne) / 2; } else if (o.alignement === 'droite') { x = o.x + o.w - largeurLigne; }
                 ligne.forEach((j, k) => {
@@ -204,9 +245,12 @@
                     x += this.largeur(j.mot, taille, esp) + (k < ligne.length - 1 ? espaceW : 0);
                 });
             });
+            c.restore();
             if (depasse) { this.alerte(o.nom ? `« ${o.nom} » est trop long : raccourcissez-le.` : 'Un texte est trop long : raccourcissez-le.', 'erreur'); }
+            const x0 = o.alignement === 'centre' ? o.x + (o.w - largeurMax) / 2 : o.alignement === 'droite' ? o.x + o.w - largeurMax : o.x;
+            this.noter(o.id, 'texte', o.nom || o.id, { x: x0 + dx, y: o.y + dy, w: Math.max(24, largeurMax), h: Math.max(lignes.length * lh, taille) }, { champs: o.champs || [], taille });
 
-            return { h: lignes.length * lh, bas: o.y + lignes.length * lh, taille, lignes: lignes.length, depasse: !!depasse };
+            return { h: lignes.length * lh, bas: o.y + lignes.length * lh, taille, lignes: lignes.length, depasse: !!depasse, largeur: largeurMax, x0 };
         }
 
         /** Texte d'une seule couleur (raccourci de texteCouleurs). */
@@ -219,6 +263,7 @@
 
             if (!im || !im.img) {
                 this.espaceReserve(r, slot);
+                this.noter(o.id || `photo:${slot}`, 'photo', o.nom || 'Photo', r, { slot, vide: true });
 
                 return false;
             }
@@ -236,7 +281,9 @@
             if (sw < tw * 0.75) { this.alerte(`La photo « ${im.libelle || slot} » est petite pour ce cadre (${Math.round(sw)} px de large) : elle risque d'être floue.`); }
 
             c.save();
-            c.beginPath(); c.rect(r.x, r.y, r.w, r.h); c.clip();
+            c.beginPath();
+            if (o.cercle) { c.arc(r.x + r.w / 2, r.y + r.h / 2, Math.min(r.w, r.h) / 2, 0, Math.PI * 2); } else { c.rect(r.x, r.y, r.w, r.h); }
+            c.clip();
             if (o.fondu) {
                 const t = toile(tw, th), g = t.getContext('2d');
                 g.drawImage(bmp, 0, 0);
@@ -252,6 +299,7 @@
                 c.drawImage(bmp, r.x, r.y, r.w, r.h);
             }
             c.restore();
+            this.noter(o.id || `photo:${slot}`, 'photo', o.nom || 'Photo', r, { slot, sw, sh, rw: r.w, rh: r.h, iw: im.w, ih: im.h });
 
             return true;
         }
@@ -271,6 +319,73 @@
                 c.fillText('Ajoutez une photo', r.x + r.w / 2, r.y + r.h / 2);
                 c.restore();
             }
+        }
+
+
+        /** Rectangle à coins arrondis. */
+        chemin(x, y, w, h, rayon) {
+            const c = this.c, r = Math.max(0, Math.min(rayon, w / 2, h / 2));
+            c.beginPath();
+            c.moveTo(x + r, y);
+            c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r);
+            c.closePath();
+        }
+
+        /** Les éléments ajoutés à la main : x, y en proportion du visuel ; w, h en proportion de sa LARGEUR (la taille suit le format). */
+        libres(liste) {
+            (liste || []).forEach((e) => this.libre(e));
+        }
+
+        libre(e) {
+            const c = this.c, W = this.W, H = this.H;
+            const nom = e.nom || { texte: 'Texte', pastille: 'Pastille', forme: 'Forme', ligne: 'Ligne', logo: 'Logo', photo: 'Photo' }[e.type] || 'Élément';
+            if (this.masque(e.id)) { this.noter(e.id, 'libre', nom, null, { masque: true, libre: true, genre: e.type }); return; }
+            const x = e.x * W, y = e.y * H, w = (e.w || 0.3) * W, h = (e.h || 0.1) * W;
+            const plus = { libre: true, genre: e.type };
+            c.save();
+            c.globalAlpha = e.opacite == null ? 1 : e.opacite;
+
+            if (e.type === 'texte' || e.type === 'pastille') {
+                const taille = (e.taille || 0.04) * W, poids = e.poids || 700, esp = e.espacement || 0;
+                let rect;
+                if (e.type === 'pastille') {
+                    this.regler(taille, poids, esp);
+                    const txt = typo(e.majuscules ? String(e.texte || '').toLocaleUpperCase('fr') : e.texte || '');
+                    const tw = this.largeur(txt, taille, esp), px = taille * 0.9, py = taille * 0.45;
+                    const bw = Math.min(w, tw + 2 * px), bh = taille * 1.2 + 2 * py;
+                    this.chemin(x, y, bw, bh, e.rayon == null ? bh / 2 : e.rayon * W);
+                    c.fillStyle = e.fond || COULEURS.cyan; c.fill();
+                    const res = this.texteCouleurs([{ t: e.texte, c: e.couleur || COULEURS.marine3 }], { x: x + px, y: y + py, w: bw - 2 * px, taille, poids, espacement: esp, interligne: 1.2, majuscules: e.majuscules, lignesMax: 1, capitales: e.majuscules });
+                    rect = { x, y, w: bw, h: Math.max(bh, res.h + 2 * py) };
+                } else {
+                    const res = this.texteCouleurs([{ t: e.texte, c: e.couleur || COULEURS.blanc }], { x, y, w, taille, min: Math.max(10, taille * 0.5), poids, espacement: esp, interligne: e.interligne || 1.2, alignement: e.align, majuscules: e.majuscules, capitales: e.majuscules, nom });
+                    rect = { x: res.x0, y, w: Math.max(24, res.largeur), h: Math.max(res.h, taille) };
+                }
+                this.noter(e.id, 'libre', nom, rect, Object.assign({ champs: [] }, plus));
+            } else if (e.type === 'forme') {
+                c.fillStyle = e.couleur || COULEURS.cyan;
+                if (e.kind === 'cercle') { c.beginPath(); c.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2); } else { this.chemin(x, y, w, h, (e.rayon || 0) * W); }
+                if (e.contour) { c.strokeStyle = e.couleur || COULEURS.cyan; c.lineWidth = Math.max(2, W * 0.003); c.stroke(); } else { c.fill(); }
+                this.noter(e.id, 'libre', nom, { x, y, w, h }, plus);
+            } else if (e.type === 'ligne') {
+                const ep = Math.max(1, (e.epaisseur || 4) * (W / 1080));
+                this.rect(x, y - ep / 2, w, ep, e.couleur || COULEURS.cyan);
+                this.noter(e.id, 'libre', nom, { x, y: y - Math.max(8, ep) / 2, w, h: Math.max(8, ep) }, plus);
+            } else if (e.type === 'logo') {
+                const im = this.env.logos[e.logo === 'theme' ? 'theme' : 'sceau'];
+                if (im) {
+                    const hh = e.logo === 'theme' ? w * (im.naturalHeight / im.naturalWidth) : w;
+                    c.drawImage(im, x, y, w, hh);
+                    this.noter(e.id, 'libre', nom, { x, y, w, h: hh }, plus);
+                }
+            } else if (e.type === 'photo') {
+                c.restore(); c.save();
+                const ok = this.photo(e.slot, { x, y, w, h }, { id: e.id, nom });
+                const entree = this.registre[this.registre.length - 1];
+                if (entree) { Object.assign(entree, plus, { type: 'photo' }); }
+                if (!ok && !this.env.apercu) { /* cadre vide : rien dans l'export */ }
+            }
+            c.restore();
         }
 
         /** Une image du site (sceau, logo du thème), à la taille donnée. */
@@ -294,7 +409,8 @@
 
     /**
      * Dessine un visuel. env : { photos: { slot: { img, w, h, focus, zoom, version, libelle } }, logos, cache, apercu, echelle }.
-     * Renvoie { alertes }.
+     * env.options = { masques, decalages, tailles, libres } : ce que la personne a changé sur le visuel (éléments masqués, déplacés, agrandis, ajoutés).
+     * Renvoie { alertes, zones } : zones = les éléments dessinés, pour les sélectionner sur le visuel.
      */
     function rendre(canvas, modele, donnees, format, env) {
         const f = FORMATS[format];
@@ -305,10 +421,11 @@
         ctx.setTransform(e, 0, 0, e, 0, 0);
         ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
         ctx.clearRect(0, 0, f.w, f.h);
-        const pen = new Pen(ctx, f.w, f.h, Object.assign({ cache: new Map(), echelle: e, apercu: false }, env));
+        const pen = new Pen(ctx, f.w, f.h, Object.assign({ cache: new Map(), echelle: e, apercu: false, options: {} }, env, { format }));
         modele.dessiner(pen, donnees, geometrie(format));
+        pen.libres(pen.env.options.libres);
 
-        return { alertes: pen.alertes };
+        return { alertes: pen.alertes, zones: pen.registre };
     }
 
     /** Les repères de chaque format : où sont l'en-tête, la photo, le texte et le pied de page. */

@@ -115,14 +115,53 @@ it('lets the media browser give the studio the original address and size of a ph
     expect($first)->toHaveKeys(['full', 'width', 'height'])->and($first['width'])->toBe(1200)->and($first['full'])->toContain('/storage/');
 });
 
+it('keeps what was changed on the artboard: hidden, moved and enlarged elements, and elements added by hand — cleaned and bounded', function () {
+    $id = $this->actingAs($this->editor)->postJson(route('admin.studio.designs.store'), studioPayload(['data' => ['options' => [
+        'masques' => ['titre', 'pied', '<script>', str_repeat('a', 80)],
+        'decalages' => ['16:9' => ['titre' => [120.7, -40], 'x y' => [1, 1]], '2:1' => ['titre' => [1, 1]]],
+        'tailles' => ['titre' => 9, 'sousTitre' => 0.01],
+        'libres' => [
+            ['id' => 'l1', 'type' => 'texte', 'x' => 0.2, 'y' => 0.3, 'w' => 0.5, 'texte' => '<b>Bonjour</b>'.str_repeat('z', 400), 'taille' => 9, 'couleur' => 'rouge', 'poids' => 5000, 'align' => 'diagonale'],
+            ['id' => 'l2', 'type' => 'forme', 'kind' => 'cercle', 'x' => 3, 'y' => -2, 'w' => 0.2, 'h' => 0.2, 'couleur' => '#ABCDEF', 'opacite' => 4],
+            ['id' => 'l3', 'type' => 'script', 'x' => 0, 'y' => 0],
+            ['id' => 'pas valide!', 'type' => 'texte'],
+            ['id' => 'l4', 'type' => 'photo', 'x' => 0.1, 'y' => 0.1, 'w' => 0.4, 'h' => 0.3, 'slot' => 'lp4'],
+            ['id' => 'l5', 'type' => 'logo', 'logo' => 'autre', 'x' => 0.1, 'y' => 0.1, 'w' => 0.2],
+        ],
+    ]]]))->assertCreated()->json('design.id');
+
+    $o = StudioDesign::find($id)->data['options'];
+    expect($o['masques'])->toBe(['titre', 'pied'])
+        ->and($o['decalages'])->toBe(['16:9' => ['titre' => [121, -40]]])
+        ->and($o['tailles'])->toBe(['titre' => 2.6, 'sousTitre' => 0.4])
+        ->and(collect($o['libres'])->pluck('id')->all())->toBe(['l1', 'l2', 'l4', 'l5']);
+
+    $texte = $o['libres'][0];
+    expect($texte['texte'])->not->toContain('<')->and(mb_strlen($texte['texte']))->toBeLessThanOrEqual(300)
+        ->and($texte['taille'])->toBe(0.3)->and($texte['couleur'])->toBe('#ffffff')->and($texte['poids'])->toBe(900)->and($texte['align'])->toBe('gauche')
+        ->and($o['libres'][1])->toMatchArray(['kind' => 'cercle', 'couleur' => '#abcdef', 'opacite' => 1.0, 'x' => 1.5, 'y' => -0.5])
+        ->and($o['libres'][2]['slot'])->toBe('lp4')->and($o['libres'][3]['logo'])->toBe('sceau');
+
+    $this->actingAs($this->editor)->getJson(route('admin.studio.designs.show', $id))->assertJsonPath('design.data.options.masques', ['titre', 'pied']);
+});
+
+it('caps the number of elements added by hand', function () {
+    $libres = array_map(fn (int $i) => ['id' => "l{$i}", 'type' => 'forme', 'x' => 0.1, 'y' => 0.1, 'w' => 0.1, 'h' => 0.1], range(1, 60));
+    $id = $this->actingAs($this->editor)->postJson(route('admin.studio.designs.store'), studioPayload(['data' => ['options' => ['libres' => $libres]]]))->assertCreated()->json('design.id');
+
+    expect(StudioDesign::find($id)->data['options']['libres'])->toHaveCount(40);
+});
+
 it('ships the engine and every template, with the French typography rules and the safe zones', function () {
     $engine = file_get_contents(public_path('js/admin/studio/moteur.js'));
     $templates = file_get_contents(public_path('js/admin/studio/modeles.js'));
+    $ids = ['accueil', 'direct', 'affiche-photo', 'salutation', 'annonce', 'verset', 'temoignage', 'programme', 'inscriptions', 'chiffres', 'theme-annee', 'felicitations'];
 
     expect($engine)->toContain("'16:9': { w: 1920, h: 1080")->toContain("'9:16': { w: 1080, h: 1920")->toContain('function redimensionner(')->toContain('const typo =')
-        ->and($templates)->toContain("ORDRE: ['accueil', 'direct', 'annonce', 'verset', 'felicitations']");
-    foreach (['accueil', 'direct', 'annonce', 'verset', 'felicitations'] as $id) {
-        expect($templates)->toContain("MODELES.{$id} = {");
+        ->toContain('groupe(id, nom, rect, fn')->toContain('libres(liste)')
+        ->and($templates)->toContain("ORDRE: ['".implode("', '", $ids)."']");
+    foreach ($ids as $id) {
+        expect($templates)->toContain(str_contains($id, '-') ? "MODELES['{$id}'] = {" : "MODELES.{$id} = {");
     }
     foreach (['fonts/studio/inter-latin.woff2', 'images/studio/theme-clair.png', 'images/uaz-seal-384.png'] as $asset) {
         expect(public_path($asset))->toBeFile();

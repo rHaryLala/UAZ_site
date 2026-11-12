@@ -24,6 +24,10 @@
         <input type="text" id="stNom" maxlength="120" placeholder="Nom du visuel" autocomplete="off" aria-label="Nom du visuel">
     </label>
     <span class="st-haut__etat" id="stEtat" role="status" aria-live="polite">Prêt</span>
+    <div class="st-haut__historique" role="group" aria-label="Historique">
+        <button type="button" class="st-btn st-btn--clair st-btn--icone" id="stAnnuler" title="Annuler (Ctrl+Z)" aria-label="Annuler" disabled><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i></button>
+        <button type="button" class="st-btn st-btn--clair st-btn--icone" id="stRetablir" title="Rétablir (Ctrl+Y)" aria-label="Rétablir" disabled><i class="bi bi-arrow-clockwise" aria-hidden="true"></i></button>
+    </div>
     <a class="st-btn st-btn--clair" href="{{ route('admin.retouche.index') }}" title="Ouvrir l’atelier de retouche photo"><i class="bi bi-camera" aria-hidden="true"></i><span>Retouche photo</span></a>
     <div class="st-menu">
         <button type="button" class="st-btn st-btn--or" id="stExporter" aria-haspopup="true" aria-expanded="false"><i class="bi bi-download" aria-hidden="true"></i><span>Exporter</span><i class="bi bi-chevron-down" aria-hidden="true"></i></button>
@@ -32,6 +36,7 @@
             <button type="button" role="menuitem" data-export="png-2"><strong>PNG haute définition (×2)</strong><span>Impression, grand écran, retouche ultérieure</span></button>
             <button type="button" role="menuitem" data-export="jpg-1"><strong>JPEG</strong><span>Léger, pour Facebook ou WhatsApp</span></button>
             <button type="button" role="menuitem" data-export="zip"><strong>Tous les formats (.zip)</strong><span>16:9, 1:1, 4:5 et 9:16 d’un coup</span></button>
+            <button type="button" role="menuitem" data-export="media"><strong>Ajouter à la médiathèque</strong><span>Pour l’insérer ensuite dans une newsletter ou une page</span></button>
         </div>
     </div>
 </header>
@@ -41,10 +46,12 @@
     <div class="st-onglets" role="tablist">
         <button type="button" role="tab" class="st-onglet is-on" data-onglet="modeles" aria-selected="true">Modèles</button>
         <button type="button" role="tab" class="st-onglet" data-onglet="contenu" aria-selected="false">Contenu</button>
+        <button type="button" role="tab" class="st-onglet" data-onglet="elements" aria-selected="false">Éléments</button>
         <button type="button" role="tab" class="st-onglet" data-onglet="visuels" aria-selected="false">Mes visuels</button>
     </div>
     <div class="st-volet" data-volet="modeles" id="stModeles"></div>
     <div class="st-volet" data-volet="contenu" id="stContenu" hidden></div>
+    <div class="st-volet" data-volet="elements" id="stElements" hidden></div>
     <div class="st-volet" data-volet="visuels" id="stVisuels" hidden></div>
 </aside>
 
@@ -60,6 +67,12 @@
             <canvas id="stCanvas" aria-label="Aperçu du visuel" role="img"></canvas>
             <div class="st-zone st-zone--haut" id="stZoneHaut" hidden></div>
             <div class="st-zone st-zone--bas" id="stZoneBas" hidden></div>
+            {{-- Au-dessus du dessin : on y clique, glisse et sélectionne les éléments (comme les blocs de l'éditeur de newsletters). --}}
+            <div class="st-surcouche" id="stSurcouche">
+                <div class="st-survol" id="stSurvol" hidden></div>
+                <div class="st-sel" id="stSel" hidden><span class="st-poignee" aria-hidden="true"></span></div>
+                <div class="st-barre-el" id="stBarreEl" role="toolbar" aria-label="Actions de l’élément" hidden></div>
+            </div>
         </div>
     </div>
     <ul class="st-alertes" id="stAlertes" aria-live="polite"></ul>
@@ -79,6 +92,8 @@
     <div class="st-grille" id="stMediasGrille"></div>
     <div class="st-dialogue__pied"><button type="button" class="st-btn st-btn--clair" id="stMediasPlus" hidden>Charger plus</button></div>
 </dialog>
+
+<div class="st-popover" id="stPopover" role="dialog" aria-label="Modifier l’élément" hidden></div>
 
 <div class="st-toasts" id="stToasts" role="status" aria-live="polite"></div>
 

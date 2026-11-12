@@ -25,8 +25,8 @@
 }
 
 .st-page *, .st-page *::before, .st-page *::after { box-sizing: border-box; }
-.st-page button, .st-page input, .st-page select, .st-page textarea { font: inherit; color: inherit; }
-.st-page button { cursor: pointer; }
+:where(.st-page) :is(button, input, select, textarea) { font: inherit; color: inherit; }
+:where(.st-page) button { cursor: pointer; }
 .st-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 body.is-resizing { cursor: col-resize; user-select: none; }
 body.is-resizing .st-scene { pointer-events: none; }
@@ -57,6 +57,8 @@ body.is-resizing .st-scene { pointer-events: none; }
 .st-btn--primaire:hover { background: var(--st-marine-2); }
 .st-btn--petit { min-height: 30px; padding: 0 10px; font-size: 12.5px; }
 .st-btn--icone { width: 34px; padding: 0; }
+.st-btn:disabled { opacity: .4; cursor: not-allowed; }
+.st-haut__historique { display: flex; gap: 4px; }
 .st-btn--plein { width: 100%; }
 .st-btn--fichier { cursor: pointer; }
 
@@ -71,8 +73,8 @@ body.is-resizing .st-scene { pointer-events: none; }
 .st-resizer { position: absolute; z-index: 30; top: 0; right: -5px; bottom: 0; width: 10px; cursor: col-resize; touch-action: none; }
 .st-resizer::after { content: ''; position: absolute; top: 50%; left: 3px; width: 4px; height: 44px; border-radius: 4px; background: #c3c9da; transform: translateY(-50%); transition: background .15s; }
 .st-resizer:hover::after, .st-resizer:focus-visible::after { background: var(--st-or); }
-.st-onglets { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--st-ligne); }
-.st-onglet { padding: 13px 6px; border: 0; border-bottom: 3px solid transparent; background: none; font-weight: 700; color: var(--st-doux); }
+.st-onglets { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--st-ligne); }
+.st-onglet { padding: 13px 2px; font-size: 13px; border: 0; border-bottom: 3px solid transparent; background: none; font-weight: 700; color: var(--st-doux); }
 .st-onglet:hover { color: var(--st-marine); }
 .st-onglet.is-on { border-bottom-color: var(--st-cyan-vif); color: var(--st-marine); }
 .st-volet { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; }
@@ -185,3 +187,42 @@ body.is-resizing .st-scene { pointer-events: none; }
     .st-scene { min-height: 70vh; }
     .st-haut__titre span, .st-btn span { display: none; }
 }
+
+/* --- Éléments sur le visuel --- */
+.st-surcouche { position: absolute; inset: 0; z-index: 5; touch-action: none; user-select: none; }
+.st-survol { position: absolute; pointer-events: none; border: 2px dashed rgb(0 196 212 / .8); border-radius: 3px; }
+.st-sel { position: absolute; pointer-events: none; border: 2px solid var(--st-cyan-vif); border-radius: 3px; box-shadow: 0 0 0 1px rgb(255 255 255 / .6); }
+.st-poignee { display: none; position: absolute; right: -9px; bottom: -9px; width: 16px; height: 16px; border: 2px solid var(--st-cyan-vif); border-radius: 50%; background: #fff; cursor: nwse-resize; pointer-events: auto; }
+.st-sel--libre .st-poignee { display: block; }
+.st-barre-el { position: absolute; z-index: 8; display: flex; align-items: center; gap: 2px; padding: 4px; border-radius: 10px; background: var(--st-marine-2); box-shadow: 0 10px 28px -8px rgb(19 26 63 / .7); white-space: nowrap; pointer-events: auto; }
+.st-barre-el__nom { padding: 0 8px 0 6px; font-size: 12px; font-weight: 700; color: #cfd6f5; max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
+.st-barre-el__btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 0; border-radius: 7px; background: none; color: #fff; }
+.st-barre-el__btn:hover { background: rgb(255 255 255 / .16); }
+.st-barre-el__btn.is-danger:hover { background: #b3261e; }
+.st-barre-el__btn:focus-visible { outline: 2px solid var(--st-or); }
+
+.st-popover { position: fixed; z-index: 60; width: 320px; max-height: min(78vh, 640px); overflow-y: auto; padding: 12px 14px 14px; border: 1px solid var(--st-ligne); border-radius: 14px; background: #fff; box-shadow: 0 24px 60px -16px rgb(19 26 63 / .55); }
+.st-popover[hidden] { display: none; }
+.st-popover__tete { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; color: var(--st-marine); }
+.st-palette { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.st-couleur { width: 26px; height: 26px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px var(--st-ligne); }
+.st-couleur.is-on { box-shadow: 0 0 0 2px var(--st-cyan-vif); }
+.st-palette input[type='color'] { width: 30px; height: 28px; padding: 0; border: 0; background: none; }
+
+/* --- Onglet Éléments --- */
+.st-titre-groupe { margin: 16px 0 8px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--st-doux); }
+.st-titre-groupe:first-child { margin-top: 0; }
+.st-ajouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.st-ajout { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; border: 1px solid var(--st-ligne); border-radius: 10px; background: #fff; font-size: 11.5px; font-weight: 600; color: var(--st-doux); }
+.st-ajout i { font-size: 18px; color: var(--st-cyan); }
+.st-ajout:hover { border-color: var(--st-cyan-vif); background: #e9fbfd; color: var(--st-marine); }
+.st-elements { margin: 0; padding: 0; list-style: none; }
+.st-element { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; border: 1px solid var(--st-ligne); border-radius: 9px; }
+.st-element.is-on { border-color: var(--st-cyan-vif); background: #e9fbfd; }
+.st-element.is-masque { opacity: .65; }
+.st-element__nom { display: flex; flex: 1; min-width: 0; align-items: center; gap: 8px; padding: 7px 9px; border: 0; background: none; text-align: left; font-weight: 600; font-size: 13px; }
+.st-element__nom i { color: var(--st-doux); }
+.st-element__nom span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-element__nom em { margin-left: auto; padding: 1px 7px; border-radius: 99px; background: var(--st-fond); font-style: normal; font-size: 11px; font-weight: 600; color: var(--st-doux); }
+.st-element .st-btn { margin-right: 4px; }
+.st-modele__vue { aspect-ratio: 16 / 9; }
