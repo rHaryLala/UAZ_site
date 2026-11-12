@@ -23,7 +23,8 @@ it('seeds the site structure idempotently', function () {
 it('never publishes invented facts: every unknown field is flagged TODO-CONTENU', function () {
     $this->seed(StructureSeeder::class);
 
-    expect(Formation::first()->description)->toContain('TODO-CONTENU')
+    // La présentation des mentions connues vient du site actuel ; ce qui n'a aucune source reste signalé (page d'accueil, mention inconnue).
+    expect(json_encode(Page::where('key', 'home')->first()->blocks, JSON_UNESCAPED_UNICODE))->toContain('TODO-CONTENU')
         ->and(SiteSetting::current()->phone)->toBe('+261 34 44 931 07');
 });
 

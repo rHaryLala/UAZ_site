@@ -233,7 +233,7 @@ php artisan icons:cache 2>/dev/null || true
 Pour **régénérer** les images (par exemple pour ajouter l'AVIF après un import) :
 `php artisan media-library:regenerate --only-missing`.
 
-**Photos du site actuel** (formations, domaines, projets, pages sans image) : `php artisan media:import-site-images` une fois par serveur (voir D-068). Rejouable, sans écraser les images déjà choisies ; `--dry-run` pour simuler. Compter plusieurs minutes.
+**Photos du site actuel** (formations, domaines, projets, pages sans image) : `php artisan media:import-site-images` une fois par serveur (voir D-068). Rejouable, sans écraser les images déjà choisies ; `--dry-run` pour simuler. Compter plusieurs minutes. À lancer **après** `php artisan migrate --force` : les migrations du 14 novembre 2026 remplissent la présentation et les débouchés des formations et ajoutent le témoignage (D-069), la commande rattache ensuite sa photo.
 
 ## 7. Sauvegardes
 

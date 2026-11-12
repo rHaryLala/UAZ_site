@@ -8,6 +8,7 @@ use App\Models\MediaAsset;
 use App\Models\Page;
 use App\Models\Project;
 use App\Models\SiteSetting;
+use App\Support\FormationContent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
@@ -170,9 +171,11 @@ class ContentTranslationsSeeder extends Seeder
 
             $this->fill($formation, 'en', array_filter([
                 'title' => "Bachelor's in $en", 'mention' => $en, 'duration' => '3 years (6 semesters)', 'summary' => $summary(0, 'Tracks:'),
+                'description' => FormationContent::description($mention, 'en'), 'career_prospects' => FormationContent::careers($mention, 'en'),
             ]));
             $this->fill($formation, 'mg', array_filter([
                 'title' => "Licence amin'ny $mg", 'mention' => $mg, 'duration' => 'Taona 3 (semestra 6)', 'summary' => $summary(1, 'Lalana:'),
+                'description' => FormationContent::description($mention, 'mg'), 'career_prospects' => FormationContent::careers($mention, 'mg'),
             ]));
         }
     }

@@ -139,6 +139,7 @@ it('imports the team from the Personnel page with photos and categories', functi
 });
 
 it('imports the three YouTube testimonials disabled until an editor completes them', function () {
+    Testimonial::query()->delete(); // le témoignage ajouté par migration n'entre pas dans ce décompte
     fakeWordpress();
     $report = runImport();
 

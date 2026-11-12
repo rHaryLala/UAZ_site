@@ -68,6 +68,7 @@ it('hides the student-life stack when none of its pages is published', function 
 });
 
 it('moves the carousel role to the content so the list only holds list items', function () {
+    Testimonial::query()->delete(); // le témoignage ajouté par migration n'entre pas dans ce décompte
     Testimonial::factory()->count(2)->create();
 
     $html = $this->get('/')->assertOk()->assertSee('x-data="carousel"', false)->getContent();

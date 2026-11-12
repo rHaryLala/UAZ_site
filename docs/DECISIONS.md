@@ -534,3 +534,13 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 5. **Volontairement laissé de côté :** les témoignages vidéo (marqués « TODO-CONTENU », la photo de Kerena Ranoarilalao du site actuel ne correspond à aucun d'eux), les deux articles sans lien avec une photo (offre d'emploi, discours à la chapelle), l'accueil, « À propos » et « Confidentialité » (déjà illustrés ou sans besoin).
 **Déploiement :** la commande est à lancer une fois sur chaque serveur (`php artisan media:import-site-images`) : les photos vivent dans la médiathèque (base et `storage`), pas dans Git. Compter plusieurs minutes (conversions WebP/AVIF).
 **Tests :** `ImportSiteImagesTest` (import, pas d'écrasement, une seule fois, simulation, site injoignable).
+
+## D-069 · Fiches de formation et témoignage complétés d'après le site actuel (12 novembre 2026)
+
+**Constat :** les sept fiches de Licence affichaient « TODO-CONTENU » pour la présentation et les débouchés ; l'accueil montrait trois « témoignages vidéo » provisoires à la place d'un vrai témoignage.
+**Décisions :**
+1. **`App\Support\FormationContent`** : pour chaque mention, ce que la fiche du site zurcher.edu.mg publie : accroche, parcours de Licence (durée, crédits, lieu), Master associé quand il existe (Communication, Études anglophones, Gestion, Informatique), débouchés. Français, anglais et malagasy tirés du site actuel ; rien n'est ajouté. Les textes malagasy restent à faire relire par un locuteur natif.
+2. **Migration `2026_11_14_100000_fill_formation_presentations`** (sites déjà installés) : remplace seulement les champs encore en TODO-CONTENU ; une saisie du back-office n'est jamais écrasée ; rejouable ; remplit aussi les traductions encore vides. Le seeder (`StructureSeeder`, `ContentTranslationsSeeder`) s'appuie sur la même classe pour les nouvelles installations.
+3. **Migration `2026_11_14_110000_add_student_testimonial`** : ajoute le témoignage de Kerena Ranoarilalao (texte français et anglais du site actuel ; sa photo est rattachée par `media:import-site-images`) et **désactive** (sans supprimer) les trois témoignages vidéo provisoires, qui s'affichaient avec « TODO-CONTENU » comme nom d'auteur. Pour les remettre : Témoignages, renseigner l'auteur puis activer.
+4. **Non complété, faute de source :** la présentation du Centre de recherche (le site actuel écrit lui-même qu'elle « sera publiée prochainement »), les pages « Accueil » et « Soutenir » (leur contenu vient de gabarits dédiés), l'avertissement interne de la page Confidentialité. Les conditions d'admission restent en français sur les pages anglaise et malagasy (traduction à faire).
+**Tests :** `FormationContentTest`.

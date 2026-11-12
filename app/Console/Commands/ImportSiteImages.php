@@ -9,6 +9,7 @@ use App\Models\MediaAsset;
 use App\Models\Page;
 use App\Models\Project;
 use App\Models\SiteSetting;
+use App\Models\Testimonial;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Http;
 use Throwable;
 
 #[Signature('media:import-site-images {--from=https://zurcher.edu.mg : Adresse du site actuel} {--only= : Ne traiter que les photos dont le chemin contient ce texte} {--dry-run : Affiche ce qui serait fait sans rien écrire}')]
-#[Description('Importe dans la médiathèque les photos du site actuel (zurcher.edu.mg) et les place sur les formations, domaines, projets et pages qui n\'ont pas d\'image')]
+#[Description('Importe dans la médiathèque les photos du site actuel (zurcher.edu.mg) et les place sur les formations, domaines, projets, témoignage et pages qui n\'ont pas d\'image')]
 class ImportSiteImages extends Command
 {
     /** Source d'import : une photo n'est téléchargée qu'une fois, même si la commande est relancée. */
@@ -32,6 +33,11 @@ class ImportSiteImages extends Command
     private function manifest(): array
     {
         return [
+            '/images/temoignages/kerena-ranoarilalao.jpg' => [
+                'title' => 'Kerena Ranoarilalao',
+                'alt' => 'Kerena Ranoarilalao, étudiante en Communication, assise en tailleur sous les pins',
+                'to' => [['testimonial', 'Kerena Ranoarilalao']],
+            ],
             '/images/site/hero-diplomes.jpg' => [
                 'title' => 'Diplômés de l\'UAZ',
                 'alt' => 'Des diplômés de l\'UAZ en toge et toque, souriants, dans le parc du campus',
@@ -244,6 +250,7 @@ class ImportSiteImages extends Command
             'faculty' => Faculty::where('slug', $key)->first(),
             'project' => Project::where('slug', $key)->first(),
             'page' => Page::where('path', $key)->first(),
+            'testimonial' => Testimonial::where('author_name', $key)->first(),
             'setting' => SiteSetting::current(),
             default => null,
         };
@@ -252,6 +259,10 @@ class ImportSiteImages extends Command
     /** Colonne qui porte l'image du contenu. */
     private function column(string $kind, string $key): string
     {
-        return $kind === 'setting' ? $key : 'cover_id';
+        return match ($kind) {
+            'setting' => $key,
+            'testimonial' => 'photo_id',
+            default => 'cover_id',
+        };
     }
 }

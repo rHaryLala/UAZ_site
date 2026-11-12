@@ -12,6 +12,7 @@ use App\Models\Page;
 use App\Models\Project;
 use App\Models\SiteSetting;
 use App\Support\FormationAdmission;
+use App\Support\FormationContent;
 use Illuminate\Database\Seeder;
 
 /**
@@ -109,8 +110,8 @@ class StructureSeeder extends Seeder
                         'duration' => '3 ans (6 semestres)',
                         'credits' => 180,
                         'summary' => "Parcours : $parcours.",
-                        'description' => '<p>'.self::TODO.' : présentation détaillée de la formation.</p>',
-                        'career_prospects' => '<p>'.self::TODO.' : débouchés professionnels.</p>',
+                        'description' => FormationContent::description($mention) ?? '<p>'.self::TODO.' : présentation détaillée de la formation.</p>',
+                        'career_prospects' => FormationContent::careers($mention) ?? '<p>'.self::TODO.' : débouchés professionnels.</p>',
                         'admission_requirements' => FormationAdmission::html($mention)
                             ?? '<p>Admission après le baccalauréat, selon la mention et les critères de la filière. '.self::TODO.' : conditions détaillées.</p>',
                         'is_featured' => true,
