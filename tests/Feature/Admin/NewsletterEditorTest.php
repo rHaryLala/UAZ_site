@@ -613,3 +613,18 @@ it('lays the embedded images out the way mail clients expect, with no file name,
         ->and($raw)->not->toMatch('~^Content-Disposition: [^\n]*filename~mi')->not->toMatch('~^Content-Disposition: attachment~mi')
         ->and(preg_match_all('~^Content-Disposition: inline~mi', $raw))->toBe(preg_match_all('~^Content-ID:~mi', $raw));
 });
+
+it('offers every template as a ready-made set of blocks in the add panel, photos included in the media map', function () {
+    $asset = MediaAsset::create(['title' => 'Photo']);
+    $asset->addMedia(UploadedFile::fake()->image('campus.jpg', 800, 600))->toMediaCollection(MediaAsset::COLLECTION);
+
+    $html = $this->actingAs($this->editor)->get(route('admin.newsletter-editor.show', draftLetter()))->assertOk()->getContent();
+
+    expect($html)->toContain('"kind":"template"');
+    foreach (NewsletterTemplates::keys() as $key) {
+        expect($html)->toContain('"key":"'.$key.'"');
+    }
+
+    // Les photos posées par les modèles sont connues de l'éditeur (miniatures du panneau de réglages) même quand la newsletter n'en contient pas.
+    expect($html)->toContain('"media":{"'.$asset->id.'"');
+});

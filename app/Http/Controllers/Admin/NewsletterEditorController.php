@@ -46,13 +46,13 @@ class NewsletterEditorController extends Controller
                 'audience' => Newsletter::audienceCount(),
                 'state' => $state,
                 'types' => NewsletterBlocks::types(),
-                'library' => $this->library(),
+                'library' => $library = $this->library(),
                 'ratios' => NewsletterBlocks::RATIOS,
                 'max' => NewsletterBlocks::MAX_BLOCKS,
                 'maxDepth' => NewsletterBlocks::MAX_DEPTH,
                 'from' => config('newsletter.from.address'),
                 'palette' => NewsletterBlocks::PALETTE,
-                'media' => $this->mediaMap($state['blocks']),
+                'media' => $this->mediaMap(array_merge($state['blocks'], collect($library)->where('kind', 'template')->pluck('blocks')->flatten(1)->all())),
                 'defaults' => NewsletterBlocks::defaultTheme(),
                 'header' => [
                     'items' => NewsletterBlocks::HEADER_ITEMS,
@@ -238,8 +238,8 @@ class NewsletterEditorController extends Controller
     }
 
     /**
-     * Les blocs du panneau « Ajouter » : les types (avec leurs blocs de départ) puis les compositions toutes faites, chacun avec un bloc modèle
-     * que l'éditeur copie (identifiants renouvelés) et dessine d'avance.
+     * Les blocs du panneau « Ajouter » : les types (avec leurs blocs de départ), les compositions toutes faites, puis les modèles complets de newsletter
+     * (plusieurs blocs d'un coup, sans l'en-tête). Chacun porte un bloc modèle (ou la liste des blocs d'un modèle) que l'éditeur copie, identifiants renouvelés.
      *
      * @return list<array<string, mixed>>
      */
@@ -253,6 +253,10 @@ class NewsletterEditorController extends Controller
 
         foreach (NewsletterBlocks::presets() as $key => $preset) {
             $items[] = ['kind' => 'preset', 'key' => $key, 'label' => $preset['label'], 'hint' => $preset['hint'], 'group' => 'preset', 'block' => NewsletterBlocks::withIds([$preset['block']])[0]];
+        }
+
+        foreach (NewsletterTemplates::list() as $key => $meta) {
+            $items[] = ['kind' => 'template', 'key' => $key, 'label' => $meta['name'], 'hint' => $meta['description'], 'group' => 'template', 'blocks' => NewsletterTemplates::build($key)['blocks']];
         }
 
         return $items;

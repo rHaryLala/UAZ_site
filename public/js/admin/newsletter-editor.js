@@ -258,7 +258,7 @@
 
     /** Prépare d'avance les blocs du panneau « Ajouter » : un clic les pose sur la newsletter sans attendre. */
     async function prefetchLibrary() {
-        const blocks = library.map((entry) => entry.block).filter((block) => !cache.has(keyOf(block)));
+        const blocks = library.map((entry) => entry.block).filter((block) => block && !cache.has(keyOf(block)));
         if (!blocks.length) return;
         const version = themeVersion;
         try {
@@ -440,6 +440,8 @@
     function insertEntry(kind, key, target = null) {
         const entry = libraryByKey.get(kind + ':' + key);
         if (locked || !entry) return;
+        // Un modèle complet : plusieurs blocs d'un coup, posés à la suite au premier niveau (jamais dans une colonne ou un bandeau).
+        if (entry.blocks) return insertTemplate(entry, target ?? defaultTarget());
         const block = renew(clone(entry.block));
         if (!place(block, target ?? defaultTarget())) return;
         selected = block.id;
@@ -450,6 +452,29 @@
         callFrame('reveal', block.id);
         // Un bloc d'image sans image : on propose tout de suite la médiathèque.
         if (['image', 'feature', 'hero', 'mosaic'].includes(block.type)) setTimeout(() => chooseMedia(block.id), 250);
+    }
+
+    function insertTemplate(entry, target) {
+        const blocks = entry.blocks.map((block) => renew(clone(block)));
+        let index = target.index ?? null;
+        if (target.parent) {
+            const top = topOf(target.parent);
+            const at = top ? locate(top.id) : null;
+            index = at ? at.index + 1 : null;
+        }
+        if (countAll() + countAll(blocks) > boot.max) {
+            toast('Une newsletter ne peut pas dépasser ' + boot.max + ' blocs : ce modèle n’y tient pas.', 'error');
+
+            return;
+        }
+        blocks.forEach((block, i) => place(block, { parent: null, col: 0, index: index === null ? null : index + i }));
+        selected = blocks[0].id;
+        insertTarget = null;
+        tab = 'block';
+        commit();
+        callFrame('select', blocks[0].id);
+        callFrame('reveal', blocks[0].id);
+        toast('Modèle « ' + entry.label + ' » ajouté (' + blocks.length + ' blocs) : remplacez les textes et les photos.');
     }
 
     function moveTo(id, target) {
@@ -591,7 +616,7 @@
     /** Petit schéma d'un bloc, pour le reconnaître d'un coup d'œil. */
     const WIRES = {
         heading: 'bar', text: 'lines', image: 'img', button: 'btn', quote: 'quo lines', feature: 'img lines', news: 'row row', columns: 'col col', section: 'band', divider: 'hr', spacer: 'gap',
-        hero: 'hero', mosaic: 'tile tile tile', 'photo-text': 'img lines', 'text-photo': 'lines img', 'two-photos': 'img img', 'three-photos': 'img img img', figures: 'fig fig fig', 'banner-light': 'band', 'banner-dark': 'band dark',
+        hero: 'hero', mosaic: 'tile tile tile', une: 'hero img', recit: 'img lines', magazine: 'hero band', affiche: 'tile tile tile', actualites: 'band row row', simple: 'bar lines', 'photo-text': 'img lines', 'text-photo': 'lines img', 'two-photos': 'img img', 'three-photos': 'img img img', figures: 'fig fig fig', 'banner-light': 'band', 'banner-dark': 'band dark',
     };
     const wire = (key) => h('span', { class: 'nl-wire', 'aria-hidden': 'true' }, (WIRES[key] ?? 'lines').split(' ').map((part) => h('i', { class: 'nl-w nl-w--' + part })));
 
@@ -612,6 +637,7 @@
             ['effects', 'Effets (photo en fond, mosaïque)'],
             ['layout', 'Mise en page'],
             ['preset', 'Compositions toutes faites'],
+            ['template', 'Modèles complets (plusieurs blocs d’un coup)'],
         ];
         const card = (entry) =>
             h(
