@@ -57,3 +57,14 @@ it('rejects file types that are not images or PDFs', function () {
 
     $asset->addMedia($file)->toMediaCollection(MediaAsset::COLLECTION);
 })->throws(FileUnacceptableForCollection::class);
+
+it('does not ask for AVIF files on a server that cannot produce them', function () {
+    $asset = MediaAsset::factory()->withImage(1600, 900)->create();
+
+    // Les photos sont arrivées avec leurs versions AVIF, mais ce serveur n'en génère pas : les conversions « *-avif » ne sont plus déclarées.
+    config(['uaz.media.avif' => false]);
+    $asset = MediaAsset::find($asset->id);
+    $data = $asset->pictureData('card');
+
+    expect($data['avif'])->toBeNull()->and($data['webp'])->not->toBeNull()->and($data['src'])->not->toBe('');
+});

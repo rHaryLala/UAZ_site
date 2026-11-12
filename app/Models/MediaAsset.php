@@ -137,8 +137,12 @@ class MediaAsset extends Model implements HasMedia
             $width = $target;
         }
 
-        $srcset = function (string $name) use ($media): ?string {
-            if (! $media || ! $media->hasGeneratedConversion($name)) {
+        // L'AVIF n'est servi que si ce serveur sait en produire : sans cela les conversions « *-avif » ne sont pas déclarées (HasUazMedia) et
+        // les demander lèverait une erreur, même si des fichiers AVIF existent (photos envoyées depuis un poste qui les génère).
+        $avif = config('uaz.media.avif') && function_exists('imageavif');
+
+        $srcset = function (string $name) use ($media, $avif): ?string {
+            if (! $media || (str_ends_with($name, '-avif') && ! $avif) || ! $media->hasGeneratedConversion($name)) {
                 return null;
             }
 

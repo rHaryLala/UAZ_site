@@ -42,8 +42,13 @@ artisan() { (cd "$APP_DIR" && as_web php artisan "$@"); }
 set_env() { local f="$APP_DIR/.env"; sed -i "/^$1=/d" "$f"; printf '%s=%s\n' "$1" "$2" >> "$f"; }
 reload_nginx() { nginx -t && systemctl reload nginx; }
 
-preview_check() { # preview_check CHEMIN CODE_ATTENDU
-    local code; code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -H "Host: $DOMAIN" "http://127.0.0.1:$PREVIEW_PORT$1" || true)"
+preview_check() { # preview_check CHEMIN CODE_ATTENDU  (Nginx met un instant à écouter après un rechargement : quelques essais avant de conclure)
+    local code='000' i
+    for i in 1 2 3 4 5 6 7 8; do
+        code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -H "Host: $DOMAIN" "http://127.0.0.1:$PREVIEW_PORT$1" || true)"
+        [ "$code" != '000' ] && break
+        sleep 1
+    done
     if [ "$code" = "$2" ]; then ok "$1 → $code"; else warn "$1 → $code (attendu $2)"; FAILED=1; fi
 }
 
@@ -358,7 +363,12 @@ phase_switch() {
     fi
     systemctl reload nginx
 
-    local code; code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 --resolve "$DOMAIN:443:127.0.0.1" "https://$DOMAIN/up" || true)"
+    local code='000' i
+    for i in 1 2 3 4 5 6 7 8; do   # le rechargement de Nginx est asynchrone : on attend qu'il écoute avant de conclure à un échec
+        code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 --resolve "$DOMAIN:443:127.0.0.1" "https://$DOMAIN/up" || true)"
+        [ "$code" != '000' ] && break
+        sleep 1
+    done
     if [ "$code" != "200" ]; then
         warn "https://$DOMAIN/up → $code : retour automatique à l'ancien site"
         phase_rollback; die "bascule annulée"
