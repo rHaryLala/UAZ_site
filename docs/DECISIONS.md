@@ -555,6 +555,8 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 4. **Défaut trouvé grâce à un essai sur MySQL avant l'installation :** le nom automatique de l'index unique des envois de lettres dépassait les 64 caractères admis par MariaDB et faisait échouer `migrate` ; il porte maintenant un nom court.
 5. **Courrier :** tant qu'aucun SMTP n'est renseigné dans `.env`, `MAIL_MAILER=log` : le formulaire de contact enregistre les messages dans le back-office mais n'envoie aucun courriel.
 **Points d'attention :** le PHP du serveur n'a pas l'AVIF (WebP seulement ; les AVIF déjà générés sont conservés) ; MariaDB écoute sur 0.0.0.0:3306 sur cette machine (existant, à restreindre à 127.0.0.1 par l'administrateur).
+**Courrier (12 novembre 2026) :** l'envoi d'essai du back-office échouait : `MAIL_HOST` était vide (le commentaire « À DÉFINIR » du modèle de `.env` avait été pris pour une valeur, donc le mode « journal » prévu n'était pas activé). Nouvelle phase **`sudo bash provision-prod.sh mail`** : serveur, port, identifiant, mot de passe (saisie masquée, jamais écrit ailleurs que dans le `.env`), adresse d'expédition et destinataire du formulaire de contact sont demandés au clavier ; la configuration est rechargée, y compris la file d'attente (elle garde la configuration en mémoire), et un message d'essai peut être envoyé.
+**Défaut corrigé au passage :** `.env` était lisible par tous les utilisateurs de la machine (droits 644, fichier recréé par `sed -i`) alors qu'il contient le mot de passe de la base et la clé de l'application. Il est maintenant toujours `www-data:www-data` en 640 (`set_env` et `sync_code`).
 
 ## D-071 · Menus hebdomadaires de la cafétéria, modifiables dans le back-office (12 novembre 2026)
 

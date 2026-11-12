@@ -5,6 +5,7 @@
 #   sudo ADMIN_EMAIL=vous@exemple.mg bash provision-prod.sh prepare    # installe le site à côté de l'existant ; rien ne change pour les visiteurs
 #   sudo bash provision-prod.sh switch                                  # zurcher.edu.mg passe sur le nouveau site (annulable)
 #   sudo bash provision-prod.sh rollback                                # retour au site Next.js, en quelques secondes
+#   sudo bash provision-prod.sh mail                                    # configure l'envoi de courrier (SMTP), identifiants saisis au clavier
 #   sudo bash provision-prod.sh update                                  # site DÉJÀ en ligne : nouvelle version du code (sauvegarde, migration, contrôle, retour automatique)
 #   sudo bash provision-prod.sh status
 #
@@ -40,7 +41,13 @@ die()  { printf '\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
 [ "$(id -u)" -eq 0 ] || die "À lancer en root (sudo)."
 as_web()  { runuser -u www-data -- env HOME=/tmp "$@"; }   # www-data a /var/www pour répertoire personnel, non modifiable : HOME temporaire (PsySH, Composer…)
 artisan() { (cd "$APP_DIR" && as_web php artisan "$@"); }
-set_env() { local f="$APP_DIR/.env"; sed -i "/^$1=/d" "$f"; printf '%s=%s\n' "$1" "$2" >> "$f"; }
+set_env() { # set_env CLE VALEUR : remplace la ligne (ou l'ajoute) ; le .env reste illisible pour les autres utilisateurs de la machine (secrets)
+    local f="$APP_DIR/.env"
+    sed -i "/^$1=/d" "$f"
+    printf '%s=%s\n' "$1" "$2" >> "$f"
+    chown www-data:www-data "$f"
+    chmod 640 "$f"
+}
 reload_nginx() { nginx -t && systemctl reload nginx; }
 
 preview_check() { # preview_check CHEMIN CODE_ATTENDU  (Nginx met un instant à écouter après un rechargement : quelques essais avant de conclure)
@@ -190,6 +197,11 @@ sync_code() { # sync_code DOSSIER_SOURCE
     chmod -R ug+rwX,o-rwx "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
     chmod +x "$APP_DIR/artisan"
     ln -sfn ../storage/app/public "$APP_DIR/public/storage"
+    # Les droits ci-dessus rendraient le .env lisible par tous (644) : il contient le mot de passe de la base et la clé de l'application.
+    if [ -f "$APP_DIR/.env" ]; then
+        chown www-data:www-data "$APP_DIR/.env"
+        chmod 640 "$APP_DIR/.env"
+    fi
 }
 
 # Reconstruit les caches de Laravel et relance la file d'attente (à appeler après tout changement de code).
@@ -252,7 +264,7 @@ SQL
     set_env SEED_ADMIN_PASSWORD ""
     set_env MEDIA_AVIF false   # PHP du serveur : WebP oui, AVIF non (les versions AVIF déjà créées sont conservées)
     # Courrier : tant qu'aucun SMTP n'est renseigné, rien ne part ; les messages du formulaire de contact restent enregistrés dans le back-office.
-    if ! grep -q '^MAIL_HOST=.' "$APP_DIR/.env"; then
+    if ! grep -qE '^MAIL_HOST=[^[:space:]#]' "$APP_DIR/.env"; then
         set_env MAIL_MAILER log
         set_env MAIL_FROM_ADDRESS "no-reply@zurcher.edu.mg"
         set_env CONTACT_RECIPIENT "office@zurcher.edu.mg"
@@ -440,6 +452,59 @@ phase_update() {
 EOF
 }
 # ─────────────────────────────────────────────────────────────
+# Configure l'envoi de courrier (formulaire de contact, lettres d'information, envoi d'essai du back-office). Les identifiants sont saisis au
+# clavier (le mot de passe n'est pas affiché) et écrits dans le .env : ils ne passent par aucun autre fichier ni par l'historique du shell.
+phase_mail() {
+    step "Configuration de l'envoi de courrier"
+    [ -f "$APP_DIR/.env" ] || die "Le site n'est pas installé : $APP_DIR/.env introuvable."
+    [ -t 0 ] || die "Cette phase pose des questions : lancez-la dans un terminal (sudo bash $(basename "$0") mail)."
+
+    local host port user pass from contact test scheme
+    echo "  (Entrée = valeur proposée entre crochets)"
+    read -r -p "  Serveur SMTP [smtp.gmail.com] : " host;  host="${host:-smtp.gmail.com}"
+    read -r -p "  Port [587] : " port;                      port="${port:-587}"
+    read -r -p "  Identifiant SMTP [newsletter@zurcher.edu.mg] : " user; user="${user:-newsletter@zurcher.edu.mg}"
+    read -r -s -p "  Mot de passe SMTP (Google : mot de passe d'application, saisie masquée) : " pass; echo
+    pass="${pass// /}"   # Google affiche le mot de passe d'application par groupes de quatre lettres : les espaces ne comptent pas
+    [ -n "$pass" ] || die "Mot de passe vide : rien n'a été modifié."
+    case "$pass" in *\"*|*\\*|*\$*|*\`*) die "Le mot de passe contient un caractère à protéger (guillemet, barre oblique inverse, dollar ou accent grave) : créez-en un autre sans ces caractères." ;; esac
+    read -r -p "  Adresse d'expédition [$user] : " from;    from="${from:-$user}"
+    read -r -p "  Adresse qui reçoit les messages du formulaire de contact [office@zurcher.edu.mg] : " contact; contact="${contact:-office@zurcher.edu.mg}"
+    read -r -p "  Envoyer un message d'essai à (Entrée = aucun) : " test
+
+    scheme=null; [ "$port" = 465 ] && scheme=smtps   # 465 : TLS direct ; 587 : STARTTLS
+    set_env MAIL_MAILER smtp
+    set_env MAIL_HOST "$host"
+    set_env MAIL_PORT "$port"
+    set_env MAIL_SCHEME "$scheme"
+    set_env MAIL_USERNAME "$user"
+    set_env MAIL_PASSWORD "\"$pass\""
+    set_env MAIL_FROM_ADDRESS "$from"
+    set_env NEWSLETTER_FROM_ADDRESS "$from"
+    set_env CONTACT_RECIPIENT "$contact"
+    refresh_app
+    ok "courrier configuré ($user via $host:$port) ; caches reconstruits, file d'attente relancée (elle garde la configuration en mémoire)"
+
+    if [ -n "$test" ]; then
+        step "Message d'essai vers $test"
+        if (cd "$APP_DIR" && as_web env TEST_TO="$test" php -r '
+            require "vendor/autoload.php";
+            $app = require "bootstrap/app.php";
+            $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+            try {
+                Illuminate\Support\Facades\Mail::raw("Ce message confirme que l envoi de courrier du site de l Université Adventiste Zurcher est configuré.", function ($m) { $m->to(getenv("TEST_TO"))->subject("Essai d envoi — site UAZ"); });
+                echo "  envoyé" . PHP_EOL;
+            } catch (Throwable $e) {
+                echo "  erreur : " . $e->getMessage() . PHP_EOL;   // le message seul : jamais la trace, qui pourrait citer des identifiants
+                exit(1);
+            }'); then
+            ok "message d'essai accepté par le serveur SMTP : regardez la boîte de $test (et les indésirables)"
+        else
+            warn "l'envoi d'essai a échoué (voir le message ci-dessus). La configuration est enregistrée : relancez cette commande pour la corriger."
+        fi
+    fi
+}
+# ─────────────────────────────────────────────────────────────
 phase_switch() {
     step "Bascule de $DOMAIN vers le site Laravel"
     [ -f "$AVAIL/$NEW_CONF" ] || die "Lancez d'abord « prepare »."
@@ -515,6 +580,7 @@ case "$PHASE" in
     rollback) phase_rollback ;;
     status)   phase_status ;;
     update)   phase_update ;;
+    mail)     phase_mail ;;
     restore)  phase_restore "$@" ;;
-    *) die "Usage : provision-prod.sh prepare | switch | rollback | status | update | restore DOSSIER" ;;
+    *) die "Usage : provision-prod.sh prepare | switch | rollback | status | update | mail | restore DOSSIER" ;;
 esac
