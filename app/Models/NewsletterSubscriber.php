@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-/** Abonné à la lettre d'information. Double confirmation : l'abonnement n'est actif qu'après le clic sur le lien reçu par e-mail. */
+/**
+ * Abonné à la lettre d'information. Actif = « confirmed_at » renseigné et pas de « unsubscribed_at » : l'abonnement depuis le site est immédiat (aucun e-mail de
+ * confirmation). Une adresse sans « confirmed_at » (reprise d'un export MailPoet « non confirmé ») ne reçoit rien tant que la personne ne s'abonne pas elle-même.
+ * « confirmation_sent_at » n'est plus renseigné : colonne conservée, sans usage.
+ */
 #[Fillable(['email', 'confirmation_sent_at', 'confirmed_at', 'unsubscribed_at'])]
 class NewsletterSubscriber extends Model
 {

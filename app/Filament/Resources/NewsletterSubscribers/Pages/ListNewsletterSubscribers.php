@@ -28,7 +28,7 @@ class ListNewsletterSubscribers extends ListRecords
                 // Ajoute des personnes à une liste d'envoi : réservé aux administrateurs.
                 ->visible(fn () => auth()->user()?->can('users.manage'))
                 ->modalHeading('Importer les abonnés depuis MailPoet')
-                ->modalDescription('Déposez le fichier CSV exporté de MailPoet. Les abonnés (« subscribed ») deviennent actifs ; les adresses non confirmées sont ajoutées « en attente de confirmation » et ne reçoivent rien ; les désinscrits sont conservés comme tels ; les rebonds et adresses invalides sont ignorés. Une personne déjà désinscrite sur ce site n\'est jamais réinscrite, et l\'import peut être refait sans créer de doublons.')
+                ->modalDescription('Déposez le fichier CSV exporté de MailPoet. Les abonnés (« subscribed ») deviennent actifs ; les adresses non confirmées sont ajoutées comme « non confirmées » et ne reçoivent rien tant que la personne ne s\'abonne pas elle-même ; les désinscrits sont conservés comme tels ; les rebonds et adresses invalides sont ignorés. Une personne déjà désinscrite sur ce site n\'est jamais réinscrite, et l\'import peut être refait sans créer de doublons.')
                 ->modalSubmitActionLabel('Importer')
                 ->schema([
                     FileUpload::make('file')

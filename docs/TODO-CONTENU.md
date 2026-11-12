@@ -89,7 +89,7 @@ La page existe en **brouillon** (Pages → « Confidentialité et cookies ») ; 
 
 - [ ] **Texte de la fenêtre** (« Restez proche de l'UAZ ») : à valider par l'UAZ.
 - [ ] **Outil d'envoi** de la lettre (Brevo, Mailchimp…) ou envoi depuis le site : à décider ; contenu et fréquence à définir.
-- [ ] **SMTP de production** : sans lui, aucun e-mail de confirmation ne part (`MAIL_*` dans `.env`).
+- [ ] **SMTP de production** : sans lui, aucun courriel ne part (notification du formulaire de contact, lettres d'information, envoi d'essai) (`sudo bash ~/uaz-deploy/provision-prod.sh mail` sur le serveur). L'abonnement à la lettre, lui, n'en dépend plus.
 - [ ] Page « Confidentialité et cookies » : durée de conservation après désinscription (`TODO-CONTENU` dans la page).
 
 ## Page Bibliothèque

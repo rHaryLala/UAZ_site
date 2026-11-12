@@ -1,24 +1,39 @@
 <?php
 
-use App\Mail\NewsletterConfirmation;
+use App\Filament\Resources\NewsletterSubscribers\Pages\ListNewsletterSubscribers;
+use App\Models\Menu;
 use App\Models\NewsletterSubscriber;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\StructureSeeder;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
+use Livewire\Livewire;
 
 beforeEach(fn () => Mail::fake());
 
-it('registers a pending subscriber and sends a confirmation e-mail', function () {
+it('subscribes the address right away, without sending any e-mail', function () {
     $this->postJson('/newsletter', ['email' => 'Visiteur@Exemple.com'])
         ->assertOk()
-        ->assertJsonPath('message', fn ($m) => str_contains($m, 'confirmation'));
+        ->assertJsonPath('message', fn ($m) => str_contains($m, 'abonné') && ! str_contains($m, 'confirmation'));
 
     $subscriber = NewsletterSubscriber::sole();
 
-    expect($subscriber->email)->toBe('visiteur@exemple.com')->and($subscriber->status())->toBe('pending');
-    Mail::assertSent(NewsletterConfirmation::class, fn ($mail) => $mail->hasTo('visiteur@exemple.com'));
+    expect($subscriber->email)->toBe('visiteur@exemple.com')->and($subscriber->status())->toBe('active')
+        ->and($subscriber->confirmed_at)->not->toBeNull()->and($subscriber->confirmation_sent_at)->toBeNull()
+        ->and(NewsletterSubscriber::active()->pluck('email')->all())->toBe(['visiteur@exemple.com']);
+
+    Mail::assertNothingSent();
+    Mail::assertNothingQueued();
+});
+
+it('does not even need a working mail server', function () {
+    config(['mail.default' => 'smtp', 'mail.mailers.smtp.host' => 'serveur-inexistant.invalid']);
+
+    $this->postJson('/newsletter', ['email' => 'sans-courrier@exemple.com'])->assertOk();
+
+    expect(NewsletterSubscriber::sole()->status())->toBe('active');
 });
 
 it('rejects an invalid address', function () {
@@ -35,39 +50,58 @@ it('ignores robots that fill the hidden field', function () {
     Mail::assertNothingSent();
 });
 
-it('does not send a second e-mail right away, nor to an already active subscriber', function () {
+it('answers the same way, and changes nothing, when the address is already subscribed', function () {
     $this->postJson('/newsletter', ['email' => 'a@exemple.com'])->assertOk();
-    $this->postJson('/newsletter', ['email' => 'a@exemple.com'])->assertOk();
-    Mail::assertSentCount(1);
+    $first = NewsletterSubscriber::sole()->confirmed_at;
 
-    NewsletterSubscriber::sole()->update(['confirmed_at' => now(), 'confirmation_sent_at' => now()->subHour()]);
-    $this->postJson('/newsletter', ['email' => 'a@exemple.com'])->assertOk();
+    $this->travel(2)->days();
+    $this->postJson('/newsletter', ['email' => 'A@exemple.com'])->assertOk();
 
-    Mail::assertSentCount(1);
-    expect(NewsletterSubscriber::sole()->status())->toBe('active');
+    expect(NewsletterSubscriber::count())->toBe(1)->and(NewsletterSubscriber::sole()->confirmed_at->equalTo($first))->toBeTrue();
 });
 
-it('confirms and unsubscribes only through signed links', function () {
-    $subscriber = NewsletterSubscriber::create(['email' => 'b@exemple.com', 'confirmation_sent_at' => now()]);
-
-    $this->get(route('newsletter.confirm', $subscriber))->assertForbidden();
-    $this->get(URL::temporarySignedRoute('newsletter.confirm', now()->addDay(), ['subscriber' => $subscriber]))->assertOk()->assertSee('Abonnement confirmé');
-    expect($subscriber->fresh()->status())->toBe('active');
+it('unsubscribes only through a signed link', function () {
+    $subscriber = NewsletterSubscriber::create(['email' => 'b@exemple.com', 'confirmed_at' => now()]);
 
     $this->get(route('newsletter.unsubscribe', $subscriber))->assertForbidden();
     $this->get(URL::signedRoute('newsletter.unsubscribe', ['subscriber' => $subscriber]))->assertOk()->assertSee('Désinscription effectuée');
+
     expect($subscriber->fresh()->status())->toBe('unsubscribed');
 });
 
-it('lets a former subscriber subscribe again', function () {
+it('has no confirmation link any more', function () {
+    expect(Route::has('newsletter.confirm'))->toBeFalse()->and(Route::has('newsletter.unsubscribe'))->toBeTrue();
+});
+
+it('lets a former subscriber subscribe again with a new request', function () {
     NewsletterSubscriber::create(['email' => 'c@exemple.com', 'confirmed_at' => now()->subYear(), 'unsubscribed_at' => now()->subMonth()]);
 
     $this->postJson('/newsletter', ['email' => 'c@exemple.com'])->assertOk();
 
-    expect(NewsletterSubscriber::sole()->status())->toBe('pending');
-    Mail::assertSentCount(1);
+    $subscriber = NewsletterSubscriber::sole();
+    expect($subscriber->status())->toBe('active')->and($subscriber->unsubscribed_at)->toBeNull();
 });
 
+it('turns an unconfirmed address (imported from MailPoet) into a subscriber when its owner asks', function () {
+    NewsletterSubscriber::create(['email' => 'attente@exemple.com']);
+
+    expect(NewsletterSubscriber::active()->count())->toBe(0);
+
+    $this->postJson('/newsletter', ['email' => 'attente@exemple.com'])->assertOk();
+
+    expect(NewsletterSubscriber::sole()->status())->toBe('active');
+});
+
+it('shows the dialog without announcing a confirmation e-mail', function () {
+    $this->seed(StructureSeeder::class);
+
+    $html = $this->get('/')->assertOk()->getContent();
+
+    expect($html)->toContain('data-newsletter-dialog')->toContain('Nous n&#039;utilisons votre adresse que pour cette lettre.')
+        ->not->toContain('Un e-mail de confirmation vous sera envoyé');
+
+    $this->get('/en')->assertOk()->assertSee('We only use your address for this newsletter.')->assertDontSee('confirmation email will be sent');
+});
 it('limits the number of requests per minute', function () {
     foreach (range(1, 6) as $i) {
         $this->postJson('/newsletter', ['email' => "n$i@exemple.com"])->assertOk();
@@ -95,13 +129,13 @@ it('lists subscribers in the admin only for people allowed to read messages', fu
     $this->get('/admin/newsletter-subscribers')->assertOk();
 
     $subscriber = NewsletterSubscriber::sole();
-    \Livewire\Livewire::test(\App\Filament\Resources\NewsletterSubscribers\Pages\ListNewsletterSubscribers::class)->loadTable()->assertCanSeeTableRecords([$subscriber]);
+    Livewire::test(ListNewsletterSubscribers::class)->loadTable()->assertCanSeeTableRecords([$subscriber]);
 });
 
 it('puts "Actualités" right after "S\'abonner" in the top bar', function () {
     $this->seed(StructureSeeder::class);
 
-    $labels = collect(\App\Models\Menu::where('handle', 'topbar')->firstOrFail()->items)->pluck('label')->all();
+    $labels = collect(Menu::where('handle', 'topbar')->firstOrFail()->items)->pluck('label')->all();
 
     expect(array_search('Actualités', $labels))->toBe(array_search('S\'abonner', $labels) + 1);
 });

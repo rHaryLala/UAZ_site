@@ -69,7 +69,8 @@ try {
     await dialog.getByLabel('Adresse e-mail').fill(email);
     await dialog.getByRole('button', { name: 'S\'abonner' }).click();
     await page.waitForFunction(() => !document.querySelector('[data-newsletter-done]').hidden, null, { timeout: 15000 });
-    check(true, 'l\'abonnement affiche le message « Presque terminé »');
+    check((await dialog.locator('[data-newsletter-done]').innerText()).includes('Vous êtes abonné(e)'), 'l\'abonnement est immédiat : la fenêtre confirme « Vous êtes abonné(e) », sans parler d\'e-mail de confirmation');
+    check(!(await dialog.innerText()).toLowerCase().includes('e-mail de confirmation'), 'aucune mention d\'un e-mail de confirmation dans la fenêtre');
     if (out) await page.screenshot({ path: path.join(out, 'newsletter-envoyee.png') });
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('uaz.newsletter')));
     check(stored.subscribed === true, 'l\'état « abonné » est mémorisé dans le navigateur');

@@ -211,8 +211,8 @@ class StructureSeeder extends Seeder
                 $block('Mémoire de votre navigateur', '<p>Sans cookie, le site retient dans votre navigateur (stockage local) <strong>une seule information</strong> : si la fenêtre d\'abonnement à la lettre d\'information vous a déjà été proposée, et si vous vous êtes abonné. '
                     .'Elle sert uniquement à ne pas vous la reproposer à chaque page : vous la revoyez au plus une fois tous les 20 jours, tant que vous n\'êtes pas abonné. '
                     .'Cette information reste sur votre appareil et n\'est jamais envoyée au site ; vous pouvez l\'effacer en vidant les données du site dans votre navigateur.</p>'),
-                $block('La lettre d\'information', '<p>Si vous vous abonnez, nous enregistrons <strong>votre adresse e-mail</strong>, la date de votre demande et celle de votre confirmation. '
-                    .'Nous vous envoyons d\'abord un e-mail de confirmation : sans clic sur le lien, vous ne recevez rien et personne ne peut vous inscrire à votre place. '
+                $block('La lettre d\'information', '<p>Si vous vous abonnez, nous enregistrons <strong>votre adresse e-mail</strong> et la date de votre abonnement. '
+                    .'L\'abonnement est immédiat : nous ne vous envoyons pas d\'e-mail de confirmation. '
                     .'Chaque message contient un lien pour vous désinscrire en un clic. Votre adresse n\'est utilisée que pour cette lettre.</p>'
                     .'<p>Durée de conservation après désinscription : '.self::TODO.' (à fixer par l\'UAZ).</p>'),
                 $block('Le formulaire de contact', '<p>Quand vous nous écrivez, nous recevons les informations que vous saisissez : <strong>nom, adresse e-mail, téléphone (facultatif), sujet et message</strong>. '

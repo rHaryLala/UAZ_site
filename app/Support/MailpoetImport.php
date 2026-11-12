@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
  *
  * Règles (le consentement des personnes prime sur la complétude de la liste) :
  *  - « subscribed »   → abonné actif (date de confirmation, à défaut date d'abonnement) ;
- *  - « unconfirmed »  → « en attente de confirmation » : ne reçoit rien tant que la personne n'a pas cliqué sur le lien reçu ;
+ *  - « unconfirmed »  → « non confirmé » : ne reçoit rien tant que la personne ne s'abonne pas elle-même (fenêtre « S'abonner » du site) ;
  *  - « unsubscribed » → enregistré comme désinscrit : la désinscription est conservée, la personne ne sera pas réinscrite par erreur ;
  *  - « bounced »      → ignoré (adresse qui n'existe plus ou refuse le courrier) ;
  *  - une adresse déjà désinscrite sur ce site n'est JAMAIS réinscrite par l'import ; une adresse déjà active n'est pas modifiée ;
@@ -226,7 +226,7 @@ final class MailpoetImport
         ];
 
         foreach ([
-            'pending_added' => '%d adresse(s) non confirmée(s) ajoutée(s) « en attente de confirmation » (elles ne reçoivent rien)',
+            'pending_added' => '%d adresse(s) non confirmée(s) ajoutée(s) (elles ne reçoivent rien tant que la personne ne s\'abonne pas elle-même)',
             'unsubscribed_added' => '%d désinscription(s) conservée(s)',
             'unsubscribed_marked' => '%d abonné(s) déjà présent(s) marqué(s) désinscrit(s)',
             'already' => '%d déjà présent(s), non modifié(s)',

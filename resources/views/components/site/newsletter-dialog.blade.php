@@ -27,7 +27,7 @@
                 </div>
 
                 <p id="newsletter-feedback" data-newsletter-error class="field-error mt-3" role="alert" hidden></p>
-                <p class="mt-4 text-xs text-ink-600">{{ __('Un e-mail de confirmation vous sera envoyé. Nous n\'utilisons votre adresse que pour cette lettre.') }}
+                <p class="mt-4 text-xs text-ink-600">{{ __('Nous n\'utilisons votre adresse que pour cette lettre.') }}
                     @if ($privacyPage ?? null)
                         <a href="{{ $privacyPage->url() }}" class="underline underline-offset-4">{{ __('En savoir plus') }}</a>
                     @endif
@@ -37,7 +37,7 @@
 
         <div data-newsletter-done hidden role="status" aria-live="polite">
             <p class="eyebrow mb-3">{{ __('Lettre d\'information') }}</p>
-            <p class="flex items-center gap-3 font-serif text-2xl text-navy-900"><x-ico name="check" class="size-6 shrink-0 text-gold-600" /> {{ __('Presque terminé') }}</p>
+            <p class="flex items-center gap-3 font-serif text-2xl text-navy-900"><x-ico name="check" class="size-6 shrink-0 text-gold-600" /> {{ __('Vous êtes abonné(e)') }}</p>
             <span class="mt-4 mb-5 block h-0.5 w-12 bg-sun-400" aria-hidden="true"></span>
             <p class="text-ink-700" data-newsletter-message></p>
             <button type="button" data-newsletter-close class="link-arrow mt-6">{{ __('Fermer') }}</button>

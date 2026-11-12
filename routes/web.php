@@ -94,9 +94,8 @@ $publicRoutes = function (): void {
     Route::get('/equipe', TeamController::class)->name('team');
     Route::get('/contact', ContactController::class)->name('contact');
 
-    // Lettre d'information : demande (JSON, depuis la fenêtre du site), confirmation et désinscription par liens signés.
+    // Lettre d'information : abonnement immédiat (JSON, depuis la fenêtre du site) et désinscription par lien signé.
     Route::post('/newsletter', [NewsletterController::class, 'subscribe'])->middleware('throttle:6,1')->name('newsletter.subscribe');
-    Route::get('/newsletter/confirmation/{subscriber}', [NewsletterController::class, 'confirm'])->middleware('signed')->name('newsletter.confirm');
     Route::get('/newsletter/desinscription/{subscriber}', [NewsletterController::class, 'unsubscribe'])->middleware('signed')->name('newsletter.unsubscribe');
     Route::get('/recherche', SearchController::class)->name('search');
     Route::get('/recherche/apercu', SearchPreviewController::class)->middleware('throttle:60,1')->name('search.preview');

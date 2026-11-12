@@ -72,7 +72,7 @@ class NewsletterSubscriberResource extends Resource
     /** @return array<string, string> */
     public static function statusLabels(): array
     {
-        return ['active' => 'Abonné', 'pending' => 'En attente de confirmation', 'unsubscribed' => 'Désinscrit'];
+        return ['active' => 'Abonné', 'pending' => 'Non confirmé (ne reçoit rien)', 'unsubscribed' => 'Désinscrit'];
     }
 
     public static function getPages(): array

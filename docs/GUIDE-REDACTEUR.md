@@ -256,7 +256,7 @@ En vue grille, la médiathèque n'a plus de numéros de page : 36 fichiers s'aff
 ## Lettre d'information : fenêtre « S'abonner »
 
 - Les **nouveaux visiteurs** voient une fenêtre d'abonnement quelques secondes après leur arrivée. Si elle est fermée sans abonnement, elle **revient 20 jours plus tard** sur le même navigateur ; une fois abonné, elle ne revient plus. Le bouton **S'abonner** de la barre du haut l'ouvre à tout moment.
-- Chaque demande déclenche un **e-mail de confirmation** : l'abonné n'est actif qu'après clic sur le lien. Personne ne peut inscrire l'adresse d'un tiers.
+- Un clic sur **S'abonner** suffit : la personne est **inscrite immédiatement**, aucun e-mail de confirmation n'est envoyé. Chaque lettre contient un lien de désinscription en un clic ; vous pouvez aussi supprimer un abonné depuis la liste (Personnes & messages → Abonnés à la lettre).
 - **Personnes & messages → Abonnés à la lettre** : liste des abonnés (Abonné / En attente / Désinscrit), export CSV des abonnés actifs, suppression sur demande.
 - La lettre se **compose et s'envoie depuis le site** (section suivante).
 
@@ -272,7 +272,7 @@ En vue grille, la médiathèque n'a plus de numéros de page : 36 fichiers s'aff
    - **Bande de couleur** : le bloc *Espace* a une couleur ; posé entre deux blocs il fait une bande d'un bord à l'autre de la lettre.
 4. **Le travail est enregistré automatiquement** (indication en haut). Les boutons ordinateur/mobile montrent le rendu ; les flèches annulent et rétablissent.
 5. **Envoyer un test** à votre propre adresse avant tout : l'objet commence par [TEST].
-6. **Envoyer…** : la fenêtre rappelle le nombre d'abonnés actifs ; la lettre part à chacun avec son lien de désinscription personnel. Les abonnés *en attente de confirmation* et *désinscrits* ne reçoivent rien.
+6. **Envoyer…** : la fenêtre rappelle le nombre d'abonnés actifs ; la lettre part à chacun avec son lien de désinscription personnel. Les abonnés *non confirmés* et *désinscrits* ne reçoivent rien.
 7. Une lettre **envoyée est figée** : elle reste consultable (le tableau indique envois réussis et échecs) mais ne peut plus être modifiée ni supprimée. Pour la suivante, utilisez **Dupliquer** sur une lettre précédente ou créez-en une nouvelle.
 
 > L'envoi se fait en arrière-plan, à raison d'un courrier toutes les quelques secondes : 500 abonnés demandent une vingtaine de minutes. Le statut passe à *Envoyée* quand tout est parti.
@@ -337,7 +337,7 @@ Ce que fait l'import (les colonnes sont reconnues par leur titre : E-mail, État
 | État MailPoet | Résultat sur le site |
 | --- | --- |
 | **subscribed** (abonné) | **Abonné** actif : il reçoit les lettres. La date d'abonnement est conservée ; à défaut de date de confirmation, la date d'abonnement en tient lieu. |
-| **unconfirmed** (non confirmé) | **En attente de confirmation** : il ne reçoit **rien** tant qu'il n'a pas cliqué sur un lien de confirmation. |
+| **unconfirmed** (non confirmé) | **Non confirmé** : il ne reçoit **rien** tant que la personne ne s'abonne pas elle-même (fenêtre « S'abonner » du site). |
 | **unsubscribed** (désinscrit) | **Désinscrit** : la désinscription est conservée. |
 | **bounced** (rebond) | Ignoré : l'adresse n'existe plus ou refuse le courrier. |
 
