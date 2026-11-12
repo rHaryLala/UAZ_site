@@ -621,3 +621,13 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 **Correctif (13 novembre 2026) — champ vidé :** un champ texte vidé dans l'éditeur (bouton sans libellé du modèle « Magazine », surtitre supprimé, tampon retiré) **reprenait sa valeur par défaut** à l'enregistrement : Laravel convertit les chaînes vides d'une requête JSON en `null`, et `NewsletterBlocks::normalize` lisait `null` comme « absent ». Un `null` explicite sur un champ texte vaut désormais « vidé » ; un champ réellement absent garde sa valeur par défaut.
 **Parallax :** vérifié, l'instruction `background-attachment: fixed` est bien dans le courrier envoyé ; c'est la messagerie qui la reconnaît ou non (voir D-075, point 2).
 **Test :** `NewsletterEditorTest` (« keeps a text field the editor emptied… »).
+
+## D-076 · Lien « Se désinscrire » de l'envoi d'essai (13 novembre 2026)
+
+**Constat :** dans l'e-mail d'essai (« Envoyer un test »), « Se désinscrire » n'était qu'un texte souligné suivi de « (le lien personnel est ajouté à chaque envoi) », donc un lien mort — l'essai part vers une adresse saisie à la main, qui n'est pas un abonné.
+**Décisions :**
+1. **L'envoi d'essai porte un vrai lien** signé, `/newsletter/desinscription-essai`, qui affiche la page « Envoi d'essai : le lien fonctionne » et **ne désinscrit personne** (aucun abonné n'est lié à cet envoi). L'en-tête `List-Unsubscribe` et la version texte l'utilisent aussi. Sans signature valide : refus (403).
+2. **Inchangé pour les vrais envois :** chaque abonné reçoit son lien personnel signé `/newsletter/desinscription/{abonné}` (un clic, immédiat) et l'en-tête `List-Unsubscribe`. Test ajouté : le lien d'un vrai message désinscrit bien l'abonné.
+3. **Plan de travail de l'éditeur :** la mention « (le lien personnel est ajouté à chaque envoi) » reste, puisqu'aucun abonné n'y est encore choisi.
+**Point d'attention (non traité) :** une désinscription par simple ouverture du lien (GET) peut être déclenchée par un antivirus ou un filtre de messagerie qui « visite » les liens ; si des abonnés disparaissent sans l'avoir demandé, passer à une page de confirmation avec bouton (POST) et à `List-Unsubscribe-Post`.
+**Tests :** `NewsletterEditorTest` (lien d'essai, absence d'effet, signature, lien réel).

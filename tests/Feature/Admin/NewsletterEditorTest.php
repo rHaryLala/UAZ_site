@@ -644,3 +644,28 @@ it('keeps a text field the editor emptied (a button without label stays without 
     $this->actingAs($this->editor)->putJson(route('admin.newsletter-editor.save', $letter), letterState([['type' => 'hero', 'data' => ['title' => 'Titre']]]))->assertOk();
     expect($letter->refresh()->blocks[0]['data']['button_label'])->toBe('En savoir plus');
 });
+
+it('gives the test message an unsubscribe link that works but unsubscribes nobody', function () {
+    $active = subscriber('actif@exemple.test');
+    $mail = new NewsletterMessage(draftLetter(), null, test: true);
+
+    $mail->assertSeeInHtml('/newsletter/desinscription-essai?signature=');
+    $mail->assertDontSeeInHtml('le lien personnel est ajouté');
+    expect($mail->headers()->text['List-Unsubscribe'])->toContain('/newsletter/desinscription-essai');
+
+    $url = URL::signedRoute('newsletter.unsubscribe.test');
+    $this->get($url)->assertOk()->assertSee('Envoi d’essai')->assertSee('n’a désinscrit personne');
+    expect($active->refresh()->unsubscribed_at)->toBeNull();
+
+    // Sans signature valide, le lien est refusé.
+    $this->get(route('newsletter.unsubscribe.test'))->assertForbidden();
+});
+
+it('unsubscribes the subscriber from the personal link of a real message', function () {
+    $sub = subscriber('vrai@exemple.test');
+    $mail = new NewsletterMessage(draftLetter(), $sub);
+    preg_match('#href="([^"]*desinscription/'.$sub->id.'[^"]*)"#', $mail->render(), $match);
+
+    $this->get(html_entity_decode($match[1]))->assertOk()->assertSee('Désinscription effectuée');
+    expect($sub->refresh()->unsubscribed_at)->not->toBeNull();
+});

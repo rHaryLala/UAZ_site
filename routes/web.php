@@ -97,6 +97,8 @@ $publicRoutes = function (): void {
     // Newsletter : abonnement immédiat (JSON, depuis la fenêtre du site) et désinscription par lien signé.
     Route::post('/newsletter', [NewsletterController::class, 'subscribe'])->middleware('throttle:6,1')->name('newsletter.subscribe');
     Route::get('/newsletter/desinscription/{subscriber}', [NewsletterController::class, 'unsubscribe'])->middleware('signed')->name('newsletter.unsubscribe');
+    // Envoi d'essai : le lien du pied de page mène ici (il fonctionne, mais ne désinscrit personne).
+    Route::get('/newsletter/desinscription-essai', [NewsletterController::class, 'unsubscribeTest'])->middleware('signed')->name('newsletter.unsubscribe.test');
     Route::get('/recherche', SearchController::class)->name('search');
     Route::get('/recherche/apercu', SearchPreviewController::class)->middleware('throttle:60,1')->name('search.preview');
 

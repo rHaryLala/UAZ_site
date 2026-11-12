@@ -42,6 +42,15 @@ class NewsletterController extends Controller
         return response()->json(['message' => $message]);
     }
 
+    /** Le lien de désinscription d'un envoi d'essai : la page que verrait un abonné, sans rien modifier (l'essai part vers une adresse de test, pas vers un abonné). */
+    public function unsubscribeTest(): View
+    {
+        return view('newsletter.status', [
+            'title' => 'Envoi d’essai : le lien fonctionne',
+            'text' => 'Dans un vrai envoi, ce lien est personnel : il retire l’abonné de la newsletter en un clic. Cet essai n’a désinscrit personne.',
+        ]);
+    }
+
     public function unsubscribe(NewsletterSubscriber $subscriber): View
     {
         $subscriber->forceFill(['unsubscribed_at' => $subscriber->unsubscribed_at ?? now()])->save();

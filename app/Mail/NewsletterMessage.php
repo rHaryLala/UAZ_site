@@ -89,7 +89,12 @@ class NewsletterMessage extends Mailable
 
     private function unsubscribeUrl(): ?string
     {
-        return $this->subscriber ? URL::signedRoute('newsletter.unsubscribe', ['subscriber' => $this->subscriber]) : null;
+        if ($this->subscriber) {
+            return URL::signedRoute('newsletter.unsubscribe', ['subscriber' => $this->subscriber]);
+        }
+
+        // Envoi d'essai : un lien qui marche, sans désinscrire personne.
+        return $this->test ? URL::signedRoute('newsletter.unsubscribe.test') : null;
     }
 
     public function envelope(): Envelope
