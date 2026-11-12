@@ -233,6 +233,8 @@ php artisan icons:cache 2>/dev/null || true
 Pour **régénérer** les images (par exemple pour ajouter l'AVIF après un import) :
 `php artisan media-library:regenerate --only-missing`.
 
+**Photos du site actuel** (formations, domaines, projets, pages sans image) : `php artisan media:import-site-images` une fois par serveur (voir D-068). Rejouable, sans écraser les images déjà choisies ; `--dry-run` pour simuler. Compter plusieurs minutes.
+
 ## 7. Sauvegardes
 
 Script fourni : `scripts/backup.sh` (base + médias, rotation, copie distante facultative).

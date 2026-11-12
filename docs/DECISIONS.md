@@ -522,3 +522,15 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 2. **Icônes normalisées :** `scripts/build-newsletter-icons.mjs` mesure la zone réellement dessinée de chaque icône puis la met à l'échelle et la centre pour que sa plus grande dimension visible soit celle d'Instagram. Dans l'en-tête, toutes mesurent 22 px (20 px sur mobile) avec le même écart de 10 px (6 px sur mobile) : plus de réduction selon la place, les éléments s'empilent s'il n'y a pas assez de largeur.
 3. **Structure du message avec images jointes (envoi en local) :** « texte brut OU (HTML + ses images) », images sans nom de fichier ni disposition « attachment ». Symfony range par défaut les images à côté du bloc texte/HTML, ce qui fait lister les images comme des pièces jointes par Gmail ; le message est donc assemblé à la main (`NewsletterMessage`). Sur un site public les images ne sont pas jointes du tout (D-066).
 **Tests :** `NewsletterEditorTest` (structure du message, absence de nom de fichier), `NewsletterHeaderTest`.
+
+## D-068 · Photos du site actuel (zurcher.edu.mg) pour les contenus sans image (12 novembre 2026)
+
+**Constat :** côté public, les sept cartes de formation, les quatre panneaux de domaines de l'accueil, les deux projets à soutenir et quatorze pages n'avaient aucune image (silhouette de Madagascar à la place).
+**Décisions :**
+1. **Commande `php artisan media:import-site-images`** (`ImportSiteImages`) : télécharge 22 photos choisies sur le site actuel, les range dans la médiathèque (titre, texte alternatif, crédit « Université Adventiste Zurcher ») et les place sur les contenus listés dans la commande. Options : `--dry-run` (simulation), `--only=texte` (une seule photo), `--from=adresse`.
+2. **Jamais d'écrasement :** un contenu qui a déjà une image n'est pas touché. La commande est **rejouable** : une photo déjà importée (table `import_records`, source `site-image`) n'est pas retéléchargée.
+3. **Textes alternatifs fidèles à l'image** : les noms de fichiers du site actuel ne le sont pas toujours (`dortoir-r2-chantier.jpg` montre une allée du campus, `cafeteria-buffet.jpg` une cuisine). Les photos ont été contrôlées une à une.
+4. **Attributions :** formations (7), domaines (4), projets (2), pages Admissions, Système LMD, Frais, Téléchargements, Vie étudiante, Cafétéria, Dortoirs, Association des étudiants, Centre de recherche, Emplois du temps, Culte d'ouverture ; l'image de partage par défaut (Réglages) reçoit la photo des diplômés.
+5. **Volontairement laissé de côté :** les témoignages vidéo (marqués « TODO-CONTENU », la photo de Kerena Ranoarilalao du site actuel ne correspond à aucun d'eux), les deux articles sans lien avec une photo (offre d'emploi, discours à la chapelle), l'accueil, « À propos » et « Confidentialité » (déjà illustrés ou sans besoin).
+**Déploiement :** la commande est à lancer une fois sur chaque serveur (`php artisan media:import-site-images`) : les photos vivent dans la médiathèque (base et `storage`), pas dans Git. Compter plusieurs minutes (conversions WebP/AVIF).
+**Tests :** `ImportSiteImagesTest` (import, pas d'écrasement, une seule fois, simulation, site injoignable).
