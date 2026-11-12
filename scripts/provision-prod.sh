@@ -37,7 +37,7 @@ warn() { printf '  \033[33m!\033[0m %s\n' "$*"; }
 die()  { printf '\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
 
 [ "$(id -u)" -eq 0 ] || die "À lancer en root (sudo)."
-as_web()  { runuser -u www-data -- "$@"; }
+as_web()  { runuser -u www-data -- env HOME=/tmp "$@"; }   # www-data a /var/www pour répertoire personnel, non modifiable : HOME temporaire (PsySH, Composer…)
 artisan() { (cd "$APP_DIR" && as_web php artisan "$@"); }
 set_env() { local f="$APP_DIR/.env"; sed -i "/^$1=/d" "$f"; printf '%s=%s\n' "$1" "$2" >> "$f"; }
 reload_nginx() { nginx -t && systemctl reload nginx; }
@@ -248,22 +248,33 @@ SQL
     if [ -f "$APP_DIR/storage/.data-imported" ]; then
         ok "contenu déjà importé (ignoré : la base de production n'est jamais écrasée)"
     else
-        [ -n "${ADMIN_EMAIL:-}" ] || die "ADMIN_EMAIL est requis à la première installation (adresse du compte administrateur)."
         # Le dossier de préparation est dans le répertoire personnel (illisible par www-data) : copie temporaire dans le site.
         cp "$STAGE/database.sqlite" "$APP_DIR/storage/import.sqlite" && chown www-data:www-data "$APP_DIR/storage/import.sqlite"
         artisan db:import-sqlite "$APP_DIR/storage/import.sqlite" --no-interaction || { rm -f "$APP_DIR/storage/import.sqlite"; die "import de la base interrompu (voir ci-dessus) ; « prepare » peut être relancé"; }
         rm -f "$APP_DIR/storage/import.sqlite"
         tar -xf "$STAGE/storage-public.tar" -C "$APP_DIR/storage/app"
         chown -R www-data:www-data "$APP_DIR/storage/app/public"
-        ADMIN_PASS="$(openssl rand -base64 18 | tr -d '/+=\n')"
-        (cd "$APP_DIR" && as_web env ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASS="$ADMIN_PASS" php artisan tinker --execute='
-            $u = App\Models\User::role("super-admin")->orderBy("id")->first() ?? App\Models\User::orderBy("id")->first();
-            $u->forceFill(["email" => getenv("ADMIN_EMAIL"), "name" => "Administrateur UAZ", "password" => Illuminate\Support\Facades\Hash::make(getenv("ADMIN_PASS"))])->save();
-            echo "compte administrateur : ".$u->email.PHP_EOL;')
-        printf '%s / %s\n' "$ADMIN_EMAIL" "$ADMIN_PASS" > "$SECRETS_DIR/admin-login"; chmod 600 "$SECRETS_DIR/admin-login"
         as_web touch "$APP_DIR/storage/.data-imported"
         rm -f "$STAGE/database.sqlite"   # la base de développement (comptes, messages d'essai) ne reste pas sur le serveur
         ok "contenu et médias importés ; fichier SQLite supprimé"
+    fi
+
+    # Compte administrateur : étape à part (relançable seule). Le premier compte super-admin reprend l'adresse donnée.
+    if [ -f "$SECRETS_DIR/admin-login" ]; then
+        ok "compte administrateur déjà créé (identifiants dans $SECRETS_DIR/admin-login)"
+    else
+        [ -n "${ADMIN_EMAIL:-}" ] || die "ADMIN_EMAIL est requis pour créer le compte administrateur : sudo ADMIN_EMAIL=vous@exemple.mg bash $(basename "$0") prepare"
+        ADMIN_PASS="$(openssl rand -base64 18 | tr -d '/+=\n')"
+        (cd "$APP_DIR" && as_web env ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASS="$ADMIN_PASS" php -r '
+            require "vendor/autoload.php";
+            $app = require "bootstrap/app.php";
+            $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+            $u = App\Models\User::role("super-admin")->orderBy("id")->first() ?? App\Models\User::orderBy("id")->first();
+            if (! $u) { fwrite(STDERR, "aucun compte à promouvoir\n"); exit(1); }
+            $u->forceFill(["email" => getenv("ADMIN_EMAIL"), "name" => "Administrateur UAZ", "password" => Illuminate\Support\Facades\Hash::make(getenv("ADMIN_PASS"))])->save();
+            echo "  compte administrateur : ".$u->email." (rôles : ".$u->getRoleNames()->implode(", ").")".PHP_EOL;') || die "création du compte administrateur impossible"
+        printf '%s / %s\n' "$ADMIN_EMAIL" "$ADMIN_PASS" > "$SECRETS_DIR/admin-login"; chmod 600 "$SECRETS_DIR/admin-login"
+        ok "identifiants écrits dans $SECRETS_DIR/admin-login"
     fi
     artisan optimize:clear
     artisan optimize
