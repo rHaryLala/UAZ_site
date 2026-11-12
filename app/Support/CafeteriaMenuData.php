@@ -4,14 +4,17 @@ namespace App\Support;
 
 /**
  * Les trois premiers menus de la cafétéria (documents « MENU CAFETERIA UAZ : 1, 2 et 3 » fournis par l'UAZ), à compter de la semaine du
- * mardi 10 novembre 2026. Ils vivent ensuite dans le back-office (Cafétéria › Menus de la semaine) : cette classe ne sert qu'à les installer
+ * dimanche 8 novembre 2026. Ils vivent ensuite dans le back-office (Cafétéria › Menus de la semaine) : cette classe ne sert qu'à les installer
  * (migration), jamais à les réécrire.
  *
  * Intitulés repris tels quels ; seules les fautes de frappe évidentes sont corrigées (« Sauted » → « Sautéed », « mouse » → « mousse »,
  * « Gros poids » → « Gros pois », « aill+ » → « ail + », « Tamarrin » → « tamarin », « canelle » → « cannelle », mots tout en capitales).
  * Les plats malgaches et les intitulés en anglais sont conservés dans leur langue d'origine.
  *
- * Chaque semaine : sept jours (du mardi au lundi), chacun avec « morning », « noon » et « evening ».
+ * Les documents de l'UAZ sont écrits du mardi au lundi ; le site, lui, commence la semaine le dimanche et la termine le samedi. Chaque menu est donc
+ * transcrit ci-dessous tel que le document (mardi → lundi), puis remis dans l'ordre dimanche → samedi : chaque plat garde son jour de la semaine.
+ *
+ * Chaque semaine : sept jours (du dimanche au samedi), chacun avec « morning », « noon » et « evening ».
  */
 final class CafeteriaMenuData
 {
@@ -19,10 +22,22 @@ final class CafeteriaMenuData
     public static function weeks(): array
     {
         return [
-            ['starts_on' => '2026-11-10', 'meals' => self::menu1()],
-            ['starts_on' => '2026-11-17', 'meals' => self::menu2()],
-            ['starts_on' => '2026-11-24', 'meals' => self::menu3()],
+            ['starts_on' => '2026-11-08', 'meals' => self::sundayFirst(self::menu1())],
+            ['starts_on' => '2026-11-15', 'meals' => self::sundayFirst(self::menu2())],
+            ['starts_on' => '2026-11-22', 'meals' => self::sundayFirst(self::menu3())],
         ];
+    }
+
+    /**
+     * Remet les sept jours d'un menu écrit « mardi → lundi » dans l'ordre « dimanche → samedi ».
+     *
+     * @param  list<array{morning: list<string>, noon: list<string>, evening: list<string>}>  $tuesdayFirst
+     * @return list<array{morning: list<string>, noon: list<string>, evening: list<string>}>
+     */
+    private static function sundayFirst(array $tuesdayFirst): array
+    {
+        // mardi, mercredi, jeudi, vendredi, samedi, dimanche, lundi  →  dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi
+        return array_map(fn (int $i) => $tuesdayFirst[$i], [5, 6, 0, 1, 2, 3, 4]);
     }
 
     /** @return list<array{morning: list<string>, noon: list<string>, evening: list<string>}> */

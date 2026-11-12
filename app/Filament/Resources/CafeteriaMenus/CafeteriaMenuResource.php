@@ -72,7 +72,7 @@ class CafeteriaMenuResource extends Resource
                 DatePicker::make('starts_on')->label('Premier jour de la semaine')->native(false)->displayFormat('d/m/Y')->required()->live()
                     ->unique(ignoreRecord: true)
                     ->default(fn () => self::nextWeekStart())
-                    ->helperText('Les menus de l\'UAZ vont du mardi au lundi : choisissez le mardi. Une semaine = sept jours à partir de cette date.')
+                    ->helperText('La semaine va du dimanche au samedi : choisissez le dimanche. Une semaine = sept jours à partir de cette date.')
                     ->validationMessages(['unique' => 'Il y a déjà un menu pour cette semaine : modifiez-le ou choisissez une autre date.']),
                 Toggle::make('is_active')->label('Affiché sur le site')->default(true)
                     ->helperText('Seuls la semaine en cours et les semaines à venir apparaissent sur la page Cafétéria.'),
@@ -136,7 +136,7 @@ class CafeteriaMenuResource extends Resource
             });
     }
 
-    /** Libellé d'un onglet : « mardi 10 nov. », ou « Jour 1 » tant que la date n'est pas choisie. */
+    /** Libellé d'un onglet : « dimanche 8 nov. », ou « Jour 1 » tant que la date n'est pas choisie. */
     public static function dayLabel(mixed $startsOn, int $index): string
     {
         if (blank($startsOn)) {
@@ -150,12 +150,12 @@ class CafeteriaMenuResource extends Resource
         }
     }
 
-    /** Semaine suivant le dernier menu enregistré (sinon, le prochain mardi). */
+    /** Semaine suivant le dernier menu enregistré (sinon, le prochain dimanche). */
     public static function nextWeekStart(): string
     {
         $last = CafeteriaMenu::query()->max('starts_on');
 
-        return $last ? Carbon::parse($last)->addWeek()->toDateString() : Carbon::today()->next(Carbon::TUESDAY)->toDateString();
+        return $last ? Carbon::parse($last)->addWeek()->toDateString() : Carbon::today()->next(Carbon::SUNDAY)->toDateString();
     }
 
     public static function period(CafeteriaMenu $menu): string

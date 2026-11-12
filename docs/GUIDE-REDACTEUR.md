@@ -311,7 +311,7 @@ Le menu de la semaine s'affiche sur la page **Cafétéria** (Vie étudiante), so
 
 **Où :** menu de gauche → **Contenus** → **Menus de la cafétéria**.
 
-- **Nouveau menu** : choisissez le **premier jour de la semaine** (les menus de l'UAZ vont du **mardi au lundi** : prenez le mardi). Le site propose
+- **Nouveau menu** : choisissez le **premier jour de la semaine** (la semaine va du **dimanche au samedi** : prenez le dimanche). Le site propose
   d'office la semaine qui suit le dernier menu enregistré. Une seule fiche par semaine.
 - **Repas de la semaine** : un onglet par jour (le nom et la date du jour sont affichés d'après la date choisie). Dans chaque case, écrivez **un plat par
   ligne**, comme sur le menu papier. Un repas laissé vide s'affiche par un tiret.
