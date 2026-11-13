@@ -102,3 +102,9 @@ it('offers the glasses-reflection and deblur corrections, in the page and in the
         ->toContain('uniform float uDeflou')->toContain('vec3 flou9(')
         ->and($workshop)->toContain('refletLunettes: 0')->toContain('defloutage: 0')->toContain('function majVisage(');
 });
+
+it('shows the photo exactly as it is until a setting is changed', function () {
+    $engine = file_get_contents(public_path('js/admin/retouche/moteur.js'));
+
+    expect($engine)->toContain('uniform int uNeutre')->toContain('function estNeutre(')->toContain('uNeutre == 1');
+});

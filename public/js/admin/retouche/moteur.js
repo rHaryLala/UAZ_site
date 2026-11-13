@@ -63,6 +63,7 @@ uniform float uReflet;        // 0..1 : force de la correction des reflets bleus
 uniform vec4 uVisage;         // boite du visage dans la source (UV : x0, y0, x1, y1) ; x1 <= x0 : aucun visage trouve
 uniform float uDeflou;        // 0..1 : force du defloutage
 uniform float uDeflouRayon;   // rayon du flou a corriger, en pixels de la photo
+uniform int uNeutre;          // 1 : aucun reglage, la photo s'affiche telle quelle (ni courbe, ni compression des hautes lumieres)
 uniform int uVoirMasque, uExport;
 uniform vec3 uFondVue;
 // masques : zone (canal de uCalquesA / uCalquesB, degrade) et reglages locaux
@@ -252,6 +253,7 @@ void main() {
 	vec2 st = vec2(length(vec2(dFdx(q).x, dFdy(q).x)), length(vec2(dFdx(q).y, dFdy(q).y)));
 	vec3 brut = echantillon(q, st);
 	if (uAvant >= 0.0 && o.x < uAvant) { sortie = vec4(brut, 1.0); return; }
+	if (uNeutre == 1 && uVoirMasque == 0 && uMVoir < 0) { sortie = vec4(brut, 1.0); return; }
 
 	vec4 mk = texture(uMasque, q);
 
@@ -439,7 +441,18 @@ void main() {
 
 	/* Couleur du virage partiel : la teinte (degres) a pleine saturation, sans
 	   sa luminance (elle colore sans eclaircir), a l echelle de la force. */
-	function virage(teinte, force) {
+	/** Vrai quand la photo n'a aucun reglage : on l'affiche alors telle qu'elle est (la chaine de developpement, avec sa courbe, sa compression des hautes
+ *  lumieres et son neutre des tons clairs, ne la modifierait pas beaucoup mais la modifierait quand meme : un blanc pur deviendrait gris clair). */
+const CLES_NEUTRES = ['exposition', 'contraste', 'hautesLumieres', 'ombres', 'blancs', 'noirs', 'temperature', 'teinte', 'vibrance', 'saturation',
+	'clarte', 'nettete', 'lissage', 'vignette', 'refletLunettes', 'defloutage', 'peauTemperature', 'peauTeinte', 'peauSaturation', 'peauLuminosite', 'virageOS', 'virageHS'];
+function estNeutre(r, filtreActif, modeFond) {
+	if (filtreActif || modeFond !== 0) { return false; }
+	if (r.masques && r.masques.length) { return false; }
+	if (CLES_NEUTRES.some((k) => r[k])) { return false; }
+	return !Object.keys(r.tsl || {}).some((k) => (r.tsl[k] || []).some((v) => v));
+}
+
+function virage(teinte, force) {
 		if (!force) { return [0, 0, 0]; }
 		const h = ((((teinte || 0) % 360) + 360) % 360) / 60, x = 1 - Math.abs((h % 2) - 1);
 		const c = h < 1 ? [1, x, 0] : h < 2 ? [x, 1, 0] : h < 3 ? [0, 1, x] : h < 4 ? [0, x, 1] : h < 5 ? [x, 0, 1] : [1, 0, x];
@@ -695,6 +708,7 @@ void main() {
 				gl.uniform1f(U.uRatioSrc, source.w / source.h);
 				gl.uniform1f(U.uAvant, opts.avant == null ? -1 : opts.avant);
 				gl.uniform1i(U.uVoirMasque, opts.voirMasque ? 1 : 0);
+				gl.uniform1i(U.uNeutre, estNeutre(r, filtreActif, mode) ? 1 : 0);
 				gl.uniform1i(U.uExport, opts.export ? 1 : 0);
 				gl.uniform1f(U.uBiais, opts.export ? -0.45 : -0.2);
 				const fv = opts.fondVue || [0.14, 0.14, 0.15];
