@@ -1126,17 +1126,50 @@ summary.rp-volet__titre:focus-visible { outline: 2px solid rgb(var(--c-accent));
     .rp-btn--outil span { display: none; }
     .rp-btn--outil { width: 34px; padding: 0; }
 }
+/* --- Téléphone et petite tablette ------------------------------------------------------------------------------------------------
+   L'aperçu de la photo reste FIXE en haut de l'écran (avec sa barre d'outils et la pellicule) ; seuls les réglages défilent en dessous, dans leur
+   propre zone : on voit toujours l'effet d'un curseur. En téléphone tenu en travers (peu de hauteur), l'aperçu passe à gauche et les réglages à droite. */
 @media (max-width: 860px) {
-    .rp-hote { overflow-y: auto; display: block; }
-    .rp-app { grid-template-columns: minmax(0, 1fr); }
-    .rp-centre { height: min(72vh, 620px); }
-    .rp-panneau { overflow: visible; border-left: 0; border-top: 1px solid rgb(var(--c-line)); }
-    .rp-pellicule { flex-direction: column; align-items: stretch; }
-    .rp-pellicule__actions { flex-direction: row; flex-wrap: wrap; }
-    .rp-barre .rp-btn--primaire span { display: none; }
-    .rp-barre .rp-btn--primaire { width: 34px; padding: 0; }
+    .rp-page { height: 100vh; height: 100dvh; }
+    .rp-haut { height: 46px; padding: 0 10px; gap: 10px; }
+    .rp-haut__lien span, .rp-haut__retour span { display: none; }
+    .rp-hote { overflow: hidden; display: flex; }
+    .rp-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 50%) minmax(0, 1fr); }
+    .rp-centre { height: auto; min-height: 0; }
+    .rp-panneau { overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; border-left: 0; border-top: 2px solid rgb(var(--c-accent) / .55); padding-bottom: env(safe-area-inset-bottom); }
+    /* barre d'outils : une seule ligne qui défile sur le côté, jamais sur deux lignes qui mangent l'aperçu */
+    .rp-barre { flex-wrap: nowrap; overflow-x: auto; gap: 4px; padding: 6px 8px; scrollbar-width: none; }
+    .rp-barre::-webkit-scrollbar { display: none; }
+    .rp-barre > * { flex: none; }
+    .rp-barre .rp-btn { min-height: 38px; }
+    .rp-barre .rp-btn--primaire span, .rp-barre #rpAjouter span { display: none; }
+    .rp-barre .rp-btn--primaire, .rp-barre #rpAjouter { width: 38px; padding: 0; }
+    .rp-barre__espace { flex: 1 0 8px; }
     .rp-zoom__val { display: none; }
+    /* pellicule : une bande de miniatures, ses actions en icônes */
+    .rp-pellicule { flex-direction: row; align-items: center; gap: 8px; padding: 6px 8px; }
+    .rp-pellicule__liste { min-width: 0; }
+    .rp-pellicule__actions { flex-direction: row; flex: none; flex-wrap: nowrap; gap: 4px; }
+    .rp-pellicule__actions .rp-btn { font-size: 0; width: 38px; min-height: 38px; padding: 0; }
+    .rp-pellicule__actions .rp-btn i { font-size: 15px; }
+    .rp-pellicule__pied { flex-direction: column; align-items: flex-end; gap: 2px; }
+    .rp-sauve span { display: none; }
+    .rp-vignette { width: 52px; min-width: 52px; }
+    /* panneau : cibles tactiles confortables, une colonne */
+    .rp-bloc--histo { padding: 8px 12px 6px; }
+    .rp-histo { height: 56px; }
+    .rp-volet__titre { min-height: 44px; }
+    .rp-curseur__piste { min-height: 28px; }
+    .rp-panneau .rp-btn, .rp-panneau select, .rp-panneau input[type="text"] { min-height: 40px; }
     .rp-filigrane__place { grid-template-columns: 156px minmax(0, 1fr); }
+}
+@media (max-width: 860px) and (orientation: landscape) and (max-height: 560px) {
+    .rp-app { grid-template-columns: minmax(0, 56%) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+    .rp-panneau { border-top: 0; border-left: 2px solid rgb(var(--c-accent) / .55); }
+}
+@media (max-width: 480px) {
+    .rp-haut__titre { font-size: 14px; }
+    .rp-barre .rp-btn { min-width: 38px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
