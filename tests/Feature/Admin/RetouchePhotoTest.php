@@ -74,3 +74,20 @@ it('ships a sharper pipeline: output-scale sharpening, bicubic magnification and
     expect($engine)->toContain('vec3 echantillon(vec2 q, vec2 st)')->toContain('uniform float uBiais')->toContain('Catmull-Rom')
         ->and($workshop)->toContain('function netteteSortie(')->toContain('NETTETE_SORTIE');
 });
+
+it('renders the workshop page without leaking any template code, and with every control of the original', function () {
+    $html = $this->actingAs($this->editor)->get(route('admin.retouche.index'))->assertOk()->getContent();
+
+    // Aucun morceau de Blade ou de PHP ne doit apparaître dans la page (la conversion depuis registrar en avait laissé dans « Couleur par teinte »).
+    foreach (['@php', '@foreach', '@endforeach', '@if', '@endif', '@else', '$rp', '$nom', '$hex', '$cle', '<?', '?>', '{{', '{!!'] as $leak) {
+        expect($html)->not->toContain($leak, "fuite de code : {$leak}");
+    }
+
+    // Les huit teintes, les curseurs de teinte, les fonds de studio, les huit grilles et les formats de cadrage sont bien là.
+    expect(substr_count($html, 'name="rpTeinte"'))->toBe(8)
+        ->and($html)->toContain('id="rp-tslT"')->toContain('id="rp-tslS"')->toContain('id="rp-tslL"')
+        ->and(substr_count($html, 'data-fond-studio='))->toBe(8)
+        ->and(substr_count($html, 'name="rpGrille"'))->toBe(8)
+        ->and(substr_count($html, 'name="rpFormat"'))->toBeGreaterThanOrEqual(13)
+        ->and($html)->toContain('Rouges')->toContain('Magentas');
+});

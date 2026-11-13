@@ -559,11 +559,9 @@ $logoUrl = asset('images/uaz-seal-384.png');
 									<summary class="rp-volet__titre">Couleur par teinte</summary>
 									<div class="rp-volet__corps">
 										<div class="rp-teintes" role="radiogroup" aria-label="Teinte à régler">
-											@php($premier = true)
-@foreach ($rpTeintes as $cle => [$nom, $hex])
-											<label class="rp-teinte" title="{!! $nom !!}"><input type="radio" name="rpTeinte" value="{!! $cle !!}" {!! $premier ? 'checked' : '' !!}><span style="--rp-teinte: {!! $hex !!}" aria-hidden="true"></span><span class="rp-visuel-masque">{!! $nom !!}</span></label>
-											@php($premier = false)
-@endforeach
+											@foreach ($rpTeintes as $cle => $teinte)
+											<label class="rp-teinte" title="{{ $teinte[0] }}"><input type="radio" name="rpTeinte" value="{{ $cle }}" {{ $loop->first ? 'checked' : '' }}><span style="--rp-teinte: {{ $teinte[1] }}" aria-hidden="true"></span><span class="rp-visuel-masque">{{ $teinte[0] }}</span></label>
+											@endforeach
 										</div>
 										<p class="rp-libelle rp-libelle--groupe" id="rpTeinteNom">Rouges</p>
 										@php $rpCurseur(['tslT', 'Teinte', -100, 100, 1, '']); @endphp
