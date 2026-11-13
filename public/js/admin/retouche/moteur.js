@@ -354,7 +354,7 @@ void main() {
 		float yp = pow(y, 1.0 / 2.2);
 		lin *= exp2(cl * 0.7 * d * 4.0 * yp * (1.0 - yp));
 	}
-	// Hautes lumieres ecretees a la prise de vue : leur couleur est perdue, la
+	// Hautes lumieres blanches ecretees a la prise de vue : leur couleur est perdue, la
 	// balance des blancs les teinterait (un chemisier blanc virerait au lilas).
 	// Elles tendent vers le neutre, comme dans un logiciel de developpement.
 	vec3 lw = lin * uGains * uExpo;
@@ -365,7 +365,8 @@ void main() {
 		float yl = luma(lw);
 		lw = max(vec3(0.0), yl + (lw - yl) * (1.0 + uPeauSat * mk.g));
 	}
-	float ecrete = smoothstep(0.955, 0.998, max(brut.r, max(brut.g, brut.b)));
+	// Seulement si la couleur est presque blanche (les trois canaux hauts) : un t-shirt bleu vif dont le seul canal bleu est sature garde sa couleur.
+	float ecrete = smoothstep(0.955, 0.998, max(brut.r, max(brut.g, brut.b))) * smoothstep(0.62, 0.9, min(brut.r, min(brut.g, brut.b)));
 	// sauf sur la peau : une joue surexposee deviendrait une tache grise
 	if (uMasqueOk == 1) { ecrete *= 1.0 - smoothstep(0.1, 0.6, mk.g); }
 	lw = mix(lw, vec3(luma(lw)), ecrete * 0.9);
