@@ -91,3 +91,14 @@ it('renders the workshop page without leaking any template code, and with every 
         ->and(substr_count($html, 'name="rpFormat"'))->toBeGreaterThanOrEqual(13)
         ->and($html)->toContain('Rouges')->toContain('Magentas');
 });
+
+it('offers the glasses-reflection and deblur corrections, in the page and in the shader', function () {
+    $html = $this->actingAs($this->editor)->get(route('admin.retouche.index'))->assertOk()->getContent();
+    $engine = file_get_contents(public_path('js/admin/retouche/moteur.js'));
+    $workshop = file_get_contents(public_path('js/admin/retouche/atelier.js'));
+
+    expect($html)->toContain('data-reglage="refletLunettes"')->toContain('data-reglage="defloutage"')->toContain('data-reglage="defloutageRayon"')
+        ->and($engine)->toContain('uniform float uReflet')->toContain('uniform vec4 uVisage')->toContain('definirVisage(')
+        ->toContain('uniform float uDeflou')->toContain('vec3 flou9(')
+        ->and($workshop)->toContain('refletLunettes: 0')->toContain('defloutage: 0')->toContain('function majVisage(');
+});

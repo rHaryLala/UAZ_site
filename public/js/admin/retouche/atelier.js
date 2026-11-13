@@ -63,7 +63,7 @@
 	   Tout confier a la balance globale bleuissait le reste : sur la photo
 	   modele, le chemisier rose virait au lilas. */
 	const PART_GLOBALE = 0.6;
-	const STUDIO_TONS = { contraste: 20, hautesLumieres: 0, ombres: 10, blancs: 32, noirs: -60, vibrance: 4, saturation: -4, clarte: 4, nettete: 32, lissage: 18, vignette: 0, virageOT: 225, virageOS: 30, virageHT: 35, virageHS: 8 };
+	const STUDIO_TONS = { contraste: 20, hautesLumieres: 0, ombres: 10, blancs: 32, noirs: -60, vibrance: 4, saturation: -4, clarte: 4, nettete: 32, lissage: 18, vignette: 0, refletLunettes: 70, virageOT: 225, virageOS: 30, virageHT: 35, virageHS: 8 };
 
 	const TSL_CLES = M.TSL_ORDRE;
 	const TEINTES_NOMS = { rouge: 'Rouges', orange: 'Oranges', jaune: 'Jaunes', vert: 'Verts', aqua: 'Turquoises', bleu: 'Bleus', violet: 'Violets', magenta: 'Magentas' };
@@ -112,7 +112,7 @@
 		return {
 			exposition: 0, contraste: 0, hautesLumieres: 0, ombres: 0, blancs: 0, noirs: 0,
 			temperature: 0, teinte: 0, vibrance: 0, saturation: 0,
-			clarte: 0, nettete: 0, lissage: 0, vignette: 0,
+			clarte: 0, nettete: 0, lissage: 0, vignette: 0, refletLunettes: 0, defloutage: 0, defloutageRayon: 2,
 			virageOT: 220, virageOS: 0, virageHT: 40, virageHS: 0,
 			peauTemperature: 0, peauTeinte: 0, peauSaturation: 0, peauLuminosite: 0,
 			tsl,
@@ -232,6 +232,7 @@
 		quitterModes();
 		active = photo;
 		moteur.source(photo.image);
+		moteur.definirVisage(null, 1, 1); // le visage d'une autre photo ne doit pas rester
 		if (!photo.t) { photo.t = D.travail(photo.image); photo.flou = D.textureFlou(photo.t); }
 		// corrections au pinceau reprises d'une seance precedente : a la taille de travail
 		if (photo.retouches && photo.retouches.length !== photo.t.w * photo.t.h) { photo.retouches = null; }
@@ -269,6 +270,13 @@
 		moteur.travail('premierPlan', photo.tex.premierPlan, w, h);
 		moteur.travail('fondFlou', photo.tex.fondFlou, w, h);
 		moteur.travail('masque', photo.tex.masque, w, h);
+		majVisage(photo);
+	}
+
+	/* Le visage detecte, donne au moteur pour la correction des reflets de lunettes. */
+	function majVisage(photo) {
+		const b = photo && photo.seg && (photo.seg.visageBoite || photo.seg.teteBoite || null);
+		moteur.definirVisage(b, photo.image.width, photo.image.height);
 	}
 
 	function retouchesPresentes(p) {
@@ -276,7 +284,7 @@
 		for (let i = 0; i < p.retouches.length; i += 7) { if (p.retouches[i] !== 128) { return true; } }
 		return false;
 	}
-	const besoinDetourage = (r) => r.fond.mode !== 'original' || r.lissage > 0
+	const besoinDetourage = (r) => r.fond.mode !== 'original' || r.lissage > 0 || r.refletLunettes > 0
 		|| !!(r.peauTemperature || r.peauTeinte || r.peauSaturation || r.peauLuminosite)
 		|| (r.masques || []).some((m) => m.actif !== false && ((TYPES_MASQUE[m.type] && TYPES_MASQUE[m.type].detourage) || !!m.limite));
 
@@ -495,7 +503,7 @@
 			ecrire(cle, v);
 			afficherValeur(bloc, v);
 			demanderRendu();
-			if ((cle === 'lissage' || cle.indexOf('peau') === 0) && v !== 0 && avant === 0) { assurerDetourage(active); }
+			if ((cle === 'lissage' || cle === 'refletLunettes' || cle.indexOf('peau') === 0) && v !== 0 && avant === 0) { assurerDetourage(active); }
 			if (cle.indexOf('peau') === 0 && active.reglages.teint) { active.reglages.teint = null; majPortrait(); }
 			if (cle.indexOf('m_') === 0) { majListeMasques(); if (cle === 'm_plume') { majPoignees(); } }
 			if (garder) { memoriser(); }

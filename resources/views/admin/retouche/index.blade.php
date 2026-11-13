@@ -41,9 +41,14 @@ $rpGroupes = [
 		['peauSaturation', 'Saturation', -100, 100, 1, ''],
 		['peauLuminosite', 'Luminosité', -100, 100, 1, ''],
 	],
+	'lunettes' => [
+		['refletLunettes', 'Reflets de lunettes', 0, 100, 1, ''],
+	],
 	'effets' => [
 		['clarte', 'Clarté', -100, 100, 1, ''],
 		['nettete', 'Netteté', 0, 100, 1, ''],
+		['defloutage', 'Défloutage', 0, 100, 1, ''],
+		['defloutageRayon', 'Taille du flou', 1, 6, 0.5, 'px'],
 		['vignette', 'Vignetage', -100, 100, 1, ''],
 	],
 ];
@@ -552,6 +557,9 @@ $logoUrl = asset('images/uaz-seal-384.png');
 										<p class="rp-libelle rp-libelle--groupe">Peau</p>
 										<p class="rp-aide">Ces réglages ne touchent que la peau, repérée par le détourage.</p>
 										@php foreach ($rpGroupes['portrait'] as $c) { $rpCurseur($c); } @endphp
+										<p class="rp-libelle rp-libelle--groupe">Lunettes</p>
+										<p class="rp-aide">Atténue le reflet bleu ou violet d'un écran dans les verres, dans la zone des yeux détectée. Le reste de la photo n'est pas touché.</p>
+										@php foreach ($rpGroupes['lunettes'] as $c) { $rpCurseur($c); } @endphp
 									</div>
 								</details>
 

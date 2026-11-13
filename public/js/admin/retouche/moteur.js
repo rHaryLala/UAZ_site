@@ -59,6 +59,10 @@ uniform int uFiltreActif;      // filtre (src/js/retouche-photo.filtres.js) : co
 uniform float uFiltreForce, uFiltreSat, uFiltreGrain, uGrainEchelle;
 uniform vec2 uTailleSortie;   // en pixels, pour un grain a l echelle de l export
 uniform float uBiais;         // biais de niveau de detail de la source : negatif = plus net (reduction)
+uniform float uReflet;        // 0..1 : force de la correction des reflets bleus des lunettes
+uniform vec4 uVisage;         // boite du visage dans la source (UV : x0, y0, x1, y1) ; x1 <= x0 : aucun visage trouve
+uniform float uDeflou;        // 0..1 : force du defloutage
+uniform float uDeflouRayon;   // rayon du flou a corriger, en pixels de la photo
 uniform int uVoirMasque, uExport;
 uniform vec3 uFondVue;
 // masques : zone (canal de uCalquesA / uCalquesB, degrade) et reglages locaux
@@ -197,6 +201,18 @@ float alphaMasque(vec4 m) {
 
 float bruit(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 
+// Flou gaussien 3 x 3 de pas r (en UV de la source), en lumiere lineaire, et bornes (min, max) du voisinage.
+vec3 flou9(vec2 q, vec2 r, out vec3 mn, out vec3 mx) {
+	vec3 c = s2l(textureLod(uSrc, q, 0.0).rgb);
+	vec3 a = s2l(textureLod(uSrc, q + vec2(r.x, 0.0), 0.0).rgb), b = s2l(textureLod(uSrc, q - vec2(r.x, 0.0), 0.0).rgb);
+	vec3 d = s2l(textureLod(uSrc, q + vec2(0.0, r.y), 0.0).rgb), e = s2l(textureLod(uSrc, q - vec2(0.0, r.y), 0.0).rgb);
+	vec3 f = s2l(textureLod(uSrc, q + r, 0.0).rgb), g = s2l(textureLod(uSrc, q - r, 0.0).rgb);
+	vec3 h = s2l(textureLod(uSrc, q + vec2(r.x, -r.y), 0.0).rgb), k = s2l(textureLod(uSrc, q + vec2(-r.x, r.y), 0.0).rgb);
+	mn = min(min(min(c, a), min(b, d)), min(min(e, f), min(g, min(h, k))));
+	mx = max(max(max(c, a), max(b, d)), max(max(e, f), max(g, max(h, k))));
+	return (c * 4.0 + (a + b + d + e) * 2.0 + f + g + h + k) / 16.0;
+}
+
 
 // Echantillon de la photo pour un pixel de SORTIE. Agrandissement (un pixel de sortie plus petit qu'un pixel de la source) : bicubique
 // (Catmull-Rom, 9 lectures) au lieu du bilineaire, nettement plus net. Reduction : filtre trilineaire avec un leger biais de nettete.
@@ -277,6 +293,23 @@ void main() {
 		float ecart = length(lin - L);
 		lin = mix(lin, L, uLissage * 0.72 * mk.g * (1.0 - smoothstep(0.06, 0.2, ecart)));
 	}
+	// Reflets bleus des lunettes : la lumiere d'un ecran se reflete dans les verres en bleu ou en violet. Dans la bande des yeux du visage detecte,
+	// les pixels dont le bleu l'emporte sur le rouge (la peau, meme rosee, les cheveux et l'iris brun ne le font pas) voient leur bleu ramene a la
+	// moyenne du rouge et du vert : le reflet devient neutre et chaud, la peau et le reste de l'image ne bougent pas.
+	if (uReflet > 0.0 && uVisage.z > uVisage.x) {
+		vec2 fc = (uVisage.xy + uVisage.zw) * 0.5;
+		vec2 fs = max((uVisage.zw - uVisage.xy) * 0.5, vec2(0.0001));
+		vec2 u = (q - fc) / fs;
+		float bande = smoothstep(-0.85, -0.65, u.y) * (1.0 - smoothstep(0.05, 0.30, u.y)) * (1.0 - smoothstep(0.95, 1.15, abs(u.x)));
+		if (bande > 0.0) {
+			float mx = max(brut.r, max(brut.g, brut.b));
+			float sur_rouge = smoothstep(0.82, 1.0, brut.b / max(brut.r, 0.001));
+			float sur_vert = smoothstep(0.03, 0.12, (brut.b - brut.g) / max(mx, 0.001));
+			float w = clamp(bande * sur_rouge * sur_vert * smoothstep(0.08, 0.25, mx) * uReflet * 1.15, 0.0, 1.0);
+			lin.b = mix(lin.b, min(lin.b, 0.5 * (lin.r + lin.g)), w);
+			lin.g = mix(lin.g, min(lin.g, lin.r), w); // le reflet tire aussi le vert : on garde un ton chaud, pas verdatre
+		}
+	}
 	float nt = uNettete + L3.z;
 	if (nt > 0.0) {
 		// Flou gaussien 3 x 3 d'un pixel de sortie : le detail est ce que la photo a de plus fin que ce flou.
@@ -292,6 +325,24 @@ void main() {
 	} else if (nt < 0.0) {
 		// netteté negative (masques seulement) : adoucit, vers le flou de la clarte
 		lin = mix(lin, s2l(texture(uFlou, q).rgb), min(1.0, -nt) * 0.6);
+	}
+	// Defloutage : la photo floue est la photo nette passee dans un flou ; on en retrouve une bonne part en rajoutant ce que ce flou a retire,
+	// a deux echelles (le rayon choisi et sa moitie). Trois garde-fous : les petits ecarts (grain, bruit) ne sont pas renforces, les gros contours
+	// non plus (pas de halo), et le resultat reste dans la fourchette des voisins du pixel (pas de liseré clair ou sombre).
+	if (uDeflou > 0.0) {
+		vec2 r1 = uDeflouRayon * uTexel;
+		vec3 mn1, mx1, mn2, mx2;
+		vec3 b1 = flou9(q, r1, mn1, mx1);
+		vec3 b2 = flou9(q, r1 * 0.5, mn2, mx2);
+		vec3 x0 = s2l(textureLod(uSrc, q, 0.0).rgb);
+		vec3 dd = 0.9 * (x0 - b1) + 1.1 * (x0 - b2);
+		float am = length(dd);
+		float poids = smoothstep(0.004, 0.025, am) * (1.0 - smoothstep(0.30, 0.80, am));
+		float menage = 1.0 - 0.45 * (uMasqueOk == 1 ? mk.g : 0.0);
+		vec3 cible = x0 + uDeflou * 2.8 * menage * poids * dd;
+		vec3 marge = 0.06 * (mx1 - mn1) + 0.002;
+		cible = clamp(cible, mn1 - marge, mx1 + marge);
+		lin = max(lin + (cible - x0), 0.0);
 	}
 	float cl = uClarte + L3.y;
 	if (cl != 0.0) {
@@ -466,6 +517,7 @@ void main() {
 		const maxTexture = gl.getParameter(gl.MAX_TEXTURE_SIZE);
 		let source = { w: 1, h: 1 };
 		let masqueOk = false;
+		let visage = new Float32Array([0, 0, 0, 0]);   // boite du visage (UV de la source), pour la correction des reflets de lunettes
 		let imageFond = null;
 
 		const moteur = {
@@ -511,6 +563,10 @@ void main() {
 				gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 				gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, y0, w, y1 - y0, gl.RGBA, gl.UNSIGNED_BYTE, donnees.subarray(y0 * w * 4, y1 * w * 4));
 			},
+			/** Boite du visage en pixels de la source ({ x0, y0, x1, y1 }) ; null : aucun visage trouve. */
+			definirVisage(b, largeur, hauteur) {
+				visage = b ? new Float32Array([b.x0 / largeur, b.y0 / hauteur, b.x1 / largeur, b.y1 / hauteur]) : new Float32Array([0, 0, 0, 0]);
+			},
 			oublierMasque() { masqueOk = false; pixel('uMasque', [255, 0, 128, 255]); },
 			imageFond(image) {
 				imageFond = image ? { w: image.width, h: image.height } : null;
@@ -548,6 +604,10 @@ void main() {
 				gl.uniform1f(U.uClarte, r.clarte / 100);
 				gl.uniform1f(U.uNettete, r.nettete / 100);
 				gl.uniform1f(U.uLissage, r.lissage / 100);
+				gl.uniform1f(U.uReflet, (r.refletLunettes || 0) / 100);
+				gl.uniform1f(U.uDeflou, (r.defloutage || 0) / 100);
+				gl.uniform1f(U.uDeflouRayon, r.defloutageRayon || 2);
+				gl.uniform4fv(U.uVisage, visage);
 				const tsl = new Float32Array(24);
 				let actif = 0;
 				TSL_ORDRE.forEach((nom, i) => {
