@@ -109,6 +109,6 @@ it('shows the photo exactly as it is until a setting is changed', function () {
     expect($engine)->toContain('uniform int uNeutre')->toContain('function estNeutre(')->toContain('uNeutre == 1');
 });
 
-it('only neutralises clipped highlights that are nearly white, so a vivid blue shirt keeps its colour', function () {
-    expect(file_get_contents(public_path('js/admin/retouche/moteur.js')))->toContain('smoothstep(0.62, 0.9, min(brut.r, min(brut.g, brut.b)))');
+it('only neutralises clipped highlights that are already nearly neutral, so a blue or pale blue shirt keeps its colour', function () {
+    expect(file_get_contents(public_path('js/admin/retouche/moteur.js')))->toContain('(mxb - mnb) / max(mxb, 0.001)');
 });

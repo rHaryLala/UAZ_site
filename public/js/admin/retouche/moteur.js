@@ -365,8 +365,10 @@ void main() {
 		float yl = luma(lw);
 		lw = max(vec3(0.0), yl + (lw - yl) * (1.0 + uPeauSat * mk.g));
 	}
-	// Seulement si la couleur est presque blanche (les trois canaux hauts) : un t-shirt bleu vif dont le seul canal bleu est sature garde sa couleur.
-	float ecrete = smoothstep(0.955, 0.998, max(brut.r, max(brut.g, brut.b))) * smoothstep(0.62, 0.9, min(brut.r, min(brut.g, brut.b)));
+	// Seulement si la couleur est deja presque neutre (blanc ecrete a dominante parasite) : un bleu pale, un cyan ou un jaune vifs, meme avec un canal
+	// sature, gardent leur couleur. Le critere est la saturation de la couleur d'origine, pas la valeur d'un seul canal.
+	float mxb = max(brut.r, max(brut.g, brut.b)), mnb = min(brut.r, min(brut.g, brut.b));
+	float ecrete = smoothstep(0.955, 0.998, mxb) * (1.0 - smoothstep(0.04, 0.13, (mxb - mnb) / max(mxb, 0.001)));
 	// sauf sur la peau : une joue surexposee deviendrait une tache grise
 	if (uMasqueOk == 1) { ecrete *= 1.0 - smoothstep(0.1, 0.6, mk.g); }
 	lw = mix(lw, vec3(luma(lw)), ecrete * 0.9);
