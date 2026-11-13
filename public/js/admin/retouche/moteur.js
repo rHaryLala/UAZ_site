@@ -365,6 +365,12 @@ void main() {
 		float yl = luma(lw);
 		lw = max(vec3(0.0), yl + (lw - yl) * (1.0 + uPeauSat * mk.g));
 	}
+	// La balance des blancs (refroidir une photo a dominante jaune) ne doit pas rendre bleu ce qui ne l'etait pas : des dents, un col blanc ou un mur
+	// aux canaux rouge et vert satures n'ont aucune information de couleur fiable, et le gain bleu les faisait virer au bleu par plaques. Un pixel qui
+	// n'etait pas bleu a l'origine et le devient est ramene vers le gris de meme luminance.
+	float versBleu = smoothstep(0.0, 0.08, (lw.b - max(lw.r, lw.g)) / max(lw.b, 0.001));
+	float dejaBleu = smoothstep(0.0, 0.06, (brut.b - max(brut.r, brut.g)) / max(max(brut.r, max(brut.g, brut.b)), 0.001));
+	lw = mix(lw, vec3(luma(lw)), versBleu * (1.0 - dejaBleu));
 	// Seulement si la couleur est deja presque neutre (blanc ecrete a dominante parasite) : un bleu pale, un cyan ou un jaune vifs, meme avec un canal
 	// sature, gardent leur couleur. Le critere est la saturation de la couleur d'origine, pas la valeur d'un seul canal.
 	float mxb = max(brut.r, max(brut.g, brut.b)), mnb = min(brut.r, min(brut.g, brut.b));

@@ -112,3 +112,8 @@ it('shows the photo exactly as it is until a setting is changed', function () {
 it('only neutralises clipped highlights that are already nearly neutral, so a blue or pale blue shirt keeps its colour', function () {
     expect(file_get_contents(public_path('js/admin/retouche/moteur.js')))->toContain('(mxb - mnb) / max(mxb, 0.001)');
 });
+
+it('keeps the white balance from turning a non-blue pixel blue (teeth, white collar, wall)', function () {
+    expect(file_get_contents(public_path('js/admin/retouche/moteur.js')))->toContain('float versBleu')->toContain('float dejaBleu')
+        ->toContain('lw = mix(lw, vec3(luma(lw)), versBleu * (1.0 - dejaBleu))');
+});
