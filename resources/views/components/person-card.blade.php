@@ -4,7 +4,7 @@
 <article {{ $attributes->class('ornament group relative isolate overflow-hidden bg-navy-900 text-white shadow-card transition-shadow duration-300 hover:shadow-lift focus-within:shadow-lift') }}>
     <div class="relative aspect-[4/5] overflow-hidden">
         @if ($member->photo)
-            <x-picture :asset="$member->photo" conversion="card" sizes="(min-width: 1280px) 20rem, (min-width: 640px) 30vw, 92vw" :eager="$eager"
+            <x-picture :asset="$member->photo" conversion="portrait" sizes="(min-width: 1280px) 20rem, (min-width: 640px) 30vw, 92vw" :eager="$eager"
                 class="size-full object-cover transition-transform duration-[400ms] ease-out group-hover:scale-105" />
         @else
             <x-madagascar class="absolute inset-y-6 right-[-12%] h-[85%] text-navy-700/70 transition-transform duration-[400ms] group-hover:scale-105" />

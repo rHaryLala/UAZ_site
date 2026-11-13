@@ -94,6 +94,9 @@ return [
             'thumb' => ['width' => 400, 'responsive' => false],
             'card' => ['width' => 960, 'responsive' => true],
             // Héros plein écran : pleine largeur de l'original et compression douce (la photo est vue en grand, parfois sur écran dense).
+            // Portraits (équipe, recherche) : retouchés avec soin dans la Retouche photo puis vus de près sur la page Équipe. Le WebP 80 des cartes
+            // leur retirait un cinquième du détail (netteté mesurée : 3,78 → 2,93) ; à 94, on garde plus de 90 % de la finesse de l'export.
+            'portrait' => ['width' => 1200, 'responsive' => true, 'webp_quality' => 94, 'avif_quality' => 78],
             'hero' => ['width' => 2560, 'responsive' => true, 'webp_quality' => 90, 'avif' => false],
         ],
         'webp_quality' => 80,

@@ -69,7 +69,7 @@
                         <li class="res-person" data-res-person>
                             <div class="res-person__photo" data-res-photo>
                                 @if ($member->photo)
-                                    <x-picture :asset="$member->photo" conversion="card" sizes="(min-width: 768px) 22rem, 80vw" :alt="__('Portrait de :name', ['name' => $member->name])" />
+                                    <x-picture :asset="$member->photo" conversion="portrait" sizes="(min-width: 768px) 22rem, 80vw" :alt="__('Portrait de :name', ['name' => $member->name])" />
                                 @else
                                     <span class="res-person__mono" aria-hidden="true">{{ collect(explode(' ', $member->name))->filter()->take(2)->map(fn ($w) => mb_substr($w, 0, 1))->implode('') }}</span>
                                 @endif

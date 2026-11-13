@@ -2,7 +2,7 @@
 <div class="grid md:grid-cols-[0.85fr_1.15fr]">
     <div class="relative min-h-72 bg-navy-900 md:min-h-[32rem]">
         @if ($member->photo)
-            <x-picture :asset="$member->photo" conversion="card" sizes="(min-width: 768px) 24rem, 90vw" class="absolute inset-0 size-full object-cover" />
+            <x-picture :asset="$member->photo" conversion="portrait" sizes="(min-width: 768px) 24rem, 90vw" class="absolute inset-0 size-full object-cover" />
         @else
             <x-madagascar class="absolute inset-y-6 right-[-12%] h-[85%] text-navy-700/70" />
             <span class="absolute top-6 left-7 font-serif text-7xl text-sun-400" aria-hidden="true">

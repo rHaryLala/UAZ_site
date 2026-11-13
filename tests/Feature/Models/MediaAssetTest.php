@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\MediaAsset;
+use App\Models\TeamMember;
 use Database\Factories\PlaceholderImage;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileUnacceptableForCollection;
@@ -67,4 +68,36 @@ it('does not ask for AVIF files on a server that cannot produce them', function 
     $data = $asset->pictureData('card');
 
     expect($data['avif'])->toBeNull()->and($data['webp'])->not->toBeNull()->and($data['src'])->not->toBe('');
+});
+
+it('generates a finer « portrait » conversion for people photos, 1200 px wide, and falls back to « card » while a photo does not have it yet', function () {
+    $asset = MediaAsset::factory()->withImage(1600, 1600)->create();
+
+    expect(config('uaz.media.conversions.portrait'))->toMatchArray(['width' => 1200, 'webp_quality' => 94])
+        ->and($asset->file()->hasGeneratedConversion('portrait'))->toBeTrue();
+
+    $data = $asset->pictureData('portrait');
+    expect($data['width'])->toBe(1200)->and($data['src'])->toContain('portrait');
+
+    // Une photo restée sans « portrait » (avant le déploiement) garde la version « card », jamais l'original en pleine taille.
+    $media = $asset->file();
+    $media->forceFill(['generated_conversions' => collect($media->generated_conversions)->except('portrait')->all()])->save();
+    $old = $asset->fresh();
+
+    expect($old->pictureData('portrait')['width'])->toBe(960)->and($old->url('portrait'))->toContain('card')->not->toContain('portrait');
+});
+
+it('regenerates the portrait conversion of existing people photos when it is deployed, without ever failing the deployment', function () {
+    $migration = require database_path('migrations/2026_11_18_100000_regenerate_portrait_conversions.php');
+
+    $asset = MediaAsset::factory()->withImage(1200, 1200)->create();
+    TeamMember::factory()->create(['photo_id' => $asset->id]);
+
+    $media = $asset->file();
+    $media->forceFill(['generated_conversions' => collect($media->generated_conversions)->except('portrait')->all()])->save();
+    expect($asset->fresh()->file()->hasGeneratedConversion('portrait'))->toBeFalse();
+
+    $migration->up();
+
+    expect($asset->fresh()->file()->hasGeneratedConversion('portrait'))->toBeTrue();
 });

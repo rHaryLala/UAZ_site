@@ -102,11 +102,25 @@ class MediaAsset extends Model implements HasMedia
             return '';
         }
 
+        $conversion = $this->availableConversion($media, $conversion);
+
         if ($conversion !== '' && $media->hasGeneratedConversion($conversion)) {
             return $media->getUrl($conversion);
         }
 
         return $media->getUrl();
+    }
+
+    /** Conversions de repli tant que la photo n'a pas encore la plus fine (« portrait » → « card ») : jamais l'original en pleine taille. */
+    private const FALLBACKS = ['portrait' => 'card'];
+
+    private function availableConversion(?Media $media, string $conversion): string
+    {
+        while ($media && isset(self::FALLBACKS[$conversion]) && ! $media->hasGeneratedConversion($conversion)) {
+            $conversion = self::FALLBACKS[$conversion];
+        }
+
+        return $conversion;
     }
 
     /**
@@ -129,6 +143,7 @@ class MediaAsset extends Model implements HasMedia
     public function pictureData(string $conversion = 'card'): array
     {
         $media = $this->file();
+        $conversion = $this->availableConversion($media, $conversion);
         [$width, $height] = $this->dimensions();
         $target = config("uaz.media.conversions.$conversion.width");
 
