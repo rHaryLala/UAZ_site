@@ -51,6 +51,7 @@ try {
 
         return { x: r.left + (z.rect.x + z.rect.w / 2) * s, y: r.top + (z.rect.y + z.rect.h / 2) * s };
     }, id);
+    await page.waitForTimeout(1200); // le visuel finit de se mettre à l’échelle de la fenêtre avant qu’on clique dessus
     let c = await centre('titre');
     await page.mouse.click(c.x, c.y);
     check(await ed(() => window.StudioEditeur.selection) === 'titre', 'un clic sur le titre le sélectionne');

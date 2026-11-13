@@ -377,6 +377,8 @@ Garanties : une personne **déjà désinscrite sur le nouveau site n'est jamais 
 4. **Enregistrement :** automatique ; *Mes visuels* permet de reprendre, dupliquer ou supprimer vos visuels (chacun ne voit que les siens).
 5. **Exporter :** *PNG* (prêt à publier), *PNG haute définition ×2*, *JPEG* (léger) ou *Tous les formats (.zip)*. Le fichier s'appelle `UAZ_ACC_2026-11-13_semaine-de-priere_16x9.png`.
 
+**La mise en page se fait toute seule :** les modèles respectent les marges, alignent les textes, centrent le bloc de texte dans l'espace libre et, en Story, laissent libres les 250 px du haut et du bas (couverts par l'interface). Un texte trop long rétrécit tout seul avant que l'alerte ne s'affiche ; les retours à la ligne sont équilibrés. Si vous déplacez ou agrandissez un élément à la main, c'est à vous de garder ces marges (les zones rouges de la Story vous aident).
+
 Le panneau de gauche s'élargit ou se réduit en glissant sa barre grise (ou avec les flèches).
 
 ## Retouche photo

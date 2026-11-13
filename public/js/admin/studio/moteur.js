@@ -121,6 +121,15 @@
             this.masques = new Set(o.masques || []);
             this.decalages = (o.decalages || {})[env.format] || {};
             this.tailles = o.tailles || {};
+            this.zoom = 1;   // réduction de tout le texte d'un bloc qui ne tient pas dans sa zone (voir modeles.js, centrer)
+        }
+
+        /** Un stylo jetable, sur une toile minuscule : sert à MESURER un bloc de texte avant de le placer (centrage vertical). */
+        essai() {
+            const c = document.createElement('canvas');
+            c.width = 2; c.height = 2;
+
+            return new Pen(c.getContext('2d'), this.W, this.H, this.env);
         }
 
         masque(id) { return !!id && this.masques.has(id); }
@@ -195,7 +204,7 @@
                 return { h: 0, bas: o.y, taille: o.taille, lignes: 0, depasse: false, masque: true };
             }
             const fac = this.facteur(o.id);
-            o = Object.assign({}, o, { taille: o.taille * fac, min: o.min ? o.min * fac : undefined });
+            o = Object.assign({}, o, { taille: o.taille * fac * this.zoom, min: o.min ? o.min * fac : undefined });
             const poids = o.poids || 500, esp = o.espacement || 0, ig = o.interligne || 1.2;
             const jetons = [];
             parties.forEach(({ t, c: couleur }) => {
@@ -208,17 +217,32 @@
             const min = o.min || Math.max(12, Math.round(o.taille * 0.55));
             let lignes = [], tropLarge = false;
 
+            const couper = (largeurMax) => {
+                const res = [[]];
+                let courant = '', trop = false;
+                for (const j of jetons) {
+                    if (j.saut) { res.push([]); courant = ''; continue; }
+                    const essai = courant ? `${courant} ${j.mot}` : j.mot;
+                    if (courant && this.largeur(essai, taille, esp) > largeurMax) { res.push([j]); courant = j.mot; } else { res[res.length - 1].push(j); courant = essai; }
+                    if (this.largeur(j.mot, taille, esp) > largeurMax) { trop = true; }
+                }
+
+                return { lignes: res.filter((l) => l.length), trop };
+            };
+            const equilibrable = o.equilibre !== false && !jetons.some((j) => j.saut);
+
             for (;;) {
                 this.regler(taille, poids, esp);
-                lignes = [[]]; tropLarge = false;
-                let courant = '';
-                for (const j of jetons) {
-                    if (j.saut) { lignes.push([]); courant = ''; continue; }
-                    const essai = courant ? `${courant} ${j.mot}` : j.mot;
-                    if (courant && this.largeur(essai, taille, esp) > o.w) { lignes.push([j]); courant = j.mot; } else { lignes[lignes.length - 1].push(j); courant = essai; }
-                    if (this.largeur(j.mot, taille, esp) > o.w) { tropLarge = true; }
+                const premiere = couper(o.w);
+                lignes = premiere.lignes; tropLarge = premiere.trop;
+                // Équilibre : on rétrécit la largeur tant que le nombre de lignes ne change pas ; la dernière ligne n'est plus un mot isolé.
+                if (equilibrable && !tropLarge && lignes.length >= 2) {
+                    for (let f = 0.97; f >= 0.5; f -= 0.03) {
+                        const essai = couper(o.w * f);
+                        if (essai.trop || essai.lignes.length !== lignes.length) { break; }
+                        lignes = essai.lignes;
+                    }
                 }
-                lignes = lignes.filter((l) => l.length);
                 if (((!o.lignesMax || lignes.length <= o.lignesMax) && !tropLarge) || taille <= min) { break; }
                 taille -= 2;
             }
@@ -228,6 +252,8 @@
             const espaceW = this.largeur(' ', taille, esp);
             const [dx, dy] = this.decalage(o.id);
             let largeurMax = 0;
+            // Alignement optique : un très gros titre a une marge intérieure à gauche ; on le décale d'autant pour que son bord rejoigne celui du petit texte.
+            const optique = o.optique && o.alignement !== 'centre' && o.alignement !== 'droite' ? -0.035 * taille : 0;
             c.save();
             c.translate(dx, dy);
             c.textBaseline = 'alphabetic';
@@ -237,7 +263,7 @@
                 const texte = ligne.map((j) => j.mot).join(' ');
                 const largeurLigne = this.largeur(texte, taille, esp) - (SPACING ? esp * taille : 0);
                 largeurMax = Math.max(largeurMax, largeurLigne);
-                let x = o.x;
+                let x = o.x + optique;
                 if (o.alignement === 'centre') { x = o.x + (o.w - largeurLigne) / 2; } else if (o.alignement === 'droite') { x = o.x + o.w - largeurLigne; }
                 ligne.forEach((j, k) => {
                     c.fillStyle = j.couleur || o.couleur || COULEURS.blanc;
@@ -247,7 +273,7 @@
             });
             c.restore();
             if (depasse) { this.alerte(o.nom ? `« ${o.nom} » est trop long : raccourcissez-le.` : 'Un texte est trop long : raccourcissez-le.', 'erreur'); }
-            const x0 = o.alignement === 'centre' ? o.x + (o.w - largeurMax) / 2 : o.alignement === 'droite' ? o.x + o.w - largeurMax : o.x;
+            const x0 = o.alignement === 'centre' ? o.x + (o.w - largeurMax) / 2 : o.alignement === 'droite' ? o.x + o.w - largeurMax : o.x + optique;
             this.noter(o.id, 'texte', o.nom || o.id, { x: x0 + dx, y: o.y + dy, w: Math.max(24, largeurMax), h: Math.max(lignes.length * lh, taille) }, { champs: o.champs || [], taille });
 
             return { h: lignes.length * lh, bas: o.y + lignes.length * lh, taille, lignes: lignes.length, depasse: !!depasse, largeur: largeurMax, x0 };
@@ -433,19 +459,28 @@
         const { w: W, h: H } = FORMATS[format];
         if (W > H) {
             return {
-                format, W, H, paysage: true, marge: 96, k: 1,
+                format, W, H, paysage: true, story: false, marge: 96, k: 1,
+                sur: { haut: 96, bas: 96 },
                 sceau: { x: 116, y: 62, d: 94 }, tx: 260, t1: { c: 86, taille: 24 }, t2: { c: 127, taille: 34 }, filetY: 208, filetX: [96, 1824],
-                texte: { x: 96, w: 880, y0: 280, y1: 905 },
+                zone: { x: 96, w: 880, y0: 232, y1: 911 },
                 photo: { x: 1040, y: 0, w: 880, h: 1080 },
                 pied: { filetY: 943, y: 990 },
             };
         }
-        const t = { '1:1': { dy: 0, eh: 150, ph: 380, y1: 940, fy: 985 }, '4:5': { dy: 0, eh: 160, ph: 520, y1: 1170, fy: 1245 }, '9:16': { dy: 170, eh: 330, ph: 760, y1: 1620, fy: 1700 } }[format];
+        // Portrait et carré : l'en-tête, la photo, la zone de texte, le pied. En Story, rien d'important dans les 250 px du haut ni du bas
+        // (zones couvertes par l'interface d'Instagram et de Facebook) : l'en-tête et le pied de page descendent, la zone de texte reste entre les deux.
+        const t = {
+            '1:1': { dy: 0, eh: 150, ph: 380, fy: 985 },
+            '4:5': { dy: 0, eh: 160, ph: 520, fy: 1245 },
+            '9:16': { dy: 250, eh: 392, ph: 700, fy: 1610 },
+        }[format];
+        const story = format === '9:16';
 
         return {
-            format, W, H, paysage: false, marge: 72, k: 0.78, dy: t.dy,
+            format, W, H, paysage: false, story, marge: 72, k: 0.78, dy: t.dy,
+            sur: { haut: story ? 270 : 72, bas: story ? 270 : 72 },
             sceau: { x: 72, y: 46 + t.dy, d: 72 }, tx: 168, t1: { c: 64 + t.dy, taille: 20 }, t2: { c: 98 + t.dy, taille: 28 }, filetY: t.eh, filetX: [72, W - 72],
-            texte: { x: 72, w: W - 144, y0: t.eh + t.ph - 24, y1: t.y1 },
+            zone: { x: 72, w: W - 144, y0: t.eh + t.ph + 8, y1: t.fy - 28 },
             photo: { x: 0, y: t.eh, w: W, h: t.ph },
             pied: { filetY: t.fy, y: t.fy + 50 },
         };

@@ -261,9 +261,9 @@
                 const m = MODELES[id];
                 const c = document.createElement('canvas');
                 c.className = 'st-modele__vue';
-                M.rendre(c, m, valeursInitiales(m), m.formats[0], { photos: {}, logos: env.logos, cache: new Map(), apercu: false, echelle: 0.2, options: optionsVides() });
+                M.rendre(c, m, valeursInitiales(m), m.formats[0], { photos: {}, logos: env.logos, cache: new Map(), apercu: false, echelle: 0.3, options: optionsVides() });
                 zone.append(h('button', { type: 'button', class: `st-modele${etat.modele === id ? ' is-on' : ''}`, 'aria-pressed': String(etat.modele === id), onclick: () => choisirModele(id) },
-                    c,
+                    h('span', { class: 'st-modele__cadre' }, c),
                     h('span', { class: 'st-modele__nom' }, icone(m.icone), m.nom),
                     h('span', { class: 'st-modele__desc' }, m.description)));
             });

@@ -85,7 +85,8 @@ body.is-resizing .st-scene { pointer-events: none; }
 .st-modele { display: block; width: 100%; margin-bottom: 12px; padding: 0; border: 2px solid var(--st-ligne); border-radius: 12px; overflow: hidden; background: #fff; text-align: left; transition: border-color .15s, box-shadow .15s; }
 .st-modele:hover { border-color: #b9c3e6; box-shadow: 0 8px 22px -12px rgb(19 26 63 / .4); }
 .st-modele.is-on { border-color: var(--st-cyan-vif); }
-.st-modele__vue { display: block; width: 100%; height: auto; background: var(--st-marine); }
+.st-modele__cadre { display: flex; align-items: center; justify-content: center; height: 210px; padding: 10px; background: linear-gradient(135deg, #1a2b6a, #0e1c4d); }
+.st-modele__vue { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; border-radius: 4px; box-shadow: 0 6px 18px -6px rgb(0 0 0 / .55); }
 .st-modele__nom { display: flex; align-items: center; gap: 8px; padding: 10px 12px 2px; font-weight: 800; color: var(--st-marine); }
 .st-modele__desc { display: block; padding: 0 12px 12px; font-size: 12.5px; line-height: 1.45; color: var(--st-doux); }
 
@@ -225,4 +226,3 @@ body.is-resizing .st-scene { pointer-events: none; }
 .st-element__nom span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .st-element__nom em { margin-left: auto; padding: 1px 7px; border-radius: 99px; background: var(--st-fond); font-style: normal; font-size: 11px; font-weight: 600; color: var(--st-doux); }
 .st-element .st-btn { margin-right: 4px; }
-.st-modele__vue { aspect-ratio: 16 / 9; }

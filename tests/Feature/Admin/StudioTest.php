@@ -167,3 +167,15 @@ it('ships the engine and every template, with the French typography rules and th
         expect(public_path($asset))->toBeFile();
     }
 });
+
+it('applies the composition rules in the engine and the templates: one type scale, an 8 px rhythm, blocks centred in their zone, safe zones, balanced lines', function () {
+    $engine = file_get_contents(public_path('js/admin/studio/moteur.js'));
+    $templates = file_get_contents(public_path('js/admin/studio/modeles.js'));
+
+    expect($engine)->toContain('const equilibrable')->toContain('essai()')->toContain('this.zoom')->toContain('const optique')
+        ->toContain("'9:16': { dy: 250")->toContain('sur: { haut: story ? 270')
+        ->and($templates)->toContain('const echelle = (g)')->toContain('const sp = (g, n)')->toContain('function centrer(')->toContain('function ancrerBas(')
+        ->toContain('function photoCourte(')->toContain('zonePleine');
+    // Plus aucune position codée en dur dans la zone des 250 px du haut ou du bas d'une Story (les modèles passent par g.sur et g.zone).
+    expect($templates)->not->toContain('t.y0')->not->toContain('g.texte');
+});
