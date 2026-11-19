@@ -50,7 +50,7 @@ return [
      * The maximum file size of an item in bytes.
      * Adding a larger file will result in an exception.
      */
-    'max_file_size' => 1024 * (int) env('MEDIA_MAX_FILE_SIZE_KB', 10240),
+    'max_file_size' => 1024 * 15360, // = uaz.media.max_file_size_kb
 
     /*
      * Uploads whose file name contains any of these extensions will be rejected.

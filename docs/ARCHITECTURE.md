@@ -120,7 +120,7 @@ image responsive (AVIF/WebP, dimensions explicites) de la médiathèque, après 
 | En-têtes | `SecurityHeaders` : CSP stricte **à nonce** (pas d'`unsafe-eval`, pas d'`unsafe-inline` pour les scripts), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, COOP, HSTS en production. Le back-office Filament n'a pas de CSP stricte (non compatible) |
 | Formulaire de contact | validation serveur, CSRF Livewire, 3 envois/min/IP, honeypot, délai minimal **verrouillé** (`#[Locked]`), IP stockée hachée |
 | Contenu riche | `App\Support\Html` : liste blanche (symfony/html-sanitizer), pas d'iframe, pas de style/script/handler |
-| Uploads | images JPEG/PNG/WebP et PDF, 10 Mo, extensions et MIME contrôlés ; compression automatique |
+| Uploads | images JPEG/PNG/WebP et PDF, 15 Mo, extensions et MIME contrôlés ; compression automatique |
 | Comptes | 2FA TOTP, limitation de débit de la connexion, impossible de supprimer son compte ou le dernier super-admin |
 | SEO | `sitemap.xml` (cache 1 h), `robots.txt` dynamique (fermé hors production), canonical, Open Graph/Twitter, JSON-LD : `CollegeOrUniversity`, `WebSite`, `BreadcrumbList`, `Course`, `Article`, `Event` |
 | Performance | images AVIF/WebP responsives avec dimensions, polices latines préchargées, JS différé et découpé, mode Save-Data sans GSAP, HTML compressible (≈ 10×) |

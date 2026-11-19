@@ -80,8 +80,8 @@ if [ ! -f "$INI" ]; then
     cat > "$INI" <<'EOF'
 expose_php = Off
 memory_limit = 256M
-upload_max_filesize = 12M
-post_max_size = 16M
+upload_max_filesize = 16M
+post_max_size = 20M
 date.timezone = Indian/Antananarivo
 opcache.enable = 1
 opcache.memory_consumption = 192
@@ -225,7 +225,7 @@ server {
     root $APP_DIR/public;
     index index.php;
     charset utf-8;
-    client_max_body_size 16m;
+    client_max_body_size 20m;
     server_tokens off;
 
     $AUTH_LINES

@@ -721,3 +721,8 @@ La vidéo de référence (« Cute Login Page Animation ») n'a pas pu être visi
 **Repli :** tant qu'une photo n'a pas la conversion `portrait`, la page sert sa version `card` (jamais l'original en pleine taille) : `MediaAsset::url()` et `pictureData()` suivent la chaîne `portrait → card`.
 **Photos déjà en ligne :** la migration `2026_11_18_100000_regenerate_portrait_conversions` met en file la génération de `portrait` pour les photos des membres de l'équipe et des témoignages (`media-library:regenerate --only=portrait`, traitée en arrière-plan par le worker) ; un échec n'arrête jamais le déploiement. Pour une photo ajoutée plus tard, la conversion est produite à l'envoi. Commande de rattrapage : `php artisan media-library:regenerate --only=portrait --with-responsive-images --force`.
 **Test :** `MediaAssetTest` (conversion, repli, migration).
+
+## D-087 · Médiathèque : 15 Mo par fichier (19 novembre 2026)
+
+**Demande de l'UAZ :** monter à 15 Mo la taille maximale des images importées dans la médiathèque (`/admin/media-assets`).
+**Décision :** `uaz.media.max_file_size_kb` = **15 360** (Filament, glisser-déposer, sélecteur de médias, import WordPress, message d'erreur). La valeur est **fixée dans la configuration** et n'est plus lue dans le `.env` : la variable `MEDIA_MAX_FILE_SIZE_KB` était écrite à 10 240 dans le `.env` de production, que la mise à jour ne modifie pas, et aurait masqué la nouvelle limite. Les limites **en amont** sont relevées : Livewire (téléversement temporaire de Filament, 12 Mo par défaut) à 15 Mo ; nginx (26 Mo) et PHP (256 Mo) de production étaient déjà au-dessus ; Docker et script de test à 20 Mo. Les originaux restent ramenés à 2 560 px de large à l'envoi : un fichier plus lourd n'alourdit pas le site.

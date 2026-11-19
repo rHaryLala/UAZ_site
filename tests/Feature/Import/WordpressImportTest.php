@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
 beforeEach(function () {
     Storage::fake('public');
     // L'importeur est testé, pas GD : pas de conversions d'images (lentes) et de toutes petites images.
-    config(['media-library.disk_name' => 'public', 'uaz.media.max_file_size_kb' => 10240, 'uaz.media.conversions' => []]);
+    config(['media-library.disk_name' => 'public', 'uaz.media.max_file_size_kb' => 15360, 'uaz.media.conversions' => []]);
     $this->seed(StructureSeeder::class);
 });
 

@@ -78,7 +78,9 @@ return [
     |--------------------------------------------------------------------------
     */
     'media' => [
-        'max_file_size_kb' => (int) env('MEDIA_MAX_FILE_SIZE_KB', 10240),
+        // 15 Mo par fichier. Fixé ici (plus lu dans le .env) : l'ancienne variable MEDIA_MAX_FILE_SIZE_KB, restée à 10240 dans le .env de production,
+        // aurait masqué la nouvelle limite. Livewire (config/livewire.php) et nginx/PHP (provision-prod.sh : 26 Mo) doivent rester au-dessus.
+        'max_file_size_kb' => 15360,
         'accepted_mime_types' => [
             'image/jpeg',
             'image/png',

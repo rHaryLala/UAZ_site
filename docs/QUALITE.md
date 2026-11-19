@@ -42,7 +42,7 @@ Poids des pages (compressé) : accueil ≈ 140 Ko de HTML/CSS/JS + polices (≈ 
 
 - CSP stricte à nonce (pas d'`unsafe-eval`), `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS en production.
 - Formulaire : CSRF, validation serveur, 3 envois/min/IP, honeypot, délai minimal verrouillé, IP stockée hachée.
-- Contenu riche assaini (liste blanche) à l'affichage, y compris le contenu importé ; uploads limités (JPEG/PNG/WebP/PDF, 10 Mo).
+- Contenu riche assaini (liste blanche) à l'affichage, y compris le contenu importé ; uploads limités (JPEG/PNG/WebP/PDF, 15 Mo).
 - Back-office : 2FA TOTP, limitation de débit de la connexion, jamais de suppression de son propre compte ni du dernier super-admin.
 - Tests automatisés : voir `tests/Feature/Public/SeoSecurityTest.php` et `tests/Feature/Admin/AdminSecurityTest.php`.
 - À faire sur le serveur réel : note SSL Labs, `securityheaders.com`, `composer audit` / `npm audit`.

@@ -28,8 +28,8 @@ Vérifier que GD sait produire WebP **et** AVIF (sinon seul le WebP sera génér
 ```ini
 expose_php = Off
 memory_limit = 256M
-upload_max_filesize = 12M
-post_max_size = 16M
+upload_max_filesize = 16M
+post_max_size = 20M
 date.timezone = Indian/Antananarivo
 opcache.enable = 1
 opcache.memory_consumption = 192
@@ -107,7 +107,7 @@ server {
     root /var/www/uaz/public;
     index index.php;
     charset utf-8;
-    client_max_body_size 16m;
+    client_max_body_size 20m;
     server_tokens off;
 
     # Compression (connexions lentes) ; activer aussi brotli si le module est installé

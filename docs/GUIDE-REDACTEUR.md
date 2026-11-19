@@ -79,7 +79,7 @@ Pour un PDF, indiquez son sujet : « Calendrier académique 2026-2027 ».
 
 ### Règles pratiques
 
-- Formats acceptés : **JPEG, PNG, WebP** et **PDF**. Taille maximale : **10 Mo** par fichier.
+- Formats acceptés : **JPEG, PNG, WebP** et **PDF**. Taille maximale : **15 Mo** par fichier.
 - Pas besoin de réduire vos photos : elles sont **compressées automatiquement** (taille maxi 2 560 px) et déclinées en
   plusieurs tailles (WebP/AVIF) pour que le site reste rapide sur mobile.
 - Fichiers Word, Excel, vidéos : non acceptés. Convertissez en PDF.
@@ -199,7 +199,7 @@ Supprimez ceux dont vous n'avez plus besoin : ce sont des données personnelles.
 - **Enregistrez** avant de quitter une page ; le navigateur prévient en cas de modification non enregistrée.
 - **Je ne vois pas ma page sur le site** : vérifiez le statut (*Publié*) et la date de publication (pas dans le futur) ; videz le cache
   de votre navigateur (Ctrl+F5).
-- **Mon image est refusée** : vérifiez le format (JPEG/PNG/WebP/PDF) et la taille (< 10 Mo).
+- **Mon image est refusée** : vérifiez le format (JPEG/PNG/WebP/PDF) et la taille (< 15 Mo).
 - **Un lien est cassé** : ouvrez la page cible dans Pages et vérifiez son adresse ; ajoutez une redirection si besoin.
 - **J'ai supprimé quelque chose par erreur** : prévenez rapidement l'administrateur, il existe des sauvegardes quotidiennes.
 - **Mot de passe oublié** : « Mot de passe oublié ? » sur l'écran de connexion, ou demandez un nouveau mot de passe à l'administrateur.

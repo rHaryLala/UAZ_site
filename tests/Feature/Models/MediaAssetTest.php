@@ -101,3 +101,9 @@ it('regenerates the portrait conversion of existing people photos when it is dep
 
     expect($asset->fresh()->file()->hasGeneratedConversion('portrait'))->toBeTrue();
 });
+
+it('accepts media up to 15 MB, at every layer that checks the size', function () {
+    expect(config('uaz.media.max_file_size_kb'))->toBe(15360)
+        ->and(config('media-library.max_file_size'))->toBe(15360 * 1024)
+        ->and(config('livewire.temporary_file_upload.rules'))->toContain('max:15360');
+});
