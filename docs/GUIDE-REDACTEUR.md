@@ -234,6 +234,9 @@ Le back-office fonctionne en « application monopage » : un clic dans le menu o
 ## Tableau de bord et actions rapides
 - **Tableau de bord** : quatre raccourcis (écrire une actualité, ajouter un événement, envoyer des images, lire les messages), les chiffres clés (cliquez sur une carte pour ouvrir la liste correspondante),
   les brouillons à relire et les derniers messages reçus. Il ne se rafraîchit pas tout seul : les chiffres se mettent à jour quand un contenu change.
+- **Visiteurs du site** (sous les chiffres clés) : visiteurs d'aujourd'hui (comparés à hier), des 7 et des 30 derniers jours, pages vues, courbe jour par jour (7, 30 ou 90 jours), pages les plus vues et sites d'où viennent les visiteurs.
+  Ces chiffres sont mis à jour toutes les 5 minutes. **Comment lire :** un visiteur est compté **une fois par jour** (sans cookie, on ne peut pas reconnaître quelqu'un d'un jour à l'autre) ; sur 7 ou 30 jours, on additionne les visiteurs de chaque jour : une personne qui revient trois jours de suite compte trois fois.
+  Ne comptent pas : les robots (moteurs de recherche, outils de contrôle), les personnes connectées au back-office, l'administration, les pages d'erreur. **Le comptage a démarré le jour de la mise en ligne de cette fonction : il n'y a pas d'historique avant.**
 - **Dans chaque liste** (pages, actualités, événements, formations) : **Aperçu** et **Modifier** sont à portée de clic ; le menu **⋯** propose **Dupliquer** (la copie est un brouillon dont le titre finit par « (copie) »),
   **Publier** ou **Repasser en brouillon** (avec confirmation), et **Supprimer**. Cochez plusieurs lignes pour publier ou repasser en brouillon toute la sélection d'un coup.
 - Seules les personnes autorisées à publier voient ces boutons de publication ; un contributeur garde ses contenus en brouillon.

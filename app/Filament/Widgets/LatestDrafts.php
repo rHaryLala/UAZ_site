@@ -14,7 +14,7 @@ use Filament\Widgets\TableWidget;
 /** Les cinq dernières actualités en brouillon : ce qu'il reste à relire et à publier. */
 class LatestDrafts extends TableWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 6;
 
     protected static bool $isLazy = true;
 

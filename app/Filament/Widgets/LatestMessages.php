@@ -13,7 +13,7 @@ use Filament\Widgets\TableWidget;
 /** Les cinq derniers messages reçus par le formulaire de contact (visible seulement avec le droit de les lire). */
 class LatestMessages extends TableWidget
 {
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 7;
 
     protected static bool $isLazy = true;
 

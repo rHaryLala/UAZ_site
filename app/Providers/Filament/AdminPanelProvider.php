@@ -8,6 +8,9 @@ use App\Filament\Widgets\ContentOverview;
 use App\Filament\Widgets\LatestDrafts;
 use App\Filament\Widgets\LatestMessages;
 use App\Filament\Widgets\QuickActions;
+use App\Filament\Widgets\TopPages;
+use App\Filament\Widgets\VisitorsChart;
+use App\Filament\Widgets\VisitorsOverview;
 use App\Models\MediaAsset;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\Pages\Login;
@@ -118,6 +121,9 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 QuickActions::class,
                 ContentOverview::class,
+                VisitorsOverview::class,
+                VisitorsChart::class,
+                TopPages::class,
                 LatestDrafts::class,
                 LatestMessages::class,
             ])

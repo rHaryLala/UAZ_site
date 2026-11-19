@@ -77,6 +77,16 @@ return [
     | Médiathèque
     |--------------------------------------------------------------------------
     */
+    /*
+    |--------------------------------------------------------------------------
+    | Statistiques de fréquentation (tableau de bord)
+    |--------------------------------------------------------------------------
+    | Comptage des visites sans cookie ni adresse IP conservée (App\Http\Middleware\TrackVisit). VISIT_TRACKING=false l'arrête.
+    */
+    'analytics' => [
+        'enabled' => (bool) env('VISIT_TRACKING', true),
+    ],
+
     'media' => [
         // 15 Mo par fichier. Fixé ici (plus lu dans le .env) : l'ancienne variable MEDIA_MAX_FILE_SIZE_KB, restée à 10240 dans le .env de production,
         // aurait masqué la nouvelle limite. Livewire (config/livewire.php) et nginx/PHP (provision-prod.sh : 26 Mo) doivent rester au-dessus.

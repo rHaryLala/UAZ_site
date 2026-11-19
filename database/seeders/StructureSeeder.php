@@ -197,7 +197,8 @@ class StructureSeeder extends Seeder
             'status' => PublicationStatus::Draft,
             'published_at' => now(),
             'blocks' => [
-                $block('En bref', '<p>Ce site n\'utilise <strong>aucun cookie publicitaire, aucun outil de mesure d\'audience et aucun traceur de réseau social</strong>. '
+                $block('En bref', '<p>Ce site n\'utilise <strong>aucun cookie publicitaire et aucun traceur de réseau social</strong>. '
+                    .'Il compte seulement, de façon anonyme, le nombre de visiteurs (voir « Statistiques de fréquentation » plus bas). '
                     .'Il ne dépose que deux cookies techniques, indispensables à son fonctionnement, qui ne nécessitent donc pas de bandeau de consentement. '
                     .'Les seules données personnelles que nous recueillons sont celles que vous nous envoyez vous-même par le formulaire de contact.</p>'),
                 $block('Qui est responsable de ces données ?', '<p>Université Adventiste Zurcher, PK 135, Route Nationale 7, Antsirabe, Madagascar. '
@@ -208,6 +209,8 @@ class StructureSeeder extends Seeder
                     .'<li><strong>XSRF-TOKEN</strong> : protège les formulaires contre les envois frauduleux. Même durée de vie.</li></ul>'
                     .'<p>Ils ne servent ni à vous suivre d\'une visite à l\'autre, ni à des statistiques, ni à de la publicité. Ils ne contiennent aucune information vous identifiant. '
                     .'Vous pouvez les refuser dans les réglages de votre navigateur : le site reste lisible, mais le formulaire de contact risque de ne plus fonctionner.</p>'),
+                $block('Statistiques de fréquentation', '<p>Pour savoir combien de personnes consultent le site, le serveur compte chaque page vue. <strong>Aucun cookie n\'est déposé</strong> et <strong>votre adresse IP n\'est pas conservée</strong> : elle sert seulement à calculer, avec le nom de votre navigateur et une clé qui change chaque jour, une empreinte chiffrée et non réversible, qui ne permet ni de vous retrouver ni de vous suivre d\'un jour à l\'autre.</p>'
+                    .'<p>Nous enregistrons aussi l\'adresse de la page vue (sans ce qui suit le « ? »), la langue et, si vous venez d\'un autre site, le nom de ce site. Les visites des robots et de l\'espace d\'administration ne sont pas comptées. Ces données ne servent qu\'aux chiffres du tableau de bord de l\'équipe du site et sont supprimées au bout de 400 jours.</p>'),
                 $block('Mémoire de votre navigateur', '<p>Sans cookie, le site retient dans votre navigateur (stockage local) <strong>une seule information</strong> : si la fenêtre d\'abonnement à la newsletter vous a déjà été proposée, et si vous vous êtes abonné. '
                     .'Elle sert uniquement à ne pas vous la reproposer à chaque page : vous la revoyez au plus une fois tous les 20 jours, tant que vous n\'êtes pas abonné. '
                     .'Cette information reste sur votre appareil et n\'est jamais envoyée au site ; vous pouvez l\'effacer en vidant les données du site dans votre navigateur.</p>'),
@@ -226,7 +229,7 @@ class StructureSeeder extends Seeder
                     .'Une fois sur ces sites, leurs propres règles s\'appliquent.</li></ul>'),
                 $block('Vos droits', '<p>Vous pouvez nous demander l\'accès aux informations que vous nous avez envoyées, leur correction ou leur suppression, en écrivant à '
                     .'<a href="mailto:office@zurcher.edu.mg">office@zurcher.edu.mg</a>. '.self::TODO.' : compléter avec le cadre légal retenu par l\'UAZ (loi malgache sur la protection des données personnelles) après validation.</p>'),
-                $block('Mise à jour', '<p>Dernière mise à jour : 28 octobre 2026. Cette page est modifiée si le site change sa façon d\'utiliser des cookies ou des données (par exemple en ajoutant un outil de statistiques).</p>'),
+                $block('Mise à jour', '<p>Dernière mise à jour : 19 novembre 2026. Cette page est modifiée si le site change sa façon d\'utiliser des cookies ou des données (par exemple en ajoutant un outil de statistiques).</p>'),
             ],
         ]);
     }

@@ -123,7 +123,7 @@ it('seeds English and Malagasy content for the site structure, without overwriti
         ->and($formation->translation('title', 'mg'))->toBe('Licence amin\'ny Lalàna')
         ->and($formation->translation('summary', 'en'))->toBe('Tracks: Public · Private.')
         ->and(SiteSetting::current()->translation('tagline', 'en'))->toBe('Preparing tomorrow\'s leaders today')
-        ->and(Page::where('key', 'privacy')->first()->translation('blocks', 'en'))->toHaveCount(9);
+        ->and(Page::where('key', 'privacy')->first()->translation('blocks', 'en'))->toHaveCount(10);
 
     $this->get('/en/formations')->assertOk()->assertSee('Law (edited by an editor)')->assertSee('Health sciences');
     $this->get('/mg/formations')->assertOk()->assertSee('Siansa momba ny fahasalamana');
