@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
 use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
@@ -33,12 +34,31 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
-    /** Tout compte doté d'au moins un rôle peut entrer dans le back-office. */
+    /** Un compte est actif tant qu'on ne l'a pas désactivé (un compte qui vient d'être créé, sans la colonne chargée, l'est aussi). */
+    public function isActive(): bool
+    {
+        return $this->is_active !== false;
+    }
+
+    /**
+     * Les super-administrateurs ne se désactivent pas (même garde-fou que pour la suppression : on ne doit jamais pouvoir verrouiller le
+     * back-office par erreur), et personne ne désactive son propre compte.
+     */
+    public function canBeDeactivated(): bool
+    {
+        return ! $this->hasRole(RolesAndPermissionsSeeder::SUPER_ADMIN) && ! $this->is(auth()->user());
+    }
+
+    /**
+     * Tout compte actif doté d'au moins un rôle peut entrer dans le back-office. Cette vérification se refait à chaque requête : désactiver un compte
+     * coupe aussi la session qu'il a déjà ouverte.
+     */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->roles()->exists();
+        return $this->isActive() && $this->roles()->exists();
     }
 }

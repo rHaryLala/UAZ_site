@@ -10,11 +10,15 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
@@ -67,7 +71,43 @@ class UserResource extends Resource
                 TextColumn::make('roles.name')->label('Rôle')->badge()
                     ->formatStateUsing(fn (string $state) => self::ROLE_LABELS[$state] ?? $state)
                     ->placeholder('Aucun accès'),
+                ToggleColumn::make('is_active')->label('Actif')
+                    ->onColor('success')->offColor('gray')
+                    ->disabled(fn (User $record) => ! $record->canBeDeactivated())
+                    ->tooltip(fn (User $record) => match (true) {
+                        $record->hasRole('super-admin') => 'Un super-administrateur ne peut pas être désactivé.',
+                        $record->is(auth()->user()) => 'Vous ne pouvez pas désactiver votre propre compte.',
+                        $record->isActive() => 'Actif : cliquez pour désactiver ce compte.',
+                        default => 'Désactivé : cliquez pour réactiver ce compte.',
+                    })
+                    // Contrôle côté serveur (l'interrupteur grisé n'est qu'une aide) : on n'enregistre que ce que le garde-fou autorise.
+                    ->updateStateUsing(function (User $record, bool $state): bool {
+                        if (! $record->canBeDeactivated()) {
+                            Notification::make()->danger()->title('Ce compte ne peut pas être désactivé')->send();
+
+                            return $record->isActive();
+                        }
+
+                        $record->forceFill(['is_active' => $state])->save();
+
+                        Notification::make()->success()
+                            ->title($state ? 'Compte activé' : 'Compte désactivé')
+                            ->body($state ? $record->name.' peut de nouveau se connecter.' : $record->name.' ne peut plus se connecter (sa session en cours est coupée).')
+                            ->send();
+
+                        return $state;
+                    }),
                 TextColumn::make('created_at')->label('Créé le')->date('d/m/Y')->sortable()->toggleable(),
+            ])
+            ->recordClasses(fn (User $record) => $record->isActive() ? null : 'opacity-60')
+            ->filters([
+                TernaryFilter::make('is_active')->label('Compte')
+                    ->trueLabel('Actifs')->falseLabel('Désactivés')
+                    ->queries(
+                        true: fn (Builder $query) => $query->where('is_active', true),
+                        false: fn (Builder $query) => $query->where('is_active', false),
+                        blank: fn (Builder $query) => $query,
+                    ),
             ])
             ->defaultSort('name')
             ->recordActions(RowActions::editDelete())

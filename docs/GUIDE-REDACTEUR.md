@@ -29,6 +29,8 @@ Ensuite, chaque connexion demandera un code à 6 chiffres.
 
 Un contributeur voit *« Seul un éditeur peut publier »* : son contenu reste en brouillon jusqu'à validation par un éditeur.
 
+**Activer ou désactiver un compte** (*Administration → Utilisateurs*, super-administrateur) : la colonne **Actif** de la liste est un interrupteur. Désactivé, le compte **ne peut plus se connecter**, et sa session déjà ouverte est coupée à la page suivante ; ses contenus et son historique restent intacts, et on le **réactive** d'un clic. Une ligne désactivée est grisée ; le filtre **Compte** (Actifs / Désactivés) les retrouve. Les **super-administrateurs** ne se désactivent pas (interrupteur grisé) : c'est le garde-fou qui évite de verrouiller le back-office par erreur ; personne non plus ne peut désactiver son propre compte.
+
 ---
 
 ## 2. Découvrir l'écran
