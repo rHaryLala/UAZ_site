@@ -339,3 +339,13 @@ La section « Votre futur commence ici » de l'accueil lit `public/videos/futur-
 
 La page `/vie-etudiante/bibliotheque` lit `public/videos/library-1080.mp4` (≈ 19 Mo, ordinateurs), `library-720.mp4` (≈ 13 Mo, tablettes), `library-360.mp4` (≈ 5 Mo, mobiles) et l'affiche `library-poster.webp`, au rythme du défilement. Les `.mp4` ne sont pas dans Git : à copier dans
 `public/videos/` (`rsync`/SFTP). Absents, la page garde la photo de la salle de lecture (image de la page) comme en-tête fixe. La politique de sécurité autorise `media-src 'self' blob:` (la vidéo est chargée en mémoire).
+
+## Base de géolocalisation des visiteurs
+
+L'écran « Visiteurs du site » situe les visiteurs (pays, région, ville) avec la base gratuite DB-IP City Lite, lue sur le serveur dans `storage/app/geoip/dbip-city-lite.mmdb` (127 Mo). Elle n'est pas dans le dépôt : à la première mise en ligne, la télécharger une fois (sinon, le planificateur le fait la nuit suivante, à 4 h 10) :
+
+```
+sudo -u www-data php /var/www/uaz-laravel/artisan geoip:update
+```
+
+La mise à jour mensuelle est automatique (`geoip:update` ne télécharge que si le fichier a plus de 25 jours). Sans base, les visites sont comptées sans lieu. Un téléchargement raté laisse l'ancienne base en place. Disque : prévoir 130 Mo.

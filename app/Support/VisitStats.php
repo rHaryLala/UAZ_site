@@ -81,6 +81,26 @@ class VisitStats
             ->all());
     }
 
+    /**
+     * Les villes d'où viennent les visiteurs (d'après l'adresse IP : approximatif), avec leur pays ; les visites sans lieu sont ignorées.
+     *
+     * @return list<array{place: string, visitors: int}>
+     */
+    public static function topPlaces(int $days = 30, int $limit = 6): array
+    {
+        return Cache::remember("visits.places.{$days}.{$limit}", self::TTL, fn () => SiteVisit::query()
+            ->where('visited_on', '>=', now()->subDays($days - 1)->toDateString())
+            ->whereNotNull('country_code')
+            ->selectRaw('country_code, country, city, COUNT(DISTINCT visitor) as visitors')
+            ->groupBy('country_code', 'country', 'city')
+            ->orderByDesc('visitors')
+            ->orderBy('city')
+            ->limit($limit)
+            ->get()
+            ->map(fn ($row) => ['place' => $row->city ? $row->city.', '.$row->country : (string) $row->country, 'visitors' => (int) $row->visitors])
+            ->all());
+    }
+
     /** Les sites d'où viennent les visiteurs (liens, réseaux sociaux, moteurs de recherche), sans les visites directes. @return list<array{host: string, views: int}> */
     public static function topReferrers(int $days = 30, int $limit = 5): array
     {

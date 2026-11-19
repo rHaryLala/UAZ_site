@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\SiteVisit;
+use App\Services\IpGeolocation;
+use App\Support\UserAgent;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +14,9 @@ use Throwable;
  * Compte les visites du site public pour le tableau de bord, sans cookie et sans conserver d'adresse IP.
  *
  * Le visiteur est une empreinte (HMAC) de son adresse IP et de son navigateur, calculée avec une clé qui change chaque jour : elle ne
- * permet ni de retrouver l'adresse, ni de suivre une personne d'un jour à l'autre. Un visiteur est donc « unique par jour ».
+ * permet ni de retrouver l'adresse, ni de suivre une personne d'un jour à l'autre. Un visiteur est donc « unique par jour », et ses pages
+ * du jour se regroupent en un parcours. Le lieu (pays, région, ville) est déduit de l'adresse IP avec une base locale (IpGeolocation) ;
+ * seul ce lieu approximatif est gardé, avec l'appareil et le navigateur (un mot chacun), jamais l'adresse ni le texte du navigateur.
  * Rien n'est enregistré pour l'administration, les robots, les fichiers, les erreurs, les personnes connectées au back-office,
  * ni pour les adresses qui portent une signature (désinscription de la newsletter) ; la partie « ?… » de l'adresse n'est jamais conservée.
  * L'enregistrement se fait après l'envoi de la réponse (terminate) : la visite n'attend pas la base de données.
@@ -34,6 +38,8 @@ class TrackVisit
             }
 
             $today = now()->toDateString();
+            $place = app(IpGeolocation::class)->lookup($request->ip());
+            $client = UserAgent::parse($request->userAgent());
 
             SiteVisit::query()->insert([
                 'visited_on' => $today,
@@ -41,6 +47,12 @@ class TrackVisit
                 'path' => mb_substr('/'.ltrim($request->path(), '/'), 0, 255),
                 'locale' => app()->getLocale(),
                 'referrer' => $this->externalReferrer($request),
+                'country_code' => $place['country_code'] ?? null,
+                'country' => $place ? mb_substr((string) $place['country'], 0, 80) : null,
+                'region' => $place ? mb_substr((string) $place['region'], 0, 100) ?: null : null,
+                'city' => $place ? mb_substr((string) $place['city'], 0, 100) ?: null : null,
+                'device' => $client['device'],
+                'browser' => $client['browser'],
                 'visited_at' => now(),
             ]);
         } catch (Throwable $e) {

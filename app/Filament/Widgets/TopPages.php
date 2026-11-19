@@ -5,7 +5,7 @@ namespace App\Filament\Widgets;
 use App\Support\VisitStats;
 use Filament\Widgets\Widget;
 
-/** Les pages les plus vues sur 30 jours, et les sites d'où viennent les visiteurs. */
+/** Les pages les plus vues sur 30 jours, les villes et les sites d'où viennent les visiteurs. */
 class TopPages extends Widget
 {
     protected static ?int $sort = 5;
@@ -16,9 +16,9 @@ class TopPages extends Widget
 
     protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 1];
 
-    /** @return array{pages: list<array{path: string, views: int, visitors: int}>, referrers: list<array{host: string, views: int}>} */
+    /** @return array{pages: list<array{path: string, views: int, visitors: int}>, places: list<array{place: string, visitors: int}>, referrers: list<array{host: string, views: int}>} */
     protected function getViewData(): array
     {
-        return ['pages' => VisitStats::topPages(30, 8), 'referrers' => VisitStats::topReferrers(30, 5)];
+        return ['pages' => VisitStats::topPages(30, 8), 'places' => VisitStats::topPlaces(30, 6), 'referrers' => VisitStats::topReferrers(30, 5)];
     }
 }

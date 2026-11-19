@@ -34,7 +34,7 @@ class RolesAndPermissionsSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        $all = collect(self::MATRIX)->flatten()->push('users.manage')->unique();
+        $all = collect(self::MATRIX)->flatten()->push('users.manage', 'visitors.view')->unique();
         $all->each(fn (string $name) => Permission::findOrCreate($name, 'web'));
 
         Role::findOrCreate(self::SUPER_ADMIN, 'web');
