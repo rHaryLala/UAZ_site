@@ -48,7 +48,7 @@ return [
             'title' => 'Yearbook 2025',
             'subtitle' => 'Clic',
             'pages' => 44,
-            'pdf' => 'https://zurcher.edu.mg/wp-content/uploads/2025/12/Yearbook-2025-.pdf',
+            'pdf' => '/storage/documents/Yearbook-2025.pdf',
         ],
     ],
 

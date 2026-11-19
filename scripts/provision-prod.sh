@@ -127,14 +127,16 @@ server {
         rewrite ^/fr/?(.*)\$ /\$1 permanent;
     }
 
-    # Vérification Google Search Console du domaine (fichier de l'ancien site)
-    location = /googlefcb3f4498216fc94.html {
-        root /var/www/wordpress;
+    # Anciens liens WordPress (retrait de l'ancien site, D-088) : les quatre téléchargements encore cités par des sites externes ont été
+    # déplacés dans /storage/documents/ ; tout le reste de l'ancien WordPress n'existe plus (410 Gone).
+    location = /wp-content/uploads/2025/12/Yearbook-2025-.pdf {
+        return 301 /storage/documents/Yearbook-2025.pdf;
     }
-
-    # Fichiers et outils de l'ancien WordPress : redirigés vers l'ancien site conservé (ancien.zurcher.edu.mg)
-    location ~ ^/(wp-content|wp-includes|wp-admin|wp-json|wp-login\.php|xmlrpc\.php|wp-cron\.php|inventory|nouveau|public_html|rhm|student_association|test|views|webradio|default\.php|llms\.txt)(/|\$) {
-        return 301 https://ancien.zurcher.edu.mg\$request_uri;
+    location ~ ^/wp-content/uploads/[0-9][0-9][0-9][0-9]/[0-9][0-9]/(Formulaire-de-demande-dadmission-new\.docx|Formulaire-de-recommandation-new-1\.doc|Formulaire-de-demande-dadmission-Master-2025\.docx)\$ {
+        return 301 /storage/documents/\$1;
+    }
+    location ~ ^/(wp-content|wp-includes|wp-admin|wp-json|wp-login\.php|xmlrpc\.php|wp-cron\.php|default\.php|llms\.txt)(/|\$) {
+        return 410;
     }
 $statics
 $php_block

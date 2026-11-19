@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\MediaAsset;
+use App\Models\Page;
 use App\Models\TeamMember;
 use Database\Factories\PlaceholderImage;
 use Illuminate\Support\Facades\Storage;
@@ -106,4 +107,21 @@ it('accepts media up to 15 MB, at every layer that checks the size', function ()
     expect(config('uaz.media.max_file_size_kb'))->toBe(15360)
         ->and(config('media-library.max_file_size'))->toBe(15360 * 1024)
         ->and(config('livewire.temporary_file_upload.rules'))->toContain('max:15360');
+});
+
+it('moves the links to the old WordPress downloads to the new site, in blocks and translations, whatever the slash escaping', function () {
+    $migration = require database_path('migrations/2026_11_19_100000_move_old_wordpress_downloads.php');
+    $old = 'https://zurcher.edu.mg/wp-content/uploads/2025/11/Formulaire-de-demande-dadmission-new.docx';
+    $pdf = 'https://zurcher.edu.mg/wp-content/uploads/2025/12/Yearbook-2025-.pdf';
+
+    $page = Page::factory()->create(['blocks' => [['type' => 'text', 'data' => ['body' => "<a href=\"{$old}\">Formulaire</a> <a href=\"{$pdf}\">Yearbook</a>"]]]]);
+    DB::table('pages')->where('id', $page->id)->update(['translations' => json_encode(['en' => ['blocks' => [['data' => ['url' => $old]]]]])]);
+
+    $migration->up();
+
+    $row = DB::table('pages')->where('id', $page->id)->first();
+    expect($row->blocks)->toContain('\/storage\/documents\/Formulaire-de-demande-dadmission-new.docx')->toContain('\/storage\/documents\/Yearbook-2025.pdf')
+        ->not->toContain('wp-content')
+        ->and($row->translations)->toContain('\/storage\/documents\/Formulaire-de-demande-dadmission-new.docx')->not->toContain('wp-content');
+    expect(config('uaz.yearbooks.2025.pdf'))->toBe('/storage/documents/Yearbook-2025.pdf');
 });
