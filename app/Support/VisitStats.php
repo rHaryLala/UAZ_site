@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Cache;
  *
  * Un « visiteur » est unique par jour (l'empreinte change chaque jour, voir TrackVisit) : sur plusieurs jours, on additionne les visiteurs
  * de chaque jour. Une même personne qui revient trois jours de suite compte donc trois fois ; c'est le prix de l'absence de cookie.
- * Les résultats sont gardés 5 minutes en cache : le tableau de bord ne relance pas ces requêtes à chaque affichage.
+ * Les résultats sont gardés 1 minute en cache : le tableau de bord ne relance pas ces requêtes à chaque affichage.
  */
 class VisitStats
 {
-    private const TTL = 300;
+    private const TTL = 60;
 
     /**
      * Visiteurs et pages vues de chaque jour, du plus ancien au plus récent, aujourd'hui compris (0 les jours sans visite).
